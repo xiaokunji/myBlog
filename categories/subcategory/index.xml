@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>subcategory on Hugo tranquilpeak theme</title>
-    <link>https://localhost:1313/categories/subcategory/</link>
+    <link>https://xiaokunji.github.io/categories/subcategory/</link>
     <description>Recent content in subcategory on Hugo tranquilpeak theme</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 06 Aug 2023 18:57:30 +0800</lastBuildDate><atom:link href="https://localhost:1313/categories/subcategory/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 06 Aug 2023 18:57:30 +0800</lastBuildDate><atom:link href="https://xiaokunji.github.io/categories/subcategory/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Mypost</title>
-      <link>https://localhost:1313/post/mypost/</link>
+      <link>https://xiaokunji.github.io/post/mypost/</link>
       <pubDate>Sun, 06 Aug 2023 18:57:30 +0800</pubDate>
       
-      <guid>https://localhost:1313/post/mypost/</guid>
+      <guid>https://xiaokunji.github.io/post/mypost/</guid>
       <description></description>
     </item>
     

@@ -2,33 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://localhost:1313/categories/</loc>
+    <loc>https://xiaokunji.github.io/categories/</loc>
     <lastmod>2023-08-06T18:57:30+08:00</lastmod>
   </url><url>
-    <loc>https://localhost:1313/categories/category/</loc>
+    <loc>https://xiaokunji.github.io/categories/category/</loc>
     <lastmod>2023-08-06T18:57:30+08:00</lastmod>
   </url><url>
-    <loc>https://localhost:1313/</loc>
+    <loc>https://xiaokunji.github.io/</loc>
     <lastmod>2023-08-06T18:57:30+08:00</lastmod>
   </url><url>
-    <loc>https://localhost:1313/post/mypost/</loc>
+    <loc>https://xiaokunji.github.io/post/mypost/</loc>
     <lastmod>2023-08-06T18:57:30+08:00</lastmod>
   </url><url>
-    <loc>https://localhost:1313/post/</loc>
+    <loc>https://xiaokunji.github.io/post/</loc>
     <lastmod>2023-08-06T18:57:30+08:00</lastmod>
   </url><url>
-    <loc>https://localhost:1313/categories/subcategory/</loc>
+    <loc>https://xiaokunji.github.io/categories/subcategory/</loc>
     <lastmod>2023-08-06T18:57:30+08:00</lastmod>
   </url><url>
-    <loc>https://localhost:1313/tags/tag1/</loc>
+    <loc>https://xiaokunji.github.io/tags/tag1/</loc>
     <lastmod>2023-08-06T18:57:30+08:00</lastmod>
   </url><url>
-    <loc>https://localhost:1313/tags/tag2/</loc>
+    <loc>https://xiaokunji.github.io/tags/tag2/</loc>
     <lastmod>2023-08-06T18:57:30+08:00</lastmod>
   </url><url>
-    <loc>https://localhost:1313/tags/</loc>
+    <loc>https://xiaokunji.github.io/tags/</loc>
     <lastmod>2023-08-06T18:57:30+08:00</lastmod>
   </url><url>
-    <loc>https://localhost:1313/archives/</loc>
+    <loc>https://xiaokunji.github.io/archives/</loc>
   </url>
 </urlset>
