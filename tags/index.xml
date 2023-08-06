@@ -2,26 +2,26 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Hugo tranquilpeak theme</title>
-    <link>https://xiaokunji.github.io/tags/</link>
+    <link>https://xiaokunji.github.io/myBlog/tags/</link>
     <description>Recent content in Tags on Hugo tranquilpeak theme</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 06 Aug 2023 18:57:30 +0800</lastBuildDate><atom:link href="https://xiaokunji.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 06 Aug 2023 18:57:30 +0800</lastBuildDate><atom:link href="https://xiaokunji.github.io/myBlog/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>tag1</title>
-      <link>https://xiaokunji.github.io/tags/tag1/</link>
+      <link>https://xiaokunji.github.io/myBlog/tags/tag1/</link>
       <pubDate>Sun, 06 Aug 2023 18:57:30 +0800</pubDate>
       
-      <guid>https://xiaokunji.github.io/tags/tag1/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/tags/tag1/</guid>
       <description></description>
     </item>
     
     <item>
       <title>tag2</title>
-      <link>https://xiaokunji.github.io/tags/tag2/</link>
+      <link>https://xiaokunji.github.io/myBlog/tags/tag2/</link>
       <pubDate>Sun, 06 Aug 2023 18:57:30 +0800</pubDate>
       
-      <guid>https://xiaokunji.github.io/tags/tag2/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/tags/tag2/</guid>
       <description></description>
     </item>
     
