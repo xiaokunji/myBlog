@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n前言 DDL(Data Definition Language) 众所周知，DDL定义了数据在数据库中的结构、关系以及权限等。比如CREATE，ALTER，DROP等等。\n几种算法实现 分别是：copy、inplace、instant。\ncopy 算法为最古老的算法，在 MySQL 5.5 及以下为默认算法。 从 MySQL 5.6 开始，引入了 inplace 算法并且默认使用。inplace 算法还包含两种类型：rebuild-table 和 not-rebuild-table。MySQL 使用 inplace 算法时，会自动判断，能使用 not-rebuild-table 的情况下会尽量使用，不能的时候才会使用 rebuild-table。当 DDL 涉及到主键和全文索引相关的操作时，无法使用 not-rebuild-table，必须使用 rebuild-table。其他情况下都会使用 not-rebuild-table。 从 MySQL 8.0.12 开始，引入了 instant 算法并且默认使用。目前 instant 算法只支持增加列等少量 DDL 类型的操作，其他类型仍然会默认使用 inplace。 copy 算法 较简单的实现方法，MySQL 会建立一个新的临时表，把源表的所有数据写入到临时表，在此期间无法对源表进行数据写入。MySQL 在完成临时表的写入之后，用临时表替换掉源表。这个算法主要被早期（\u0026lt;=5.5）版本所使用。\ninplace 算法 从 5.6 开始，常用的 DDL 都默认使用这个算法。inplace 算法包含两类：inplace-no-rebuild 和 inplace-rebuild，两者的主要差异在于是否需要重建源表。\ninplace 算法的操作阶段主要分为三个：\nPrepare阶段：- 创建新的临时 frm 文件(与 InnoDB 无关)。- 持有 EXCLUSIVE-MDL 锁，禁止读写。- 根据 alter 类型，确定执行方式（copy，online-rebuild，online-not-rebuild）。更新数据字典的内存对象。- 分配 row_log 对象记录数据变更的增量（仅 rebuild 类型需要）。- 生成新的临时ibd文件 new_table（仅rebuild类型需要）。 Execute 阶段：降级EXCLUSIVE-MDL锁，允许读写。扫描old_table聚集索引（主键）中的每一条记录 rec。遍历new_table的聚集索引和二级索引，逐一处理。根据 rec 构造对应的索引项。将构造索引项插入 sort_buffer 块排序。将 sort_buffer 块更新到 new_table 的索引上。记录 online-ddl 执行过程中产生的增量（仅 rebuild 类型需要）。重放 row_log 中的操作到 new_table 的索引上（not-rebuild 数据是在原表上更新）。重放 row_log 中的DML操作到 new_table 的数据行上。 Commit阶段：当前 Block 为 row_log 最后一个时，禁止读写，升级到 EXCLUSIVE-MDL 锁。重做 row_log 中最后一部分增量。更新 innodb 的数据字典表。提交事务（刷事务的 redo 日志）。修改统计信息。rename 临时 ibd 文件，frm文件。变更完成，释放 EXCLUSIVE-MDL 锁。 instant 算法 MySQL 8.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/mysql\/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+前言 DDL(Data Definition Language) 众所周知，DDL定义了数据在数据库中的结构、关系以及权限等。比如CREATE，ALTER，DROP等等。
+几种算法实现 分别是：copy、inplace、instant。
+copy 算法为最古老的算法，在 MySQL 5.5 及以下为默认算法。 从 MySQL 5.6 开始，引入了 inplace 算法并且默认使用。inplace 算法还包含两种类型：rebuild-table 和 not-rebuild-table。MySQL 使用 inplace 算法时，会自动判断，能使用 not-rebuild-table 的情况下会尽量使用，不能的时候才会使用 rebuild-table。当 DDL 涉及到主键和全文索引相关的操作时，无法使用 not-rebuild-table，必须使用 rebuild-table。其他情况下都会使用 not-rebuild-table。 从 MySQL 8.0.12 开始，引入了 instant 算法并且默认使用。目前 instant 算法只支持增加列等少量 DDL 类型的操作，其他类型仍然会默认使用 inplace。 copy 算法 较简单的实现方法，MySQL 会建立一个新的临时表，把源表的所有数据写入到临时表，在此期间无法对源表进行数据写入。MySQL 在完成临时表的写入之后，用临时表替换掉源表。这个算法主要被早期（&lt;=5.5）版本所使用。
+inplace 算法 从 5.6 开始，常用的 DDL 都默认使用这个算法。inplace 算法包含两类：inplace-no-rebuild 和 inplace-rebuild，两者的主要差异在于是否需要重建源表。
+inplace 算法的操作阶段主要分为三个：
+Prepare阶段：- 创建新的临时 frm 文件(与 InnoDB 无关)。- 持有 EXCLUSIVE-MDL 锁，禁止读写。- 根据 alter 类型，确定执行方式（copy，online-rebuild，online-not-rebuild）。更新数据字典的内存对象。- 分配 row_log 对象记录数据变更的增量（仅 rebuild 类型需要）。- 生成新的临时ibd文件 new_table（仅rebuild类型需要）。 Execute 阶段：降级EXCLUSIVE-MDL锁，允许读写。扫描old_table聚集索引（主键）中的每一条记录 rec。遍历new_table的聚集索引和二级索引，逐一处理。根据 rec 构造对应的索引项。将构造索引项插入 sort_buffer 块排序。将 sort_buffer 块更新到 new_table 的索引上。记录 online-ddl 执行过程中产生的增量（仅 rebuild 类型需要）。重放 row_log 中的操作到 new_table 的索引上（not-rebuild 数据是在原表上更新）。重放 row_log 中的DML操作到 new_table 的数据行上。 Commit阶段：当前 Block 为 row_log 最后一个时，禁止读写，升级到 EXCLUSIVE-MDL 锁。重做 row_log 中最后一部分增量。更新 innodb 的数据字典表。提交事务（刷事务的 redo 日志）。修改统计信息。rename 临时 ibd 文件，frm文件。变更完成，释放 EXCLUSIVE-MDL 锁。 instant 算法 MySQL 8.">
+
+
+<meta property="og:description" content="[toc]
+前言 DDL(Data Definition Language) 众所周知，DDL定义了数据在数据库中的结构、关系以及权限等。比如CREATE，ALTER，DROP等等。
+几种算法实现 分别是：copy、inplace、instant。
+copy 算法为最古老的算法，在 MySQL 5.5 及以下为默认算法。 从 MySQL 5.6 开始，引入了 inplace 算法并且默认使用。inplace 算法还包含两种类型：rebuild-table 和 not-rebuild-table。MySQL 使用 inplace 算法时，会自动判断，能使用 not-rebuild-table 的情况下会尽量使用，不能的时候才会使用 rebuild-table。当 DDL 涉及到主键和全文索引相关的操作时，无法使用 not-rebuild-table，必须使用 rebuild-table。其他情况下都会使用 not-rebuild-table。 从 MySQL 8.0.12 开始，引入了 instant 算法并且默认使用。目前 instant 算法只支持增加列等少量 DDL 类型的操作，其他类型仍然会默认使用 inplace。 copy 算法 较简单的实现方法，MySQL 会建立一个新的临时表，把源表的所有数据写入到临时表，在此期间无法对源表进行数据写入。MySQL 在完成临时表的写入之后，用临时表替换掉源表。这个算法主要被早期（&lt;=5.5）版本所使用。
+inplace 算法 从 5.6 开始，常用的 DDL 都默认使用这个算法。inplace 算法包含两类：inplace-no-rebuild 和 inplace-rebuild，两者的主要差异在于是否需要重建源表。
+inplace 算法的操作阶段主要分为三个：
+Prepare阶段：- 创建新的临时 frm 文件(与 InnoDB 无关)。- 持有 EXCLUSIVE-MDL 锁，禁止读写。- 根据 alter 类型，确定执行方式（copy，online-rebuild，online-not-rebuild）。更新数据字典的内存对象。- 分配 row_log 对象记录数据变更的增量（仅 rebuild 类型需要）。- 生成新的临时ibd文件 new_table（仅rebuild类型需要）。 Execute 阶段：降级EXCLUSIVE-MDL锁，允许读写。扫描old_table聚集索引（主键）中的每一条记录 rec。遍历new_table的聚集索引和二级索引，逐一处理。根据 rec 构造对应的索引项。将构造索引项插入 sort_buffer 块排序。将 sort_buffer 块更新到 new_table 的索引上。记录 online-ddl 执行过程中产生的增量（仅 rebuild 类型需要）。重放 row_log 中的操作到 new_table 的索引上（not-rebuild 数据是在原表上更新）。重放 row_log 中的DML操作到 new_table 的数据行上。 Commit阶段：当前 Block 为 row_log 最后一个时，禁止读写，升级到 EXCLUSIVE-MDL 锁。重做 row_log 中最后一部分增量。更新 innodb 的数据字典表。提交事务（刷事务的 redo 日志）。修改统计信息。rename 临时 ibd 文件，frm文件。变更完成，释放 EXCLUSIVE-MDL 锁。 instant 算法 MySQL 8.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+前言 DDL(Data Definition Language) 众所周知，DDL定义了数据在数据库中的结构、关系以及权限等。比如CREATE，ALTER，DROP等等。
+几种算法实现 分别是：copy、inplace、instant。
+copy 算法为最古老的算法，在 MySQL 5.5 及以下为默认算法。 从 MySQL 5.6 开始，引入了 inplace 算法并且默认使用。inplace 算法还包含两种类型：rebuild-table 和 not-rebuild-table。MySQL 使用 inplace 算法时，会自动判断，能使用 not-rebuild-table 的情况下会尽量使用，不能的时候才会使用 rebuild-table。当 DDL 涉及到主键和全文索引相关的操作时，无法使用 not-rebuild-table，必须使用 rebuild-table。其他情况下都会使用 not-rebuild-table。 从 MySQL 8.0.12 开始，引入了 instant 算法并且默认使用。目前 instant 算法只支持增加列等少量 DDL 类型的操作，其他类型仍然会默认使用 inplace。 copy 算法 较简单的实现方法，MySQL 会建立一个新的临时表，把源表的所有数据写入到临时表，在此期间无法对源表进行数据写入。MySQL 在完成临时表的写入之后，用临时表替换掉源表。这个算法主要被早期（&lt;=5.5）版本所使用。
+inplace 算法 从 5.6 开始，常用的 DDL 都默认使用这个算法。inplace 算法包含两类：inplace-no-rebuild 和 inplace-rebuild，两者的主要差异在于是否需要重建源表。
+inplace 算法的操作阶段主要分为三个：
+Prepare阶段：- 创建新的临时 frm 文件(与 InnoDB 无关)。- 持有 EXCLUSIVE-MDL 锁，禁止读写。- 根据 alter 类型，确定执行方式（copy，online-rebuild，online-not-rebuild）。更新数据字典的内存对象。- 分配 row_log 对象记录数据变更的增量（仅 rebuild 类型需要）。- 生成新的临时ibd文件 new_table（仅rebuild类型需要）。 Execute 阶段：降级EXCLUSIVE-MDL锁，允许读写。扫描old_table聚集索引（主键）中的每一条记录 rec。遍历new_table的聚集索引和二级索引，逐一处理。根据 rec 构造对应的索引项。将构造索引项插入 sort_buffer 块排序。将 sort_buffer 块更新到 new_table 的索引上。记录 online-ddl 执行过程中产生的增量（仅 rebuild 类型需要）。重放 row_log 中的操作到 new_table 的索引上（not-rebuild 数据是在原表上更新）。重放 row_log 中的DML操作到 new_table 的数据行上。 Commit阶段：当前 Block 为 row_log 最后一个时，禁止读写，升级到 EXCLUSIVE-MDL 锁。重做 row_log 中最后一部分增量。更新 innodb 的数据字典表。提交事务（刷事务的 redo 日志）。修改统计信息。rename 临时 ibd 文件，frm文件。变更完成，释放 EXCLUSIVE-MDL 锁。 instant 算法 MySQL 8.">
+<meta name="twitter:description" content="[toc]
+前言 DDL(Data Definition Language) 众所周知，DDL定义了数据在数据库中的结构、关系以及权限等。比如CREATE，ALTER，DROP等等。
+几种算法实现 分别是：copy、inplace、instant。
+copy 算法为最古老的算法，在 MySQL 5.5 及以下为默认算法。 从 MySQL 5.6 开始，引入了 inplace 算法并且默认使用。inplace 算法还包含两种类型：rebuild-table 和 not-rebuild-table。MySQL 使用 inplace 算法时，会自动判断，能使用 not-rebuild-table 的情况下会尽量使用，不能的时候才会使用 rebuild-table。当 DDL 涉及到主键和全文索引相关的操作时，无法使用 not-rebuild-table，必须使用 rebuild-table。其他情况下都会使用 not-rebuild-table。 从 MySQL 8.0.12 开始，引入了 instant 算法并且默认使用。目前 instant 算法只支持增加列等少量 DDL 类型的操作，其他类型仍然会默认使用 inplace。 copy 算法 较简单的实现方法，MySQL 会建立一个新的临时表，把源表的所有数据写入到临时表，在此期间无法对源表进行数据写入。MySQL 在完成临时表的写入之后，用临时表替换掉源表。这个算法主要被早期（&lt;=5.5）版本所使用。
+inplace 算法 从 5.6 开始，常用的 DDL 都默认使用这个算法。inplace 算法包含两类：inplace-no-rebuild 和 inplace-rebuild，两者的主要差异在于是否需要重建源表。
+inplace 算法的操作阶段主要分为三个：
+Prepare阶段：- 创建新的临时 frm 文件(与 InnoDB 无关)。- 持有 EXCLUSIVE-MDL 锁，禁止读写。- 根据 alter 类型，确定执行方式（copy，online-rebuild，online-not-rebuild）。更新数据字典的内存对象。- 分配 row_log 对象记录数据变更的增量（仅 rebuild 类型需要）。- 生成新的临时ibd文件 new_table（仅rebuild类型需要）。 Execute 阶段：降级EXCLUSIVE-MDL锁，允许读写。扫描old_table聚集索引（主键）中的每一条记录 rec。遍历new_table的聚集索引和二级索引，逐一处理。根据 rec 构造对应的索引项。将构造索引项插入 sort_buffer 块排序。将 sort_buffer 块更新到 new_table 的索引上。记录 online-ddl 执行过程中产生的增量（仅 rebuild 类型需要）。重放 row_log 中的操作到 new_table 的索引上（not-rebuild 数据是在原表上更新）。重放 row_log 中的DML操作到 new_table 的数据行上。 Commit阶段：当前 Block 为 row_log 最后一个时，禁止读写，升级到 EXCLUSIVE-MDL 锁。重做 row_log 中最后一部分增量。更新 innodb 的数据字典表。提交事务（刷事务的 redo 日志）。修改统计信息。rename 临时 ibd 文件，frm文件。变更完成，释放 EXCLUSIVE-MDL 锁。 instant 算法 MySQL 8.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="前言">前言</h1>
+<p>DDL(Data Definition Language) 众所周知，DDL定义了数据在数据库中的结构、关系以及权限等。比如CREATE，ALTER，DROP等等。</p>
+<p><img src="DDL%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB.assets/v2-de5a67075149db913f8f285e25cd8e7c_720w.jpg" alt="img"></p>
+<h1 id="几种算法实现">几种算法实现</h1>
+<p>分别是：copy、inplace、instant。</p>
+<ul>
+<li>copy 算法为最古老的算法，在 MySQL 5.5 及以下为默认算法。</li>
+<li>从 MySQL 5.6 开始，引入了 inplace 算法并且默认使用。inplace 算法还包含两种类型：rebuild-table 和 not-rebuild-table。MySQL 使用 inplace 算法时，会自动判断，能使用 not-rebuild-table 的情况下会尽量使用，不能的时候才会使用 rebuild-table。当 DDL 涉及到主键和全文索引相关的操作时，无法使用 not-rebuild-table，必须使用 rebuild-table。其他情况下都会使用 not-rebuild-table。</li>
+<li>从 MySQL 8.0.12 开始，引入了 instant 算法并且默认使用。目前 instant 算法只支持增加列等少量 DDL 类型的操作，其他类型仍然会默认使用 inplace。</li>
+</ul>
+<h2 id="copy-算法">copy 算法</h2>
+<p>较简单的实现方法，MySQL 会建立一个新的临时表，把源表的所有数据写入到临时表，在此期间无法对源表进行数据写入。MySQL 在完成临时表的写入之后，用临时表替换掉源表。这个算法主要被早期（&lt;=5.5）版本所使用。</p>
+<h1 id="inplace-算法">inplace 算法</h1>
+<p>从 5.6 开始，常用的 DDL 都默认使用这个算法。inplace 算法包含两类：inplace-no-rebuild 和 inplace-rebuild，两者的主要差异在于是否需要重建源表。</p>
+<p>inplace 算法的操作阶段主要分为三个：</p>
+<ul>
+<li>Prepare阶段：- 创建新的临时 frm 文件(与 InnoDB 无关)。- 持有 EXCLUSIVE-MDL 锁，禁止读写。- 根据 alter 类型，确定执行方式（copy，online-rebuild，online-not-rebuild）。更新数据字典的内存对象。- 分配 row_log 对象记录数据变更的增量（仅 rebuild 类型需要）。- 生成新的临时ibd文件 new_table（仅rebuild类型需要）。</li>
+<li>Execute 阶段：降级EXCLUSIVE-MDL锁，允许读写。扫描old_table聚集索引（主键）中的每一条记录 rec。遍历new_table的聚集索引和二级索引，逐一处理。根据 rec 构造对应的索引项。将构造索引项插入 sort_buffer 块排序。将 sort_buffer 块更新到 new_table 的索引上。记录 online-ddl 执行过程中产生的增量（仅 rebuild 类型需要）。重放 row_log 中的操作到 new_table 的索引上（not-rebuild 数据是在原表上更新）。重放 row_log 中的DML操作到 new_table 的数据行上。</li>
+<li>Commit阶段：当前 Block 为 row_log 最后一个时，禁止读写，升级到 EXCLUSIVE-MDL 锁。重做 row_log 中最后一部分增量。更新 innodb 的数据字典表。提交事务（刷事务的 redo 日志）。修改统计信息。rename 临时 ibd 文件，frm文件。变更完成，释放 EXCLUSIVE-MDL 锁。</li>
+</ul>
+<h1 id="instant-算法">instant 算法</h1>
+<p>MySQL 8.0.12 才提出的新算法，目前只支持添加列等少量操作，<strong>利用 8.0 新的表结构设计，可以直接修改表的 metadata 数据，省掉了 rebuild 的过程，极大的缩短了 DDL 语句的执行时间。</strong></p>
+<p><strong>基于 instant算法 , 可以让 mysql大表加字段做到秒级</strong>, 案例:</p>
+<p><code>ALTER TABLE person ADD COLUMN age INT ALGORITHM=instant;</code></p>
+<p><a href="https://zhuanlan.zhihu.com/p/127145573">MySQL DDL实现机制和分类 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://cloud.tencent.com/developer/article/1801049">MySQL 8.0.19亿级数据如何秒速增加字段？ - 腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/mycat/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/mysql\/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB\/';
+        
+          this.page.identifier = '\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/mysql\/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/mycat/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2Fmysql%2Fddl%25E5%25AE%259E%25E7%258E%25B0%25E6%259C%25BA%25E5%2588%25B6%25E5%2592%258C%25E5%2588%2586%25E7%25B1%25BB%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2Fmysql%2Fddl%25E5%25AE%259E%25E7%258E%25B0%25E6%259C%25BA%25E5%2588%25B6%25E5%2592%258C%25E5%2588%2586%25E7%25B1%25BB%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2Fmysql%2Fddl%25E5%25AE%259E%25E7%258E%25B0%25E6%259C%25BA%25E5%2588%25B6%25E5%2592%258C%25E5%2588%2586%25E7%25B1%25BB%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

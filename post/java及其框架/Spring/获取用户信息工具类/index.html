@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"UserUtils.java package com.gree.ecommerce.utils; import com.alibaba.fastjson.JSON; import com.alibaba.fastjson.JSONObject; import com.gree.ecommerce.config.InheritableThreadPoolTaskExecutor; import com.gree.ecommerce.constant.Constant; import com.gree.ecommerce.constant.ServerResultCode; import com.gree.ecommerce.exception.BusinessException; import com.gree.ecommerce.module.user.BaseUserRedisVO; import com.gree.ecommerce.module.user.EocLoginUserRedisVO; import com.gree.ecommerce.module.user.LoginUserRedisVO; import lombok.extern.slf4j.Slf4j; import org.apache.commons.collections4.CollectionUtils; import java.util.Collection; import java.util.List; import java.util.Optional; import java.util.concurrent.TimeUnit; import java.util.function.Supplier; import java.util.stream.Collectors; import java.util.stream.Stream; \/** * 用户数据相关工具类 * * @createDate 2021\/12\/15 *\/ @Slf4j public class UserUtils { static RedisUtil redisUtil = new RedisUtil(); public UserUtils(RedisUtil ru) { redisUtil = ru; } static Supplier\u0026lt;BusinessException\u0026gt; resultUserNotLoginEx = () -\u0026gt; new BusinessException(ServerResultCode.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="UserUtils.java package com.gree.ecommerce.utils; import com.alibaba.fastjson.JSON; import com.alibaba.fastjson.JSONObject; import com.gree.ecommerce.config.InheritableThreadPoolTaskExecutor; import com.gree.ecommerce.constant.Constant; import com.gree.ecommerce.constant.ServerResultCode; import com.gree.ecommerce.exception.BusinessException; import com.gree.ecommerce.module.user.BaseUserRedisVO; import com.gree.ecommerce.module.user.EocLoginUserRedisVO; import com.gree.ecommerce.module.user.LoginUserRedisVO; import lombok.extern.slf4j.Slf4j; import org.apache.commons.collections4.CollectionUtils; import java.util.Collection; import java.util.List; import java.util.Optional; import java.util.concurrent.TimeUnit; import java.util.function.Supplier; import java.util.stream.Collectors; import java.util.stream.Stream; /** * 用户数据相关工具类 * * @createDate 2021/12/15 */ @Slf4j public class UserUtils { static RedisUtil redisUtil = new RedisUtil(); public UserUtils(RedisUtil ru) { redisUtil = ru; } static Supplier&lt;BusinessException&gt; resultUserNotLoginEx = () -&gt; new BusinessException(ServerResultCode.">
+
+
+<meta property="og:description" content="UserUtils.java package com.gree.ecommerce.utils; import com.alibaba.fastjson.JSON; import com.alibaba.fastjson.JSONObject; import com.gree.ecommerce.config.InheritableThreadPoolTaskExecutor; import com.gree.ecommerce.constant.Constant; import com.gree.ecommerce.constant.ServerResultCode; import com.gree.ecommerce.exception.BusinessException; import com.gree.ecommerce.module.user.BaseUserRedisVO; import com.gree.ecommerce.module.user.EocLoginUserRedisVO; import com.gree.ecommerce.module.user.LoginUserRedisVO; import lombok.extern.slf4j.Slf4j; import org.apache.commons.collections4.CollectionUtils; import java.util.Collection; import java.util.List; import java.util.Optional; import java.util.concurrent.TimeUnit; import java.util.function.Supplier; import java.util.stream.Collectors; import java.util.stream.Stream; /** * 用户数据相关工具类 * * @createDate 2021/12/15 */ @Slf4j public class UserUtils { static RedisUtil redisUtil = new RedisUtil(); public UserUtils(RedisUtil ru) { redisUtil = ru; } static Supplier&lt;BusinessException&gt; resultUserNotLoginEx = () -&gt; new BusinessException(ServerResultCode.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="UserUtils.java package com.gree.ecommerce.utils; import com.alibaba.fastjson.JSON; import com.alibaba.fastjson.JSONObject; import com.gree.ecommerce.config.InheritableThreadPoolTaskExecutor; import com.gree.ecommerce.constant.Constant; import com.gree.ecommerce.constant.ServerResultCode; import com.gree.ecommerce.exception.BusinessException; import com.gree.ecommerce.module.user.BaseUserRedisVO; import com.gree.ecommerce.module.user.EocLoginUserRedisVO; import com.gree.ecommerce.module.user.LoginUserRedisVO; import lombok.extern.slf4j.Slf4j; import org.apache.commons.collections4.CollectionUtils; import java.util.Collection; import java.util.List; import java.util.Optional; import java.util.concurrent.TimeUnit; import java.util.function.Supplier; import java.util.stream.Collectors; import java.util.stream.Stream; /** * 用户数据相关工具类 * * @createDate 2021/12/15 */ @Slf4j public class UserUtils { static RedisUtil redisUtil = new RedisUtil(); public UserUtils(RedisUtil ru) { redisUtil = ru; } static Supplier&lt;BusinessException&gt; resultUserNotLoginEx = () -&gt; new BusinessException(ServerResultCode.">
+<meta name="twitter:description" content="UserUtils.java package com.gree.ecommerce.utils; import com.alibaba.fastjson.JSON; import com.alibaba.fastjson.JSONObject; import com.gree.ecommerce.config.InheritableThreadPoolTaskExecutor; import com.gree.ecommerce.constant.Constant; import com.gree.ecommerce.constant.ServerResultCode; import com.gree.ecommerce.exception.BusinessException; import com.gree.ecommerce.module.user.BaseUserRedisVO; import com.gree.ecommerce.module.user.EocLoginUserRedisVO; import com.gree.ecommerce.module.user.LoginUserRedisVO; import lombok.extern.slf4j.Slf4j; import org.apache.commons.collections4.CollectionUtils; import java.util.Collection; import java.util.List; import java.util.Optional; import java.util.concurrent.TimeUnit; import java.util.function.Supplier; import java.util.stream.Collectors; import java.util.stream.Stream; /** * 用户数据相关工具类 * * @createDate 2021/12/15 */ @Slf4j public class UserUtils { static RedisUtil redisUtil = new RedisUtil(); public UserUtils(RedisUtil ru) { redisUtil = ru; } static Supplier&lt;BusinessException&gt; resultUserNotLoginEx = () -&gt; new BusinessException(ServerResultCode.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <h1 id="userutilsjava">UserUtils.java</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> com.gree.ecommerce.utils<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.alibaba.fastjson.JSON<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.alibaba.fastjson.JSONObject<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.gree.ecommerce.config.InheritableThreadPoolTaskExecutor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.gree.ecommerce.constant.Constant<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.gree.ecommerce.constant.ServerResultCode<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.gree.ecommerce.exception.BusinessException<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.gree.ecommerce.module.user.BaseUserRedisVO<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.gree.ecommerce.module.user.EocLoginUserRedisVO<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.gree.ecommerce.module.user.LoginUserRedisVO<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> lombok.extern.slf4j.Slf4j<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.apache.commons.collections4.CollectionUtils<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.Collection<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.List<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.Optional<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.concurrent.TimeUnit<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.function.Supplier<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.stream.Collectors<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.stream.Stream<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 用户数据相关工具类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @createDate 2021/12/15
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Slf4j</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserUtils</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> RedisUtil redisUtil <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisUtil<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">UserUtils</span><span style="color:#f92672">(</span>RedisUtil ru<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        redisUtil <span style="color:#f92672">=</span> ru<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> Supplier<span style="color:#f92672">&lt;</span>BusinessException<span style="color:#f92672">&gt;</span> resultUserNotLoginEx <span style="color:#f92672">=</span> <span style="color:#f92672">()</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">new</span> BusinessException<span style="color:#f92672">(</span>ServerResultCode<span style="color:#f92672">.</span><span style="color:#a6e22e">USER_NOT_LOGGED_IN</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 从请求头中获得token =&gt; 再通过redis获取用户信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 用户基础信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @throws BusinessException token不存在则会抛出 , 返回码为 {@link ServerResultCode#USER_NOT_LOGGED_IN }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @createDate 2021/12/20
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> BaseUserRedisVO <span style="color:#a6e22e">getBaseUserRedisInfo</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> HttpRequestUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">getHttpHeader</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">AUTHORIZATION</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>authStr <span style="color:#f92672">-&gt;</span> redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>authStr<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>str <span style="color:#f92672">-&gt;</span> JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">parseObject</span><span style="color:#f92672">(</span>str<span style="color:#f92672">,</span> BaseUserRedisVO<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">orElseGet</span><span style="color:#f92672">(()</span> <span style="color:#f92672">-&gt;</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>                        JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">parseObject</span><span style="color:#f92672">(</span>InheritableThreadPoolTaskExecutor<span style="color:#f92672">.</span><span style="color:#a6e22e">THREAD_USER_INFO_CACHE</span><span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(),</span> BaseUserRedisVO<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#f92672">.</span><span style="color:#a6e22e">orElseThrow</span><span style="color:#f92672">(</span>resultUserNotLoginEx<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 从请求头中获得token =&gt; 再通过redis获取用户信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 商城用户信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @throws BusinessException token不存在则会抛出 , 返回码为 {@link ServerResultCode#USER_NOT_LOGGED_IN }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @createDate 2021/12/20
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> LoginUserRedisVO <span style="color:#a6e22e">getMallUserInfo</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> HttpRequestUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">getHttpHeader</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">AUTHORIZATION</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>authStr <span style="color:#f92672">-&gt;</span> redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>authStr<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>str <span style="color:#f92672">-&gt;</span> JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">parseObject</span><span style="color:#f92672">(</span>str<span style="color:#f92672">,</span> LoginUserRedisVO<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">orElseGet</span><span style="color:#f92672">(()-&gt;</span>
+</span></span><span style="display:flex;"><span>                        Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">parseObject</span><span style="color:#f92672">(</span>InheritableThreadPoolTaskExecutor<span style="color:#f92672">.</span><span style="color:#a6e22e">THREAD_USER_INFO_CACHE</span><span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(),</span> LoginUserRedisVO<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">.</span><span style="color:#a6e22e">orElseThrow</span><span style="color:#f92672">(</span>resultUserNotLoginEx<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 更新商城用户登录的redis信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param modify 需要修改的属性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @author zhouMJ
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">modifyMallUserRedisInfo</span><span style="color:#f92672">(</span>LoginUserRedisVO modify<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>getPlatAllXflagTokenGroup<span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_SELLER</span><span style="color:#f92672">,</span> modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserId</span><span style="color:#f92672">()),</span>
+</span></span><span style="display:flex;"><span>                        getPlatAllXflagTokenGroup<span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_MALL</span><span style="color:#f92672">,</span> modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserId</span><span style="color:#f92672">()),</span>
+</span></span><span style="display:flex;"><span>                        getPlatAllXflagTokenGroup<span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_ALL_SALES</span><span style="color:#f92672">,</span> modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserId</span><span style="color:#f92672">()))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>CollectionUtils<span style="color:#f92672">::</span>isNotEmpty<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>Collection<span style="color:#f92672">::</span>stream<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">::</span>isNotBlank<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//查出商城用户的token
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>key <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                    String redisStr <span style="color:#f92672">=</span> redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>redisStr<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                        LoginUserRedisVO redisVO <span style="color:#f92672">=</span> generateMallModifyVO<span style="color:#f92672">(</span>redisStr<span style="color:#f92672">,</span> modify<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#75715e">//修改属性值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                        redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">setEx</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> JSONObject<span style="color:#f92672">.</span><span style="color:#a6e22e">toJSONString</span><span style="color:#f92672">(</span>redisVO<span style="color:#f92672">),</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">REDIS_MALL_USER_LOGIN_TOKEN_TTL</span><span style="color:#f92672">,</span> TimeUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">MINUTES</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">});</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 生成商城用户的redis信息修改后的属性对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param redisStr redis的json串
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param modify   需要修改的属性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return LoginUserRedisVO 商城用户的redis信息修改后的属性对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> LoginUserRedisVO <span style="color:#a6e22e">generateMallModifyVO</span><span style="color:#f92672">(</span>String redisStr<span style="color:#f92672">,</span> LoginUserRedisVO modify<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        LoginUserRedisVO vo <span style="color:#f92672">=</span> JSONObject<span style="color:#f92672">.</span><span style="color:#a6e22e">parseObject</span><span style="color:#f92672">(</span>redisStr<span style="color:#f92672">,</span> LoginUserRedisVO<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserAcc</span><span style="color:#f92672">()))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            vo<span style="color:#f92672">.</span><span style="color:#a6e22e">setUserAcc</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserAcc</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getNickName</span><span style="color:#f92672">()))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            vo<span style="color:#f92672">.</span><span style="color:#a6e22e">setNickName</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getNickName</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getMobile</span><span style="color:#f92672">()))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            vo<span style="color:#f92672">.</span><span style="color:#a6e22e">setMobile</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getMobile</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getType</span><span style="color:#f92672">()))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            vo<span style="color:#f92672">.</span><span style="color:#a6e22e">setType</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getType</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> vo<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * eoc退出登录
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eocLoginOut</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//删除token信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span>getToken<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//删除token群组中的token值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        String tokenGroupKey <span style="color:#f92672">=</span> String<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">REDIS_USER_TOKEN_LIST_KEY</span><span style="color:#f92672">,</span> getBaseUserRedisInfo<span style="color:#f92672">().</span><span style="color:#a6e22e">getUserId</span><span style="color:#f92672">(),</span> getPlatformFlag<span style="color:#f92672">(),</span> getXFlag<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">lRemove</span><span style="color:#f92672">(</span>tokenGroupKey<span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">ONE</span><span style="color:#f92672">,</span> getToken<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//删除用户的权限变化标识
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        delSignUserPower<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 商城退出登录
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">mallLoginOut</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//删除token信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span>getToken<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//删除token群组中的token值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        String tokenGroupKey <span style="color:#f92672">=</span> String<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">REDIS_USER_TOKEN_LIST_KEY</span><span style="color:#f92672">,</span> getBaseUserRedisInfo<span style="color:#f92672">().</span><span style="color:#a6e22e">getUserId</span><span style="color:#f92672">(),</span> getPlatformFlag<span style="color:#f92672">(),</span> getXFlag<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">lRemove</span><span style="color:#f92672">(</span>tokenGroupKey<span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">ONE</span><span style="color:#f92672">,</span> getToken<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//如果是卖家中心的,删除用户的权限变化标识
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>getPlatformFlag<span style="color:#f92672">().</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_SELLER</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            delSignUserPower<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 从请求头中获得token
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 请求头token，不存在会返回空字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">getToken</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> HttpRequestUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">getHttpHeader</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">AUTHORIZATION</span><span style="color:#f92672">).</span><span style="color:#a6e22e">orElse</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 从请求头中获得权限菜单路由
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 请求头权限菜单路由，不存在会返回空字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">getPowerMenuPath</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> HttpRequestUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">getHttpHeader</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">POWER_MENU_PATH</span><span style="color:#f92672">).</span><span style="color:#a6e22e">orElse</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 从请求头中获得端标识
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 请求头端标识 不存在会返回空字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">getXFlag</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> HttpRequestUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">getHttpHeader</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">X_FLAG</span><span style="color:#f92672">).</span><span style="color:#a6e22e">orElse</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 从请求头中获得端标识
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 请求头端标识，不存在会返回空字符串
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">getPlatformFlag</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> HttpRequestUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">getHttpHeader</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG</span><span style="color:#f92672">).</span><span style="color:#a6e22e">orElse</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 从请求头中获得token =&gt; 再通过redis获取用户信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return eoc用户信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @throws BusinessException token不存在则会抛出 , 返回码为 {@link ServerResultCode#USER_NOT_LOGGED_IN }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @createDate 2021/12/20
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> EocLoginUserRedisVO <span style="color:#a6e22e">getEocUserInfo</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> HttpRequestUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">getHttpHeader</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">AUTHORIZATION</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>authStr <span style="color:#f92672">-&gt;</span> redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>authStr<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>str <span style="color:#f92672">-&gt;</span> JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">parseObject</span><span style="color:#f92672">(</span>str<span style="color:#f92672">,</span> EocLoginUserRedisVO<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">orElseGet</span><span style="color:#f92672">(()-&gt;</span>
+</span></span><span style="display:flex;"><span>                        Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">parseObject</span><span style="color:#f92672">(</span>InheritableThreadPoolTaskExecutor<span style="color:#f92672">.</span><span style="color:#a6e22e">THREAD_USER_INFO_CACHE</span><span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(),</span> EocLoginUserRedisVO<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                                <span style="color:#f92672">.</span><span style="color:#a6e22e">orElseThrow</span><span style="color:#f92672">(</span>resultUserNotLoginEx<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 更新eoc用户登录的redis信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param modify 需要修改的属性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @author zhouMJ
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">modifyEocUserRedisInfo</span><span style="color:#f92672">(</span>EocLoginUserRedisVO modify<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//查询eoc的token的key集合
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> tokenKeys <span style="color:#f92672">=</span> getPlatAllXflagTokenGroup<span style="color:#f92672">(</span>getPlatformFlag<span style="color:#f92672">(),</span> modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserId</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        tokenKeys<span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>key <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            String redisStr <span style="color:#f92672">=</span> redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>redisStr<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                EocLoginUserRedisVO redisVO <span style="color:#f92672">=</span> generateEocModifyVO<span style="color:#f92672">(</span>redisStr<span style="color:#f92672">,</span> modify<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//修改属性值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">setEx</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> JSONObject<span style="color:#f92672">.</span><span style="color:#a6e22e">toJSONString</span><span style="color:#f92672">(</span>redisVO<span style="color:#f92672">),</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">REDIS_SYS_USER_LOGIN_TOKEN_TTL</span><span style="color:#f92672">,</span> TimeUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">MINUTES</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">});</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 生成eoc用户的redis信息修改后的属性对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param redisStr redis的json串
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param modify   需要修改的属性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return LoginUserRedisVO 用户的redis信息修改后的属性对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> EocLoginUserRedisVO <span style="color:#a6e22e">generateEocModifyVO</span><span style="color:#f92672">(</span>String redisStr<span style="color:#f92672">,</span> EocLoginUserRedisVO modify<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        EocLoginUserRedisVO vo <span style="color:#f92672">=</span> JSONObject<span style="color:#f92672">.</span><span style="color:#a6e22e">parseObject</span><span style="color:#f92672">(</span>redisStr<span style="color:#f92672">,</span> EocLoginUserRedisVO<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserAcc</span><span style="color:#f92672">()))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            vo<span style="color:#f92672">.</span><span style="color:#a6e22e">setUserAcc</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserAcc</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getEmpName</span><span style="color:#f92672">()))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            vo<span style="color:#f92672">.</span><span style="color:#a6e22e">setEmpName</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getEmpName</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getMobile</span><span style="color:#f92672">()))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            vo<span style="color:#f92672">.</span><span style="color:#a6e22e">setMobile</span><span style="color:#f92672">(</span>modify<span style="color:#f92672">.</span><span style="color:#a6e22e">getMobile</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> vo<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * eoc强制清空用户token
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param userId 用户id
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eocClearUserToken</span><span style="color:#f92672">(</span>Long userId<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span>getPlatAllXflagTokenGroup<span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_EOC</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * eoc标识用户权限变化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param userIds 用户ids
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eocSignUserPowerUpdate</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>Long<span style="color:#f92672">&gt;</span> userIds<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> signUserKeys <span style="color:#f92672">=</span> userIds<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//拿到用户下的token组
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>userId <span style="color:#f92672">-&gt;</span> getPlatAndXflagTokenGroup<span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_EOC</span><span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">X_REQ_PC</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>Collection<span style="color:#f92672">::</span>stream<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//按照token的维度标识权限变化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>UserUtils<span style="color:#f92672">::</span>getSignUserPowerKey<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;eoc标识用户权限变化eocSignUserPowerUpdate，keys：{}&#34;</span><span style="color:#f92672">,</span> signUserKeys<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String key<span style="color:#f92672">:</span> signUserKeys<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">setEx</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">TRUE_STR</span><span style="color:#f92672">,</span> 7<span style="color:#f92672">,</span> TimeUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">HOURS</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 卖家中心标识用户权限变化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param userIds 用户ids
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sellerSignUserPowerUpdate</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>Long<span style="color:#f92672">&gt;</span> userIds<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> signUserKeys <span style="color:#f92672">=</span> userIds<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//拿到用户下的token组
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>userId <span style="color:#f92672">-&gt;</span> getPlatAndXflagTokenGroup<span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_SELLER</span><span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">X_REQ_PC</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>Collection<span style="color:#f92672">::</span>stream<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//按照token的维度标识权限变化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>UserUtils<span style="color:#f92672">::</span>getSignUserPowerKey<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;卖家中心标识用户权限变化sellerSignUserPowerUpdate，keys：{}&#34;</span><span style="color:#f92672">,</span> signUserKeys<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String key<span style="color:#f92672">:</span> signUserKeys<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">setEx</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">TRUE_STR</span><span style="color:#f92672">,</span> 7<span style="color:#f92672">,</span> TimeUnit<span style="color:#f92672">.</span><span style="color:#a6e22e">HOURS</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">getSignUserPowerKey</span><span style="color:#f92672">(</span>String token<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> String<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">REDIS_USER_TOKEN_POWER_UPDATE_SIGN_KEY</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                getPlatformFlag<span style="color:#f92672">(),</span>
+</span></span><span style="display:flex;"><span>                getXFlag<span style="color:#f92672">(),</span>
+</span></span><span style="display:flex;"><span>                token<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *  删除用户权限变化标识
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">delSignUserPower</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span>getSignUserPowerKey<span style="color:#f92672">(</span>getToken<span style="color:#f92672">()));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 卖家中心强制清空用户token
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param userId 用户id
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sellerClearUserToken</span><span style="color:#f92672">(</span>Long userId<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span>getPlatAllXflagTokenGroup<span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_SELLER</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 得到平台所有端的token群组
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param platform 平台标识
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param userId   用户id
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return java.util.List&lt;java.lang.String&gt; 平台所有端的token集合
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @author gree
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getPlatAllXflagTokenGroup</span><span style="color:#f92672">(</span>String platform<span style="color:#f92672">,</span> Long userId<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>getPlatAndXflagTokenGroup<span style="color:#f92672">(</span>platform<span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">X_REQ_H5</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">),</span>
+</span></span><span style="display:flex;"><span>                        getPlatAndXflagTokenGroup<span style="color:#f92672">(</span>platform<span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">X_REQ_MINI</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">),</span>
+</span></span><span style="display:flex;"><span>                        getPlatAndXflagTokenGroup<span style="color:#f92672">(</span>platform<span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">X_REQ_ANDROID</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">),</span>
+</span></span><span style="display:flex;"><span>                        getPlatAndXflagTokenGroup<span style="color:#f92672">(</span>platform<span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">X_REQ_IOS</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">),</span>
+</span></span><span style="display:flex;"><span>                        getPlatAndXflagTokenGroup<span style="color:#f92672">(</span>platform<span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">X_REQ_PC</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>CollectionUtils<span style="color:#f92672">::</span>isNotEmpty<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>Collection<span style="color:#f92672">::</span>stream<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">::</span>isNotBlank<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 得到平台对应端的token群组
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param platform 平台标识
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param xflag    端标识
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param userId   用户id
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return java.util.List&lt;java.lang.String&gt; 平台对应端的token群组
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @author gree
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getPlatAndXflagTokenGroup</span><span style="color:#f92672">(</span>String platform<span style="color:#f92672">,</span> String xflag<span style="color:#f92672">,</span> Long userId<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        String key <span style="color:#f92672">=</span> String<span style="color:#f92672">.</span><span style="color:#a6e22e">format</span><span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">REDIS_USER_TOKEN_LIST_KEY</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">,</span> platform<span style="color:#f92672">,</span> xflag<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">lRange</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">ZERO</span><span style="color:#f92672">,</span> Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">NEGATIVE_NUMBER_ONE</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *  董店注销用户 退出董店、pc商城、全员销售、卖家中心的系统
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">mallDelUser</span><span style="color:#f92672">(</span>Long userId<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> mallUserAllToken <span style="color:#f92672">=</span> Stream<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>getPlatAllXflagTokenGroup<span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_SELLER</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">),</span>
+</span></span><span style="display:flex;"><span>                        getPlatAllXflagTokenGroup<span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_MALL</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">),</span>
+</span></span><span style="display:flex;"><span>                        getPlatAllXflagTokenGroup<span style="color:#f92672">(</span>Constant<span style="color:#f92672">.</span><span style="color:#a6e22e">PLATFORM_FLAG_ALL_SALES</span><span style="color:#f92672">,</span> userId<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>Collection<span style="color:#f92672">::</span>stream<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>CollectionUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isNotEmpty</span><span style="color:#f92672">(</span>mallUserAllToken<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            redisUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span>mallUserAllToken<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="httprequestutiljava">HttpRequestUtil.java</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> com.gree.ecommerce.utils<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.web.context.request.RequestContextHolder<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.web.context.request.ServletRequestAttributes<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> javax.servlet.http.HttpServletRequest<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.Optional<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @author A80080
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @createDate 2022/1/4
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HttpRequestUtil</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 获取当前请求session
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 返回request
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Optional<span style="color:#f92672">&lt;</span>HttpServletRequest<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getHttpServletRequest</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> getServletRequestAttributes<span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>ServletRequestAttributes<span style="color:#f92672">::</span>getRequest<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 获取当前请求Attributes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 返回Attributes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Optional<span style="color:#f92672">&lt;</span>ServletRequestAttributes<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getServletRequestAttributes</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>RequestContextHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">getRequestAttributes</span><span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>s <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">(</span>ServletRequestAttributes<span style="color:#f92672">)</span> s<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 设置请求Attributes inheritable参数为true
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 返回Attributes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Optional<span style="color:#f92672">&lt;</span>ServletRequestAttributes<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">setInheritableServletRequestAttributes</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Optional<span style="color:#f92672">&lt;</span>ServletRequestAttributes<span style="color:#f92672">&gt;</span> attributesOpt <span style="color:#f92672">=</span> getServletRequestAttributes<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        attributesOpt<span style="color:#f92672">.</span><span style="color:#a6e22e">ifPresent</span><span style="color:#f92672">(</span>servletRequestAttributes <span style="color:#f92672">-&gt;</span> RequestContextHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">setRequestAttributes</span><span style="color:#f92672">(</span>servletRequestAttributes<span style="color:#f92672">,</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> attributesOpt<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 获取当前请求中指定的header
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param name headerName
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 指定headerName对应的值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Optional<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getHttpHeader</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> getHttpServletRequest<span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>request <span style="color:#f92672">-&gt;</span> request<span style="color:#f92672">.</span><span style="color:#a6e22e">getHeader</span><span style="color:#f92672">(</span>name<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div>
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2F%25E8%258E%25B7%25E5%258F%2596%25E7%2594%25A8%25E6%2588%25B7%25E4%25BF%25A1%25E6%2581%25AF%25E5%25B7%25A5%25E5%2585%25B7%25E7%25B1%25BB%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2F%25E8%258E%25B7%25E5%258F%2596%25E7%2594%25A8%25E6%2588%25B7%25E4%25BF%25A1%25E6%2581%25AF%25E5%25B7%25A5%25E5%2585%25B7%25E7%25B1%25BB%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2F%25E8%258E%25B7%25E5%258F%2596%25E7%2594%25A8%25E6%2588%25B7%25E4%25BF%25A1%25E6%2581%25AF%25E5%25B7%25A5%25E5%2585%25B7%25E7%25B1%25BB%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

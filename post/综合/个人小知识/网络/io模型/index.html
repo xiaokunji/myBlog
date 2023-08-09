@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n同步阻塞IO (BIO) 假设应用程序的进程发起IO调用，但是如果内核的数据还没准备好的话，那应用程序进程就一直在阻塞等待，一直等到内核数据准备好了，从内核拷贝到用户空间，才返回成功提示，此次IO操作，称之为阻塞IO。\n阻塞IO比较经典的应用就是阻塞socket、Java BIO。 阻塞IO的缺点就是：如果内核数据一直没准备好，那用户进程将一直阻塞，浪费性能，可以使用非阻塞IO优化。 同步非阻塞IO (NIO) 如果内核数据还没准备好，可以先返回错误信息给用户进程，让它不需要等待，而是通过轮询的方式再来请求。这就是非阻塞IO，流程图如下：\n非阻塞IO模型，简称NIO，Non-Blocking IO \/ New IO。它相对于阻塞IO，虽然大幅提升了性能，但是它依然存在性能问题，即频繁的轮询，导致频繁的系统调用，同样会消耗大量的CPU资源。可以考虑IO复用模型，去解决这个问题。\nIO多路复用模型 (NIO) IO复用模型核心思路：系统给我们提供一类函数（如我们耳濡目染的select、poll、epoll函数），它们可以同时监控多个fd的操作，任何一个返回内核数据就绪，应用进程再发起recvfrom系统调用。\n文件描述符fd(File Descriptor),它是计算机科学中的一个术语，形式上是一个非负整数。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。\nepoll函数的调用流程\n更多详见 - IO多路复用.md\nIO模型之信号驱动模型 信号驱动IO不再用主动询问的方式去确认数据是否就绪，而是向内核发送一个信号（调用sigaction的时候建立一个SIGIO的信号），然后应用用户进程可以去做别的事，不用阻塞。当内核数据准备好后，再通过SIGIO信号通知应用进程，数据准备好后的可读状态。应用用户进程收到信号之后，立即调用recvfrom，去读取数据。\n信号驱动IO模型，在应用进程发出信号后，是立即返回的，不会阻塞进程。它已经有异步操作的感觉了。但是你细看上面的流程图，发现数据复制到应用缓冲的时候，应用进程还是阻塞的。回过头来看下，不管是BIO，还是NIO，还是信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的\nIO 模型之异步IO(AIO) 前面讲的BIO，NIO和信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的，因此都不是真正的异步。AIO实现了IO全流程的非阻塞，就是应用进程发出系统调用后，是立即返回的，但是立即返回的不是处理结果，而是表示提交成功类似的意思。等内核数据准备好，将数据拷贝到用户进程缓冲区，发送信号通知用户进程IO操作执行完毕。\n看一遍就理解：IO模型详解 - 掘金 (juejin.cn)",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/%E7%BD%91%E7%BB%9C\/io%E6%A8%A1%E5%9E%8B\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+同步阻塞IO (BIO) 假设应用程序的进程发起IO调用，但是如果内核的数据还没准备好的话，那应用程序进程就一直在阻塞等待，一直等到内核数据准备好了，从内核拷贝到用户空间，才返回成功提示，此次IO操作，称之为阻塞IO。
+阻塞IO比较经典的应用就是阻塞socket、Java BIO。 阻塞IO的缺点就是：如果内核数据一直没准备好，那用户进程将一直阻塞，浪费性能，可以使用非阻塞IO优化。 同步非阻塞IO (NIO) 如果内核数据还没准备好，可以先返回错误信息给用户进程，让它不需要等待，而是通过轮询的方式再来请求。这就是非阻塞IO，流程图如下：
+非阻塞IO模型，简称NIO，Non-Blocking IO / New IO。它相对于阻塞IO，虽然大幅提升了性能，但是它依然存在性能问题，即频繁的轮询，导致频繁的系统调用，同样会消耗大量的CPU资源。可以考虑IO复用模型，去解决这个问题。
+IO多路复用模型 (NIO) IO复用模型核心思路：系统给我们提供一类函数（如我们耳濡目染的select、poll、epoll函数），它们可以同时监控多个fd的操作，任何一个返回内核数据就绪，应用进程再发起recvfrom系统调用。
+文件描述符fd(File Descriptor),它是计算机科学中的一个术语，形式上是一个非负整数。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。
+epoll函数的调用流程
+更多详见 - IO多路复用.md
+IO模型之信号驱动模型 信号驱动IO不再用主动询问的方式去确认数据是否就绪，而是向内核发送一个信号（调用sigaction的时候建立一个SIGIO的信号），然后应用用户进程可以去做别的事，不用阻塞。当内核数据准备好后，再通过SIGIO信号通知应用进程，数据准备好后的可读状态。应用用户进程收到信号之后，立即调用recvfrom，去读取数据。
+信号驱动IO模型，在应用进程发出信号后，是立即返回的，不会阻塞进程。它已经有异步操作的感觉了。但是你细看上面的流程图，发现数据复制到应用缓冲的时候，应用进程还是阻塞的。回过头来看下，不管是BIO，还是NIO，还是信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的
+IO 模型之异步IO(AIO) 前面讲的BIO，NIO和信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的，因此都不是真正的异步。AIO实现了IO全流程的非阻塞，就是应用进程发出系统调用后，是立即返回的，但是立即返回的不是处理结果，而是表示提交成功类似的意思。等内核数据准备好，将数据拷贝到用户进程缓冲区，发送信号通知用户进程IO操作执行完毕。
+看一遍就理解：IO模型详解 - 掘金 (juejin.cn)">
+
+
+<meta property="og:description" content="[toc]
+同步阻塞IO (BIO) 假设应用程序的进程发起IO调用，但是如果内核的数据还没准备好的话，那应用程序进程就一直在阻塞等待，一直等到内核数据准备好了，从内核拷贝到用户空间，才返回成功提示，此次IO操作，称之为阻塞IO。
+阻塞IO比较经典的应用就是阻塞socket、Java BIO。 阻塞IO的缺点就是：如果内核数据一直没准备好，那用户进程将一直阻塞，浪费性能，可以使用非阻塞IO优化。 同步非阻塞IO (NIO) 如果内核数据还没准备好，可以先返回错误信息给用户进程，让它不需要等待，而是通过轮询的方式再来请求。这就是非阻塞IO，流程图如下：
+非阻塞IO模型，简称NIO，Non-Blocking IO / New IO。它相对于阻塞IO，虽然大幅提升了性能，但是它依然存在性能问题，即频繁的轮询，导致频繁的系统调用，同样会消耗大量的CPU资源。可以考虑IO复用模型，去解决这个问题。
+IO多路复用模型 (NIO) IO复用模型核心思路：系统给我们提供一类函数（如我们耳濡目染的select、poll、epoll函数），它们可以同时监控多个fd的操作，任何一个返回内核数据就绪，应用进程再发起recvfrom系统调用。
+文件描述符fd(File Descriptor),它是计算机科学中的一个术语，形式上是一个非负整数。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。
+epoll函数的调用流程
+更多详见 - IO多路复用.md
+IO模型之信号驱动模型 信号驱动IO不再用主动询问的方式去确认数据是否就绪，而是向内核发送一个信号（调用sigaction的时候建立一个SIGIO的信号），然后应用用户进程可以去做别的事，不用阻塞。当内核数据准备好后，再通过SIGIO信号通知应用进程，数据准备好后的可读状态。应用用户进程收到信号之后，立即调用recvfrom，去读取数据。
+信号驱动IO模型，在应用进程发出信号后，是立即返回的，不会阻塞进程。它已经有异步操作的感觉了。但是你细看上面的流程图，发现数据复制到应用缓冲的时候，应用进程还是阻塞的。回过头来看下，不管是BIO，还是NIO，还是信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的
+IO 模型之异步IO(AIO) 前面讲的BIO，NIO和信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的，因此都不是真正的异步。AIO实现了IO全流程的非阻塞，就是应用进程发出系统调用后，是立即返回的，但是立即返回的不是处理结果，而是表示提交成功类似的意思。等内核数据准备好，将数据拷贝到用户进程缓冲区，发送信号通知用户进程IO操作执行完毕。
+看一遍就理解：IO模型详解 - 掘金 (juejin.cn)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+同步阻塞IO (BIO) 假设应用程序的进程发起IO调用，但是如果内核的数据还没准备好的话，那应用程序进程就一直在阻塞等待，一直等到内核数据准备好了，从内核拷贝到用户空间，才返回成功提示，此次IO操作，称之为阻塞IO。
+阻塞IO比较经典的应用就是阻塞socket、Java BIO。 阻塞IO的缺点就是：如果内核数据一直没准备好，那用户进程将一直阻塞，浪费性能，可以使用非阻塞IO优化。 同步非阻塞IO (NIO) 如果内核数据还没准备好，可以先返回错误信息给用户进程，让它不需要等待，而是通过轮询的方式再来请求。这就是非阻塞IO，流程图如下：
+非阻塞IO模型，简称NIO，Non-Blocking IO / New IO。它相对于阻塞IO，虽然大幅提升了性能，但是它依然存在性能问题，即频繁的轮询，导致频繁的系统调用，同样会消耗大量的CPU资源。可以考虑IO复用模型，去解决这个问题。
+IO多路复用模型 (NIO) IO复用模型核心思路：系统给我们提供一类函数（如我们耳濡目染的select、poll、epoll函数），它们可以同时监控多个fd的操作，任何一个返回内核数据就绪，应用进程再发起recvfrom系统调用。
+文件描述符fd(File Descriptor),它是计算机科学中的一个术语，形式上是一个非负整数。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。
+epoll函数的调用流程
+更多详见 - IO多路复用.md
+IO模型之信号驱动模型 信号驱动IO不再用主动询问的方式去确认数据是否就绪，而是向内核发送一个信号（调用sigaction的时候建立一个SIGIO的信号），然后应用用户进程可以去做别的事，不用阻塞。当内核数据准备好后，再通过SIGIO信号通知应用进程，数据准备好后的可读状态。应用用户进程收到信号之后，立即调用recvfrom，去读取数据。
+信号驱动IO模型，在应用进程发出信号后，是立即返回的，不会阻塞进程。它已经有异步操作的感觉了。但是你细看上面的流程图，发现数据复制到应用缓冲的时候，应用进程还是阻塞的。回过头来看下，不管是BIO，还是NIO，还是信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的
+IO 模型之异步IO(AIO) 前面讲的BIO，NIO和信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的，因此都不是真正的异步。AIO实现了IO全流程的非阻塞，就是应用进程发出系统调用后，是立即返回的，但是立即返回的不是处理结果，而是表示提交成功类似的意思。等内核数据准备好，将数据拷贝到用户进程缓冲区，发送信号通知用户进程IO操作执行完毕。
+看一遍就理解：IO模型详解 - 掘金 (juejin.cn)">
+<meta name="twitter:description" content="[toc]
+同步阻塞IO (BIO) 假设应用程序的进程发起IO调用，但是如果内核的数据还没准备好的话，那应用程序进程就一直在阻塞等待，一直等到内核数据准备好了，从内核拷贝到用户空间，才返回成功提示，此次IO操作，称之为阻塞IO。
+阻塞IO比较经典的应用就是阻塞socket、Java BIO。 阻塞IO的缺点就是：如果内核数据一直没准备好，那用户进程将一直阻塞，浪费性能，可以使用非阻塞IO优化。 同步非阻塞IO (NIO) 如果内核数据还没准备好，可以先返回错误信息给用户进程，让它不需要等待，而是通过轮询的方式再来请求。这就是非阻塞IO，流程图如下：
+非阻塞IO模型，简称NIO，Non-Blocking IO / New IO。它相对于阻塞IO，虽然大幅提升了性能，但是它依然存在性能问题，即频繁的轮询，导致频繁的系统调用，同样会消耗大量的CPU资源。可以考虑IO复用模型，去解决这个问题。
+IO多路复用模型 (NIO) IO复用模型核心思路：系统给我们提供一类函数（如我们耳濡目染的select、poll、epoll函数），它们可以同时监控多个fd的操作，任何一个返回内核数据就绪，应用进程再发起recvfrom系统调用。
+文件描述符fd(File Descriptor),它是计算机科学中的一个术语，形式上是一个非负整数。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。
+epoll函数的调用流程
+更多详见 - IO多路复用.md
+IO模型之信号驱动模型 信号驱动IO不再用主动询问的方式去确认数据是否就绪，而是向内核发送一个信号（调用sigaction的时候建立一个SIGIO的信号），然后应用用户进程可以去做别的事，不用阻塞。当内核数据准备好后，再通过SIGIO信号通知应用进程，数据准备好后的可读状态。应用用户进程收到信号之后，立即调用recvfrom，去读取数据。
+信号驱动IO模型，在应用进程发出信号后，是立即返回的，不会阻塞进程。它已经有异步操作的感觉了。但是你细看上面的流程图，发现数据复制到应用缓冲的时候，应用进程还是阻塞的。回过头来看下，不管是BIO，还是NIO，还是信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的
+IO 模型之异步IO(AIO) 前面讲的BIO，NIO和信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的，因此都不是真正的异步。AIO实现了IO全流程的非阻塞，就是应用进程发出系统调用后，是立即返回的，但是立即返回的不是处理结果，而是表示提交成功类似的意思。等内核数据准备好，将数据拷贝到用户进程缓冲区，发送信号通知用户进程IO操作执行完毕。
+看一遍就理解：IO模型详解 - 掘金 (juejin.cn)">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="同步阻塞io-bio">同步阻塞IO (BIO)</h1>
+<p>假设应用程序的进程发起IO调用，但是如果内核的数据还没准备好的话，那应用程序进程就一直在阻塞等待，一直等到内核数据准备好了，从内核拷贝到用户空间，才返回成功提示，此次IO操作，称之为阻塞IO。</p>
+<p><img src="IO%E6%A8%A1%E5%9E%8B.assets/481bb921f7724daba97ee5f4048e7b91tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp" alt="img"></p>
+<ul>
+<li>阻塞IO比较经典的应用就是阻塞socket、Java BIO。</li>
+<li>阻塞IO的缺点就是：如果内核数据一直没准备好，那用户进程将一直阻塞，浪费性能，可以使用非阻塞IO优化。</li>
+</ul>
+<h1 id="同步非阻塞io-nio">同步非阻塞IO (NIO)</h1>
+<p>如果内核数据还没准备好，可以先返回错误信息给用户进程，让它不需要等待，而是通过轮询的方式再来请求。这就是非阻塞IO，流程图如下：</p>
+<p><img src="IO%E6%A8%A1%E5%9E%8B.assets/dd0b9247608f4bce9f2035a16e29ec87tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp" alt="img"></p>
+<p>非阻塞IO模型，简称NIO，<code>Non-Blocking IO / New IO</code>。它相对于阻塞IO，虽然大幅提升了性能，但是它依然存在性能问题，即频繁的轮询，导致频繁的系统调用，同样会消耗大量的CPU资源。可以考虑IO复用模型，去解决这个问题。</p>
+<h1 id="io多路复用模型-nio">IO多路复用模型 (NIO)</h1>
+<p>IO复用模型核心思路：系统给我们提供一类函数（如我们耳濡目染的<code>select、poll、epoll</code>函数），它们可以同时监控多个fd的操作，任何一个返回内核数据就绪，应用进程再发起<code>recvfrom</code>系统调用。</p>
+<blockquote>
+<p>文件描述符fd(File Descriptor),它是计算机科学中的一个术语，形式上是一个非负整数。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。</p>
+</blockquote>
+<p><code>epoll</code>函数的调用流程</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/58a287b7295c4dce91453fc1412270d4~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp" alt="img"></p>
+<p><a href="....%5C%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80%5CIO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.md">更多详见 - IO多路复用.md</a></p>
+<h1 id="io模型之信号驱动模型">IO模型之信号驱动模型</h1>
+<p>信号驱动IO不再用主动询问的方式去确认数据是否就绪，而是向内核发送一个信号（调用sigaction的时候建立一个SIGIO的信号），然后应用用户进程可以去做别的事，不用阻塞。当内核数据准备好后，再通过SIGIO信号通知应用进程，数据准备好后的可读状态。应用用户进程收到信号之后，立即调用<code>recvfrom</code>，去读取数据。</p>
+<p><img src="IO%E6%A8%A1%E5%9E%8B.assets/68265c90c47246ee87d3ffb18bc4f9eetplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp" alt="img"></p>
+<p>信号驱动IO模型，在应用进程发出信号后，是立即返回的，不会阻塞进程。它已经有异步操作的感觉了。但是你细看上面的流程图，发现数据复制到应用缓冲的时候，应用进程还是阻塞的。回过头来看下，不管是BIO，还是NIO，还是信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的</p>
+<h1 id="io-模型之异步ioaio">IO 模型之异步IO(AIO)</h1>
+<p>前面讲的BIO，NIO和信号驱动，在数据从内核复制到应用缓冲的时候，都是阻塞的，因此都不是真正的异步。AIO实现了IO全流程的非阻塞，就是应用进程发出系统调用后，<strong>是立即返回的，但是立即返回的不是处理结果，而是表示提交成功类似的意思</strong>。等内核数据准备好，将数据拷贝到用户进程缓冲区，发送信号通知用户进程IO操作执行完毕。</p>
+<p><img src="IO%E6%A8%A1%E5%9E%8B.assets/5c788c623b0941349c984995bddfba30tplv-k3u1fbpfcp-zoom-in-crop-mark3024000.webp" alt="img"></p>
+<p><a href="https://juejin.cn/post/7036518015462015006#heading-5">看一遍就理解：IO模型详解 - 掘金 (juejin.cn)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/https/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/tcp/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/%E7%BD%91%E7%BB%9C\/io%E6%A8%A1%E5%9E%8B\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/%E7%BD%91%E7%BB%9C\/io%E6%A8%A1%E5%9E%8B\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/https/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/tcp/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2F%25E7%25BD%2591%25E7%25BB%259C%2Fio%25E6%25A8%25A1%25E5%259E%258B%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2F%25E7%25BD%2591%25E7%25BB%259C%2Fio%25E6%25A8%25A1%25E5%259E%258B%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2F%25E7%25BD%2591%25E7%25BB%259C%2Fio%25E6%25A8%25A1%25E5%259E%258B%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

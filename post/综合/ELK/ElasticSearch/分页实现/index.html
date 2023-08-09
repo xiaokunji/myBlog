@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1. from \u002b size 这是ES分页中最常用的一种方式，与MySQL类似，from指定起始位置，size指定返回的文档数。\nGET kibana_sample_data_flights\/_search { \u0026#34;from\u0026#34;: 10, \u0026#34;size\u0026#34;: 2, \u0026#34;query\u0026#34;: { \u0026#34;match\u0026#34;: { \u0026#34;DestWeather\u0026#34;: \u0026#34;Sunny\u0026#34; } }, \u0026#34;sort\u0026#34;: [ { \u0026#34;timestamp\u0026#34;: { \u0026#34;order\u0026#34;: \u0026#34;asc\u0026#34; } } ] } 使用简单，且默认的深度分页限制是1万，from \u002b size 大于 10000会报错，可以通过index.max_result_window参数进行修改。\n好处是可以灵活分页, 比如指定页码的跳转\n这种分页方式，在分布式的环境下的深度分页是有性能问题的，一般不建议用这种方式做深度分页，可以用下面将要介绍的两种方式。(以下两种均不能指定页码跳转,只能下滑式翻页)\n理解为什么深度分页是有问题的，我们可以假设在一个有 5 个主分片的索引中搜索。 当我们请求结果的第一页（结果从 1 到 10 ），每一个分片产生前 10 的结果，并且返回给协调节点 ，协调节点对 50 个结果排序得到全部结果的前 10 个。\n现在假设我们请求第 1000 页，结果从 10001 到 10010 。所有都以相同的方式工作除了每个分片不得不产生前10010个结果以外。 然后协调节点对全部 50050 个结果排序最后丢弃掉这些结果中的 50040 个结果。\n可以看到，在分布式系统中，对结果排序的成本随分页的深度成指数上升。\n2. scroll api 创建一个快照，有新的数据写入以后，无法被查到。每次查询后，输入上一次的 scroll_id",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1. from &#43; size 这是ES分页中最常用的一种方式，与MySQL类似，from指定起始位置，size指定返回的文档数。
+GET kibana_sample_data_flights/_search { &#34;from&#34;: 10, &#34;size&#34;: 2, &#34;query&#34;: { &#34;match&#34;: { &#34;DestWeather&#34;: &#34;Sunny&#34; } }, &#34;sort&#34;: [ { &#34;timestamp&#34;: { &#34;order&#34;: &#34;asc&#34; } } ] } 使用简单，且默认的深度分页限制是1万，from &#43; size 大于 10000会报错，可以通过index.max_result_window参数进行修改。
+好处是可以灵活分页, 比如指定页码的跳转
+这种分页方式，在分布式的环境下的深度分页是有性能问题的，一般不建议用这种方式做深度分页，可以用下面将要介绍的两种方式。(以下两种均不能指定页码跳转,只能下滑式翻页)
+理解为什么深度分页是有问题的，我们可以假设在一个有 5 个主分片的索引中搜索。 当我们请求结果的第一页（结果从 1 到 10 ），每一个分片产生前 10 的结果，并且返回给协调节点 ，协调节点对 50 个结果排序得到全部结果的前 10 个。
+现在假设我们请求第 1000 页，结果从 10001 到 10010 。所有都以相同的方式工作除了每个分片不得不产生前10010个结果以外。 然后协调节点对全部 50050 个结果排序最后丢弃掉这些结果中的 50040 个结果。
+可以看到，在分布式系统中，对结果排序的成本随分页的深度成指数上升。
+2. scroll api 创建一个快照，有新的数据写入以后，无法被查到。每次查询后，输入上一次的 scroll_id">
+
+
+<meta property="og:description" content="[toc]
+1. from &#43; size 这是ES分页中最常用的一种方式，与MySQL类似，from指定起始位置，size指定返回的文档数。
+GET kibana_sample_data_flights/_search { &#34;from&#34;: 10, &#34;size&#34;: 2, &#34;query&#34;: { &#34;match&#34;: { &#34;DestWeather&#34;: &#34;Sunny&#34; } }, &#34;sort&#34;: [ { &#34;timestamp&#34;: { &#34;order&#34;: &#34;asc&#34; } } ] } 使用简单，且默认的深度分页限制是1万，from &#43; size 大于 10000会报错，可以通过index.max_result_window参数进行修改。
+好处是可以灵活分页, 比如指定页码的跳转
+这种分页方式，在分布式的环境下的深度分页是有性能问题的，一般不建议用这种方式做深度分页，可以用下面将要介绍的两种方式。(以下两种均不能指定页码跳转,只能下滑式翻页)
+理解为什么深度分页是有问题的，我们可以假设在一个有 5 个主分片的索引中搜索。 当我们请求结果的第一页（结果从 1 到 10 ），每一个分片产生前 10 的结果，并且返回给协调节点 ，协调节点对 50 个结果排序得到全部结果的前 10 个。
+现在假设我们请求第 1000 页，结果从 10001 到 10010 。所有都以相同的方式工作除了每个分片不得不产生前10010个结果以外。 然后协调节点对全部 50050 个结果排序最后丢弃掉这些结果中的 50040 个结果。
+可以看到，在分布式系统中，对结果排序的成本随分页的深度成指数上升。
+2. scroll api 创建一个快照，有新的数据写入以后，无法被查到。每次查询后，输入上一次的 scroll_id">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1. from &#43; size 这是ES分页中最常用的一种方式，与MySQL类似，from指定起始位置，size指定返回的文档数。
+GET kibana_sample_data_flights/_search { &#34;from&#34;: 10, &#34;size&#34;: 2, &#34;query&#34;: { &#34;match&#34;: { &#34;DestWeather&#34;: &#34;Sunny&#34; } }, &#34;sort&#34;: [ { &#34;timestamp&#34;: { &#34;order&#34;: &#34;asc&#34; } } ] } 使用简单，且默认的深度分页限制是1万，from &#43; size 大于 10000会报错，可以通过index.max_result_window参数进行修改。
+好处是可以灵活分页, 比如指定页码的跳转
+这种分页方式，在分布式的环境下的深度分页是有性能问题的，一般不建议用这种方式做深度分页，可以用下面将要介绍的两种方式。(以下两种均不能指定页码跳转,只能下滑式翻页)
+理解为什么深度分页是有问题的，我们可以假设在一个有 5 个主分片的索引中搜索。 当我们请求结果的第一页（结果从 1 到 10 ），每一个分片产生前 10 的结果，并且返回给协调节点 ，协调节点对 50 个结果排序得到全部结果的前 10 个。
+现在假设我们请求第 1000 页，结果从 10001 到 10010 。所有都以相同的方式工作除了每个分片不得不产生前10010个结果以外。 然后协调节点对全部 50050 个结果排序最后丢弃掉这些结果中的 50040 个结果。
+可以看到，在分布式系统中，对结果排序的成本随分页的深度成指数上升。
+2. scroll api 创建一个快照，有新的数据写入以后，无法被查到。每次查询后，输入上一次的 scroll_id">
+<meta name="twitter:description" content="[toc]
+1. from &#43; size 这是ES分页中最常用的一种方式，与MySQL类似，from指定起始位置，size指定返回的文档数。
+GET kibana_sample_data_flights/_search { &#34;from&#34;: 10, &#34;size&#34;: 2, &#34;query&#34;: { &#34;match&#34;: { &#34;DestWeather&#34;: &#34;Sunny&#34; } }, &#34;sort&#34;: [ { &#34;timestamp&#34;: { &#34;order&#34;: &#34;asc&#34; } } ] } 使用简单，且默认的深度分页限制是1万，from &#43; size 大于 10000会报错，可以通过index.max_result_window参数进行修改。
+好处是可以灵活分页, 比如指定页码的跳转
+这种分页方式，在分布式的环境下的深度分页是有性能问题的，一般不建议用这种方式做深度分页，可以用下面将要介绍的两种方式。(以下两种均不能指定页码跳转,只能下滑式翻页)
+理解为什么深度分页是有问题的，我们可以假设在一个有 5 个主分片的索引中搜索。 当我们请求结果的第一页（结果从 1 到 10 ），每一个分片产生前 10 的结果，并且返回给协调节点 ，协调节点对 50 个结果排序得到全部结果的前 10 个。
+现在假设我们请求第 1000 页，结果从 10001 到 10010 。所有都以相同的方式工作除了每个分片不得不产生前10010个结果以外。 然后协调节点对全部 50050 个结果排序最后丢弃掉这些结果中的 50040 个结果。
+可以看到，在分布式系统中，对结果排序的成本随分页的深度成指数上升。
+2. scroll api 创建一个快照，有新的数据写入以后，无法被查到。每次查询后，输入上一次的 scroll_id">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1-from--size">1. from + size</h1>
+<p>这是ES分页中最常用的一种方式，与MySQL类似，from指定起始位置，size指定返回的文档数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET kibana_sample_data_flights/_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;from&#34;: 10,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;size&#34;: 2, 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;match&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;DestWeather&#34;: &#34;Sunny&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;sort&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;timestamp&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;order&#34;: &#34;asc&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>使用简单，且默认的深度分页限制是1万，from + size 大于 10000会报错，可以通过<code>index.max_result_window</code>参数进行修改。</p>
+<p><!-- raw HTML omitted -->好处是可以灵活分页, 比如指定页码的跳转<!-- raw HTML omitted --></p>
+<p><!-- raw HTML omitted -->这种分页方式，在分布式的环境下的深度分页是有性能问题的<!-- raw HTML omitted -->，一般不建议用这种方式做深度分页，可以用下面将要介绍的两种方式。(<strong>以下两种均不能指定页码跳转,只能下滑式翻页</strong>)</p>
+<p>理解为什么深度分页是有问题的，我们可以假设在一个有 5 个主分片的索引中搜索。 当我们请求结果的第一页（结果从 1 到 10 ），每一个分片产生前 10 的结果，并且返回给协调节点 ，协调节点对 50 个结果排序得到全部结果的前 10 个。</p>
+<p>现在假设我们请求第 1000 页，结果从 10001 到 10010 。所有都以相同的方式工作除了每个分片不得不产生前10010个结果以外。 然后协调节点对全部 50050 个结果排序最后丢弃掉这些结果中的 50040 个结果。</p>
+<p>可以看到，在分布式系统中，对结果排序的成本随分页的深度成指数上升。</p>
+<h1 id="2-scroll-api">2. scroll api</h1>
+<p>创建一个快照，有新的数据写入以后，无法被查到。每次查询后，输入上一次的 scroll_id</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET kibana_sample_data_flights/_search?scroll=1m
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;size&#34;: 2,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;match&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;DestWeather&#34;: &#34;Sunny&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;sort&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;timestamp&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;order&#34;: &#34;asc&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;_id&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;order&#34;: &#34;desc&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>在返回的数据中，有一个<code>_scroll_id</code>字段，下次搜索的时候带上这个数据，并且使用下面的查询语句。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST _search/scroll
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;scroll&#34; : &#34;1m&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;scroll_id&#34; : &#34;DXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAA6UWWVJRTk9TUXFTLUdnU28xVFN6bEM4QQ==&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>上面的<code>scroll</code>指定搜索上下文保留的时间，1m代表1分钟，还有其他时间可以选择，有d、h、m、s等，分别代表天、时、分钟、秒</p>
+<p>搜索上下文有过期自动删除，但如果自己知道什么时候该删，可以自己手动删除，减少资源占用。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">DELETE /_search/scroll
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;scroll_id&#34; : &#34;DXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAA6UWWVJRTk9TUXFTLUdnU28xVFN6bEM4QQ==&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p><code>scroll</code> 本质是创建一个快照,在这个快照中做搜索,所以意味着<!-- raw HTML omitted -->数据不会被实时更新<!-- raw HTML omitted -->, 其次上下文是需要保留的,占用了资源,<!-- raw HTML omitted -->当搜索量大时,上下文就会占据大量资源<!-- raw HTML omitted -->,官方也不推荐使用这种方式</p>
+<blockquote>
+<p>不过用在快照场景还是可以的,比如 大量数据导出或者索引重建</p>
+</blockquote>
+<h1 id="3-search-after">3. search after</h1>
+<p>search after 利用实时有游标来帮我们解决实时滚动的问题。第一次搜索时需要指定 sort，并且保证值是唯一的，可以通过加入 _id 保证唯一性。</p>
+<blockquote>
+<p>和srcoll很类似,都是记录上次搜索的结尾,然后才开始分页</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET kibana_sample_data_flights/_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;size&#34;: 2, 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;match&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;DestWeather&#34;: &#34;Sunny&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;sort&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;timestamp&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;order&#34;: &#34;asc&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;_id&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;order&#34;: &#34;desc&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>在返回的结果中，最后一个文档有类似下面的数据，由于我们排序用的是两个字段，返回的是两个值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;sort&#34;</span> <span style="color:#960050;background-color:#1e0010">:</span> [
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">1614561419000</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;6FxZJXgBE6QbUWetnarH&#34;</span>
+</span></span><span style="display:flex;"><span>]
+</span></span></code></pre></div><p>第二次搜索，带上这个sort的信息即可，如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET kibana_sample_data_flights/_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;size&#34;: 2,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;match&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;DestWeather&#34;: &#34;Sunny&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;sort&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;timestamp&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;order&#34;: &#34;asc&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;_id&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;order&#34;: &#34;desc&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;search_after&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    1614561419000,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;6FxZJXgBE6QbUWetnarH&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>三者性能比较</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">分页方式</th>
+<th style="text-align:left">1～10</th>
+<th style="text-align:left">49000～49010</th>
+<th style="text-align:left">99000～99010</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">form…size</td>
+<td style="text-align:left">8ms</td>
+<td style="text-align:left">30ms</td>
+<td style="text-align:left">117ms</td>
+</tr>
+<tr>
+<td style="text-align:left">scroll</td>
+<td style="text-align:left">7ms</td>
+<td style="text-align:left">66ms</td>
+<td style="text-align:left">36ms</td>
+</tr>
+<tr>
+<td style="text-align:left">search_after</td>
+<td style="text-align:left">5ms</td>
+<td style="text-align:left">8ms</td>
+<td style="text-align:left">7ms</td>
+</tr>
+</tbody>
+</table>
+<p>参考链接:</p>
+<p><a href="https://www.cnblogs.com/powercto/p/14618147.html">三种方式比较</a></p>
+<p><a href="https://blog.csdn.net/zzh920625/article/details/84593590">性能比较</a></p>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/7.x/paginate-search-results.html#search-after">官方文档</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/painless-%E8%84%9A%E6%9C%AC/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/painless-%E8%84%9A%E6%9C%AC/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2F%25E5%2588%2586%25E9%25A1%25B5%25E5%25AE%259E%25E7%258E%25B0%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2F%25E5%2588%2586%25E9%25A1%25B5%25E5%25AE%259E%25E7%258E%25B0%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2F%25E5%2588%2586%25E9%25A1%25B5%25E5%25AE%259E%25E7%258E%25B0%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

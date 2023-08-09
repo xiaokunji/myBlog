@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[TOC]\n前言 Leader选举是保证分布式数据一致性的关键所在。当Zookeeper集群中的一台服务器出现以下两种情况之一时，需要进入Leader选举。\n服务器初始化启动。 服务器运行期间无法和Leader保持连接。 leader的选择机制，zookeeper提供了三种方式：\nLeaderElection AuthFastLeaderElection FastLeaderElection （最新默认,也是本文主角） 下面就两种情况进行分析讲解。\n服务器[启动]时期的Leader选举 个人简述: 初始启动时,每台机器都投自己,然后通知其他机器(通知的这个过程就叫投票),通知本质是发送消息,携带了(leaderId,zxid,Epoch),初始值就是(1,0,0),\n(每个机器都投票,都判别)然后其他机器收到消息,进行判断,用收到的消息和自己的消息判别,\n首先看是否为本轮选举(别人是新选举就更新自己,自己是新选举就通知它更新),然后比较zxid,如果一样再比较leaderId(都是取大值,所以配置文件中要求brokenId不能重复),比较后的结果如果与本地不同,则更新本地并通知其他机器,反之不动. 服务器还会判断,是否收集到了所有服务器的选举状态或者是否有过半机器(此时还会等200ms,看有没有新的消息),根据结果设置自己该成为leader还是follower,然后退出选举,kafka就能正常用了,如果已经产生leader,新加入的机器自动成为follower,同步数据即可\n说明:\nleaderId:机器所认为的leader ID,这个ID值就是配置文件中的brokenId zxid: 数据值,每次kafka中更新值就会更新这个值(zxid越大,数据越新) Epoch: 逻辑时钟值, 用于判断是否为本轮选举,每次选举都自动递增 若进行Leader选举，则至少需要两台机器，这里选取3台机器组成的服务器集群为例。在集群初始化阶段，当有一台服务器Server1启动时，其单独无法进行和完成Leader选举，当第二台服务器Server2启动时，此时两台机器可以相互通信，每台机器都试图找到Leader，于是进入Leader选举过程。选举过程如下\n(1) 每个Server发出一个投票。由于是初始情况，Server1和Server2都会将自己作为Leader服务器来进行投票，每次投票会包含所推举的服务器的myid和ZXID，使用(myid, ZXID)来表示，此时Server1的投票为(1, 0)，Server2的投票为(2, 0)，然后各自将这个投票发给集群中其他机器。\n(2) 接受来自各个服务器的投票。集群的每个服务器收到投票后，首先判断该投票的有效性，如检查是否是本轮投票、是否来自LOOKING状态的服务器。\n(3) 处理投票。针对每一个投票，服务器都需要将别人的投票和自己的投票进行PK，PK规则如下\n优先检查ZXID。ZXID比较大的服务器优先作为Leader。 如果ZXID相同，那么就比较myid。myid较大的服务器作为Leader服务器。 对于Server1而言，它的投票是(1, 0)，接收Server2的投票为(2, 0)，首先会比较两者的ZXID，均为0，再比较myid，此时Server2的myid最大，于是更新自己的投票为(2, 0)，然后重新投票，对于Server2而言，其无须更新自己的投票，只是再次向集群中所有机器发出上一次投票信息即可。\n(4) 统计投票。每次投票后，服务器都会统计投票信息，判断是否已经有过半机器接受到相同的投票信息，对于Server1、Server2而言，都统计出集群中已经有两台机器接受了(2, 0)的投票信息，此时便认为已经选出了Leader。\n(5) 改变服务器状态。一旦确定了Leader，每个服务器就会更新自己的状态，如果是Follower，那么就变更为FOLLOWING，如果是Leader，就变更为LEADING。\n以上这是两台的场景,\n如果是三台, 按顺序启动,leader也会是server2, 因为在第二轮投票时 server1和server2会投给server2, 达到过半,(server3会投给自己) (集群中没有leader时每个节点优先投给自己)\n如果是四台, 按顺序启动, leader也会是server4, 但会有三轮选举. 在第二轮中, 每个节点的票数: server1:0 ; server:2 ; server3:1 ; server4:1\nserver2票数没有过半, 所以需要会发起一轮投票, 而server4的myid最大, 所以大家都会投给它,",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/zookeeper\/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[TOC]
+前言 Leader选举是保证分布式数据一致性的关键所在。当Zookeeper集群中的一台服务器出现以下两种情况之一时，需要进入Leader选举。
+服务器初始化启动。 服务器运行期间无法和Leader保持连接。 leader的选择机制，zookeeper提供了三种方式：
+LeaderElection AuthFastLeaderElection FastLeaderElection （最新默认,也是本文主角） 下面就两种情况进行分析讲解。
+服务器[启动]时期的Leader选举 个人简述: 初始启动时,每台机器都投自己,然后通知其他机器(通知的这个过程就叫投票),通知本质是发送消息,携带了(leaderId,zxid,Epoch),初始值就是(1,0,0),
+(每个机器都投票,都判别)然后其他机器收到消息,进行判断,用收到的消息和自己的消息判别,
+首先看是否为本轮选举(别人是新选举就更新自己,自己是新选举就通知它更新),然后比较zxid,如果一样再比较leaderId(都是取大值,所以配置文件中要求brokenId不能重复),比较后的结果如果与本地不同,则更新本地并通知其他机器,反之不动. 服务器还会判断,是否收集到了所有服务器的选举状态或者是否有过半机器(此时还会等200ms,看有没有新的消息),根据结果设置自己该成为leader还是follower,然后退出选举,kafka就能正常用了,如果已经产生leader,新加入的机器自动成为follower,同步数据即可
+说明:
+leaderId:机器所认为的leader ID,这个ID值就是配置文件中的brokenId zxid: 数据值,每次kafka中更新值就会更新这个值(zxid越大,数据越新) Epoch: 逻辑时钟值, 用于判断是否为本轮选举,每次选举都自动递增 若进行Leader选举，则至少需要两台机器，这里选取3台机器组成的服务器集群为例。在集群初始化阶段，当有一台服务器Server1启动时，其单独无法进行和完成Leader选举，当第二台服务器Server2启动时，此时两台机器可以相互通信，每台机器都试图找到Leader，于是进入Leader选举过程。选举过程如下
+(1) 每个Server发出一个投票。由于是初始情况，Server1和Server2都会将自己作为Leader服务器来进行投票，每次投票会包含所推举的服务器的myid和ZXID，使用(myid, ZXID)来表示，此时Server1的投票为(1, 0)，Server2的投票为(2, 0)，然后各自将这个投票发给集群中其他机器。
+(2) 接受来自各个服务器的投票。集群的每个服务器收到投票后，首先判断该投票的有效性，如检查是否是本轮投票、是否来自LOOKING状态的服务器。
+(3) 处理投票。针对每一个投票，服务器都需要将别人的投票和自己的投票进行PK，PK规则如下
+优先检查ZXID。ZXID比较大的服务器优先作为Leader。 如果ZXID相同，那么就比较myid。myid较大的服务器作为Leader服务器。 对于Server1而言，它的投票是(1, 0)，接收Server2的投票为(2, 0)，首先会比较两者的ZXID，均为0，再比较myid，此时Server2的myid最大，于是更新自己的投票为(2, 0)，然后重新投票，对于Server2而言，其无须更新自己的投票，只是再次向集群中所有机器发出上一次投票信息即可。
+(4) 统计投票。每次投票后，服务器都会统计投票信息，判断是否已经有过半机器接受到相同的投票信息，对于Server1、Server2而言，都统计出集群中已经有两台机器接受了(2, 0)的投票信息，此时便认为已经选出了Leader。
+(5) 改变服务器状态。一旦确定了Leader，每个服务器就会更新自己的状态，如果是Follower，那么就变更为FOLLOWING，如果是Leader，就变更为LEADING。
+以上这是两台的场景,
+如果是三台, 按顺序启动,leader也会是server2, 因为在第二轮投票时 server1和server2会投给server2, 达到过半,(server3会投给自己) (集群中没有leader时每个节点优先投给自己)
+如果是四台, 按顺序启动, leader也会是server4, 但会有三轮选举. 在第二轮中, 每个节点的票数: server1:0 ; server:2 ; server3:1 ; server4:1
+server2票数没有过半, 所以需要会发起一轮投票, 而server4的myid最大, 所以大家都会投给它,">
+
+
+<meta property="og:description" content="[TOC]
+前言 Leader选举是保证分布式数据一致性的关键所在。当Zookeeper集群中的一台服务器出现以下两种情况之一时，需要进入Leader选举。
+服务器初始化启动。 服务器运行期间无法和Leader保持连接。 leader的选择机制，zookeeper提供了三种方式：
+LeaderElection AuthFastLeaderElection FastLeaderElection （最新默认,也是本文主角） 下面就两种情况进行分析讲解。
+服务器[启动]时期的Leader选举 个人简述: 初始启动时,每台机器都投自己,然后通知其他机器(通知的这个过程就叫投票),通知本质是发送消息,携带了(leaderId,zxid,Epoch),初始值就是(1,0,0),
+(每个机器都投票,都判别)然后其他机器收到消息,进行判断,用收到的消息和自己的消息判别,
+首先看是否为本轮选举(别人是新选举就更新自己,自己是新选举就通知它更新),然后比较zxid,如果一样再比较leaderId(都是取大值,所以配置文件中要求brokenId不能重复),比较后的结果如果与本地不同,则更新本地并通知其他机器,反之不动. 服务器还会判断,是否收集到了所有服务器的选举状态或者是否有过半机器(此时还会等200ms,看有没有新的消息),根据结果设置自己该成为leader还是follower,然后退出选举,kafka就能正常用了,如果已经产生leader,新加入的机器自动成为follower,同步数据即可
+说明:
+leaderId:机器所认为的leader ID,这个ID值就是配置文件中的brokenId zxid: 数据值,每次kafka中更新值就会更新这个值(zxid越大,数据越新) Epoch: 逻辑时钟值, 用于判断是否为本轮选举,每次选举都自动递增 若进行Leader选举，则至少需要两台机器，这里选取3台机器组成的服务器集群为例。在集群初始化阶段，当有一台服务器Server1启动时，其单独无法进行和完成Leader选举，当第二台服务器Server2启动时，此时两台机器可以相互通信，每台机器都试图找到Leader，于是进入Leader选举过程。选举过程如下
+(1) 每个Server发出一个投票。由于是初始情况，Server1和Server2都会将自己作为Leader服务器来进行投票，每次投票会包含所推举的服务器的myid和ZXID，使用(myid, ZXID)来表示，此时Server1的投票为(1, 0)，Server2的投票为(2, 0)，然后各自将这个投票发给集群中其他机器。
+(2) 接受来自各个服务器的投票。集群的每个服务器收到投票后，首先判断该投票的有效性，如检查是否是本轮投票、是否来自LOOKING状态的服务器。
+(3) 处理投票。针对每一个投票，服务器都需要将别人的投票和自己的投票进行PK，PK规则如下
+优先检查ZXID。ZXID比较大的服务器优先作为Leader。 如果ZXID相同，那么就比较myid。myid较大的服务器作为Leader服务器。 对于Server1而言，它的投票是(1, 0)，接收Server2的投票为(2, 0)，首先会比较两者的ZXID，均为0，再比较myid，此时Server2的myid最大，于是更新自己的投票为(2, 0)，然后重新投票，对于Server2而言，其无须更新自己的投票，只是再次向集群中所有机器发出上一次投票信息即可。
+(4) 统计投票。每次投票后，服务器都会统计投票信息，判断是否已经有过半机器接受到相同的投票信息，对于Server1、Server2而言，都统计出集群中已经有两台机器接受了(2, 0)的投票信息，此时便认为已经选出了Leader。
+(5) 改变服务器状态。一旦确定了Leader，每个服务器就会更新自己的状态，如果是Follower，那么就变更为FOLLOWING，如果是Leader，就变更为LEADING。
+以上这是两台的场景,
+如果是三台, 按顺序启动,leader也会是server2, 因为在第二轮投票时 server1和server2会投给server2, 达到过半,(server3会投给自己) (集群中没有leader时每个节点优先投给自己)
+如果是四台, 按顺序启动, leader也会是server4, 但会有三轮选举. 在第二轮中, 每个节点的票数: server1:0 ; server:2 ; server3:1 ; server4:1
+server2票数没有过半, 所以需要会发起一轮投票, 而server4的myid最大, 所以大家都会投给它,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[TOC]
+前言 Leader选举是保证分布式数据一致性的关键所在。当Zookeeper集群中的一台服务器出现以下两种情况之一时，需要进入Leader选举。
+服务器初始化启动。 服务器运行期间无法和Leader保持连接。 leader的选择机制，zookeeper提供了三种方式：
+LeaderElection AuthFastLeaderElection FastLeaderElection （最新默认,也是本文主角） 下面就两种情况进行分析讲解。
+服务器[启动]时期的Leader选举 个人简述: 初始启动时,每台机器都投自己,然后通知其他机器(通知的这个过程就叫投票),通知本质是发送消息,携带了(leaderId,zxid,Epoch),初始值就是(1,0,0),
+(每个机器都投票,都判别)然后其他机器收到消息,进行判断,用收到的消息和自己的消息判别,
+首先看是否为本轮选举(别人是新选举就更新自己,自己是新选举就通知它更新),然后比较zxid,如果一样再比较leaderId(都是取大值,所以配置文件中要求brokenId不能重复),比较后的结果如果与本地不同,则更新本地并通知其他机器,反之不动. 服务器还会判断,是否收集到了所有服务器的选举状态或者是否有过半机器(此时还会等200ms,看有没有新的消息),根据结果设置自己该成为leader还是follower,然后退出选举,kafka就能正常用了,如果已经产生leader,新加入的机器自动成为follower,同步数据即可
+说明:
+leaderId:机器所认为的leader ID,这个ID值就是配置文件中的brokenId zxid: 数据值,每次kafka中更新值就会更新这个值(zxid越大,数据越新) Epoch: 逻辑时钟值, 用于判断是否为本轮选举,每次选举都自动递增 若进行Leader选举，则至少需要两台机器，这里选取3台机器组成的服务器集群为例。在集群初始化阶段，当有一台服务器Server1启动时，其单独无法进行和完成Leader选举，当第二台服务器Server2启动时，此时两台机器可以相互通信，每台机器都试图找到Leader，于是进入Leader选举过程。选举过程如下
+(1) 每个Server发出一个投票。由于是初始情况，Server1和Server2都会将自己作为Leader服务器来进行投票，每次投票会包含所推举的服务器的myid和ZXID，使用(myid, ZXID)来表示，此时Server1的投票为(1, 0)，Server2的投票为(2, 0)，然后各自将这个投票发给集群中其他机器。
+(2) 接受来自各个服务器的投票。集群的每个服务器收到投票后，首先判断该投票的有效性，如检查是否是本轮投票、是否来自LOOKING状态的服务器。
+(3) 处理投票。针对每一个投票，服务器都需要将别人的投票和自己的投票进行PK，PK规则如下
+优先检查ZXID。ZXID比较大的服务器优先作为Leader。 如果ZXID相同，那么就比较myid。myid较大的服务器作为Leader服务器。 对于Server1而言，它的投票是(1, 0)，接收Server2的投票为(2, 0)，首先会比较两者的ZXID，均为0，再比较myid，此时Server2的myid最大，于是更新自己的投票为(2, 0)，然后重新投票，对于Server2而言，其无须更新自己的投票，只是再次向集群中所有机器发出上一次投票信息即可。
+(4) 统计投票。每次投票后，服务器都会统计投票信息，判断是否已经有过半机器接受到相同的投票信息，对于Server1、Server2而言，都统计出集群中已经有两台机器接受了(2, 0)的投票信息，此时便认为已经选出了Leader。
+(5) 改变服务器状态。一旦确定了Leader，每个服务器就会更新自己的状态，如果是Follower，那么就变更为FOLLOWING，如果是Leader，就变更为LEADING。
+以上这是两台的场景,
+如果是三台, 按顺序启动,leader也会是server2, 因为在第二轮投票时 server1和server2会投给server2, 达到过半,(server3会投给自己) (集群中没有leader时每个节点优先投给自己)
+如果是四台, 按顺序启动, leader也会是server4, 但会有三轮选举. 在第二轮中, 每个节点的票数: server1:0 ; server:2 ; server3:1 ; server4:1
+server2票数没有过半, 所以需要会发起一轮投票, 而server4的myid最大, 所以大家都会投给它,">
+<meta name="twitter:description" content="[TOC]
+前言 Leader选举是保证分布式数据一致性的关键所在。当Zookeeper集群中的一台服务器出现以下两种情况之一时，需要进入Leader选举。
+服务器初始化启动。 服务器运行期间无法和Leader保持连接。 leader的选择机制，zookeeper提供了三种方式：
+LeaderElection AuthFastLeaderElection FastLeaderElection （最新默认,也是本文主角） 下面就两种情况进行分析讲解。
+服务器[启动]时期的Leader选举 个人简述: 初始启动时,每台机器都投自己,然后通知其他机器(通知的这个过程就叫投票),通知本质是发送消息,携带了(leaderId,zxid,Epoch),初始值就是(1,0,0),
+(每个机器都投票,都判别)然后其他机器收到消息,进行判断,用收到的消息和自己的消息判别,
+首先看是否为本轮选举(别人是新选举就更新自己,自己是新选举就通知它更新),然后比较zxid,如果一样再比较leaderId(都是取大值,所以配置文件中要求brokenId不能重复),比较后的结果如果与本地不同,则更新本地并通知其他机器,反之不动. 服务器还会判断,是否收集到了所有服务器的选举状态或者是否有过半机器(此时还会等200ms,看有没有新的消息),根据结果设置自己该成为leader还是follower,然后退出选举,kafka就能正常用了,如果已经产生leader,新加入的机器自动成为follower,同步数据即可
+说明:
+leaderId:机器所认为的leader ID,这个ID值就是配置文件中的brokenId zxid: 数据值,每次kafka中更新值就会更新这个值(zxid越大,数据越新) Epoch: 逻辑时钟值, 用于判断是否为本轮选举,每次选举都自动递增 若进行Leader选举，则至少需要两台机器，这里选取3台机器组成的服务器集群为例。在集群初始化阶段，当有一台服务器Server1启动时，其单独无法进行和完成Leader选举，当第二台服务器Server2启动时，此时两台机器可以相互通信，每台机器都试图找到Leader，于是进入Leader选举过程。选举过程如下
+(1) 每个Server发出一个投票。由于是初始情况，Server1和Server2都会将自己作为Leader服务器来进行投票，每次投票会包含所推举的服务器的myid和ZXID，使用(myid, ZXID)来表示，此时Server1的投票为(1, 0)，Server2的投票为(2, 0)，然后各自将这个投票发给集群中其他机器。
+(2) 接受来自各个服务器的投票。集群的每个服务器收到投票后，首先判断该投票的有效性，如检查是否是本轮投票、是否来自LOOKING状态的服务器。
+(3) 处理投票。针对每一个投票，服务器都需要将别人的投票和自己的投票进行PK，PK规则如下
+优先检查ZXID。ZXID比较大的服务器优先作为Leader。 如果ZXID相同，那么就比较myid。myid较大的服务器作为Leader服务器。 对于Server1而言，它的投票是(1, 0)，接收Server2的投票为(2, 0)，首先会比较两者的ZXID，均为0，再比较myid，此时Server2的myid最大，于是更新自己的投票为(2, 0)，然后重新投票，对于Server2而言，其无须更新自己的投票，只是再次向集群中所有机器发出上一次投票信息即可。
+(4) 统计投票。每次投票后，服务器都会统计投票信息，判断是否已经有过半机器接受到相同的投票信息，对于Server1、Server2而言，都统计出集群中已经有两台机器接受了(2, 0)的投票信息，此时便认为已经选出了Leader。
+(5) 改变服务器状态。一旦确定了Leader，每个服务器就会更新自己的状态，如果是Follower，那么就变更为FOLLOWING，如果是Leader，就变更为LEADING。
+以上这是两台的场景,
+如果是三台, 按顺序启动,leader也会是server2, 因为在第二轮投票时 server1和server2会投给server2, 达到过半,(server3会投给自己) (集群中没有leader时每个节点优先投给自己)
+如果是四台, 按顺序启动, leader也会是server4, 但会有三轮选举. 在第二轮中, 每个节点的票数: server1:0 ; server:2 ; server3:1 ; server4:1
+server2票数没有过半, 所以需要会发起一轮投票, 而server4的myid最大, 所以大家都会投给它,">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[TOC]</p>
+<h1 id="前言">前言</h1>
+<p>Leader选举是保证分布式数据一致性的关键所在。当Zookeeper集群中的一台服务器出现以下两种情况之一时，需要进入Leader选举。</p>
+<ul>
+<li>服务器初始化启动。</li>
+<li>服务器运行期间无法和Leader保持连接。</li>
+</ul>
+<p>leader的选择机制，zookeeper提供了三种方式：</p>
+<ul>
+<li>LeaderElection</li>
+<li>AuthFastLeaderElection</li>
+<li><strong>FastLeaderElection</strong> （最新默认,也是本文主角）</li>
+</ul>
+<p>下面就两种情况进行分析讲解。</p>
+<h1 id="服务器启动时期的leader选举">服务器[启动]时期的Leader选举</h1>
+<blockquote>
+<p>个人简述: 初始启动时,每台机器都投自己,然后通知其他机器(通知的这个过程就叫投票),通知本质是发送消息,携带了(leaderId,zxid,Epoch),初始值就是(1,0,0),</p>
+<p>(每个机器都投票,都判别)然后其他机器收到消息,进行判断,用收到的消息和自己的消息判别,</p>
+<p>首先看是否为本轮选举(别人是新选举就更新自己,自己是新选举就通知它更新),然后比较zxid,如果一样再比较leaderId(都是取大值,所以配置文件中要求brokenId不能重复),比较后的结果如果与本地不同,则更新本地并通知其他机器,反之不动.
+服务器还会判断,是否收集到了所有服务器的选举状态或者是否有过半机器(此时还会等200ms,看有没有新的消息),根据结果设置自己该成为leader还是follower,然后退出选举,kafka就能正常用了,如果已经产生leader,新加入的机器自动成为follower,同步数据即可</p>
+</blockquote>
+<blockquote>
+<p>说明:</p>
+<ul>
+<li>leaderId:机器所认为的leader ID,这个ID值就是配置文件中的brokenId</li>
+<li>zxid: 数据值,每次kafka中更新值就会更新这个值(zxid越大,数据越新)</li>
+<li>Epoch: 逻辑时钟值, 用于判断是否为本轮选举,每次选举都自动递增</li>
+</ul>
+</blockquote>
+<p>若进行Leader选举，则至少需要两台机器，这里选取3台机器组成的服务器集群为例。在集群初始化阶段，当有一台服务器Server1启动时，其单独无法进行和完成Leader选举，当第二台服务器Server2启动时，此时两台机器可以相互通信，每台机器都试图找到Leader，于是进入Leader选举过程。选举过程如下</p>
+<p>　　(1) <strong>每个Server发出一个投票</strong>。由于是初始情况，Server1和Server2都会将自己作为Leader服务器来进行投票，每次投票会包含所推举的服务器的myid和ZXID，使用(myid, ZXID)来表示，此时Server1的投票为(1, 0)，Server2的投票为(2, 0)，然后各自将这个投票发给集群中其他机器。</p>
+<p>　　(2) <strong>接受来自各个服务器的投票</strong>。集群的每个服务器收到投票后，首先判断该投票的有效性，如检查是否是本轮投票、是否来自LOOKING状态的服务器。</p>
+<p>　　(3) <strong>处理投票</strong>。针对每一个投票，服务器都需要将别人的投票和自己的投票进行PK，PK规则如下</p>
+<ul>
+<li>优先检查ZXID。ZXID比较大的服务器优先作为Leader。</li>
+<li>如果ZXID相同，那么就比较myid。myid较大的服务器作为Leader服务器。</li>
+</ul>
+<p>　　对于Server1而言，它的投票是(1, 0)，接收Server2的投票为(2, 0)，首先会比较两者的ZXID，均为0，再比较myid，此时Server2的myid最大，于是更新自己的投票为(2, 0)，然后重新投票，对于Server2而言，其无须更新自己的投票，只是再次向集群中所有机器发出上一次投票信息即可。</p>
+<p>　　(4) <strong>统计投票</strong>。每次投票后，服务器都会统计投票信息，判断是否已经有过半机器接受到相同的投票信息，对于Server1、Server2而言，都统计出集群中已经有两台机器接受了(2, 0)的投票信息，此时便认为已经选出了Leader。</p>
+<p>　　(5) <strong>改变服务器状态</strong>。一旦确定了Leader，每个服务器就会更新自己的状态，如果是Follower，那么就变更为FOLLOWING，如果是Leader，就变更为LEADING。</p>
+<blockquote>
+<p>以上这是两台的场景,</p>
+<p>如果是三台, 按顺序启动,leader也会是server2, 因为在第二轮投票时 server1和server2会投给server2, 达到过半,(server3会投给自己) (<strong>集群中没有leader时每个节点优先投给自己</strong>)</p>
+<p>如果是四台, 按顺序启动, leader也会是server4, 但会有三轮选举. 在第二轮中, 每个节点的票数: server1:0 ; server:2 ; server3:1 ; server4:1</p>
+<p>server2票数没有过半, 所以需要会发起一轮投票, 而server4的myid最大, 所以大家都会投给它,</p>
+</blockquote>
+<h1 id="服务器运行时期的leader选举">服务器[运行]时期的Leader选举</h1>
+<blockquote>
+<p>个人简述: 集群运行过程中,leader突然宕机了,其他机器就把自己的状态变成LOOKING状态,开始选举新的leader(如同新启动时的那种),但是不同的是,每个broken上的zxid可能是不同的(可能数据还未完全同步)</p>
+</blockquote>
+<p>在Zookeeper运行期间，Leader与非Leader服务器各司其职，即便当有非Leader服务器宕机或新加入，此时也不会影响Leader，但是<!-- raw HTML omitted -->一旦Leader服务器挂了，那么整个集群将暂停对外服务<!-- raw HTML omitted -->，进入新一轮Leader选举，其过程和启动时期的Leader选举过程基本一致。假设正在运行的有Server1、Server2、Server3三台服务器，当前Leader是Server2，若某一时刻Leader挂了，此时便开始Leader选举。选举过程如下</p>
+<p>　　(1) <strong>变更状态</strong>。Leader挂后，余下的非Observer服务器都会讲自己的服务器状态变更为LOOKING，然后开始进入Leader选举过程。</p>
+<p>　　(2) <strong>每个Server会发出一个投票</strong>。在运行期间，每个服务器上的ZXID可能不同，此时假定Server1的ZXID为123，Server3的ZXID为122；在第一轮投票中，Server1和Server3都会投自己，产生投票(1, 123)，(3, 122)，然后各自将投票发送给集群中所有机器。</p>
+<p>　　(3) <strong>接收来自各个服务器的投票</strong>。与启动时过程相同。</p>
+<p>　　(4) <strong>处理投票</strong>。与启动时过程相同，此时，Server1将会成为Leader。</p>
+<p>　　(5) <strong>统计投票</strong>。与启动时过程相同。</p>
+<p>　　(6) <strong>改变服务器的状态</strong>。与启动时过程相同。</p>
+<blockquote>
+<p>参考:</p>
+<p><a href="https://www.cnblogs.com/shuaiandjun/p/9383655.html">https://www.cnblogs.com/shuaiandjun/p/9383655.html</a></p>
+<p><a href="https://www.cnblogs.com/leesf456/p/6107600.html">https://www.cnblogs.com/leesf456/p/6107600.html</a></p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E5%88%9D%E5%A7%8B%E7%94%9F%E6%80%81%E5%9C%88/%E4%B8%80%E5%BC%A0%E5%BE%88%E7%89%9B%E9%80%BC%E7%9A%84%E5%9B%BE/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/zookeeper\/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6\/';
+        
+          this.page.identifier = '\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/zookeeper\/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E5%88%9D%E5%A7%8B%E7%94%9F%E6%80%81%E5%9C%88/%E4%B8%80%E5%BC%A0%E5%BE%88%E7%89%9B%E9%80%BC%E7%9A%84%E5%9B%BE/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/zookeeper/%E7%AE%80%E8%BF%B0%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fzookeeper%2F%25E7%25AE%2580%25E8%25BF%25B0%25E9%2580%2589%25E4%25B8%25BE%25E6%259C%25BA%25E5%2588%25B6%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fzookeeper%2F%25E7%25AE%2580%25E8%25BF%25B0%25E9%2580%2589%25E4%25B8%25BE%25E6%259C%25BA%25E5%2588%25B6%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fzookeeper%2F%25E7%25AE%2580%25E8%25BF%25B0%25E9%2580%2589%25E4%25B8%25BE%25E6%259C%25BA%25E5%2588%25B6%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

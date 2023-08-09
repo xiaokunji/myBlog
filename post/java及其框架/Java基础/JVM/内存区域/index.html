@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1. 大纲 1、根据Java虚拟机规范，Java虚拟机所管理的内存包括方法区、虚拟机栈、本地方法栈、堆、程序计数器等。\n2、我们通常认为JVM中运行时数据存储包括堆和栈。这里所提到的栈其实指的是虚拟机栈，或者说是虚拟栈中的局部变量表。\n3、栈中存放一些基本类型的变量数据（int\/short\/long\/byte\/float\/double\/Boolean\/char）和对象引用。\n4、堆中主要存放对象，即通过new关键字创建的对象。\n5、数组引用变量是存放在栈内存中，数组元素是存放在堆内存中。\nhotspot jdk8中移除了永久代以后的内存结构\nJVM结构及堆的划分 - 光何 - 博客园 (cnblogs.com)\n2. 方法区(元空间\/永久代) 怎么回收对象? 《Java虚拟机规范》 中提到过可以不要求虚拟机在方法区中实现垃圾收集， 事实上也确实有未实现或未能完整实现方法区类型卸载的收集器存在（如JDK 11时期的ZGC收集器就不支持类卸载）\n方法区的垃圾收集主要回收两部分内容： 废弃的常量和不再使用的类型\n回收废弃常量与回收Java堆中的对象非常类似。 举个常量池中字面量回收的例子， 假如一个字符串“java”曾经进入常量池中， 但是当前系统又没有任何一个字符串对象的值是“java”， 换句话说， 已经没有任何字符串对象引用常量池中的“java”常量， 且虚拟机中也没有其他地方引用这个字面量。 如果在这时发生内存回收， 而且垃圾收集器判断确有必要的话， 这个“java”常量就将会被系统清理出常量池。 常量池中其他类（接口） 、 方法、 字段的符号引用也与此类似\n判定一个类型是否属于“不再被使用的类”的条件需要同时满足下面三个条件：\n该类所有的实例都已经被回收， 也就是Java堆中不存在该类及其任何派生子类的实例。 加载该类的类加载器已经被回收， 这个条件除非是经过精心设计的可替换类加载器的场景， 如OSGi、 JSP的重加载等， 否则通常是很难达成的。 该类对应的java.lang.Class对象没有在任何地方被引用， 无法在任何地方通过反射访问该类的方法 Java虚拟机被允许对满足上述三个条件的无用类进行回收， 这里说的仅仅是“被允许”， 而并不是和对象一样， 没有引用了就必然会回收 ,关于是否要对类型进行回收 , HotSpot虚拟机提供了-Xnoclassgc参数进行控制\n在大量使用反射、 动态代理、 CGLib等字节码框架， 动态生成JSP以及OSGi这类频繁自定义类加载器的场景中， 通常都需要Java虚拟机具备类型卸载的能力， 以保证不会对方法区造成过大的内存压力。\n3. 堆的分代 Java虚拟机根据对象存活的周期不同，把堆内存划分为几块，一般分为新生代、老年代和永久代（对HotSpot虚拟机而言），这就是JVM的内存分代策略。\nJava虚拟机将堆内存划分为新生代、老年代和永久代，永久代是HotSpot虚拟机特有的概念（JDK1.8之后为metaspace替代永久代），它采用永久代的方式来实现方法区，其他的虚拟机实现没有这一概念，永久代主要存放常量、类信息、静态变量等数据，与垃圾回收关系不大，新生代和老年代是垃圾回收的主要区域。\n3.1 新生代（Young Generation） 新生成的对象优先存放在新生代中，新生代对象朝生夕死，存活率很低，在新生代中，常规应用进行一次垃圾收集一般可以回收70% ~ 95% 的空间，回收效率很高。 HotSpot将新生代划分为三块，一块较大的Eden（伊甸）空间和两块较小的Survivor（幸存者）空间，默认比例为8：1：1。划分的目的是因为HotSpot采用复制算法来回收新生代，设置这个比例是为了充分利用内存空间，减少浪费。新生成的对象在Eden区分配（大对象除外，大对象直接进入老年代），当Eden区没有足够的空间进行分配时，虚拟机将发起一次Minor GC。 GC开始时，对象只会存在于Eden区和From Survivor区，To Survivor区是空的（作为保留区域）。GC进行时，Eden区中所有存活的对象都会被复制到To Survivor区，而在From Survivor区中，仍存活的对象会根据它们的年龄值决定去向，要么移到老年代要么复制到To survivor区",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/jvm\/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1. 大纲 1、根据Java虚拟机规范，Java虚拟机所管理的内存包括方法区、虚拟机栈、本地方法栈、堆、程序计数器等。
+2、我们通常认为JVM中运行时数据存储包括堆和栈。这里所提到的栈其实指的是虚拟机栈，或者说是虚拟栈中的局部变量表。
+3、栈中存放一些基本类型的变量数据（int/short/long/byte/float/double/Boolean/char）和对象引用。
+4、堆中主要存放对象，即通过new关键字创建的对象。
+5、数组引用变量是存放在栈内存中，数组元素是存放在堆内存中。
+hotspot jdk8中移除了永久代以后的内存结构
+JVM结构及堆的划分 - 光何 - 博客园 (cnblogs.com)
+2. 方法区(元空间/永久代) 怎么回收对象? 《Java虚拟机规范》 中提到过可以不要求虚拟机在方法区中实现垃圾收集， 事实上也确实有未实现或未能完整实现方法区类型卸载的收集器存在（如JDK 11时期的ZGC收集器就不支持类卸载）
+方法区的垃圾收集主要回收两部分内容： 废弃的常量和不再使用的类型
+回收废弃常量与回收Java堆中的对象非常类似。 举个常量池中字面量回收的例子， 假如一个字符串“java”曾经进入常量池中， 但是当前系统又没有任何一个字符串对象的值是“java”， 换句话说， 已经没有任何字符串对象引用常量池中的“java”常量， 且虚拟机中也没有其他地方引用这个字面量。 如果在这时发生内存回收， 而且垃圾收集器判断确有必要的话， 这个“java”常量就将会被系统清理出常量池。 常量池中其他类（接口） 、 方法、 字段的符号引用也与此类似
+判定一个类型是否属于“不再被使用的类”的条件需要同时满足下面三个条件：
+该类所有的实例都已经被回收， 也就是Java堆中不存在该类及其任何派生子类的实例。 加载该类的类加载器已经被回收， 这个条件除非是经过精心设计的可替换类加载器的场景， 如OSGi、 JSP的重加载等， 否则通常是很难达成的。 该类对应的java.lang.Class对象没有在任何地方被引用， 无法在任何地方通过反射访问该类的方法 Java虚拟机被允许对满足上述三个条件的无用类进行回收， 这里说的仅仅是“被允许”， 而并不是和对象一样， 没有引用了就必然会回收 ,关于是否要对类型进行回收 , HotSpot虚拟机提供了-Xnoclassgc参数进行控制
+在大量使用反射、 动态代理、 CGLib等字节码框架， 动态生成JSP以及OSGi这类频繁自定义类加载器的场景中， 通常都需要Java虚拟机具备类型卸载的能力， 以保证不会对方法区造成过大的内存压力。
+3. 堆的分代 Java虚拟机根据对象存活的周期不同，把堆内存划分为几块，一般分为新生代、老年代和永久代（对HotSpot虚拟机而言），这就是JVM的内存分代策略。
+Java虚拟机将堆内存划分为新生代、老年代和永久代，永久代是HotSpot虚拟机特有的概念（JDK1.8之后为metaspace替代永久代），它采用永久代的方式来实现方法区，其他的虚拟机实现没有这一概念，永久代主要存放常量、类信息、静态变量等数据，与垃圾回收关系不大，新生代和老年代是垃圾回收的主要区域。
+3.1 新生代（Young Generation） 新生成的对象优先存放在新生代中，新生代对象朝生夕死，存活率很低，在新生代中，常规应用进行一次垃圾收集一般可以回收70% ~ 95% 的空间，回收效率很高。 HotSpot将新生代划分为三块，一块较大的Eden（伊甸）空间和两块较小的Survivor（幸存者）空间，默认比例为8：1：1。划分的目的是因为HotSpot采用复制算法来回收新生代，设置这个比例是为了充分利用内存空间，减少浪费。新生成的对象在Eden区分配（大对象除外，大对象直接进入老年代），当Eden区没有足够的空间进行分配时，虚拟机将发起一次Minor GC。 GC开始时，对象只会存在于Eden区和From Survivor区，To Survivor区是空的（作为保留区域）。GC进行时，Eden区中所有存活的对象都会被复制到To Survivor区，而在From Survivor区中，仍存活的对象会根据它们的年龄值决定去向，要么移到老年代要么复制到To survivor区">
+
+
+<meta property="og:description" content="[toc]
+1. 大纲 1、根据Java虚拟机规范，Java虚拟机所管理的内存包括方法区、虚拟机栈、本地方法栈、堆、程序计数器等。
+2、我们通常认为JVM中运行时数据存储包括堆和栈。这里所提到的栈其实指的是虚拟机栈，或者说是虚拟栈中的局部变量表。
+3、栈中存放一些基本类型的变量数据（int/short/long/byte/float/double/Boolean/char）和对象引用。
+4、堆中主要存放对象，即通过new关键字创建的对象。
+5、数组引用变量是存放在栈内存中，数组元素是存放在堆内存中。
+hotspot jdk8中移除了永久代以后的内存结构
+JVM结构及堆的划分 - 光何 - 博客园 (cnblogs.com)
+2. 方法区(元空间/永久代) 怎么回收对象? 《Java虚拟机规范》 中提到过可以不要求虚拟机在方法区中实现垃圾收集， 事实上也确实有未实现或未能完整实现方法区类型卸载的收集器存在（如JDK 11时期的ZGC收集器就不支持类卸载）
+方法区的垃圾收集主要回收两部分内容： 废弃的常量和不再使用的类型
+回收废弃常量与回收Java堆中的对象非常类似。 举个常量池中字面量回收的例子， 假如一个字符串“java”曾经进入常量池中， 但是当前系统又没有任何一个字符串对象的值是“java”， 换句话说， 已经没有任何字符串对象引用常量池中的“java”常量， 且虚拟机中也没有其他地方引用这个字面量。 如果在这时发生内存回收， 而且垃圾收集器判断确有必要的话， 这个“java”常量就将会被系统清理出常量池。 常量池中其他类（接口） 、 方法、 字段的符号引用也与此类似
+判定一个类型是否属于“不再被使用的类”的条件需要同时满足下面三个条件：
+该类所有的实例都已经被回收， 也就是Java堆中不存在该类及其任何派生子类的实例。 加载该类的类加载器已经被回收， 这个条件除非是经过精心设计的可替换类加载器的场景， 如OSGi、 JSP的重加载等， 否则通常是很难达成的。 该类对应的java.lang.Class对象没有在任何地方被引用， 无法在任何地方通过反射访问该类的方法 Java虚拟机被允许对满足上述三个条件的无用类进行回收， 这里说的仅仅是“被允许”， 而并不是和对象一样， 没有引用了就必然会回收 ,关于是否要对类型进行回收 , HotSpot虚拟机提供了-Xnoclassgc参数进行控制
+在大量使用反射、 动态代理、 CGLib等字节码框架， 动态生成JSP以及OSGi这类频繁自定义类加载器的场景中， 通常都需要Java虚拟机具备类型卸载的能力， 以保证不会对方法区造成过大的内存压力。
+3. 堆的分代 Java虚拟机根据对象存活的周期不同，把堆内存划分为几块，一般分为新生代、老年代和永久代（对HotSpot虚拟机而言），这就是JVM的内存分代策略。
+Java虚拟机将堆内存划分为新生代、老年代和永久代，永久代是HotSpot虚拟机特有的概念（JDK1.8之后为metaspace替代永久代），它采用永久代的方式来实现方法区，其他的虚拟机实现没有这一概念，永久代主要存放常量、类信息、静态变量等数据，与垃圾回收关系不大，新生代和老年代是垃圾回收的主要区域。
+3.1 新生代（Young Generation） 新生成的对象优先存放在新生代中，新生代对象朝生夕死，存活率很低，在新生代中，常规应用进行一次垃圾收集一般可以回收70% ~ 95% 的空间，回收效率很高。 HotSpot将新生代划分为三块，一块较大的Eden（伊甸）空间和两块较小的Survivor（幸存者）空间，默认比例为8：1：1。划分的目的是因为HotSpot采用复制算法来回收新生代，设置这个比例是为了充分利用内存空间，减少浪费。新生成的对象在Eden区分配（大对象除外，大对象直接进入老年代），当Eden区没有足够的空间进行分配时，虚拟机将发起一次Minor GC。 GC开始时，对象只会存在于Eden区和From Survivor区，To Survivor区是空的（作为保留区域）。GC进行时，Eden区中所有存活的对象都会被复制到To Survivor区，而在From Survivor区中，仍存活的对象会根据它们的年龄值决定去向，要么移到老年代要么复制到To survivor区">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1. 大纲 1、根据Java虚拟机规范，Java虚拟机所管理的内存包括方法区、虚拟机栈、本地方法栈、堆、程序计数器等。
+2、我们通常认为JVM中运行时数据存储包括堆和栈。这里所提到的栈其实指的是虚拟机栈，或者说是虚拟栈中的局部变量表。
+3、栈中存放一些基本类型的变量数据（int/short/long/byte/float/double/Boolean/char）和对象引用。
+4、堆中主要存放对象，即通过new关键字创建的对象。
+5、数组引用变量是存放在栈内存中，数组元素是存放在堆内存中。
+hotspot jdk8中移除了永久代以后的内存结构
+JVM结构及堆的划分 - 光何 - 博客园 (cnblogs.com)
+2. 方法区(元空间/永久代) 怎么回收对象? 《Java虚拟机规范》 中提到过可以不要求虚拟机在方法区中实现垃圾收集， 事实上也确实有未实现或未能完整实现方法区类型卸载的收集器存在（如JDK 11时期的ZGC收集器就不支持类卸载）
+方法区的垃圾收集主要回收两部分内容： 废弃的常量和不再使用的类型
+回收废弃常量与回收Java堆中的对象非常类似。 举个常量池中字面量回收的例子， 假如一个字符串“java”曾经进入常量池中， 但是当前系统又没有任何一个字符串对象的值是“java”， 换句话说， 已经没有任何字符串对象引用常量池中的“java”常量， 且虚拟机中也没有其他地方引用这个字面量。 如果在这时发生内存回收， 而且垃圾收集器判断确有必要的话， 这个“java”常量就将会被系统清理出常量池。 常量池中其他类（接口） 、 方法、 字段的符号引用也与此类似
+判定一个类型是否属于“不再被使用的类”的条件需要同时满足下面三个条件：
+该类所有的实例都已经被回收， 也就是Java堆中不存在该类及其任何派生子类的实例。 加载该类的类加载器已经被回收， 这个条件除非是经过精心设计的可替换类加载器的场景， 如OSGi、 JSP的重加载等， 否则通常是很难达成的。 该类对应的java.lang.Class对象没有在任何地方被引用， 无法在任何地方通过反射访问该类的方法 Java虚拟机被允许对满足上述三个条件的无用类进行回收， 这里说的仅仅是“被允许”， 而并不是和对象一样， 没有引用了就必然会回收 ,关于是否要对类型进行回收 , HotSpot虚拟机提供了-Xnoclassgc参数进行控制
+在大量使用反射、 动态代理、 CGLib等字节码框架， 动态生成JSP以及OSGi这类频繁自定义类加载器的场景中， 通常都需要Java虚拟机具备类型卸载的能力， 以保证不会对方法区造成过大的内存压力。
+3. 堆的分代 Java虚拟机根据对象存活的周期不同，把堆内存划分为几块，一般分为新生代、老年代和永久代（对HotSpot虚拟机而言），这就是JVM的内存分代策略。
+Java虚拟机将堆内存划分为新生代、老年代和永久代，永久代是HotSpot虚拟机特有的概念（JDK1.8之后为metaspace替代永久代），它采用永久代的方式来实现方法区，其他的虚拟机实现没有这一概念，永久代主要存放常量、类信息、静态变量等数据，与垃圾回收关系不大，新生代和老年代是垃圾回收的主要区域。
+3.1 新生代（Young Generation） 新生成的对象优先存放在新生代中，新生代对象朝生夕死，存活率很低，在新生代中，常规应用进行一次垃圾收集一般可以回收70% ~ 95% 的空间，回收效率很高。 HotSpot将新生代划分为三块，一块较大的Eden（伊甸）空间和两块较小的Survivor（幸存者）空间，默认比例为8：1：1。划分的目的是因为HotSpot采用复制算法来回收新生代，设置这个比例是为了充分利用内存空间，减少浪费。新生成的对象在Eden区分配（大对象除外，大对象直接进入老年代），当Eden区没有足够的空间进行分配时，虚拟机将发起一次Minor GC。 GC开始时，对象只会存在于Eden区和From Survivor区，To Survivor区是空的（作为保留区域）。GC进行时，Eden区中所有存活的对象都会被复制到To Survivor区，而在From Survivor区中，仍存活的对象会根据它们的年龄值决定去向，要么移到老年代要么复制到To survivor区">
+<meta name="twitter:description" content="[toc]
+1. 大纲 1、根据Java虚拟机规范，Java虚拟机所管理的内存包括方法区、虚拟机栈、本地方法栈、堆、程序计数器等。
+2、我们通常认为JVM中运行时数据存储包括堆和栈。这里所提到的栈其实指的是虚拟机栈，或者说是虚拟栈中的局部变量表。
+3、栈中存放一些基本类型的变量数据（int/short/long/byte/float/double/Boolean/char）和对象引用。
+4、堆中主要存放对象，即通过new关键字创建的对象。
+5、数组引用变量是存放在栈内存中，数组元素是存放在堆内存中。
+hotspot jdk8中移除了永久代以后的内存结构
+JVM结构及堆的划分 - 光何 - 博客园 (cnblogs.com)
+2. 方法区(元空间/永久代) 怎么回收对象? 《Java虚拟机规范》 中提到过可以不要求虚拟机在方法区中实现垃圾收集， 事实上也确实有未实现或未能完整实现方法区类型卸载的收集器存在（如JDK 11时期的ZGC收集器就不支持类卸载）
+方法区的垃圾收集主要回收两部分内容： 废弃的常量和不再使用的类型
+回收废弃常量与回收Java堆中的对象非常类似。 举个常量池中字面量回收的例子， 假如一个字符串“java”曾经进入常量池中， 但是当前系统又没有任何一个字符串对象的值是“java”， 换句话说， 已经没有任何字符串对象引用常量池中的“java”常量， 且虚拟机中也没有其他地方引用这个字面量。 如果在这时发生内存回收， 而且垃圾收集器判断确有必要的话， 这个“java”常量就将会被系统清理出常量池。 常量池中其他类（接口） 、 方法、 字段的符号引用也与此类似
+判定一个类型是否属于“不再被使用的类”的条件需要同时满足下面三个条件：
+该类所有的实例都已经被回收， 也就是Java堆中不存在该类及其任何派生子类的实例。 加载该类的类加载器已经被回收， 这个条件除非是经过精心设计的可替换类加载器的场景， 如OSGi、 JSP的重加载等， 否则通常是很难达成的。 该类对应的java.lang.Class对象没有在任何地方被引用， 无法在任何地方通过反射访问该类的方法 Java虚拟机被允许对满足上述三个条件的无用类进行回收， 这里说的仅仅是“被允许”， 而并不是和对象一样， 没有引用了就必然会回收 ,关于是否要对类型进行回收 , HotSpot虚拟机提供了-Xnoclassgc参数进行控制
+在大量使用反射、 动态代理、 CGLib等字节码框架， 动态生成JSP以及OSGi这类频繁自定义类加载器的场景中， 通常都需要Java虚拟机具备类型卸载的能力， 以保证不会对方法区造成过大的内存压力。
+3. 堆的分代 Java虚拟机根据对象存活的周期不同，把堆内存划分为几块，一般分为新生代、老年代和永久代（对HotSpot虚拟机而言），这就是JVM的内存分代策略。
+Java虚拟机将堆内存划分为新生代、老年代和永久代，永久代是HotSpot虚拟机特有的概念（JDK1.8之后为metaspace替代永久代），它采用永久代的方式来实现方法区，其他的虚拟机实现没有这一概念，永久代主要存放常量、类信息、静态变量等数据，与垃圾回收关系不大，新生代和老年代是垃圾回收的主要区域。
+3.1 新生代（Young Generation） 新生成的对象优先存放在新生代中，新生代对象朝生夕死，存活率很低，在新生代中，常规应用进行一次垃圾收集一般可以回收70% ~ 95% 的空间，回收效率很高。 HotSpot将新生代划分为三块，一块较大的Eden（伊甸）空间和两块较小的Survivor（幸存者）空间，默认比例为8：1：1。划分的目的是因为HotSpot采用复制算法来回收新生代，设置这个比例是为了充分利用内存空间，减少浪费。新生成的对象在Eden区分配（大对象除外，大对象直接进入老年代），当Eden区没有足够的空间进行分配时，虚拟机将发起一次Minor GC。 GC开始时，对象只会存在于Eden区和From Survivor区，To Survivor区是空的（作为保留区域）。GC进行时，Eden区中所有存活的对象都会被复制到To Survivor区，而在From Survivor区中，仍存活的对象会根据它们的年龄值决定去向，要么移到老年代要么复制到To survivor区">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1-大纲">1. 大纲</h1>
+<p><img src="https://gitee.com/xiaokunji/my-images/raw/master/myMD/20210712002935.png" alt="img"></p>
+<p>1、根据Java虚拟机规范，Java虚拟机所管理的内存包括方法区、虚拟机栈、本地方法栈、堆、程序计数器等。</p>
+<p>2、我们通常认为JVM中运行时数据存储包括堆和栈。这里所提到的栈其实指的是虚拟机栈，或者说是虚拟栈中的局部变量表。</p>
+<p>3、栈中存放一些基本类型的变量数据（int/short/long/byte/float/double/Boolean/char）和对象引用。</p>
+<p>4、堆中主要存放对象，即通过new关键字创建的对象。</p>
+<p>5、数组引用变量是存放在栈内存中，数组元素是存放在堆内存中。</p>
+<p>hotspot jdk8中移除了永久代以后的内存结构</p>
+<p><img src="https://img2018.cnblogs.com/blog/955092/201903/955092-20190313171623705-2036052608.jpg" alt="img"></p>
+<p><a href="https://www.cnblogs.com/guanghe/p/10524314.html">JVM结构及堆的划分 - 光何 - 博客园 (cnblogs.com)</a></p>
+<h1 id="2-方法区元空间永久代-怎么回收对象">2. 方法区(元空间/永久代) 怎么回收对象?</h1>
+<p>《Java虚拟机规范》 中提到过可以不要求虚拟机在方法区中实现垃圾收集， 事实上也确实有未实现或未能完整实现方法区类型卸载的收集器存在（如JDK 11时期的ZGC收集器就不支持类卸载）</p>
+<p>方法区的垃圾收集主要回收两部分内容： <strong>废弃的常量和不再使用的类型</strong></p>
+<p><strong>回收废弃常量</strong>与回收Java堆中的对象非常类似。 举个常量池中字面量回收的例子， 假如一个字符串“java”曾经进入常量池中， 但是当前系统又没有任何一个字符串对象的值是“java”， 换句话说， 已经没有任何字符串对象引用常量池中的“java”常量， 且虚拟机中也没有其他地方引用这个字面量。 如果在这时发生内存回收， 而且垃圾收集器判断确有必要的话， 这个“java”常量就将会被系统清理出常量池。 常量池中其他类（接口） 、 方法、 字段的符号引用也与此类似</p>
+<p><strong>判定一个类型是否属于“不再被使用的类”的条件需要同时满足下面三个条件：</strong></p>
+<ul>
+<li>该类所有的实例都已经被回收， 也就是Java堆中不存在该类及其任何派生子类的实例。</li>
+<li>加载该类的类加载器已经被回收， 这个条件除非是经过精心设计的可替换类加载器的场景， 如OSGi、 JSP的重加载等， 否则通常是很难达成的。</li>
+<li>该类对应的java.lang.Class对象没有在任何地方被引用， 无法在任何地方通过反射访问该类的方法</li>
+</ul>
+<p>Java虚拟机被允许对满足上述三个条件的无用类进行回收， 这里说的仅仅是“被允许”， 而并不是和对象一样， 没有引用了就必然会回收  ,关于是否要对类型进行回收  , HotSpot虚拟机提供了<code>-Xnoclassgc</code>参数进行控制</p>
+<p>在大量使用反射、 动态代理、 CGLib等字节码框架， 动态生成JSP以及OSGi这类频繁<!-- raw HTML omitted -->自定义类加载器<!-- raw HTML omitted -->的场景中， 通常都需要Java虚拟机具备类型卸载的能力， 以保证不会对方法区造成过大的内存压力。</p>
+<h1 id="3-堆的分代">3. 堆的分代</h1>
+<p>Java虚拟机根据对象存活的周期不同，把堆内存划分为几块，一般分为新生代、老年代和永久代（对HotSpot虚拟机而言），这就是JVM的内存分代策略。</p>
+<p><img src="https://img2018.cnblogs.com/blog/955092/201903/955092-20190313165427522-1253660306.jpg" alt="img"></p>
+<p>　Java虚拟机将堆内存划分为新生代、老年代和永久代，永久代是HotSpot虚拟机特有的概念（JDK1.8之后为metaspace替代永久代），它采用永久代的方式来实现方法区，其他的虚拟机实现没有这一概念，永久代主要存放常量、类信息、静态变量等数据，与垃圾回收关系不大，新生代和老年代是垃圾回收的主要区域。</p>
+<h2 id="31-新生代young-generation">3.1 新生代（Young Generation）</h2>
+<p>　　新生成的对象优先存放在新生代中，新生代对象朝生夕死，存活率很低，在新生代中，常规应用进行一次垃圾收集一般可以回收70% ~ 95% 的空间，回收效率很高。
+　　<strong>HotSpot将新生代划分为三块，一块较大的Eden（伊甸）空间和两块较小的Survivor（幸存者）空间，默认比例为8：1：1</strong>。划分的目的是因为HotSpot采用复制算法来回收新生代，设置这个比例是为了充分利用内存空间，减少浪费。新生成的对象在Eden区分配（大对象除外，大对象直接进入老年代），当Eden区没有足够的空间进行分配时，虚拟机将发起一次Minor GC。
+　　GC开始时，对象只会存在于Eden区和From Survivor区，To Survivor区是空的（作为保留区域）。GC进行时，Eden区中所有存活的对象都会被复制到To Survivor区，而在From Survivor区中，仍存活的对象会根据它们的年龄值决定去向，要么移到老年代要么复制到To survivor区</p>
+<blockquote>
+<p>年龄值达到年龄阀值（默认为15，新生代中的对象每熬过一轮垃圾回收，年龄值就加1，GC分代年龄存储在对象的header中）的对象会被移到老年代中，没有达到阀值的对象会被复制到To Survivor区。接着清空Eden区和From Survivor区，新生代中存活的对象都在To Survivor区。</p>
+</blockquote>
+<p>接着， From Survivor区和To Survivor区会交换它们的角色，<!-- raw HTML omitted -->也就是说新的To Survivor区就是上次GC清空的From Survivor区<!-- raw HTML omitted -->，新的From Survivor区就是上次GC的To Survivor区，总之，不管怎样都会保证To Survivor区在一轮GC后是空的。GC时当To Survivor区没有足够的空间存放上一次新生代收集下来的存活对象时，需要依赖老年代进行分配担保，将这些对象存放在老年代中。</p>
+<p><strong>“对象从新生代进入到老年代”的四种情况</strong></p>
+<ol>
+<li>Minor GC/Young <strong>GC 时，To Survivor 区不足以存放存活的对象</strong>，对象会直接进入到老年代。</li>
+<li>经过多次 Minor GC/Young <strong>GC 后，如果存活对象的年龄达到了设定阈值</strong>，则会晋升到老年代中。</li>
+<li>动态年龄判定规则，<strong>To Survivor 区中相同年龄的对象</strong>，如果<strong>其大小之和占到了 To Survivor 区一半以上的空间</strong>，那么大于此年龄的对象会直接进入老年代，而不需要达到默认的分代年龄。</li>
+<li><strong>大对象</strong>：由<code>-XX:PretenureSizeThreshold</code>启动参数控制，若对象大小大于此值，就会绕过新生代，直接在老年代中分配。 (默认值是0 , 表示所有对象都放eden区, 超过eden区剩余大小就放老年代; 这个参数只对 Serial 和ParNew的单线程版收集器有效)</li>
+</ol>
+<p><a href="https://www.jianshu.com/p/f7cde625d849">-XX:PretenureSizeThreshold 的默认值和作用 - 简书 (jianshu.com)</a></p>
+<p><a href="https://www.jianshu.com/p/a720f5e6910e">JVM的垃圾回收 - 简书 (jianshu.com)</a></p>
+<h2 id="32-老年代old-generationn">3.2 老年代（Old Generationn）</h2>
+<p>　　在新生代中经历了多次（具体看虚拟机配置的阀值）GC后仍然存活下来的对象会进入老年代中。老年代中的对象生命周期较长，存活率比较高，在老年代中进行GC的频率相对而言较低，而且回收的速度也比较慢。</p>
+<p>这里会发生Full GC , 产生STW(stop the world)</p>
+<p><strong>新生代和老年代的空间配比是 1 : 2</strong></p>
+<p><a href="https://zhuanlan.zhihu.com/p/266257353">什么时候会触发Full GC（建议收藏） - 知乎 (zhihu.com)</a></p>
+<h2 id="33-永久代permanent-generationn">3.3 永久代（Permanent Generationn）</h2>
+<p>　　永久代存储类信息、常量、静态变量、即时编译器编译后的代码等数据，对这一区域而言，Java虚拟机规范指出可以不进行垃圾收集，一般而言不会进行垃圾回收。</p>
+<p><a href="https://www.cnblogs.com/guanghe/p/10524314.html">JVM结构及堆的划分 - 光何 - 博客园 (cnblogs.com)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/%E5%9B%9E%E6%94%B6%E5%89%8D%E6%8F%90/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/jvm\/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/jvm\/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/%E5%9B%9E%E6%94%B6%E5%89%8D%E6%8F%90/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2Fjvm%2F%25E5%2586%2585%25E5%25AD%2598%25E5%258C%25BA%25E5%259F%259F%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2Fjvm%2F%25E5%2586%2585%25E5%25AD%2598%25E5%258C%25BA%25E5%259F%259F%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2Fjvm%2F%25E5%2586%2585%25E5%25AD%2598%25E5%258C%25BA%25E5%259F%259F%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

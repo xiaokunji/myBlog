@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"1.java是值传递还是引用传递 ​ 答: 全部均为值传递!!!!\n以前我认为基本类型是值传递,而对象是引用传递,这是错误的!!!!\n有时候我会觉得传对象时里面的属性值变化了,\n(瞎猜:)其实是属性值的地址变化了,值也就改变了,而原来的值还在,指向原来的地址,只是没人用而已(等待被回收)\n来自* \u0026lt;https:\/\/blog.csdn.net\/bjweimengshu\/article\/details\/79799485\u0026gt;\n2.尾递归 有一种特殊的递归方式叫尾递归。如果函数中的递归调用都是尾调用，则该函数是尾递归函数。尾递归的特性使得递归调用不需要额外的空间 . 不能有任何操作, 如果有f(n)\u002b1这类的操作,都不算尾递归(因为还是保存了函数的返回值)\n来自:https:\/\/www.ibm.com\/developerworks\/cn\/java\/j-understanding-functional-programming-2\/index.html?ca=drs-#icomments\nhttps:\/\/www.cnblogs.com\/bellkosmos\/p\/5280619.html\n\/\/ 实现斐波那契数列 \/\/ 普通递归 int FibonacciRecursive(int n) { if( n \u0026lt; 2) return n; return FibonacciRecursive(n-1)\u002bFibonacciRecursive(n-2); } \/\/ 尾递归 int FibonacciTailRecursive(int n,int ret1,int ret2) { if(n==0) return ret1; return FibonacciTailRecursive(n-1,ret2,ret1\u002bret2); } 来自: https:\/\/blog.csdn.net\/mengxiangjia_linxi\/article\/details\/78158819\n尾递归效率高的原理:\n尾递归就是从最后开始计算, 每递归一次就算出相应的结果, 也就是说, 函数调用出现在调用者函数的尾部, 因为是尾部, 所以根本没有必要去保存任何局部变量. 直接让被调用的函数返回时越过调用者, 返回到调用者的调用者去。精髓：尾递归就是把当前的运算结果（或路径）放在参数里传给下层函数 , 也不用开辟新的栈空间,直接用上一个栈\n尾递归优化得益于编译器的支持,恰巧java不支持尾递归优化,但是上面那种省栈省开销还是有的(应该吧).一般函数式语言都是支持的,比如scala\n但是可以利用lambda的懒加载来实现尾递归优化,\n详情: https:\/\/www.cnblogs.com\/invoker-\/p\/7723420.html#autoid-3-0-0\n3. java中的CAS和AQS CAS : Conmpare And Swap (比较和交换) 是用于实现多线程同步的原子指令。 它将内存位置的内容与给(期望)定值进行比较，只有在相同的情况下，将该内存位置的内容修改为新的给定值。 这是作为单个原子操作完成的。",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/java\/java%E5%9F%BA%E7%A1%80\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="1.java是值传递还是引用传递 ​ 答: 全部均为值传递!!!!
+以前我认为基本类型是值传递,而对象是引用传递,这是错误的!!!!
+有时候我会觉得传对象时里面的属性值变化了,
+(瞎猜:)其实是属性值的地址变化了,值也就改变了,而原来的值还在,指向原来的地址,只是没人用而已(等待被回收)
+来自* &lt;https://blog.csdn.net/bjweimengshu/article/details/79799485&gt;
+2.尾递归 有一种特殊的递归方式叫尾递归。如果函数中的递归调用都是尾调用，则该函数是尾递归函数。尾递归的特性使得递归调用不需要额外的空间 . 不能有任何操作, 如果有f(n)&#43;1这类的操作,都不算尾递归(因为还是保存了函数的返回值)
+来自:https://www.ibm.com/developerworks/cn/java/j-understanding-functional-programming-2/index.html?ca=drs-#icomments
+https://www.cnblogs.com/bellkosmos/p/5280619.html
+// 实现斐波那契数列 // 普通递归 int FibonacciRecursive(int n) { if( n &lt; 2) return n; return FibonacciRecursive(n-1)&#43;FibonacciRecursive(n-2); } // 尾递归 int FibonacciTailRecursive(int n,int ret1,int ret2) { if(n==0) return ret1; return FibonacciTailRecursive(n-1,ret2,ret1&#43;ret2); } 来自: https://blog.csdn.net/mengxiangjia_linxi/article/details/78158819
+尾递归效率高的原理:
+尾递归就是从最后开始计算, 每递归一次就算出相应的结果, 也就是说, 函数调用出现在调用者函数的尾部, 因为是尾部, 所以根本没有必要去保存任何局部变量. 直接让被调用的函数返回时越过调用者, 返回到调用者的调用者去。精髓：尾递归就是把当前的运算结果（或路径）放在参数里传给下层函数 , 也不用开辟新的栈空间,直接用上一个栈
+尾递归优化得益于编译器的支持,恰巧java不支持尾递归优化,但是上面那种省栈省开销还是有的(应该吧).一般函数式语言都是支持的,比如scala
+但是可以利用lambda的懒加载来实现尾递归优化,
+详情: https://www.cnblogs.com/invoker-/p/7723420.html#autoid-3-0-0
+3. java中的CAS和AQS CAS : Conmpare And Swap (比较和交换) 是用于实现多线程同步的原子指令。 它将内存位置的内容与给(期望)定值进行比较，只有在相同的情况下，将该内存位置的内容修改为新的给定值。 这是作为单个原子操作完成的。">
+
+
+<meta property="og:description" content="1.java是值传递还是引用传递 ​ 答: 全部均为值传递!!!!
+以前我认为基本类型是值传递,而对象是引用传递,这是错误的!!!!
+有时候我会觉得传对象时里面的属性值变化了,
+(瞎猜:)其实是属性值的地址变化了,值也就改变了,而原来的值还在,指向原来的地址,只是没人用而已(等待被回收)
+来自* &lt;https://blog.csdn.net/bjweimengshu/article/details/79799485&gt;
+2.尾递归 有一种特殊的递归方式叫尾递归。如果函数中的递归调用都是尾调用，则该函数是尾递归函数。尾递归的特性使得递归调用不需要额外的空间 . 不能有任何操作, 如果有f(n)&#43;1这类的操作,都不算尾递归(因为还是保存了函数的返回值)
+来自:https://www.ibm.com/developerworks/cn/java/j-understanding-functional-programming-2/index.html?ca=drs-#icomments
+https://www.cnblogs.com/bellkosmos/p/5280619.html
+// 实现斐波那契数列 // 普通递归 int FibonacciRecursive(int n) { if( n &lt; 2) return n; return FibonacciRecursive(n-1)&#43;FibonacciRecursive(n-2); } // 尾递归 int FibonacciTailRecursive(int n,int ret1,int ret2) { if(n==0) return ret1; return FibonacciTailRecursive(n-1,ret2,ret1&#43;ret2); } 来自: https://blog.csdn.net/mengxiangjia_linxi/article/details/78158819
+尾递归效率高的原理:
+尾递归就是从最后开始计算, 每递归一次就算出相应的结果, 也就是说, 函数调用出现在调用者函数的尾部, 因为是尾部, 所以根本没有必要去保存任何局部变量. 直接让被调用的函数返回时越过调用者, 返回到调用者的调用者去。精髓：尾递归就是把当前的运算结果（或路径）放在参数里传给下层函数 , 也不用开辟新的栈空间,直接用上一个栈
+尾递归优化得益于编译器的支持,恰巧java不支持尾递归优化,但是上面那种省栈省开销还是有的(应该吧).一般函数式语言都是支持的,比如scala
+但是可以利用lambda的懒加载来实现尾递归优化,
+详情: https://www.cnblogs.com/invoker-/p/7723420.html#autoid-3-0-0
+3. java中的CAS和AQS CAS : Conmpare And Swap (比较和交换) 是用于实现多线程同步的原子指令。 它将内存位置的内容与给(期望)定值进行比较，只有在相同的情况下，将该内存位置的内容修改为新的给定值。 这是作为单个原子操作完成的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/java%E5%9F%BA%E7%A1%80/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/java%E5%9F%BA%E7%A1%80/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="1.java是值传递还是引用传递 ​ 答: 全部均为值传递!!!!
+以前我认为基本类型是值传递,而对象是引用传递,这是错误的!!!!
+有时候我会觉得传对象时里面的属性值变化了,
+(瞎猜:)其实是属性值的地址变化了,值也就改变了,而原来的值还在,指向原来的地址,只是没人用而已(等待被回收)
+来自* &lt;https://blog.csdn.net/bjweimengshu/article/details/79799485&gt;
+2.尾递归 有一种特殊的递归方式叫尾递归。如果函数中的递归调用都是尾调用，则该函数是尾递归函数。尾递归的特性使得递归调用不需要额外的空间 . 不能有任何操作, 如果有f(n)&#43;1这类的操作,都不算尾递归(因为还是保存了函数的返回值)
+来自:https://www.ibm.com/developerworks/cn/java/j-understanding-functional-programming-2/index.html?ca=drs-#icomments
+https://www.cnblogs.com/bellkosmos/p/5280619.html
+// 实现斐波那契数列 // 普通递归 int FibonacciRecursive(int n) { if( n &lt; 2) return n; return FibonacciRecursive(n-1)&#43;FibonacciRecursive(n-2); } // 尾递归 int FibonacciTailRecursive(int n,int ret1,int ret2) { if(n==0) return ret1; return FibonacciTailRecursive(n-1,ret2,ret1&#43;ret2); } 来自: https://blog.csdn.net/mengxiangjia_linxi/article/details/78158819
+尾递归效率高的原理:
+尾递归就是从最后开始计算, 每递归一次就算出相应的结果, 也就是说, 函数调用出现在调用者函数的尾部, 因为是尾部, 所以根本没有必要去保存任何局部变量. 直接让被调用的函数返回时越过调用者, 返回到调用者的调用者去。精髓：尾递归就是把当前的运算结果（或路径）放在参数里传给下层函数 , 也不用开辟新的栈空间,直接用上一个栈
+尾递归优化得益于编译器的支持,恰巧java不支持尾递归优化,但是上面那种省栈省开销还是有的(应该吧).一般函数式语言都是支持的,比如scala
+但是可以利用lambda的懒加载来实现尾递归优化,
+详情: https://www.cnblogs.com/invoker-/p/7723420.html#autoid-3-0-0
+3. java中的CAS和AQS CAS : Conmpare And Swap (比较和交换) 是用于实现多线程同步的原子指令。 它将内存位置的内容与给(期望)定值进行比较，只有在相同的情况下，将该内存位置的内容修改为新的给定值。 这是作为单个原子操作完成的。">
+<meta name="twitter:description" content="1.java是值传递还是引用传递 ​ 答: 全部均为值传递!!!!
+以前我认为基本类型是值传递,而对象是引用传递,这是错误的!!!!
+有时候我会觉得传对象时里面的属性值变化了,
+(瞎猜:)其实是属性值的地址变化了,值也就改变了,而原来的值还在,指向原来的地址,只是没人用而已(等待被回收)
+来自* &lt;https://blog.csdn.net/bjweimengshu/article/details/79799485&gt;
+2.尾递归 有一种特殊的递归方式叫尾递归。如果函数中的递归调用都是尾调用，则该函数是尾递归函数。尾递归的特性使得递归调用不需要额外的空间 . 不能有任何操作, 如果有f(n)&#43;1这类的操作,都不算尾递归(因为还是保存了函数的返回值)
+来自:https://www.ibm.com/developerworks/cn/java/j-understanding-functional-programming-2/index.html?ca=drs-#icomments
+https://www.cnblogs.com/bellkosmos/p/5280619.html
+// 实现斐波那契数列 // 普通递归 int FibonacciRecursive(int n) { if( n &lt; 2) return n; return FibonacciRecursive(n-1)&#43;FibonacciRecursive(n-2); } // 尾递归 int FibonacciTailRecursive(int n,int ret1,int ret2) { if(n==0) return ret1; return FibonacciTailRecursive(n-1,ret2,ret1&#43;ret2); } 来自: https://blog.csdn.net/mengxiangjia_linxi/article/details/78158819
+尾递归效率高的原理:
+尾递归就是从最后开始计算, 每递归一次就算出相应的结果, 也就是说, 函数调用出现在调用者函数的尾部, 因为是尾部, 所以根本没有必要去保存任何局部变量. 直接让被调用的函数返回时越过调用者, 返回到调用者的调用者去。精髓：尾递归就是把当前的运算结果（或路径）放在参数里传给下层函数 , 也不用开辟新的栈空间,直接用上一个栈
+尾递归优化得益于编译器的支持,恰巧java不支持尾递归优化,但是上面那种省栈省开销还是有的(应该吧).一般函数式语言都是支持的,比如scala
+但是可以利用lambda的懒加载来实现尾递归优化,
+详情: https://www.cnblogs.com/invoker-/p/7723420.html#autoid-3-0-0
+3. java中的CAS和AQS CAS : Conmpare And Swap (比较和交换) 是用于实现多线程同步的原子指令。 它将内存位置的内容与给(期望)定值进行比较，只有在相同的情况下，将该内存位置的内容修改为新的给定值。 这是作为单个原子操作完成的。">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/java%E5%9F%BA%E7%A1%80/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <h1 id="1java是值传递还是引用传递"><strong>1.java是值传递还是引用传递</strong></h1>
+<p>​    答: <strong>全部均为值传递!!!!</strong></p>
+<p>以前我认为基本类型是值传递,而对象是引用传递,这是错误的!!!!</p>
+<p>有时候我会觉得传对象时里面的属性值变化了,</p>
+<p>(瞎猜:)其实是属性值的地址变化了,值也就改变了,而原来的值还在,指向原来的地址,只是没人用而已(等待被回收)</p>
+<blockquote>
+<p>来自* <em>&lt;</em><a href="https://blog.csdn.net/bjweimengshu/article/details/79799485"><em>https://blog.csdn.net/bjweimengshu/article/details/79799485</em></a><em>&gt;</em></p>
+</blockquote>
+<h1 id="2尾递归"><strong>2.尾递归</strong></h1>
+<p>有一种特殊的递归方式叫尾递归。如果函数中的递归调用都是尾调用，则该函数是尾递归函数。尾递归的特性使得递归调用不需要额外的空间 . 不能有任何操作, 如果有f(n)+1这类的操作,都不算尾递归(因为还是保存了函数的返回值)</p>
+<blockquote>
+<p>来自:https://www.ibm.com/developerworks/cn/java/j-understanding-functional-programming-2/index.html?ca=drs-#icomments</p>
+<p><a href="https://www.cnblogs.com/bellkosmos/p/5280619.html">https://www.cnblogs.com/bellkosmos/p/5280619.html</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 实现斐波那契数列
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 普通递归
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">FibonacciRecursive</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> n<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span> n <span style="color:#f92672">&lt;</span> 2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#66d9ef">return</span> n<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">return</span> FibonacciRecursive<span style="color:#f92672">(</span>n<span style="color:#f92672">-</span>1<span style="color:#f92672">)+</span>FibonacciRecursive<span style="color:#f92672">(</span>n<span style="color:#f92672">-</span>2<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span> <span style="color:#75715e">// 尾递归
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">FibonacciTailRecursive</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> n<span style="color:#f92672">,</span><span style="color:#66d9ef">int</span> ret1<span style="color:#f92672">,</span><span style="color:#66d9ef">int</span> ret2<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>n<span style="color:#f92672">==</span>0<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">return</span> ret1<span style="color:#f92672">;</span> 
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">return</span> FibonacciTailRecursive<span style="color:#f92672">(</span>n<span style="color:#f92672">-</span>1<span style="color:#f92672">,</span>ret2<span style="color:#f92672">,</span>ret1<span style="color:#f92672">+</span>ret2<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">}</span>
+</span></span></code></pre></div><blockquote>
+<p>来自: <a href="https://blog.csdn.net/mengxiangjia_linxi/article/details/78158819">https://blog.csdn.net/mengxiangjia_linxi/article/details/78158819</a></p>
+</blockquote>
+<p>尾递归效率高的原理:</p>
+<p>尾递归就是从最后开始计算, 每递归一次就算出相应的结果, 也就是说, 函数调用出现在调用者函数的尾部, 因为是尾部, 所以根本没有必要去保存任何局部变量. 直接让被调用的函数返回时越过调用者, 返回到调用者的调用者去。<strong>精髓：尾递归就是把当前的运算结果（或路径）放在参数里传给下层函数 , 也不用开辟新的栈空间,直接用上一个栈</strong></p>
+<p>尾递归优化得益于编译器的支持,恰巧<strong>java不支持尾递归优化</strong>,但是上面那种省栈省开销还是有的(应该吧).一般函数式语言都是支持的,比如scala</p>
+<p>但是可以利用lambda的懒加载来实现尾递归优化,</p>
+<blockquote>
+<p>详情: <a href="https://www.cnblogs.com/invoker-/p/7723420.html#autoid-3-0-0">https://www.cnblogs.com/invoker-/p/7723420.html#autoid-3-0-0</a></p>
+</blockquote>
+<h1 id="3-java中的cas和aqs"><strong>3. java中的CAS和AQS</strong></h1>
+<p>CAS : Conmpare And Swap (比较和交换) 是用于实现<strong>多线程同步的原子指令</strong>。 它将内存位置的内容与给(期望)定值进行比较，只有在相同的情况下，将该内存位置的内容修改为新的给定值。 这是作为单个原子操作完成的。</p>
+<p>AQS:  抽象队列同步器(AbstractQueuedSynchronizer) , 是用来<strong>构建锁或者其他同步组件的基础框架</strong>，它使用一个int成员表示同步状态，通过内部的FIFO队列来完成资源获取线程的排序工作。ReentrantLock、Semaphore、CountDownLatch、CyclicBarrier等并发类均是基于AQS来实现的，</p>
+<blockquote>
+<p><a href="https://blog.csdn.net/yanghan1222/article/details/80247844">https://blog.csdn.net/yanghan1222/article/details/80247844</a></p>
+<p><a href="https://www.jianshu.com/p/0f876ead2846">https://www.jianshu.com/p/0f876ead2846</a></p>
+<p><a href="https://www.cnblogs.com/fsmly/p/11274572.html">https://www.cnblogs.com/fsmly/p/11274572.html</a></p>
+</blockquote>
+<h1 id="4-jvm中的记忆集remembered-set是什么">4. jvm中的记忆集(Remembered Set)是什么?</h1>
+<p>jvm的堆内存分为了 年轻代和老年代, 分别使用各自的垃圾回收器回收</p>
+<p>如果年轻代中的对象引用了老年代的对象,  当youngGC时就不能只扫描年轻代, 还得扫描老年代看对象是否有引用,  这种情况下, 就会变成扫描整个堆 &mdash;&ndash; 称为 <strong>跨代引用假说</strong></p>
+<p>所以jvm在年轻代中存了一个<strong>全局的数据结构, 称为记忆集</strong>. 这个结构把老年代划分成若干小块，<strong>标识出老年代的哪一块内存会存在跨代引用</strong>。此后当发生Minor GC时，只有包含了跨代引用的小块内存里的对象才会被加入到GC Roots进行扫描</p>
+<h1 id="5-运行时常量池和字符串常量池">5. 运行时常量池和字符串常量池</h1>
+<h2 id="运行时常量池">运行时常量池</h2>
+<p>类文件中除了包含<strong>类的版本、字段、方法、接口</strong>等描述信息, 这些最开始都是保存在常量池中，他们都是静态信息,</p>
+<p>当程序运行时被加载到内存后，这些符号才有对应的内存地址信息。这些常量一旦被转入内存就会变成<strong>运行时常量池</strong>。运行时常量池在方法区中。</p>
+<blockquote>
+<p>比如  <code>math.compute()</code> , 在代码中写的是字符串, 那具体怎么调用的呢?</p>
+<p>compute()这个符号引用在运行时就会被转变为compute()方法具体代码在内存中的地址，主要通过对象头里的类型指针去转换直接引用。</p>
+<p>compute()方法被加载到内存以后，就有了自己的地址，原来调用computer()方法的符号引用，现在就变成对compute()地址的直接引用，这个直接引用是存在对象头里的，通过指针来指向直接引用</p>
+</blockquote>
+<p>所以 <strong>运行时常量池 存的类和方法等一些描述信息, 用于程序调用执行</strong>, <strong>存在方法区中,</strong>  jdk8后放入元空间了</p>
+<h2 id="字符串常量池">字符串常量池</h2>
+<p><strong>字符串常量池存的是字符串信息</strong> , 存在于堆中 , 因为字符串用的多, 所以用个池单独存起来, 并实现值的复用</p>
+<blockquote>
+<p>比如:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>String c <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;abcdefg&#34;</span>
+</span></span><span style="display:flex;"><span>String d <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;abcdefg&#34;</span>
+</span></span></code></pre></div><p>c和d 都指向字符串常量池, 且为同一个内存地址,</p>
+</blockquote>
+<blockquote>
+<p>jdk8后 静态成员变量也放在堆中了</p>
+</blockquote>
+<h2 id="两个池的存放位置">两个池的存放位置</h2>
+<p><img src="java%E5%9F%BA%E7%A1%80.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2xpdXlvbmcxOTky,size_16,color_FFFFFF,t_70.png" alt="img"></p>
+<p><a href="https://juejin.cn/post/7058375922235211790#heading-0">深刻理解运行时常量池、字符串常量池 - 掘金 (juejin.cn)</a></p>
+<p><a href="https://blog.csdn.net/liuyong1992/article/details/113835447">java的字符串存储在堆中还是常量池中_编码大神经的博客-CSDN博客</a></p>
+<h1 id="6-java-虚拟线程">6. java 虚拟线程</h1>
+<p>虚拟线程（Virtual Thread-）是 JDK 而不是 OS 实现的轻量级线程(Lightweight Process，LWP），许多虚拟线程共享同一个操作系统线程，虚拟线程的数量可以远大于操作系统线程的数量。</p>
+<p>近几十年来，我们一直依靠上述多线程模型来解决 Java 中的并发编程问题。为了提高系统的吞吐量，我们必须不断增加线程的数量，但是机器的线程很昂贵，可用线程的数量是有限的。尽管我们使用各种线程池来最大限度地提高线程的成本效益，但在 CPU、网络或内存资源被耗尽之前，线程往往成为我们应用程序性能的瓶颈，无法释放硬件应具有的最大性能。</p>
+<p>我们常见的Java线程与系统内核线程是一一对应的，系统内核线程调度器负责调度Java线程。</p>
+<p><img src="java%E5%9F%BA%E7%A1%80.assets/2b71c4b71dbd4045bfa0ed24ae89d710.png" alt="img"></p>
+<p>Java19 引入了虚拟线程。在 Java19 中，我们以前使用的线程称为平台线程，仍然与系统内核线程一一对应。大量 (M个) 的虚拟线程，运行在少量 (N个) 的平台线程上（与 OS 线程一一对应）（M:N 调度）。JVM调度多个虚拟线程在特定平台线程上执行，并且在平台线程上一次只执行一个虚拟线程。</p>
+<p><img src="java%E5%9F%BA%E7%A1%80.assets/824e418235d049d0b6bd7c7ed437dc2e.png" alt="img"></p>
+<blockquote>
+<ol>
+<li>直接用虚拟线程池代替线程池。如果您的项目使用<code>CompletableFuture</code>，您也可以直接将执行异步任务的线程池替换为<code>Executors.newVirtualThreadPerTaskExecutor()</code>.</li>
+<li>消除池化机制。虚拟线程非常轻量级，不需要池化。</li>
+<li>synchronized更改为ReentrantLock减少固定到平台线程的虚拟线程。</li>
+</ol>
+</blockquote>
+<p><a href="https://blog.csdn.net/lewyu521/article/details/127649776">Java19 虚拟线程原理介绍及实现_lew-yu的博客-CSDN博客</a></p>
+<p><a href="https://javaguide.cn/java/new-features/java19.html#jep-424-%E5%A4%96%E9%83%A8%E5%87%BD%E6%95%B0%E5%92%8C%E5%86%85%E5%AD%98-api-%E9%A2%84%E8%A7%88">Java 19 新特性概览 | JavaGuide</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/javaee/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/netty/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/java%E5%9F%BA%E7%A1%80/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/java%E5%9F%BA%E7%A1%80/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/java%E5%9F%BA%E7%A1%80/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/java\/java%E5%9F%BA%E7%A1%80\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/java\/java%E5%9F%BA%E7%A1%80\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/javaee/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/netty/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/java%E5%9F%BA%E7%A1%80/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/java%E5%9F%BA%E7%A1%80/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/java%E5%9F%BA%E7%A1%80/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2Fjava%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2Fjava%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2Fjava%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

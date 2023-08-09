@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"在使用上的差别:\nmysql中 where 条件允许 1,0,true,false 条件,而Oracle只允许true\/false,\n例如 : select * from person where 1 ,相当于where 1=1 ,是个恒等式\n事项 MySQL Oracle 注释 例子 where 支持1,0,true,false 支持true\/false mysql : select * from person where 1Oracle: select * from person where 1=1 as 表和字段都能用,也可以不用 仅字段能用 都支持不写as,直接写别名就行 当前时间 SYSDATE() SYSDATE Oracle:SELECT SYSDATE FROM JBP_ACCOUNT 判空 IFNULL nvl oracle: nvl( LOCK_FLAG,\u0026rsquo;\u0026rsquo;) as lockFlag, 连接字符串 concat(str1.str2,str3,\u0026hellip;..) 不定参数 concat(str1,str2) 仅两个参数, 可以用|| 任意连接字符串 eg. \u0026lsquo;3\u0026rsquo;|| id || \u0026lsquo;4\u0026rsquo; 时间格式化 DATE_FORMAT(#{time} , %Y-%m-%d %H:%i:%s) TO_CHAR(yyyy-MM-dd hh24:mi:ss) 查找字符串 find_in_set(a,b) 可用替代 instr find_in_set查找a在b中的位置,b是又逗号隔开的字符串,用到了比特运算,速度很快 分组并合并 GROUP_CONCAT wm_concat ",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/%E5%B7%AE%E5%BC%82\/mysql%E4%B8%8Eoracle\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="在使用上的差别:
+mysql中 where 条件允许 1,0,true,false 条件,而Oracle只允许true/false,
+例如 : select * from person where 1 ,相当于where 1=1 ,是个恒等式
+事项 MySQL Oracle 注释 例子 where 支持1,0,true,false 支持true/false mysql : select * from person where 1Oracle: select * from person where 1=1 as 表和字段都能用,也可以不用 仅字段能用 都支持不写as,直接写别名就行 当前时间 SYSDATE() SYSDATE Oracle:SELECT SYSDATE FROM JBP_ACCOUNT 判空 IFNULL nvl oracle: nvl( LOCK_FLAG,&rsquo;&rsquo;) as lockFlag, 连接字符串 concat(str1.str2,str3,&hellip;..) 不定参数 concat(str1,str2) 仅两个参数, 可以用|| 任意连接字符串 eg. &lsquo;3&rsquo;|| id || &lsquo;4&rsquo; 时间格式化 DATE_FORMAT(#{time} , %Y-%m-%d %H:%i:%s) TO_CHAR(yyyy-MM-dd hh24:mi:ss) 查找字符串 find_in_set(a,b) 可用替代 instr find_in_set查找a在b中的位置,b是又逗号隔开的字符串,用到了比特运算,速度很快 分组并合并 GROUP_CONCAT wm_concat ">
+
+
+<meta property="og:description" content="在使用上的差别:
+mysql中 where 条件允许 1,0,true,false 条件,而Oracle只允许true/false,
+例如 : select * from person where 1 ,相当于where 1=1 ,是个恒等式
+事项 MySQL Oracle 注释 例子 where 支持1,0,true,false 支持true/false mysql : select * from person where 1Oracle: select * from person where 1=1 as 表和字段都能用,也可以不用 仅字段能用 都支持不写as,直接写别名就行 当前时间 SYSDATE() SYSDATE Oracle:SELECT SYSDATE FROM JBP_ACCOUNT 判空 IFNULL nvl oracle: nvl( LOCK_FLAG,&rsquo;&rsquo;) as lockFlag, 连接字符串 concat(str1.str2,str3,&hellip;..) 不定参数 concat(str1,str2) 仅两个参数, 可以用|| 任意连接字符串 eg. &lsquo;3&rsquo;|| id || &lsquo;4&rsquo; 时间格式化 DATE_FORMAT(#{time} , %Y-%m-%d %H:%i:%s) TO_CHAR(yyyy-MM-dd hh24:mi:ss) 查找字符串 find_in_set(a,b) 可用替代 instr find_in_set查找a在b中的位置,b是又逗号隔开的字符串,用到了比特运算,速度很快 分组并合并 GROUP_CONCAT wm_concat ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="在使用上的差别:
+mysql中 where 条件允许 1,0,true,false 条件,而Oracle只允许true/false,
+例如 : select * from person where 1 ,相当于where 1=1 ,是个恒等式
+事项 MySQL Oracle 注释 例子 where 支持1,0,true,false 支持true/false mysql : select * from person where 1Oracle: select * from person where 1=1 as 表和字段都能用,也可以不用 仅字段能用 都支持不写as,直接写别名就行 当前时间 SYSDATE() SYSDATE Oracle:SELECT SYSDATE FROM JBP_ACCOUNT 判空 IFNULL nvl oracle: nvl( LOCK_FLAG,&rsquo;&rsquo;) as lockFlag, 连接字符串 concat(str1.str2,str3,&hellip;..) 不定参数 concat(str1,str2) 仅两个参数, 可以用|| 任意连接字符串 eg. &lsquo;3&rsquo;|| id || &lsquo;4&rsquo; 时间格式化 DATE_FORMAT(#{time} , %Y-%m-%d %H:%i:%s) TO_CHAR(yyyy-MM-dd hh24:mi:ss) 查找字符串 find_in_set(a,b) 可用替代 instr find_in_set查找a在b中的位置,b是又逗号隔开的字符串,用到了比特运算,速度很快 分组并合并 GROUP_CONCAT wm_concat ">
+<meta name="twitter:description" content="在使用上的差别:
+mysql中 where 条件允许 1,0,true,false 条件,而Oracle只允许true/false,
+例如 : select * from person where 1 ,相当于where 1=1 ,是个恒等式
+事项 MySQL Oracle 注释 例子 where 支持1,0,true,false 支持true/false mysql : select * from person where 1Oracle: select * from person where 1=1 as 表和字段都能用,也可以不用 仅字段能用 都支持不写as,直接写别名就行 当前时间 SYSDATE() SYSDATE Oracle:SELECT SYSDATE FROM JBP_ACCOUNT 判空 IFNULL nvl oracle: nvl( LOCK_FLAG,&rsquo;&rsquo;) as lockFlag, 连接字符串 concat(str1.str2,str3,&hellip;..) 不定参数 concat(str1,str2) 仅两个参数, 可以用|| 任意连接字符串 eg. &lsquo;3&rsquo;|| id || &lsquo;4&rsquo; 时间格式化 DATE_FORMAT(#{time} , %Y-%m-%d %H:%i:%s) TO_CHAR(yyyy-MM-dd hh24:mi:ss) 查找字符串 find_in_set(a,b) 可用替代 instr find_in_set查找a在b中的位置,b是又逗号隔开的字符串,用到了比特运算,速度很快 分组并合并 GROUP_CONCAT wm_concat ">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>在使用上的差别:</p>
+<p>mysql中 where 条件允许 1,0,true,false 条件,而Oracle只允许true/false,</p>
+<p>例如 : select * from person where 1  ,相当于where 1=1 ,是个恒等式</p>
+<table>
+<thead>
+<tr>
+<th>事项</th>
+<th>MySQL</th>
+<th>Oracle</th>
+<th>注释</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>where</td>
+<td>支持1,0,true,false</td>
+<td>支持true/false</td>
+<td></td>
+<td>mysql : select * from person where 1Oracle: select * from person where 1=1</td>
+</tr>
+<tr>
+<td>as</td>
+<td>表和字段都能用,也可以不用</td>
+<td>仅字段能用</td>
+<td>都支持不写as,直接写别名就行</td>
+<td></td>
+</tr>
+<tr>
+<td>当前时间</td>
+<td>SYSDATE()</td>
+<td>SYSDATE</td>
+<td></td>
+<td>Oracle:SELECT SYSDATE FROM JBP_ACCOUNT</td>
+</tr>
+<tr>
+<td>判空</td>
+<td>IFNULL</td>
+<td>nvl</td>
+<td></td>
+<td>oracle: nvl( LOCK_FLAG,&rsquo;&rsquo;) as lockFlag,</td>
+</tr>
+<tr>
+<td>连接字符串</td>
+<td>concat(str1.str2,str3,&hellip;..) 不定参数</td>
+<td>concat(str1,str2) 仅两个参数, 可以用|| 任意连接字符串</td>
+<td></td>
+<td>eg. &lsquo;3&rsquo;|| id || &lsquo;4&rsquo;</td>
+</tr>
+<tr>
+<td>时间格式化</td>
+<td>DATE_FORMAT(#{time} , %Y-%m-%d %H:%i:%s)</td>
+<td>TO_CHAR(yyyy-MM-dd hh24:mi:ss)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>查找字符串</td>
+<td>find_in_set(a,b)</td>
+<td>可用替代 instr</td>
+<td>find_in_set查找a在b中的位置,b是又逗号隔开的字符串,用到了比特运算,速度很快</td>
+<td></td>
+</tr>
+<tr>
+<td>分组并合并</td>
+<td>GROUP_CONCAT</td>
+<td>wm_concat</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E8%8C%83%E5%BC%8F/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/postgresql%E4%B8%8Emysql/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/%E5%B7%AE%E5%BC%82\/mysql%E4%B8%8Eoracle\/';
+        
+          this.page.identifier = '\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/%E5%B7%AE%E5%BC%82\/mysql%E4%B8%8Eoracle\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E8%8C%83%E5%BC%8F/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/postgresql%E4%B8%8Emysql/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2F%25E5%25B7%25AE%25E5%25BC%2582%2Fmysql%25E4%25B8%258Eoracle%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2F%25E5%25B7%25AE%25E5%25BC%2582%2Fmysql%25E4%25B8%258Eoracle%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2F%25E5%25B7%25AE%25E5%25BC%2582%2Fmysql%25E4%25B8%258Eoracle%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

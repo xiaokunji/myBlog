@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1.介绍 在Spring boot应用中，要实现可监控的功能，依赖的是 spring-boot-starter-actuator 这个组件。它提供了很多监控和管理你的spring boot应用的HTTP或者JMX端点，并且你可以有选择地开启和关闭部分功能。当你的spring boot应用中引入下面的依赖之后，将自动的拥有审计、健康检查、Metrics监控功能。\n基于springboot2.X版本\n链接：https:\/\/www.jianshu.com\/p\/1aadc4c85f51\n2.使用 \/\/ 先有parent和web包 \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;org.springframework.boot\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;spring-boot-starter-actuator\u0026lt;\/artifactId\u0026gt; \u0026lt;\/dependency\u0026gt; 然后就能访问了,哈哈哈,是不是超简单,http:\/\/127.0.0.1:8767\/actuator\/health\n端口是项目的访问地址,即使是用Feign访问的server层\n返回值:\nup:服务正常 down:服务异常 它是号称可以做监控中心的插件,展示东西远不止这些\n加上配置:management.endpoint.health.show-details=always\n表示总是展示详细信息,因为还有个选择是when-authorized,默认是不展示(never)\n再次访问,会展示出项目中使用的插件,比如redis,数据库等使用情况还有磁盘的使用情况,基本上,用这个能很好的看到项目的当前状态.\n默认情况下(Http)还能访问一个链接,\/info (http:\/\/127.0.0.1:8767\/actuator\/info),这个能获取应用程序的定制信息，这些信息由 info 打头的属性提供,比如:info.app.version=V1.0.0,访问地址就能得到这个样的json字符串\n{ \u0026#34;app\u0026#34;:{ \u0026#34;version\u0026#34;:\u0026#34;V1.0.0\u0026#34; } } 还有其他链接:\nHttp 方法 路径 描述 get \/autoconfig 提供了一份自动配置报告，记录哪些自动配置条件通过了，哪些没通过 get \/configprops 描述配置属性（包含默认值）如何注入 Bean get \/beans 描述应用程序上下文里全部的 Bean，以及它们的关系 get \/dump 获取线程活动的快照 get \/env 获取全部环境属性 get \/env\/{name} 根据名称获取特定的环境属性值 get \/info 获取应用程序的定制信息，这些信息由 info 打头的属性提供 get \/mappings 描述全部的 URI 路径，以及它们和控制器（包含 Actuator 端点）的映射关系 get \/metrics 报告各种应用程序度量信息，比如内存用量和 HTTP 请求计数 get \/metrics\/{name} 报告指定名称的应用程序度量值 post \/shutdown 关闭应用程序，要求 endpoints.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring-boot\/actuator\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1.介绍 在Spring boot应用中，要实现可监控的功能，依赖的是 spring-boot-starter-actuator 这个组件。它提供了很多监控和管理你的spring boot应用的HTTP或者JMX端点，并且你可以有选择地开启和关闭部分功能。当你的spring boot应用中引入下面的依赖之后，将自动的拥有审计、健康检查、Metrics监控功能。
+基于springboot2.X版本
+链接：https://www.jianshu.com/p/1aadc4c85f51
+2.使用 // 先有parent和web包 &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt; &lt;/dependency&gt; 然后就能访问了,哈哈哈,是不是超简单,http://127.0.0.1:8767/actuator/health
+端口是项目的访问地址,即使是用Feign访问的server层
+返回值:
+up:服务正常 down:服务异常 它是号称可以做监控中心的插件,展示东西远不止这些
+加上配置:management.endpoint.health.show-details=always
+表示总是展示详细信息,因为还有个选择是when-authorized,默认是不展示(never)
+再次访问,会展示出项目中使用的插件,比如redis,数据库等使用情况还有磁盘的使用情况,基本上,用这个能很好的看到项目的当前状态.
+默认情况下(Http)还能访问一个链接,/info (http://127.0.0.1:8767/actuator/info),这个能获取应用程序的定制信息，这些信息由 info 打头的属性提供,比如:info.app.version=V1.0.0,访问地址就能得到这个样的json字符串
+{ &#34;app&#34;:{ &#34;version&#34;:&#34;V1.0.0&#34; } } 还有其他链接:
+Http 方法 路径 描述 get /autoconfig 提供了一份自动配置报告，记录哪些自动配置条件通过了，哪些没通过 get /configprops 描述配置属性（包含默认值）如何注入 Bean get /beans 描述应用程序上下文里全部的 Bean，以及它们的关系 get /dump 获取线程活动的快照 get /env 获取全部环境属性 get /env/{name} 根据名称获取特定的环境属性值 get /info 获取应用程序的定制信息，这些信息由 info 打头的属性提供 get /mappings 描述全部的 URI 路径，以及它们和控制器（包含 Actuator 端点）的映射关系 get /metrics 报告各种应用程序度量信息，比如内存用量和 HTTP 请求计数 get /metrics/{name} 报告指定名称的应用程序度量值 post /shutdown 关闭应用程序，要求 endpoints.">
+
+
+<meta property="og:description" content="[toc]
+1.介绍 在Spring boot应用中，要实现可监控的功能，依赖的是 spring-boot-starter-actuator 这个组件。它提供了很多监控和管理你的spring boot应用的HTTP或者JMX端点，并且你可以有选择地开启和关闭部分功能。当你的spring boot应用中引入下面的依赖之后，将自动的拥有审计、健康检查、Metrics监控功能。
+基于springboot2.X版本
+链接：https://www.jianshu.com/p/1aadc4c85f51
+2.使用 // 先有parent和web包 &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt; &lt;/dependency&gt; 然后就能访问了,哈哈哈,是不是超简单,http://127.0.0.1:8767/actuator/health
+端口是项目的访问地址,即使是用Feign访问的server层
+返回值:
+up:服务正常 down:服务异常 它是号称可以做监控中心的插件,展示东西远不止这些
+加上配置:management.endpoint.health.show-details=always
+表示总是展示详细信息,因为还有个选择是when-authorized,默认是不展示(never)
+再次访问,会展示出项目中使用的插件,比如redis,数据库等使用情况还有磁盘的使用情况,基本上,用这个能很好的看到项目的当前状态.
+默认情况下(Http)还能访问一个链接,/info (http://127.0.0.1:8767/actuator/info),这个能获取应用程序的定制信息，这些信息由 info 打头的属性提供,比如:info.app.version=V1.0.0,访问地址就能得到这个样的json字符串
+{ &#34;app&#34;:{ &#34;version&#34;:&#34;V1.0.0&#34; } } 还有其他链接:
+Http 方法 路径 描述 get /autoconfig 提供了一份自动配置报告，记录哪些自动配置条件通过了，哪些没通过 get /configprops 描述配置属性（包含默认值）如何注入 Bean get /beans 描述应用程序上下文里全部的 Bean，以及它们的关系 get /dump 获取线程活动的快照 get /env 获取全部环境属性 get /env/{name} 根据名称获取特定的环境属性值 get /info 获取应用程序的定制信息，这些信息由 info 打头的属性提供 get /mappings 描述全部的 URI 路径，以及它们和控制器（包含 Actuator 端点）的映射关系 get /metrics 报告各种应用程序度量信息，比如内存用量和 HTTP 请求计数 get /metrics/{name} 报告指定名称的应用程序度量值 post /shutdown 关闭应用程序，要求 endpoints.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/actuator/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/actuator/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1.介绍 在Spring boot应用中，要实现可监控的功能，依赖的是 spring-boot-starter-actuator 这个组件。它提供了很多监控和管理你的spring boot应用的HTTP或者JMX端点，并且你可以有选择地开启和关闭部分功能。当你的spring boot应用中引入下面的依赖之后，将自动的拥有审计、健康检查、Metrics监控功能。
+基于springboot2.X版本
+链接：https://www.jianshu.com/p/1aadc4c85f51
+2.使用 // 先有parent和web包 &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt; &lt;/dependency&gt; 然后就能访问了,哈哈哈,是不是超简单,http://127.0.0.1:8767/actuator/health
+端口是项目的访问地址,即使是用Feign访问的server层
+返回值:
+up:服务正常 down:服务异常 它是号称可以做监控中心的插件,展示东西远不止这些
+加上配置:management.endpoint.health.show-details=always
+表示总是展示详细信息,因为还有个选择是when-authorized,默认是不展示(never)
+再次访问,会展示出项目中使用的插件,比如redis,数据库等使用情况还有磁盘的使用情况,基本上,用这个能很好的看到项目的当前状态.
+默认情况下(Http)还能访问一个链接,/info (http://127.0.0.1:8767/actuator/info),这个能获取应用程序的定制信息，这些信息由 info 打头的属性提供,比如:info.app.version=V1.0.0,访问地址就能得到这个样的json字符串
+{ &#34;app&#34;:{ &#34;version&#34;:&#34;V1.0.0&#34; } } 还有其他链接:
+Http 方法 路径 描述 get /autoconfig 提供了一份自动配置报告，记录哪些自动配置条件通过了，哪些没通过 get /configprops 描述配置属性（包含默认值）如何注入 Bean get /beans 描述应用程序上下文里全部的 Bean，以及它们的关系 get /dump 获取线程活动的快照 get /env 获取全部环境属性 get /env/{name} 根据名称获取特定的环境属性值 get /info 获取应用程序的定制信息，这些信息由 info 打头的属性提供 get /mappings 描述全部的 URI 路径，以及它们和控制器（包含 Actuator 端点）的映射关系 get /metrics 报告各种应用程序度量信息，比如内存用量和 HTTP 请求计数 get /metrics/{name} 报告指定名称的应用程序度量值 post /shutdown 关闭应用程序，要求 endpoints.">
+<meta name="twitter:description" content="[toc]
+1.介绍 在Spring boot应用中，要实现可监控的功能，依赖的是 spring-boot-starter-actuator 这个组件。它提供了很多监控和管理你的spring boot应用的HTTP或者JMX端点，并且你可以有选择地开启和关闭部分功能。当你的spring boot应用中引入下面的依赖之后，将自动的拥有审计、健康检查、Metrics监控功能。
+基于springboot2.X版本
+链接：https://www.jianshu.com/p/1aadc4c85f51
+2.使用 // 先有parent和web包 &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt; &lt;/dependency&gt; 然后就能访问了,哈哈哈,是不是超简单,http://127.0.0.1:8767/actuator/health
+端口是项目的访问地址,即使是用Feign访问的server层
+返回值:
+up:服务正常 down:服务异常 它是号称可以做监控中心的插件,展示东西远不止这些
+加上配置:management.endpoint.health.show-details=always
+表示总是展示详细信息,因为还有个选择是when-authorized,默认是不展示(never)
+再次访问,会展示出项目中使用的插件,比如redis,数据库等使用情况还有磁盘的使用情况,基本上,用这个能很好的看到项目的当前状态.
+默认情况下(Http)还能访问一个链接,/info (http://127.0.0.1:8767/actuator/info),这个能获取应用程序的定制信息，这些信息由 info 打头的属性提供,比如:info.app.version=V1.0.0,访问地址就能得到这个样的json字符串
+{ &#34;app&#34;:{ &#34;version&#34;:&#34;V1.0.0&#34; } } 还有其他链接:
+Http 方法 路径 描述 get /autoconfig 提供了一份自动配置报告，记录哪些自动配置条件通过了，哪些没通过 get /configprops 描述配置属性（包含默认值）如何注入 Bean get /beans 描述应用程序上下文里全部的 Bean，以及它们的关系 get /dump 获取线程活动的快照 get /env 获取全部环境属性 get /env/{name} 根据名称获取特定的环境属性值 get /info 获取应用程序的定制信息，这些信息由 info 打头的属性提供 get /mappings 描述全部的 URI 路径，以及它们和控制器（包含 Actuator 端点）的映射关系 get /metrics 报告各种应用程序度量信息，比如内存用量和 HTTP 请求计数 get /metrics/{name} 报告指定名称的应用程序度量值 post /shutdown 关闭应用程序，要求 endpoints.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/actuator/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1介绍">1.介绍</h1>
+<p>在Spring boot应用中，要实现可监控的功能，依赖的是 spring-boot-starter-actuator 这个组件。它提供了很多监控和管理你的spring boot应用的HTTP或者JMX端点，并且你可以有选择地开启和关闭部分功能。当你的spring boot应用中引入下面的依赖之后，将自动的拥有审计、健康检查、Metrics监控功能。</p>
+<blockquote>
+<p>基于springboot2.X版本</p>
+</blockquote>
+<p>链接：https://www.jianshu.com/p/1aadc4c85f51</p>
+<h1 id="2使用">2.使用</h1>
+<pre tabindex="0"><code>// 先有parent和web包
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre><p>然后就能访问了,哈哈哈,是不是超简单,<code>http://127.0.0.1:8767/actuator/health</code></p>
+<blockquote>
+<p>端口是项目的访问地址,即使是用Feign访问的server层</p>
+<p>返回值:</p>
+<ul>
+<li>up:服务正常</li>
+<li>down:服务异常</li>
+</ul>
+</blockquote>
+<p><strong>它是号称可以做监控中心的插件,展示东西远不止这些</strong></p>
+<p>加上配置:<code>management.endpoint.health.show-details=always</code></p>
+<p>表示总是展示详细信息,因为还有个选择是<code>when-authorized</code>,默认是不展示(<code>never</code>)</p>
+<p>再次访问,会展示出项目中使用的插件,比如redis,数据库等使用情况还有磁盘的使用情况,基本上,用这个能很好的看到项目的当前状态.</p>
+<p><!-- raw HTML omitted -->默认情况<!-- raw HTML omitted -->下(Http)还能访问一个链接,/info (<code>http://127.0.0.1:8767/actuator/info</code>),这个能获取应用程序的定制信息，这些信息由 info 打头的属性提供,比如:<code>info.app.version=V1.0.0</code>,访问地址就能得到这个样的json字符串</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;app&#34;</span>:{
+</span></span><span style="display:flex;"><span>      	<span style="color:#f92672">&#34;version&#34;</span>:<span style="color:#e6db74">&#34;V1.0.0&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>还有其他链接:</p>
+<table>
+<thead>
+<tr>
+<th>Http 方法</th>
+<th>路径</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>get</td>
+<td>/autoconfig</td>
+<td>提供了一份自动配置报告，记录哪些自动配置条件通过了，哪些没通过</td>
+</tr>
+<tr>
+<td>get</td>
+<td>/configprops</td>
+<td>描述配置属性（包含默认值）如何注入 Bean</td>
+</tr>
+<tr>
+<td>get</td>
+<td>/beans</td>
+<td>描述应用程序上下文里全部的 Bean，以及它们的关系</td>
+</tr>
+<tr>
+<td>get</td>
+<td>/dump</td>
+<td>获取线程活动的快照</td>
+</tr>
+<tr>
+<td>get</td>
+<td>/env</td>
+<td>获取全部环境属性</td>
+</tr>
+<tr>
+<td>get</td>
+<td>/env/{name}</td>
+<td>根据名称获取特定的环境属性值</td>
+</tr>
+<tr>
+<td>get</td>
+<td>/info</td>
+<td>获取应用程序的定制信息，这些信息由 info 打头的属性提供</td>
+</tr>
+<tr>
+<td>get</td>
+<td>/mappings</td>
+<td>描述全部的 URI 路径，以及它们和控制器（包含 Actuator 端点）的映射关系</td>
+</tr>
+<tr>
+<td>get</td>
+<td>/metrics</td>
+<td>报告各种应用程序度量信息，比如内存用量和 HTTP 请求计数</td>
+</tr>
+<tr>
+<td>get</td>
+<td>/metrics/{name}</td>
+<td>报告指定名称的应用程序度量值</td>
+</tr>
+<tr>
+<td>post</td>
+<td>/shutdown</td>
+<td>关闭应用程序，要求 endpoints.shutdown.enabled 设置为 true（默认为 false）</td>
+</tr>
+<tr>
+<td>get</td>
+<td>/trace</td>
+<td>提供基本的 HTTP 请求跟踪信息（时间戳、HTTP 头等）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>除了/info,/health默认是开启的,其他都是关闭的</strong>
+<code>management.endpoints.web.exposure.include=*</code> 使用这个配置可以打开所有端点(这些链接官方叫endpoint,翻译过来叫端点)
+还有一个配置,表示&quot;除了&quot;,一看就懂对吧
+<code>management.endpoints.web.exposure.exclude=env,beans</code></p>
+</blockquote>
+<h1 id="3-安全">3. 安全</h1>
+<p>在 Actuator 启用的情况下，如果没有做好相关权限控制，非法用户可通过访问默认的执行器端点（endpoints）来获取应用系统中的监控信息。</p>
+<h2 id="31安全隐患">3.1安全隐患:</h2>
+<ul>
+<li>
+<p><strong>认证字段的获取以证明可影响其他用户</strong>:</p>
+<p>这个主要通过访问<code>/trace</code> 路径获取用户认证字段信息，比如如下站点存在 actuator 配置不当漏洞，在其 trace 路径下，除了记录有基本的 HTTP 请求信息（时间戳、HTTP 头等），还有用户 token、cookie 字段：</p>
+</li>
+<li>
+<p><strong>数据库账户密码泄露</strong>:</p>
+<p>通过其<code>/env</code> 路径, 由于 actuator 会监控站点 mysql、mangodb 之类的数据库服务，所以通过监控信息有时可以拿下 mysql、mangodb 数据库；</p>
+</li>
+<li>
+<p><strong>git 项目地址泄露</strong>:</p>
+<p>这个一般是在<code>/health</code> 路径，比如如下站点，访问其 health 路径可探测到站点 git 项目地址：</p>
+</li>
+<li>
+<p><strong>后台用户账号密码泄露</strong>:</p>
+<p>这个一般是在<code>/heapdump</code> 路径下，访问/heapdump 路径，返回 GZip 压缩 hprof 堆转储文件。在 Android studio 打开，会泄露站点内存信息，很多时候会包含后台用户的账号密码（包含漏洞的图片暂时没得，大家记住思路就好了..），通过泄露的账号密码，然后进入后台一番轰炸也不错的。</p>
+<p>来自:https://www.freebuf.com/news/193509.html</p>
+</li>
+</ul>
+<h2 id="32-措施">3.2 措施</h2>
+<p>引入spring-boot-starter-security依赖</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-starter-security<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><p>在<code>application.properties</code>中指定actuator的端口以及开启security功能，配置访问权限验证，这时再访问actuator功能时就会弹出登录窗口，需要输入账号密码验证后才允许访问。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">management.port</span><span style="color:#f92672">=</span><span style="color:#e6db74">8099</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">management.security.enabled</span><span style="color:#f92672">=</span><span style="color:#e6db74">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">security.user.name</span><span style="color:#f92672">=</span><span style="color:#e6db74">admin</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">security.user.password</span><span style="color:#f92672">=</span><span style="color:#e6db74">admin</span>
+</span></span></code></pre></div>
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/service-mesh/%E4%BB%8B%E7%BB%8D/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/filter/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/actuator/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/actuator/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/actuator/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring-boot\/actuator\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring-boot\/actuator\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/service-mesh/%E4%BB%8B%E7%BB%8D/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/filter/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/actuator/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/actuator/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/actuator/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring-boot%2Factuator%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring-boot%2Factuator%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring-boot%2Factuator%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1. 整体架构 RocketMQ 主要由 Broker、NameServer、Producer 和 Consumer 组成的一个集群。\nNameServer：整个集群的注册中心和配置中心，管理集群的元数据。包括 Topic 信息和路由信息、Producer 和 Consumer 的客户端注册信息、Broker 的注册信息。 Broker：负责接收消息的生产和消费请求，并进行消息的持久化和消息的读取。 Producer：负责生产消息。 Consumer：负责消费消息。 broker有很多台,可以分散存储和被访问的压力, 且每个broker可以存在多个slave,当消费者从slave获取消息时,还能分担broker压力,进一步提高消费性能\n生产和消费直连nameServer,可以快速定位到主题在哪个broker上,而且broker上还有这些数据(meta)的缓存, 甚至连nameServer的访问都省略了\n消费集群可以增加数量, 以增加消费性能\n1.1. 网络模型 RocketMQ 使用 Netty 框架实现高性能的网络传输。\nNetty 的高性能传输的体现\n非阻塞 IO Ractor 线程模型 零拷贝。使用 FileChannel.transfer 避免在用户态和内核态之间的拷贝操作；通过 CompositeByteBuf 组合多个 ByteBuffer；通过 slice 获取 ByteBuffer 的切片；通过 wrapper 把普通 ByteBuffer 封装成 netty.ByteBuffer。 RocketMQ 网络模型\nRocketMQ 的 Broker 端基于 Netty 实现了主从 Reactor 模型。架构如下：\n具体流程：\neventLoopGroupBoss 作为 acceptor 负责接收客户端的连接请求 eventLoopGroupSelector 负责 NIO 的读写操作 NettyServerHandler 读取 IO 数据，并对消息头进行解析 disatch 过程根据注册的消息 code 和 processsor 把不同的事件分发给不同的线程。由 processTable 维护（类型为 HashMap） 1.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/rocketmq\/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1. 整体架构 RocketMQ 主要由 Broker、NameServer、Producer 和 Consumer 组成的一个集群。
+NameServer：整个集群的注册中心和配置中心，管理集群的元数据。包括 Topic 信息和路由信息、Producer 和 Consumer 的客户端注册信息、Broker 的注册信息。 Broker：负责接收消息的生产和消费请求，并进行消息的持久化和消息的读取。 Producer：负责生产消息。 Consumer：负责消费消息。 broker有很多台,可以分散存储和被访问的压力, 且每个broker可以存在多个slave,当消费者从slave获取消息时,还能分担broker压力,进一步提高消费性能
+生产和消费直连nameServer,可以快速定位到主题在哪个broker上,而且broker上还有这些数据(meta)的缓存, 甚至连nameServer的访问都省略了
+消费集群可以增加数量, 以增加消费性能
+1.1. 网络模型 RocketMQ 使用 Netty 框架实现高性能的网络传输。
+Netty 的高性能传输的体现
+非阻塞 IO Ractor 线程模型 零拷贝。使用 FileChannel.transfer 避免在用户态和内核态之间的拷贝操作；通过 CompositeByteBuf 组合多个 ByteBuffer；通过 slice 获取 ByteBuffer 的切片；通过 wrapper 把普通 ByteBuffer 封装成 netty.ByteBuffer。 RocketMQ 网络模型
+RocketMQ 的 Broker 端基于 Netty 实现了主从 Reactor 模型。架构如下：
+具体流程：
+eventLoopGroupBoss 作为 acceptor 负责接收客户端的连接请求 eventLoopGroupSelector 负责 NIO 的读写操作 NettyServerHandler 读取 IO 数据，并对消息头进行解析 disatch 过程根据注册的消息 code 和 processsor 把不同的事件分发给不同的线程。由 processTable 维护（类型为 HashMap） 1.">
+
+
+<meta property="og:description" content="[toc]
+1. 整体架构 RocketMQ 主要由 Broker、NameServer、Producer 和 Consumer 组成的一个集群。
+NameServer：整个集群的注册中心和配置中心，管理集群的元数据。包括 Topic 信息和路由信息、Producer 和 Consumer 的客户端注册信息、Broker 的注册信息。 Broker：负责接收消息的生产和消费请求，并进行消息的持久化和消息的读取。 Producer：负责生产消息。 Consumer：负责消费消息。 broker有很多台,可以分散存储和被访问的压力, 且每个broker可以存在多个slave,当消费者从slave获取消息时,还能分担broker压力,进一步提高消费性能
+生产和消费直连nameServer,可以快速定位到主题在哪个broker上,而且broker上还有这些数据(meta)的缓存, 甚至连nameServer的访问都省略了
+消费集群可以增加数量, 以增加消费性能
+1.1. 网络模型 RocketMQ 使用 Netty 框架实现高性能的网络传输。
+Netty 的高性能传输的体现
+非阻塞 IO Ractor 线程模型 零拷贝。使用 FileChannel.transfer 避免在用户态和内核态之间的拷贝操作；通过 CompositeByteBuf 组合多个 ByteBuffer；通过 slice 获取 ByteBuffer 的切片；通过 wrapper 把普通 ByteBuffer 封装成 netty.ByteBuffer。 RocketMQ 网络模型
+RocketMQ 的 Broker 端基于 Netty 实现了主从 Reactor 模型。架构如下：
+具体流程：
+eventLoopGroupBoss 作为 acceptor 负责接收客户端的连接请求 eventLoopGroupSelector 负责 NIO 的读写操作 NettyServerHandler 读取 IO 数据，并对消息头进行解析 disatch 过程根据注册的消息 code 和 processsor 把不同的事件分发给不同的线程。由 processTable 维护（类型为 HashMap） 1.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1. 整体架构 RocketMQ 主要由 Broker、NameServer、Producer 和 Consumer 组成的一个集群。
+NameServer：整个集群的注册中心和配置中心，管理集群的元数据。包括 Topic 信息和路由信息、Producer 和 Consumer 的客户端注册信息、Broker 的注册信息。 Broker：负责接收消息的生产和消费请求，并进行消息的持久化和消息的读取。 Producer：负责生产消息。 Consumer：负责消费消息。 broker有很多台,可以分散存储和被访问的压力, 且每个broker可以存在多个slave,当消费者从slave获取消息时,还能分担broker压力,进一步提高消费性能
+生产和消费直连nameServer,可以快速定位到主题在哪个broker上,而且broker上还有这些数据(meta)的缓存, 甚至连nameServer的访问都省略了
+消费集群可以增加数量, 以增加消费性能
+1.1. 网络模型 RocketMQ 使用 Netty 框架实现高性能的网络传输。
+Netty 的高性能传输的体现
+非阻塞 IO Ractor 线程模型 零拷贝。使用 FileChannel.transfer 避免在用户态和内核态之间的拷贝操作；通过 CompositeByteBuf 组合多个 ByteBuffer；通过 slice 获取 ByteBuffer 的切片；通过 wrapper 把普通 ByteBuffer 封装成 netty.ByteBuffer。 RocketMQ 网络模型
+RocketMQ 的 Broker 端基于 Netty 实现了主从 Reactor 模型。架构如下：
+具体流程：
+eventLoopGroupBoss 作为 acceptor 负责接收客户端的连接请求 eventLoopGroupSelector 负责 NIO 的读写操作 NettyServerHandler 读取 IO 数据，并对消息头进行解析 disatch 过程根据注册的消息 code 和 processsor 把不同的事件分发给不同的线程。由 processTable 维护（类型为 HashMap） 1.">
+<meta name="twitter:description" content="[toc]
+1. 整体架构 RocketMQ 主要由 Broker、NameServer、Producer 和 Consumer 组成的一个集群。
+NameServer：整个集群的注册中心和配置中心，管理集群的元数据。包括 Topic 信息和路由信息、Producer 和 Consumer 的客户端注册信息、Broker 的注册信息。 Broker：负责接收消息的生产和消费请求，并进行消息的持久化和消息的读取。 Producer：负责生产消息。 Consumer：负责消费消息。 broker有很多台,可以分散存储和被访问的压力, 且每个broker可以存在多个slave,当消费者从slave获取消息时,还能分担broker压力,进一步提高消费性能
+生产和消费直连nameServer,可以快速定位到主题在哪个broker上,而且broker上还有这些数据(meta)的缓存, 甚至连nameServer的访问都省略了
+消费集群可以增加数量, 以增加消费性能
+1.1. 网络模型 RocketMQ 使用 Netty 框架实现高性能的网络传输。
+Netty 的高性能传输的体现
+非阻塞 IO Ractor 线程模型 零拷贝。使用 FileChannel.transfer 避免在用户态和内核态之间的拷贝操作；通过 CompositeByteBuf 组合多个 ByteBuffer；通过 slice 获取 ByteBuffer 的切片；通过 wrapper 把普通 ByteBuffer 封装成 netty.ByteBuffer。 RocketMQ 网络模型
+RocketMQ 的 Broker 端基于 Netty 实现了主从 Reactor 模型。架构如下：
+具体流程：
+eventLoopGroupBoss 作为 acceptor 负责接收客户端的连接请求 eventLoopGroupSelector 负责 NIO 的读写操作 NettyServerHandler 读取 IO 数据，并对消息头进行解析 disatch 过程根据注册的消息 code 和 processsor 把不同的事件分发给不同的线程。由 processTable 维护（类型为 HashMap） 1.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1-整体架构">1. 整体架构</h1>
+<p><img src="https://pic1.zhimg.com/v2-abc9b7ea6a9e454f5bd98d086e694274_r.jpg" alt="img"></p>
+<p>RocketMQ 主要由 Broker、NameServer、Producer 和 Consumer 组成的一个集群。</p>
+<ul>
+<li>NameServer：整个集群的注册中心和配置中心，管理集群的元数据。包括 Topic 信息和路由信息、Producer 和 Consumer 的客户端注册信息、Broker 的注册信息。</li>
+<li>Broker：负责接收消息的生产和消费请求，并进行消息的持久化和消息的读取。</li>
+<li>Producer：负责生产消息。</li>
+<li>Consumer：负责消费消息。</li>
+</ul>
+<ol>
+<li>
+<p>broker有很多台,可以分散存储和被访问的压力, 且每个broker可以存在多个slave,当消费者从slave获取消息时,还能分担broker压力,进一步提高消费性能</p>
+</li>
+<li>
+<p>生产和消费直连nameServer,可以快速定位到主题在哪个broker上,而且broker上还有这些数据(meta)的缓存, 甚至连nameServer的访问都省略了</p>
+</li>
+<li>
+<p>消费集群可以增加数量, 以增加消费性能</p>
+</li>
+</ol>
+<h2 id="11-网络模型">1.1. 网络模型</h2>
+<p>RocketMQ 使用 Netty 框架实现高性能的网络传输。</p>
+<p><strong>Netty 的高性能传输的体现</strong></p>
+<ul>
+<li>非阻塞 IO</li>
+<li>Ractor 线程模型</li>
+<li>零拷贝。使用 FileChannel.transfer 避免在用户态和内核态之间的拷贝操作；通过 CompositeByteBuf 组合多个 ByteBuffer；通过 slice 获取 ByteBuffer 的切片；通过 wrapper 把普通 ByteBuffer 封装成 netty.ByteBuffer。</li>
+</ul>
+<p><strong>RocketMQ 网络模型</strong></p>
+<p>RocketMQ 的 Broker 端基于 Netty 实现了主从 Reactor 模型。架构如下：</p>
+<p><img src="https://pic4.zhimg.com/v2-c5d022fcd16a30950576ba63756f5213_r.jpg" alt="img"></p>
+<p>具体流程：</p>
+<ol>
+<li>eventLoopGroupBoss 作为 acceptor 负责接收客户端的连接请求</li>
+<li>eventLoopGroupSelector 负责 NIO 的读写操作</li>
+<li>NettyServerHandler 读取 IO 数据，并对消息头进行解析</li>
+<li>disatch 过程根据注册的消息 code 和 processsor 把不同的事件分发给不同的线程。由 processTable 维护（类型为 HashMap）</li>
+</ol>
+<h2 id="12-业务线程池隔离">1.2. 业务线程池隔离</h2>
+<p>RocketMQ 对 Broker 的线程池进行了精细的隔离。使得消息的生产、消费、客户端心跳、客户端注册等请求不会互相干扰。如下是各个业务执行线程池和 Broker 处理的报文类型的对应关系，从下图中我们也可以看出 Broker 的核心功能点。</p>
+<p><img src="https://pic2.zhimg.com/v2-a6a6702c366ea2ca7d5743002ad7edb5_r.jpg" alt="img"></p>
+<h1 id="2-生产者">2. 生产者</h1>
+<h2 id="21-三种发送方式-可选">2.1 三种发送方式 可选</h2>
+<p>RocketMQ 支持三种消息发送方式：同步发送、异步发送和 One-Way 发送。One-Way 发送时客户端无法确定服务端消息是否投递成功，因此是不可靠的发送方式。异步发送也存在一定几率丢失,</p>
+<p><strong>客户端同步发送消息 时序图:</strong></p>
+<p><img src="https://pic3.zhimg.com/v2-27ad45373eec049664f67e4ef3daf826_r.jpg" alt="img"></p>
+<h2 id="22-mqclientinstance-的单例模式统一管理维护网络通道发送消息前只需要做一次服务状态可用性检查即可">2.2. MQClientInstance 的单例模式统一管理维护网络通道，发送消息前只需要做一次服务状态可用性检查即可</h2>
+<h2 id="23-客户端故障容错机制">2.3. 客户端故障容错机制</h2>
+<p>MQFaultStrategy 实现了基于 RT 耗时的容错策略。当某个 Broker 的 RT 过大时，认为该 Broker 存在问题，会禁用该 Broker 一段时间</p>
+<blockquote>
+<p>这样免得再次访问该broker造成性能降低</p>
+</blockquote>
+<h1 id="3-broker写入">3. broker写入</h1>
+<p>Broker 接收消息时序图</p>
+<p><img src="https://pic1.zhimg.com/v2-8f745d0085dce0591681cf3a732b8c1c_r.jpg" alt="img"></p>
+<p>流程说明</p>
+<ol>
+<li>Broker 通过 Netty 接收 RequestCode 为 SEND_MESSAGE 的请求，并把该请求交给 SendMessageProcessor 进行处理。</li>
+<li>SendMessageProcessor 先解析出 SEND_MESSAGE 报文中的消息头信息（Topic、queueId、producerGroup 等），并调用存储层进行处理。</li>
+<li>putMessage 中判断当前是否满足写入条件：Broker 状态为 running；Broker 为 master 节点；磁盘状态可写（磁盘满则无法写入）；Topic 长度未超限；消息属性长度未超限；pageCache 未处于繁忙状态（pageCachebusy 的依据是 putMessage 写入 mmap 的耗时，如果耗时超过 1s，说明由于缺页导致页加载慢，此时认定 pageCache 繁忙，拒绝写入）。</li>
+<li>从 MappedFileQueue 中选择已经预热过的 MappedFile。</li>
+<li>AppendMessageCallback 中执行消息的操作 doAppend，直接对 mmap 后的文件的 bytbuffer 进行写入操作。</li>
+</ol>
+<h2 id="31-自旋锁减少上下文切换">3.1 自旋锁减少上下文切换</h2>
+<p>RocketMQ 的 CommitLog 为了避免并发写入，使用一个 PutMessageLock。PutMessageLock 有 2 个实现版本：<code>PutMessageReentrantLock</code> 和 <code>PutMessageSpinLock</code>。</p>
+<p>PutMessageReentrantLock 是基于 java 的同步等待唤醒机制；PutMessageSpinLock 使用 Java 的 CAS 原语，通过自旋设值实现上锁和解锁。RocketMQ 默认使用 PutMessageSpinLock 以提高高并发写入时候的上锁解锁效率，并减少线程上下文切换次数。</p>
+<h2 id="32-mappedfile-预热和零拷贝机制">3.2 MappedFile 预热和零拷贝机制</h2>
+<p><strong>MappedFile 预热</strong></p>
+<p>RocketMQ 消息写入对延时敏感，为了避免在写入消息时，CommitLog 文件尚未打开或者文件尚未加载到内存引起的 load 的开销，RocketMQ 实现了文件预热机制。项目启动时就开启了线程去预热, 预热代码关键节点如下:</p>
+<blockquote>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TD
+org.apache.rocketmq.broker.BrokerController#initialize --&gt;
+org.apache.rocketmq.common.ServiceThread#start --&gt;
+org.apache.rocketmq.store.MappedFile#warmMappedFile
+</code></pre></blockquote>
+<p>Linux 系统在写数据时候不会直接把数据写到磁盘上，而是写到磁盘对应的 PageCache 中，并把该页标记为脏页。当脏页累计到一定程度或者一定时间后再把数据 flush 到磁盘（当然在此期间如果系统掉电，会导致脏页数据丢失）。</p>
+<p><strong>零拷贝</strong></p>
+<p>RocketMQ 选择了 mmap + write 这种零拷贝方式，适用于业务级消息这种小块文件的数据持久化和传输</p>
+<blockquote>
+<p>而 Kafka 采用的是 sendfile 这种零拷贝方式，适用于系统日志消息这种高吞吐量的大块文件的数据持久化和传输</p>
+</blockquote>
+<p><img src=".%5C%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81.assets%5Cimage-20220729145338914.png" alt="image-20220729145338914"></p>
+<p><a href="https://pdai.tech/md/java/io/java-io-nio-zerocopy.html">Java NIO - 零拷贝实现 | Java 全栈知识体系 (pdai.tech)</a></p>
+<h2 id="33-同步和异步刷盘机制">3.3 同步和异步刷盘机制</h2>
+<p>RocketMQ 提供了同步刷盘和异步刷盘两种机制。默认使用异步刷盘机制。</p>
+<p>当 CommitLog 在 putMessage() 中收到 MappedFile 成功追加消息到内存的结果后，便会调用 handleDiskFlush() 方法进行刷盘，将消息存储到文件中。<code>org.apache.rocketmq.store.CommitLog#submitFlushRequest</code> 便会根据两种刷盘策略，调用不同的刷盘服务。</p>
+<p>抽象类 FlushCommitLogService 负责进行刷盘操作，该抽象类有 3 中实现：</p>
+<ul>
+<li>
+<p>GroupCommitService：同步刷盘</p>
+</li>
+<li>
+<p>FlushRealTimeService：异步刷盘</p>
+</li>
+<li>
+<p>CommitRealTimeService：异步刷盘并且开启 TransientStorePool</p>
+<p>每个实现类都是一个 ServiceThread 实现类。ServiceThread 可以看做是一个封装了基础功能的后台线程服务。有完整的生命周期管理，支持 start、shutdown、weakup、waitForRunning。</p>
+</li>
+</ul>
+<p><strong>同步刷盘流程</strong></p>
+<ul>
+<li>
+<p>所有的 flush 操作都由 GroupCommitService 线程进行处理</p>
+</li>
+<li>
+<p>当前接收消息的线程封装一个 GroupCommitRequest，并提交给 GroupCommitService 线程，然后当前线程进入一个 CountDownLatch 的等待</p>
+</li>
+<li>
+<p>一旦有新任务进来 GroupCommitService 被立即唤醒，并调用 MappedFile.flush 进行刷盘。底层是调用 mappedByteBuffer.force ()</p>
+</li>
+<li>
+<p>flush 完成后唤醒等待中的接收消息线程。从而完成同步刷盘流程</p>
+</li>
+</ul>
+<p><strong>异步刷盘流程</strong></p>
+<ul>
+<li>RocketMQ 每隔 200ms 进行一次 flush 操作（把数据持久化到磁盘）</li>
+<li>当有新的消息写入时候会主动唤醒 flush 线程进行刷盘</li>
+<li>当前接收消息线程无须等待 flush 的结果。</li>
+</ul>
+<h2 id="34--顺序写磁盘">3.4  顺序写磁盘</h2>
+<p>扩展阅读:</p>
+<p><a href="https://blog.csdn.net/x763795151/article/details/111147255">RocketMQ的broker处理消息commit时，加锁应该使用自旋锁还是重入锁以及sendMessageThreadPoolNums-CSDN博客</a></p>
+<h1 id="4-消费者">4. 消费者</h1>
+<p><strong>消息存储结构</strong></p>
+<p>RocketMQ 的存储结构最大特点：</p>
+<ul>
+<li>所有的消息写入转为顺序写</li>
+<li>读写文件分离。通过 ReputMessageService 服务生成 ConsumeQueue</li>
+</ul>
+<p><img src="https://pic1.zhimg.com/v2-b15d1d0bcd675533c5bfa21a7485a88c_r.jpg" alt="img"></p>
+<p>结构说明</p>
+<ul>
+<li>ConsumeQueue 与 CommitLog 不同，采用定长存储结构，如下图所示。为了实现定长存储，ConsumeQueue 存储了消息 Tag 的 Hash Code，在进行 Broker 端消息过滤时，通过比较 Consumer 订阅 Tag 的 HashCode 和存储条目中的 Tag Hash Code 是否一致来决定是否消费消息。</li>
+<li>ReputMessageService 持续地读取 CommitLog 文件并生成 ConsumeQueue。</li>
+</ul>
+<h2 id="41-顺序消费与并行消费">4.1 顺序消费与并行消费</h2>
+<p>串行消费和并行消费最大的区别在于消费队列中消息的顺序性。顺序消费保证了同一个 Queue 中的消费时的顺序性。RocketMQ 的顺序性依赖于分区锁的实现。</p>
+<p><strong>并行消费</strong></p>
+<ol>
+<li>
+<p>并行消费的实现类为 ConsumeMessageConcurrentlyService。</p>
+</li>
+<li>
+<p>PullMessageService 内置一个 scheduledExecutorService 线程池，主要负责处理 PullRequest 请求，从 Broker 端拉取最新的消息返回给客户端。拉取到的消息会放入 MessageQueue 对应的 ProcessQueue。</p>
+</li>
+<li>
+<p>ConsumeMessageConcurrentlyService 把收到的消息封装成一个 ConsumeRequest，投递给内置的 consumeExecutor 独立线程池进行消费。</p>
+</li>
+<li>
+<p>ConsumeRequest 调用 MessageListener.consumeMessage 执行用户定义的消费逻辑，返回消费状态。</p>
+</li>
+<li>
+<p>如果消费状态为 SUCCESS。则删除 ProcessQueue 中的消息，并提交 offset。</p>
+</li>
+<li>
+<p>如果消费状态为 RECONSUME。则把消息发送到延时队列进行重试，并对当前失败的消息进行延迟处理。</p>
+</li>
+</ol>
+<p><strong>串行消费</strong></p>
+<ol>
+<li>
+<p>串行消费的实现类为 ConsumeMessageOrderlyService。</p>
+</li>
+<li>
+<p>PullMessageService 内置一个 scheduledExecutorService 线程池，主要负责处理 PullRequest 请求，从 Broker 端拉取最新的消息返回给客户端。拉取到的消息会放入 MessageQueue 对应的 ProcessQueue。</p>
+</li>
+<li>
+<p>ConsumeMessageOrderlyService 把收到的消息封装成一个 ConsumeRequest，投递给内置的 consumeExecutor 独立线程池进行消费。</p>
+</li>
+<li>
+<p>消费时首先获取 MessageQueue 对应的 objectLock，保证当前进程内只有一个线程在处理对应的的 MessageQueue, 从 ProcessQueue 的 msgTreeMap 中按 offset 从低到高的顺序取消息，从而保证了消息的顺序性。</p>
+</li>
+<li>
+<p>ConsumeRequest 调用 MessageListener.consumeMessage 执行用户定义的消费逻辑，返回消费状态。</p>
+</li>
+<li>
+<p>如果消费状态为 SUCCESS。则删除 ProcessQueue 中的消息，并提交 offset。</p>
+</li>
+<li>
+<p>如果消费状态为 SUSPEND。判断是否达到最大重试次数，如果达到最大重试次数，就把消息投递到死信队列，继续下一条消费；否则消息重试次数 + 1，在延时一段时间后继续重试。</p>
+<p>可见，串行消费如果某条消息一直无法消费成功会造成阻塞，严重时会引起消息堆积和关联业务异常。</p>
+</li>
+</ol>
+<h2 id="42-push消息">4.2 push消息</h2>
+<p>RocketMQ支持pull和push操作, 它的push操作是加强版的pull的. 其本质就是一个 长轮询的pull操作, 具体流程如下:</p>
+<ol>
+<li>
+<p>PullRequest 请求中有个参数 brokerSuspendMaxTimeMillis，默认值为 <strong>15s</strong>，控制请求 hold 的时长。</p>
+</li>
+<li>
+<p>PullMessageProcessor 接收到 Request 后，解析参数，校验 Topic 的 Meta 信息和消费者的订阅关系。对于符合要求的请求，从存储中拉取消息。</p>
+</li>
+<li>
+<p>如果拉取消息的结果为 PULL_NOT_FOUND，表示当前 MessageQueue 没有最新消息。</p>
+</li>
+<li>
+<p>此时会封装一个 PullRequest 对象，并投递给 PullRequestHoldService 内部线程的 pullRequestTable 中。</p>
+</li>
+<li>
+<p>PullRequestHoldService 线程会周期性轮询 pullRequestTable，如果有新的消息或者 hold 时间超时 polling time，就会封装 Response 请求发给客户端。
+另外 DefaultMessageStore 中定义了 messageArrivingListener，当产生新的 ConsumeQueue 记录时候，会触发 messageArrivingListener 回调，立即给客户端返回最新的消息。</p>
+<p>长连接机制使得 RocketMQ 的网络利用率非常高效，并且最大限度地降低了消息拉取时的等待开销。实现了毫秒级的消息投递。</p>
+</li>
+</ol>
+<p><a href="https://zhuanlan.zhihu.com/p/93602392">RocketMQ 高性能揭秘 - 知乎 (zhihu.com)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%9D%A2%E8%AF%95/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/javaee/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/rocketmq\/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/rocketmq\/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%9D%A2%E8%AF%95/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/javaee/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Frocketmq%2F%25E9%25AB%2598%25E6%2580%25A7%25E8%2583%25BD%25E4%25BF%259D%25E8%25AF%2581%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Frocketmq%2F%25E9%25AB%2598%25E6%2580%25A7%25E8%2583%25BD%25E4%25BF%259D%25E8%25AF%2581%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Frocketmq%2F%25E9%25AB%2598%25E6%2580%25A7%25E8%2583%25BD%25E4%25BF%259D%25E8%25AF%2581%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

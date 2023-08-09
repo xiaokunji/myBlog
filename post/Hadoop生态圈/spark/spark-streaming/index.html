@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1.概述 Spark Streaming 是Spark核心API的一个扩展，可以实现高吞吐量的、具备容错机制的实时流数据的处理。支持从多种数据源获取数据，包括Kafk、Flume、Twitter、ZeroMQ、Kinesis 以及TCP sockets，从数据源获取数据之后，可以使用诸如map、reduce、join和window等高级函数进行复杂算法的处理。最后还可以将处理结果存储到文件系统，数据库和现场仪表盘。\n来自* \u0026lt;http:\/\/www.cnblogs.com\/shishanyuan\/p\/4747735.html\u0026gt;\n2. Streaming架构 2.1 计算流程： Spark Streaming是将流式计算分解成一系列短小的批处理作业。这里的批处理引擎是Spark Core，也就是把Spark Streaming的输入数据按照batch size（如1秒）分成一段一段的数据（Discretized Stream），每一段数据都转换成Spark中的RDD（Resilient Distributed Dataset），然后将Spark Streaming中对DStream的Transformation操作变为针对Spark中对RDD的Transformation操作，将RDD经过操作变成中间结果保存在内存中。整个流式计算根据业务的需求可以对中间的结果进行叠加或者存储到外部设备。下图显示了Spark Streaming的整个流程。\n图Spark Streaming构架\n2.2 容错性： 对于流式计算来说，容错性至关重要。首先我们要明确一下Spark中RDD的容错机制。每一个RDD都是一个不可变的分布式可重算的数据集，其记录着确定性的操作继承关系（lineage），所以只要输入数据是可容错的，那么任意一个RDD的分区（Partition）出错或不可用，都是可以利用原始输入数据通过转换操作而重新算出的。\n对于Spark Streaming来说，其RDD的传承关系如下图所示，图中的每一个椭圆形表示一个RDD，椭圆形中的每个圆形代表一个RDD中的一个Partition，图中的每一列的多个RDD表示一个DStream（图中有三个DStream），而每一行最后一个RDD则表示每一个Batch Size所产生的中间结果RDD。我们可以看到图中的每一个RDD都是通过lineage相连接的，由于Spark Streaming输入数据可以来自于磁盘，例如HDFS（多份拷贝）或是来自于网络的数据流（Spark Streaming会将网络输入数据的每一个数据流拷贝两份到其他的机器）都能保证容错性，所以RDD中任意的Partition出错，都可以并行地在其他机器上将缺失的Partition计算出来。这个容错恢复方式比连续计算模型（如Storm）的效率更高。\nSpark Streaming中RDD的lineage关系图\n2.3 实时性： 对于实时性的讨论，会牵涉到流式处理框架的应用场景。Spark Streaming将流式计算分解成多个Spark Job，对于每一段数据的处理都会经过Spark DAG图分解以及Spark的任务集的调度过程。对于目前版本的Spark Streaming而言，其最小的Batch Size的选取在0.5~2秒钟之间（Storm目前最小的延迟是100ms左右）\n2.4 扩展性与吞吐量： Spark目前在EC2上已能够线性扩展到100个节点（每个节点4Core），可以以数秒的延迟处理6GB\/s的数据量（60M records\/s），其吞吐量也比流行的Storm高2～5倍。\n来自* \u0026lt;http:\/\/www.cnblogs.com\/shishanyuan\/p\/4747735.html\u0026gt;\n3.使用 3.1 基本使用(接收套接字) import org.apache.spark._ import org.apache.spark.streaming._ import org.apache.spark.streaming.StreamingContext._ \/\/ Create a local StreamingContext with two working thread and batch interval of 1 second.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/spark\/spark-streaming\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1.概述 Spark Streaming 是Spark核心API的一个扩展，可以实现高吞吐量的、具备容错机制的实时流数据的处理。支持从多种数据源获取数据，包括Kafk、Flume、Twitter、ZeroMQ、Kinesis 以及TCP sockets，从数据源获取数据之后，可以使用诸如map、reduce、join和window等高级函数进行复杂算法的处理。最后还可以将处理结果存储到文件系统，数据库和现场仪表盘。
+来自* &lt;http://www.cnblogs.com/shishanyuan/p/4747735.html&gt;
+2. Streaming架构 2.1 计算流程： Spark Streaming是将流式计算分解成一系列短小的批处理作业。这里的批处理引擎是Spark Core，也就是把Spark Streaming的输入数据按照batch size（如1秒）分成一段一段的数据（Discretized Stream），每一段数据都转换成Spark中的RDD（Resilient Distributed Dataset），然后将Spark Streaming中对DStream的Transformation操作变为针对Spark中对RDD的Transformation操作，将RDD经过操作变成中间结果保存在内存中。整个流式计算根据业务的需求可以对中间的结果进行叠加或者存储到外部设备。下图显示了Spark Streaming的整个流程。
+图Spark Streaming构架
+2.2 容错性： 对于流式计算来说，容错性至关重要。首先我们要明确一下Spark中RDD的容错机制。每一个RDD都是一个不可变的分布式可重算的数据集，其记录着确定性的操作继承关系（lineage），所以只要输入数据是可容错的，那么任意一个RDD的分区（Partition）出错或不可用，都是可以利用原始输入数据通过转换操作而重新算出的。
+对于Spark Streaming来说，其RDD的传承关系如下图所示，图中的每一个椭圆形表示一个RDD，椭圆形中的每个圆形代表一个RDD中的一个Partition，图中的每一列的多个RDD表示一个DStream（图中有三个DStream），而每一行最后一个RDD则表示每一个Batch Size所产生的中间结果RDD。我们可以看到图中的每一个RDD都是通过lineage相连接的，由于Spark Streaming输入数据可以来自于磁盘，例如HDFS（多份拷贝）或是来自于网络的数据流（Spark Streaming会将网络输入数据的每一个数据流拷贝两份到其他的机器）都能保证容错性，所以RDD中任意的Partition出错，都可以并行地在其他机器上将缺失的Partition计算出来。这个容错恢复方式比连续计算模型（如Storm）的效率更高。
+Spark Streaming中RDD的lineage关系图
+2.3 实时性： 对于实时性的讨论，会牵涉到流式处理框架的应用场景。Spark Streaming将流式计算分解成多个Spark Job，对于每一段数据的处理都会经过Spark DAG图分解以及Spark的任务集的调度过程。对于目前版本的Spark Streaming而言，其最小的Batch Size的选取在0.5~2秒钟之间（Storm目前最小的延迟是100ms左右）
+2.4 扩展性与吞吐量： Spark目前在EC2上已能够线性扩展到100个节点（每个节点4Core），可以以数秒的延迟处理6GB/s的数据量（60M records/s），其吞吐量也比流行的Storm高2～5倍。
+来自* &lt;http://www.cnblogs.com/shishanyuan/p/4747735.html&gt;
+3.使用 3.1 基本使用(接收套接字) import org.apache.spark._ import org.apache.spark.streaming._ import org.apache.spark.streaming.StreamingContext._ // Create a local StreamingContext with two working thread and batch interval of 1 second.">
+
+
+<meta property="og:description" content="[toc]
+1.概述 Spark Streaming 是Spark核心API的一个扩展，可以实现高吞吐量的、具备容错机制的实时流数据的处理。支持从多种数据源获取数据，包括Kafk、Flume、Twitter、ZeroMQ、Kinesis 以及TCP sockets，从数据源获取数据之后，可以使用诸如map、reduce、join和window等高级函数进行复杂算法的处理。最后还可以将处理结果存储到文件系统，数据库和现场仪表盘。
+来自* &lt;http://www.cnblogs.com/shishanyuan/p/4747735.html&gt;
+2. Streaming架构 2.1 计算流程： Spark Streaming是将流式计算分解成一系列短小的批处理作业。这里的批处理引擎是Spark Core，也就是把Spark Streaming的输入数据按照batch size（如1秒）分成一段一段的数据（Discretized Stream），每一段数据都转换成Spark中的RDD（Resilient Distributed Dataset），然后将Spark Streaming中对DStream的Transformation操作变为针对Spark中对RDD的Transformation操作，将RDD经过操作变成中间结果保存在内存中。整个流式计算根据业务的需求可以对中间的结果进行叠加或者存储到外部设备。下图显示了Spark Streaming的整个流程。
+图Spark Streaming构架
+2.2 容错性： 对于流式计算来说，容错性至关重要。首先我们要明确一下Spark中RDD的容错机制。每一个RDD都是一个不可变的分布式可重算的数据集，其记录着确定性的操作继承关系（lineage），所以只要输入数据是可容错的，那么任意一个RDD的分区（Partition）出错或不可用，都是可以利用原始输入数据通过转换操作而重新算出的。
+对于Spark Streaming来说，其RDD的传承关系如下图所示，图中的每一个椭圆形表示一个RDD，椭圆形中的每个圆形代表一个RDD中的一个Partition，图中的每一列的多个RDD表示一个DStream（图中有三个DStream），而每一行最后一个RDD则表示每一个Batch Size所产生的中间结果RDD。我们可以看到图中的每一个RDD都是通过lineage相连接的，由于Spark Streaming输入数据可以来自于磁盘，例如HDFS（多份拷贝）或是来自于网络的数据流（Spark Streaming会将网络输入数据的每一个数据流拷贝两份到其他的机器）都能保证容错性，所以RDD中任意的Partition出错，都可以并行地在其他机器上将缺失的Partition计算出来。这个容错恢复方式比连续计算模型（如Storm）的效率更高。
+Spark Streaming中RDD的lineage关系图
+2.3 实时性： 对于实时性的讨论，会牵涉到流式处理框架的应用场景。Spark Streaming将流式计算分解成多个Spark Job，对于每一段数据的处理都会经过Spark DAG图分解以及Spark的任务集的调度过程。对于目前版本的Spark Streaming而言，其最小的Batch Size的选取在0.5~2秒钟之间（Storm目前最小的延迟是100ms左右）
+2.4 扩展性与吞吐量： Spark目前在EC2上已能够线性扩展到100个节点（每个节点4Core），可以以数秒的延迟处理6GB/s的数据量（60M records/s），其吞吐量也比流行的Storm高2～5倍。
+来自* &lt;http://www.cnblogs.com/shishanyuan/p/4747735.html&gt;
+3.使用 3.1 基本使用(接收套接字) import org.apache.spark._ import org.apache.spark.streaming._ import org.apache.spark.streaming.StreamingContext._ // Create a local StreamingContext with two working thread and batch interval of 1 second.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-streaming/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-streaming/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1.概述 Spark Streaming 是Spark核心API的一个扩展，可以实现高吞吐量的、具备容错机制的实时流数据的处理。支持从多种数据源获取数据，包括Kafk、Flume、Twitter、ZeroMQ、Kinesis 以及TCP sockets，从数据源获取数据之后，可以使用诸如map、reduce、join和window等高级函数进行复杂算法的处理。最后还可以将处理结果存储到文件系统，数据库和现场仪表盘。
+来自* &lt;http://www.cnblogs.com/shishanyuan/p/4747735.html&gt;
+2. Streaming架构 2.1 计算流程： Spark Streaming是将流式计算分解成一系列短小的批处理作业。这里的批处理引擎是Spark Core，也就是把Spark Streaming的输入数据按照batch size（如1秒）分成一段一段的数据（Discretized Stream），每一段数据都转换成Spark中的RDD（Resilient Distributed Dataset），然后将Spark Streaming中对DStream的Transformation操作变为针对Spark中对RDD的Transformation操作，将RDD经过操作变成中间结果保存在内存中。整个流式计算根据业务的需求可以对中间的结果进行叠加或者存储到外部设备。下图显示了Spark Streaming的整个流程。
+图Spark Streaming构架
+2.2 容错性： 对于流式计算来说，容错性至关重要。首先我们要明确一下Spark中RDD的容错机制。每一个RDD都是一个不可变的分布式可重算的数据集，其记录着确定性的操作继承关系（lineage），所以只要输入数据是可容错的，那么任意一个RDD的分区（Partition）出错或不可用，都是可以利用原始输入数据通过转换操作而重新算出的。
+对于Spark Streaming来说，其RDD的传承关系如下图所示，图中的每一个椭圆形表示一个RDD，椭圆形中的每个圆形代表一个RDD中的一个Partition，图中的每一列的多个RDD表示一个DStream（图中有三个DStream），而每一行最后一个RDD则表示每一个Batch Size所产生的中间结果RDD。我们可以看到图中的每一个RDD都是通过lineage相连接的，由于Spark Streaming输入数据可以来自于磁盘，例如HDFS（多份拷贝）或是来自于网络的数据流（Spark Streaming会将网络输入数据的每一个数据流拷贝两份到其他的机器）都能保证容错性，所以RDD中任意的Partition出错，都可以并行地在其他机器上将缺失的Partition计算出来。这个容错恢复方式比连续计算模型（如Storm）的效率更高。
+Spark Streaming中RDD的lineage关系图
+2.3 实时性： 对于实时性的讨论，会牵涉到流式处理框架的应用场景。Spark Streaming将流式计算分解成多个Spark Job，对于每一段数据的处理都会经过Spark DAG图分解以及Spark的任务集的调度过程。对于目前版本的Spark Streaming而言，其最小的Batch Size的选取在0.5~2秒钟之间（Storm目前最小的延迟是100ms左右）
+2.4 扩展性与吞吐量： Spark目前在EC2上已能够线性扩展到100个节点（每个节点4Core），可以以数秒的延迟处理6GB/s的数据量（60M records/s），其吞吐量也比流行的Storm高2～5倍。
+来自* &lt;http://www.cnblogs.com/shishanyuan/p/4747735.html&gt;
+3.使用 3.1 基本使用(接收套接字) import org.apache.spark._ import org.apache.spark.streaming._ import org.apache.spark.streaming.StreamingContext._ // Create a local StreamingContext with two working thread and batch interval of 1 second.">
+<meta name="twitter:description" content="[toc]
+1.概述 Spark Streaming 是Spark核心API的一个扩展，可以实现高吞吐量的、具备容错机制的实时流数据的处理。支持从多种数据源获取数据，包括Kafk、Flume、Twitter、ZeroMQ、Kinesis 以及TCP sockets，从数据源获取数据之后，可以使用诸如map、reduce、join和window等高级函数进行复杂算法的处理。最后还可以将处理结果存储到文件系统，数据库和现场仪表盘。
+来自* &lt;http://www.cnblogs.com/shishanyuan/p/4747735.html&gt;
+2. Streaming架构 2.1 计算流程： Spark Streaming是将流式计算分解成一系列短小的批处理作业。这里的批处理引擎是Spark Core，也就是把Spark Streaming的输入数据按照batch size（如1秒）分成一段一段的数据（Discretized Stream），每一段数据都转换成Spark中的RDD（Resilient Distributed Dataset），然后将Spark Streaming中对DStream的Transformation操作变为针对Spark中对RDD的Transformation操作，将RDD经过操作变成中间结果保存在内存中。整个流式计算根据业务的需求可以对中间的结果进行叠加或者存储到外部设备。下图显示了Spark Streaming的整个流程。
+图Spark Streaming构架
+2.2 容错性： 对于流式计算来说，容错性至关重要。首先我们要明确一下Spark中RDD的容错机制。每一个RDD都是一个不可变的分布式可重算的数据集，其记录着确定性的操作继承关系（lineage），所以只要输入数据是可容错的，那么任意一个RDD的分区（Partition）出错或不可用，都是可以利用原始输入数据通过转换操作而重新算出的。
+对于Spark Streaming来说，其RDD的传承关系如下图所示，图中的每一个椭圆形表示一个RDD，椭圆形中的每个圆形代表一个RDD中的一个Partition，图中的每一列的多个RDD表示一个DStream（图中有三个DStream），而每一行最后一个RDD则表示每一个Batch Size所产生的中间结果RDD。我们可以看到图中的每一个RDD都是通过lineage相连接的，由于Spark Streaming输入数据可以来自于磁盘，例如HDFS（多份拷贝）或是来自于网络的数据流（Spark Streaming会将网络输入数据的每一个数据流拷贝两份到其他的机器）都能保证容错性，所以RDD中任意的Partition出错，都可以并行地在其他机器上将缺失的Partition计算出来。这个容错恢复方式比连续计算模型（如Storm）的效率更高。
+Spark Streaming中RDD的lineage关系图
+2.3 实时性： 对于实时性的讨论，会牵涉到流式处理框架的应用场景。Spark Streaming将流式计算分解成多个Spark Job，对于每一段数据的处理都会经过Spark DAG图分解以及Spark的任务集的调度过程。对于目前版本的Spark Streaming而言，其最小的Batch Size的选取在0.5~2秒钟之间（Storm目前最小的延迟是100ms左右）
+2.4 扩展性与吞吐量： Spark目前在EC2上已能够线性扩展到100个节点（每个节点4Core），可以以数秒的延迟处理6GB/s的数据量（60M records/s），其吞吐量也比流行的Storm高2～5倍。
+来自* &lt;http://www.cnblogs.com/shishanyuan/p/4747735.html&gt;
+3.使用 3.1 基本使用(接收套接字) import org.apache.spark._ import org.apache.spark.streaming._ import org.apache.spark.streaming.StreamingContext._ // Create a local StreamingContext with two working thread and batch interval of 1 second.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-streaming/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1概述"><strong>1.概述</strong></h1>
+<p>Spark Streaming 是Spark核心API的一个扩展，可以实现高吞吐量的、具备容错机制的实时流数据的处理。支持从多种数据源获取数据，包括Kafk、Flume、Twitter、ZeroMQ、Kinesis 以及TCP sockets，从数据源获取数据之后，可以使用诸如map、reduce、join和window等高级函数进行复杂算法的处理。最后还可以将处理结果存储到文件系统，数据库和现场仪表盘。</p>
+<p><img src="F:%5C%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99%5C%E4%B8%AA%E4%BA%BA%E7%AC%94%E8%AE%B0%5CMDImages%5Cip_image001-1598543590569.jpeg" alt="img"></p>
+<blockquote>
+<p>来自* <em>&lt;</em><a href="http://www.cnblogs.com/shishanyuan/p/4747735.html"><em>http://www.cnblogs.com/shishanyuan/p/4747735.html</em></a><em>&gt;</em></p>
+</blockquote>
+<h1 id="2-streaming架构"><strong>2. Streaming架构</strong></h1>
+<h2 id="21-计算流程"><strong>2.1 计算流程：</strong></h2>
+<p>Spark Streaming是将流式计算分解成一系列短小的批处理作业。这里的批处理引擎是Spark Core，也就是把Spark Streaming的输入数据按照batch size（如1秒）分成一段一段的数据（Discretized Stream），每一段数据都转换成Spark中的RDD（Resilient Distributed Dataset），然后将Spark Streaming中对DStream的Transformation操作变为针对Spark中对RDD的Transformation操作，将RDD经过操作变成中间结果保存在内存中。整个流式计算根据业务的需求可以对中间的结果进行叠加或者存储到外部设备。下图显示了Spark Streaming的整个流程。</p>
+<p><img src="F:%5C%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99%5C%E4%B8%AA%E4%BA%BA%E7%AC%94%E8%AE%B0%5CMDImages%5Cip_image002-1598543590569.jpeg" alt="img"></p>
+<p>图Spark Streaming构架</p>
+<h2 id="22-容错性"><strong>2.2 容错性：</strong></h2>
+<p>对于流式计算来说，容错性至关重要。首先我们要明确一下Spark中RDD的容错机制。每一个RDD都是一个不可变的分布式可重算的数据集，其记录着确定性的操作继承关系（lineage），所以只要输入数据是可容错的，那么任意一个RDD的分区（Partition）出错或不可用，都是可以利用原始输入数据通过转换操作而重新算出的。</p>
+<p>对于Spark Streaming来说，其RDD的传承关系如下图所示，图中的每一个椭圆形表示一个RDD，椭圆形中的每个圆形代表一个RDD中的一个Partition，图中的每一列的多个RDD表示一个DStream（图中有三个DStream），而每一行最后一个RDD则表示每一个Batch Size所产生的中间结果RDD。我们可以看到图中的每一个RDD都是通过lineage相连接的，由于Spark Streaming输入数据可以来自于磁盘，例如HDFS（多份拷贝）或是来自于网络的数据流（Spark Streaming会将网络输入数据的每一个数据流拷贝两份到其他的机器）都能保证容错性，所以RDD中任意的Partition出错，都可以并行地在其他机器上将缺失的Partition计算出来。这个容错恢复方式比连续计算模型（如Storm）的效率更高。</p>
+<p><img src="F:%5C%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99%5C%E4%B8%AA%E4%BA%BA%E7%AC%94%E8%AE%B0%5CMDImages%5Cip_image003-1598543590569.jpeg" alt="img"></p>
+<p>Spark Streaming中RDD的lineage关系图</p>
+<h2 id="23-实时性"><strong>2.3 实时性：</strong></h2>
+<p>对于实时性的讨论，会牵涉到流式处理框架的应用场景。Spark Streaming将流式计算分解成多个Spark Job，对于每一段数据的处理都会经过Spark DAG图分解以及Spark的任务集的调度过程。对于目前版本的Spark Streaming而言，其最小的Batch Size的选取在0.5~2秒钟之间（Storm目前最小的延迟是100ms左右）</p>
+<h2 id="24-扩展性与吞吐量"><strong>2.4 扩展性与吞吐量：</strong></h2>
+<p>Spark目前在EC2上已能够线性扩展到100个节点（每个节点4Core），可以以数秒的延迟处理6GB/s的数据量（60M records/s），其吞吐量也比流行的Storm高2～5倍。</p>
+<blockquote>
+<p>来自* <em>&lt;</em><a href="http://www.cnblogs.com/shishanyuan/p/4747735.html"><em>http://www.cnblogs.com/shishanyuan/p/4747735.html</em></a><em>&gt;</em></p>
+</blockquote>
+<h1 id="3使用"><strong>3.使用</strong></h1>
+<h2 id="31-基本使用接收套接字"><strong>3.1 基本使用(接收套接字)</strong></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scala" data-lang="scala"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.spark._
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.spark.streaming._
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.spark.streaming.StreamingContext._
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Create a local StreamingContext with two working thread and batch interval of 1 second.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// The master requires 2 cores to prevent from a starvation scenario.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">val</span> conf <span style="color:#66d9ef">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">SparkConf</span><span style="color:#f92672">().</span>setMaster<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;local[2]&#34;</span><span style="color:#f92672">).</span>setAppName<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;NetworkWordCount&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">val</span> ssc <span style="color:#66d9ef">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">StreamingContext</span><span style="color:#f92672">(</span>conf<span style="color:#f92672">,</span> <span style="color:#a6e22e">Seconds</span><span style="color:#f92672">(</span><span style="color:#ae81ff">5</span><span style="color:#f92672">))</span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 后面时间的含义: 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//1. 每隔5秒切一次RDD(可能包含多个)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//2. 每隔5秒提交一个job,或者说每隔5秒执行一次
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//3. 这个job需5秒内算完,不然下次就要来了,造成处理积压
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Create a DStream that will connect to hostname:port, like localhost:9999
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">val</span> lines <span style="color:#66d9ef">=</span> ssc<span style="color:#f92672">.</span>socketTextStream<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;localhost&#34;</span><span style="color:#f92672">,</span> <span style="color:#ae81ff">9999</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Split each line into words
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">val</span> words <span style="color:#66d9ef">=</span> lines<span style="color:#f92672">.</span>flatMap<span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">.</span>split<span style="color:#f92672">(</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.spark.streaming.StreamingContext._
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Count each word in each batch
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">val</span> pairs <span style="color:#66d9ef">=</span> words<span style="color:#f92672">.</span>map<span style="color:#f92672">(</span>word <span style="color:#66d9ef">=&gt;</span> <span style="color:#f92672">(</span>word<span style="color:#f92672">,</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">val</span> wordCounts <span style="color:#66d9ef">=</span> pairs<span style="color:#f92672">.</span>reduceByKey<span style="color:#f92672">(</span><span style="color:#66d9ef">_</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">_</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Print the first ten elements of each RDD generated in this DStream to the console
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>wordCounts<span style="color:#f92672">.</span>print<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>ssc<span style="color:#f92672">.</span>start<span style="color:#f92672">()</span>              <span style="color:#75715e">// Start the computation
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>ssc<span style="color:#f92672">.</span>awaitTermination<span style="color:#f92672">()</span>  <span style="color:#75715e">// Wait for the computation to terminate
+</span></span></span></code></pre></div><blockquote>
+<p>使用:</p>
+<p>1.在集群中执行命令:  nc -lk 9999<br>
+2.然后输入内容,用空格隔开,
+3.然后在IDE控制台就能看见单词计数结果
+解释:
+<strong>1.创建StreamingContext对象</strong>
+同Spark初始化需要创建SparkContext对象一样，使用Spark Streaming就需要创建StreamingContext对象。创建StreamingContext对象所需的参数与SparkContext基本一致，包括指明Master，设定名称(如NetworkWordCount)。需要注意的是参数Seconds(1)，Spark Streaming需要指定处理数据的时间间隔，如上例所示的1s，那么Spark Streaming会以1s为时间窗口进行数据处理。此参数需要根据用户的需求和集群的处理能力进行适当的设置；
+<strong>2.创建InputDStream</strong>
+​    如同Storm的Spout，Spark Streaming需要指明数据源。如上例所示的socketTextStream，Spark Streaming以socket连接作为数据源读取数据。当然Spark Streaming支持多种不同的数据源，包括Kafka、 Flume、HDFS/S3、Kinesis和Twitter等数据源；
+<strong>3.操作Dstream</strong>
+​    对于从数据源得到的DStream，用户可以在其基础上进行各种操作，如上例所示的操作就是一个典型的WordCount执行流程：对于当前时间窗口内从数据源得到的数据首先进行分割，然后利用Map和ReduceByKey方法进行计算，当然最后还有使用print()方法输出结果；
+<strong>4.启动Spark Streaming</strong>
+​    之前所作的所有步骤只是创建了执行流程，程序没有真正连接上数据源，也没有对数据进行任何操作，只是设定好了所有的执行计划，当ssc.start()启动后程序才真正进行所有预期的操作。</p>
+<p><em>来自</em> <em>&lt;</em><a href="http://www.cnblogs.com/shishanyuan/p/4747735.html"><em>http://www.cnblogs.com/shishanyuan/p/4747735.html</em></a><em>&gt;</em><a href="http://spark.apache.org/docs/2.2.1/streaming-programming-guide.html"><em>http://spark.apache.org/docs/2.2.1/streaming-programming-guide.html</em></a></p>
+</blockquote>
+<h2 id="32-hdfs接收"><strong>3.2 HDFS接收</strong></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>streamingContext.fileStream<span style="color:#f92672">[</span>KeyClass, ValueClass, InputFormatClass<span style="color:#f92672">](</span>dataDirectory<span style="color:#f92672">)</span> 
+</span></span><span style="display:flex;"><span>eg.  streamingContext.fileStream<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hdfs://192.168.2.101:8020/data/&#34;</span><span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>Spark Streaming将监视目录dataDirectory并处理在该目录中创建的任何文件（不支持在嵌套目录中写入的文件）。注意</p>
+<ul>
+<li>文件必须具有相同的数据格式。</li>
+<li>必须dataDirectory通过原子地<em>将</em>文件<em>移动</em>或<em>重命名</em>到数据目录中来创建文件。</li>
+<li>移动后，不得更改文件。因此，如果文件被连续追加，则不会读取新数据。</li>
+</ul>
+<p>对于简单的文本文件，有一个更简单的方法streamingContext.textFileStream(dataDirectory)。文件流不需要运行接收器，因此不需要分配内核。</p>
+<ul>
+<li>**基于自定义接收器的流：**可以使用通过自定义接收器接收的数据流创建DStream。有关更多详细信息，请参见《<a href="http://spark.apache.org/docs/2.2.1/streaming-custom-receivers.html">定制接收器指南》</a>。</li>
+<li>**RDD队列作为流：**为了使用测试数据测试Spark Streaming应用程序，还可以使用，基于RDD队列创建DStream streamingContext.queueStream(queueOfRDDs)。推送到队列中的每个RDD将被视为DStream中的一批数据，并像流一样进行处理。</li>
+</ul>
+<h2 id="33-windows窗口函数"><strong>3.3 windows窗口函数</strong></h2>
+<p><strong>（实现一阶段内的累加 ，而不是程序启动时）</strong></p>
+<p><img src="F:%5C%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99%5C%E4%B8%AA%E4%BA%BA%E7%AC%94%E8%AE%B0%5CMDImages%5C1-1882315162.png" alt="img"></p>
+<p>​    <strong>假设每隔5s 1个batch,上图中窗口长度为15s，窗口滑动间隔10s。</strong></p>
+<p>​    <strong>窗口长度和滑动间隔必须是batchInterval的整数倍。如果不是整数倍会检测报错</strong>。</p>
+<p>​    <strong>优化后的window操作要保存状态所以要设置checkpoint路径，没有优化的window操作可以不设置checkpoint路径。</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scala" data-lang="scala"><span style="display:flex;"><span><span style="color:#66d9ef">val</span> sc <span style="color:#66d9ef">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">SparkConf</span><span style="color:#f92672">().</span>setMaster<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;local[3]&#34;</span><span style="color:#f92672">).</span>setAppName<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;WindowsFunc&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">val</span> ssc <span style="color:#66d9ef">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">StreamingContext</span><span style="color:#f92672">(</span>sc<span style="color:#f92672">,</span><span style="color:#a6e22e">Seconds</span><span style="color:#f92672">(</span><span style="color:#ae81ff">2</span><span style="color:#f92672">))</span> <span style="color:#75715e">// 每隔5秒接收一次(以前的也保留)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>ssc<span style="color:#f92672">.</span>checkpoint<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;./checkPoint&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">val</span> line <span style="color:#66d9ef">=</span> ssc<span style="color:#f92672">.</span>socketTextStream<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;192.168.2.101&#34;</span><span style="color:#f92672">,</span><span style="color:#ae81ff">9999</span><span style="color:#f92672">)</span><span style="color:#75715e">// Receiver机制会占用一个线程
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">val</span> wc <span style="color:#66d9ef">=</span> line<span style="color:#f92672">.</span>flatMap<span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">.</span>split<span style="color:#f92672">(</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">)).</span>map<span style="color:#f92672">((</span><span style="color:#66d9ef">_</span><span style="color:#f92672">,</span><span style="color:#ae81ff">1</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>wc<span style="color:#f92672">.</span>reduceByKeyAndWindow<span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">+</span><span style="color:#66d9ef">_</span><span style="color:#f92672">,</span><span style="color:#a6e22e">Seconds</span><span style="color:#f92672">(</span><span style="color:#ae81ff">8</span><span style="color:#f92672">),</span><span style="color:#a6e22e">Seconds</span><span style="color:#f92672">(</span><span style="color:#ae81ff">2</span><span style="color:#f92672">)).</span>print<span style="color:#f92672">()</span><span style="color:#75715e">// 每隔四秒算前八秒的数据
+</span></span></span></code></pre></div><p>reduceByKeyAndWindow 函数</p>
+<p>`reduceByKeyAndWindow(func, invFunc,windowLength, slideInterval, [numTasks])``</p>
+<p>　　前面的func作用和上一个reduceByKeyAndWindow相同，后面的invFunc是用于处理流出rdd的。 因为窗口滑动的原因,就会造成数据重复计算(如上图的time3),使用该函数可以减少计算(会计算出重复量.再计算出增量,再合并)</p>
+<p>　　在下面这个例子中，如果把3秒的时间窗口当成一个池塘，池塘每一秒都会有鱼游进或者游出，那么第一个函数表示每由进来一条鱼，就在该类鱼的数量上累加。而第二个函数是，每由出去一条鱼，就将该鱼的总数减去一。(简单这么理解,当数据出窗时,就会执行这个反向函数)</p>
+<p>`wc.reduceByKeyAndWindow(<em>+</em>,<em>-</em>,Seconds(8),Seconds(2)).print()// 每隔四秒算前八秒的数据(其结果与上方一直)``</p>
+<blockquote>
+<p>以后用到了再看吧</p>
+<p><a href="https://www.cnblogs.com/yjd_hycf_space/p/7053722.html">https://www.cnblogs.com/yjd_hycf_space/p/7053722.html</a></p>
+<p><a href="http://www.freesion.com/article/487428411/">http://www.freesion.com/article/487428411/</a></p>
+<p><a href="https://www.iteye.com/blog/humingminghz-2308138">https://www.iteye.com/blog/humingminghz-2308138</a></p>
+<p><a href="https://blog.csdn.net/legotime/article/details/51836040">https://blog.csdn.net/legotime/article/details/51836040</a></p>
+</blockquote>
+<h2 id="34-连接kafka"><strong>3.4 连接kafka</strong></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scala" data-lang="scala"><span style="display:flex;"><span><span style="color:#66d9ef">package</span> xkj.sparkStream
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> com.alibaba.fastjson.JSON
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> entity.MyPerson
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.kafka.common.serialization.StringDeserializer
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.log4j.Level
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.log4j.Logger._
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.spark.rdd.RDD
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.spark.sql.<span style="color:#f92672">{</span><span style="color:#a6e22e">SaveMode</span><span style="color:#f92672">,</span> <span style="color:#a6e22e">SparkSession</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.spark.streaming.kafka010.<span style="color:#f92672">{</span><span style="color:#a6e22e">ConsumerStrategies</span><span style="color:#f92672">,</span> <span style="color:#a6e22e">KafkaUtils</span><span style="color:#f92672">,</span> <span style="color:#a6e22e">LocationStrategies</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> org.apache.spark.streaming.<span style="color:#f92672">{</span><span style="color:#a6e22e">Seconds</span><span style="color:#f92672">,</span> <span style="color:#a6e22e">StreamingContext</span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">object</span> <span style="color:#a6e22e">KafkaTest</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">def</span> main<span style="color:#f92672">(</span>args<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Array</span><span style="color:#f92672">[</span><span style="color:#66d9ef">String</span><span style="color:#f92672">])</span><span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Unit</span> <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    getLogger<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;org.apache.hadoop&#34;</span><span style="color:#f92672">).</span>setLevel<span style="color:#f92672">(</span><span style="color:#a6e22e">Level</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ERROR</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    getLogger<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;org.apache.zookeeper&#34;</span><span style="color:#f92672">).</span>setLevel<span style="color:#f92672">(</span><span style="color:#a6e22e">Level</span><span style="color:#f92672">.</span><span style="color:#a6e22e">WARN</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    getLogger<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;org.apache.hive&#34;</span><span style="color:#f92672">).</span>setLevel<span style="color:#f92672">(</span><span style="color:#a6e22e">Level</span><span style="color:#f92672">.</span><span style="color:#a6e22e">WARN</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    getLogger<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;org.apache&#34;</span><span style="color:#f92672">).</span>setLevel<span style="color:#f92672">(</span><span style="color:#a6e22e">Level</span><span style="color:#f92672">.</span><span style="color:#a6e22e">WARN</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">val</span> spark <span style="color:#66d9ef">=</span> <span style="color:#a6e22e">SparkSession</span><span style="color:#f92672">.</span>builder<span style="color:#f92672">().</span>master<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;local[3]&#34;</span><span style="color:#f92672">).</span>appName<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;KafkaTest&#34;</span><span style="color:#f92672">).</span>getOrCreate<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">import</span> spark.implicits._
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">val</span> ssc <span style="color:#66d9ef">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">StreamingContext</span><span style="color:#f92672">(</span>spark<span style="color:#f92672">.</span>sparkContext<span style="color:#f92672">,</span> <span style="color:#a6e22e">Seconds</span><span style="color:#f92672">(</span><span style="color:#ae81ff">4</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>    ssc<span style="color:#f92672">.</span>checkpoint<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;./checkPoint&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">val</span> kafkaParams <span style="color:#66d9ef">=</span> <span style="color:#a6e22e">Map</span><span style="color:#f92672">[</span><span style="color:#66d9ef">String</span>, <span style="color:#66d9ef">Object</span><span style="color:#f92672">](</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;bootstrap.servers&#34;</span> <span style="color:#f92672">-&gt;</span> <span style="color:#e6db74">&#34;192.168.2.101:9092&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;key.deserializer&#34;</span> <span style="color:#f92672">-&gt;</span> classOf<span style="color:#f92672">[</span><span style="color:#66d9ef">StringDeserializer</span><span style="color:#f92672">],</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;value.deserializer&#34;</span> <span style="color:#f92672">-&gt;</span> classOf<span style="color:#f92672">[</span><span style="color:#66d9ef">StringDeserializer</span><span style="color:#f92672">],</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#e6db74">&#34;group.id&#34;</span> <span style="color:#f92672">-&gt;</span> <span style="color:#e6db74">&#34;xkj&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">val</span> topics<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Set</span><span style="color:#f92672">[</span><span style="color:#66d9ef">String</span><span style="color:#f92672">]</span> <span style="color:#66d9ef">=</span> <span style="color:#a6e22e">Set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mystream&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//    val stream = KafkaUtils.createDirectStream(ssc, LocationStrategies.PreferConsistent, ConsumerStrategies.Subscribe[String, String](topics, kafkaParams))
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//    stream.foreachRDD(rdd =&gt; {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      rdd.foreach(line =&gt; {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//        println(&#34;key=&#34; + line.key() + &#34;,  value=&#34; + line.value() + &#34;, offset=&#34; + line.offset())
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//      })
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//    })
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">val</span> streamPerson <span style="color:#66d9ef">=</span> <span style="color:#a6e22e">KafkaUtils</span><span style="color:#f92672">.</span>createDirectStream<span style="color:#f92672">(</span>ssc<span style="color:#f92672">,</span><span style="color:#a6e22e">LocationStrategies</span><span style="color:#f92672">.</span><span style="color:#a6e22e">PreferConsistent</span><span style="color:#f92672">,</span><span style="color:#a6e22e">ConsumerStrategies</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Subscribe</span><span style="color:#f92672">[</span><span style="color:#66d9ef">String</span>,<span style="color:#66d9ef">String</span><span style="color:#f92672">](</span>topics<span style="color:#f92672">,</span>kafkaParams<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>    streamPerson<span style="color:#f92672">.</span>foreachRDD<span style="color:#f92672">(</span>rdd<span style="color:#f92672">=&gt;{</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">val</span> v<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">RDD</span><span style="color:#f92672">[</span><span style="color:#66d9ef">String</span><span style="color:#f92672">]</span> <span style="color:#66d9ef">=</span> rdd<span style="color:#f92672">.</span>map<span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">.</span>value<span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">val</span> rddP<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">RDD</span><span style="color:#f92672">[</span><span style="color:#66d9ef">MyPerson</span><span style="color:#f92672">]</span> <span style="color:#66d9ef">=</span> v<span style="color:#f92672">.</span>map<span style="color:#f92672">(</span><span style="color:#a6e22e">JSON</span><span style="color:#f92672">.</span>parseObject<span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">,</span> classOf<span style="color:#f92672">[</span><span style="color:#66d9ef">MyPerson</span><span style="color:#f92672">]))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">val</span> df <span style="color:#66d9ef">=</span> rddP<span style="color:#f92672">.</span>toDF<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>      df<span style="color:#f92672">.</span>show<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>      df<span style="color:#f92672">.</span>write<span style="color:#f92672">.</span>mode<span style="color:#f92672">(</span><span style="color:#a6e22e">SaveMode</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Append</span><span style="color:#f92672">).</span>json<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hdfs://192.168.2.101:9000/user&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ssc<span style="color:#f92672">.</span>start<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>    ssc<span style="color:#f92672">.</span>awaitTermination<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>特别注意版本:</p>
+<p>pom.xml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;properties&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;spark.version&gt;</span>2.3.0<span style="color:#f92672">&lt;/spark.version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/properties&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependencies&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;groupId&gt;</span>org.apache.spark<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;artifactId&gt;</span>spark-streaming_2.11<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;version&gt;</span>${spark.version}<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;groupId&gt;</span>org.apache.spark<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;artifactId&gt;</span>spark-streaming-kafka-0-10_2.11<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;version&gt;</span>${spark.version}<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependencies&gt;</span>
+</span></span></code></pre></div><blockquote>
+<p><a href="https://blog.csdn.net/zhaolq1024/article/details/85685189">https://blog.csdn.net/zhaolq1024/article/details/85685189</a></p>
+<p><a href="https://blog.51cto.com/simplelife/2311296">https://blog.51cto.com/simplelife/2311296</a></p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-sql/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/storm%E4%B8%8Espark-streaming/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-streaming/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-streaming/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-streaming/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/spark\/spark-streaming\/';
+        
+          this.page.identifier = '\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/spark\/spark-streaming\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-sql/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/storm%E4%B8%8Espark-streaming/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-streaming/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-streaming/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark-streaming/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fspark%2Fspark-streaming%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fspark%2Fspark-streaming%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fspark%2Fspark-streaming%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

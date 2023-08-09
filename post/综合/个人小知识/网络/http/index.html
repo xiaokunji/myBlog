@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\nhttp 2.0 新特性 二进制分帧\n在应用层(HTTP2.0)和传输层(TCP、UDP)新增的二进制分帧层。在这层中,数据会被分割成更小的消息和帧,然后可以无序发,最后组装就行\nhead压缩\n多路复用\n做到同一个连接并发处理多个请求，而且并发请求的数量比HTTP1.1大了好几个数量级。\n因为请求都在同一个tcp连接上完成\n服务器推送\n服务器可以对一个客户端请求发送多个响应,之前是一个请求一个响应\n实现原理大致: 客户端发送一次请求,服务端的请求并不会关闭,发完第一次,接着发第二次\n目前NGINX的V1.13.9和tomcat已经支持,后端也能实现\n关键字是link\n服务器推送有一个很麻烦的问题。所要推送的资源文件，如果浏览器已经有缓存，推送就是浪费带宽。即使推送的文件版本更新，浏览器也会优先使用本地缓存。\n一种解决办法是，只对第一次访问的用户开启服务器推送。\n来源: 服务器推送实现\nhttp2.0新特性\nhttp各版本之间的区别\nHTTP协议的Keep-Alive 可以看到里面的请求头部和响应头部都有一个key-valueConnection: Keep-Alive，这个键值对的作用是让HTTP保持连接状态(就是俗称的长链接)，因为HTTP 协议采用“请求-应答”模式，当使用普通模式，即非 Keep-Alive 模式时，每个请求\/应答客户和服务器都要新建一个连接，完成之后立即断开连接（HTTP 协议为无连接的协议）；当使用 Keep-Alive 模式时，Keep-Alive 功能使客户端到服务器端的连接持续有效。\n在HTTP 1.1版本后，默认都开启Keep-Alive模式，只有加入加入 Connection: close才关闭连接，当然也可以设置Keep-Alive模式的属性，例如 Keep-Alive: timeout=5, max=100，表示这个TCP通道可以保持5秒，max=100，表示这个长连接最多接收100次请求就断开。\nKeep-Alive模式下如何知道某一次数据传输结束\n如果不是Keep-Alive模式，HTTP协议中客户端发送一个请求，服务器响应其请求，返回数据。服务器通常在发送回所请求的数据之后就关闭连接。这样客户端读数据时会返回EOF（-1），就知道数据已经接收完全了。 但是如果开启了 Keep-Alive模式，那么客户端如何知道某一次的响应结束了呢？\n以下有两个方法\n如果是静态的响应数据，可以通过判断响应头部中的Content-Length 字段，判断数据达到这个大小就知道数据传输结束了。 但是返回的数据是动态变化的，服务器不能第一时间知道数据长度，这样就没有 Content-Length 关键字了。这种情况下，服务器是分块传输数据的，Transfer-Encoding：chunk，这时候就要根据传输的数据块chunk来判断，数据传输结束的时候，最后的一个数据块chunk的长度是0。 使用HTTP建立长连接\n当需要建立 HTTP 长连接时，HTTP 请求头将包含如下内容：\nConnection: Keep-Alive\n如果服务端同意建立长连接，HTTP 响应头也将包含如下内容：\nConnection: Keep-Alive\n当需要关闭连接时，HTTP 头中会包含如下内容：\nConnection: Close\n慢速攻击：Http协议中规定，HttpRequest以\\r\\n\\r\\n结尾来表示客户端发送结束。攻击者打开一个Http 1.1的连接，将Connection设置为Keep-Alive， 保持和服务器的TCP长连接。然后始终不发送\\r\\n\\r\\n， 每隔几分钟写入一些无意义的数据流， 拖死机器。\ncc攻击",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/%E7%BD%91%E7%BB%9C\/http\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+http 2.0 新特性 二进制分帧
+在应用层(HTTP2.0)和传输层(TCP、UDP)新增的二进制分帧层。在这层中,数据会被分割成更小的消息和帧,然后可以无序发,最后组装就行
+head压缩
+多路复用
+做到同一个连接并发处理多个请求，而且并发请求的数量比HTTP1.1大了好几个数量级。
+因为请求都在同一个tcp连接上完成
+服务器推送
+服务器可以对一个客户端请求发送多个响应,之前是一个请求一个响应
+实现原理大致: 客户端发送一次请求,服务端的请求并不会关闭,发完第一次,接着发第二次
+目前NGINX的V1.13.9和tomcat已经支持,后端也能实现
+关键字是link
+服务器推送有一个很麻烦的问题。所要推送的资源文件，如果浏览器已经有缓存，推送就是浪费带宽。即使推送的文件版本更新，浏览器也会优先使用本地缓存。
+一种解决办法是，只对第一次访问的用户开启服务器推送。
+来源: 服务器推送实现
+http2.0新特性
+http各版本之间的区别
+HTTP协议的Keep-Alive 可以看到里面的请求头部和响应头部都有一个key-valueConnection: Keep-Alive，这个键值对的作用是让HTTP保持连接状态(就是俗称的长链接)，因为HTTP 协议采用“请求-应答”模式，当使用普通模式，即非 Keep-Alive 模式时，每个请求/应答客户和服务器都要新建一个连接，完成之后立即断开连接（HTTP 协议为无连接的协议）；当使用 Keep-Alive 模式时，Keep-Alive 功能使客户端到服务器端的连接持续有效。
+在HTTP 1.1版本后，默认都开启Keep-Alive模式，只有加入加入 Connection: close才关闭连接，当然也可以设置Keep-Alive模式的属性，例如 Keep-Alive: timeout=5, max=100，表示这个TCP通道可以保持5秒，max=100，表示这个长连接最多接收100次请求就断开。
+Keep-Alive模式下如何知道某一次数据传输结束
+如果不是Keep-Alive模式，HTTP协议中客户端发送一个请求，服务器响应其请求，返回数据。服务器通常在发送回所请求的数据之后就关闭连接。这样客户端读数据时会返回EOF（-1），就知道数据已经接收完全了。 但是如果开启了 Keep-Alive模式，那么客户端如何知道某一次的响应结束了呢？
+以下有两个方法
+如果是静态的响应数据，可以通过判断响应头部中的Content-Length 字段，判断数据达到这个大小就知道数据传输结束了。 但是返回的数据是动态变化的，服务器不能第一时间知道数据长度，这样就没有 Content-Length 关键字了。这种情况下，服务器是分块传输数据的，Transfer-Encoding：chunk，这时候就要根据传输的数据块chunk来判断，数据传输结束的时候，最后的一个数据块chunk的长度是0。 使用HTTP建立长连接
+当需要建立 HTTP 长连接时，HTTP 请求头将包含如下内容：
+Connection: Keep-Alive
+如果服务端同意建立长连接，HTTP 响应头也将包含如下内容：
+Connection: Keep-Alive
+当需要关闭连接时，HTTP 头中会包含如下内容：
+Connection: Close
+慢速攻击：Http协议中规定，HttpRequest以\r\n\r\n结尾来表示客户端发送结束。攻击者打开一个Http 1.1的连接，将Connection设置为Keep-Alive， 保持和服务器的TCP长连接。然后始终不发送\r\n\r\n， 每隔几分钟写入一些无意义的数据流， 拖死机器。
+cc攻击">
+
+
+<meta property="og:description" content="[toc]
+http 2.0 新特性 二进制分帧
+在应用层(HTTP2.0)和传输层(TCP、UDP)新增的二进制分帧层。在这层中,数据会被分割成更小的消息和帧,然后可以无序发,最后组装就行
+head压缩
+多路复用
+做到同一个连接并发处理多个请求，而且并发请求的数量比HTTP1.1大了好几个数量级。
+因为请求都在同一个tcp连接上完成
+服务器推送
+服务器可以对一个客户端请求发送多个响应,之前是一个请求一个响应
+实现原理大致: 客户端发送一次请求,服务端的请求并不会关闭,发完第一次,接着发第二次
+目前NGINX的V1.13.9和tomcat已经支持,后端也能实现
+关键字是link
+服务器推送有一个很麻烦的问题。所要推送的资源文件，如果浏览器已经有缓存，推送就是浪费带宽。即使推送的文件版本更新，浏览器也会优先使用本地缓存。
+一种解决办法是，只对第一次访问的用户开启服务器推送。
+来源: 服务器推送实现
+http2.0新特性
+http各版本之间的区别
+HTTP协议的Keep-Alive 可以看到里面的请求头部和响应头部都有一个key-valueConnection: Keep-Alive，这个键值对的作用是让HTTP保持连接状态(就是俗称的长链接)，因为HTTP 协议采用“请求-应答”模式，当使用普通模式，即非 Keep-Alive 模式时，每个请求/应答客户和服务器都要新建一个连接，完成之后立即断开连接（HTTP 协议为无连接的协议）；当使用 Keep-Alive 模式时，Keep-Alive 功能使客户端到服务器端的连接持续有效。
+在HTTP 1.1版本后，默认都开启Keep-Alive模式，只有加入加入 Connection: close才关闭连接，当然也可以设置Keep-Alive模式的属性，例如 Keep-Alive: timeout=5, max=100，表示这个TCP通道可以保持5秒，max=100，表示这个长连接最多接收100次请求就断开。
+Keep-Alive模式下如何知道某一次数据传输结束
+如果不是Keep-Alive模式，HTTP协议中客户端发送一个请求，服务器响应其请求，返回数据。服务器通常在发送回所请求的数据之后就关闭连接。这样客户端读数据时会返回EOF（-1），就知道数据已经接收完全了。 但是如果开启了 Keep-Alive模式，那么客户端如何知道某一次的响应结束了呢？
+以下有两个方法
+如果是静态的响应数据，可以通过判断响应头部中的Content-Length 字段，判断数据达到这个大小就知道数据传输结束了。 但是返回的数据是动态变化的，服务器不能第一时间知道数据长度，这样就没有 Content-Length 关键字了。这种情况下，服务器是分块传输数据的，Transfer-Encoding：chunk，这时候就要根据传输的数据块chunk来判断，数据传输结束的时候，最后的一个数据块chunk的长度是0。 使用HTTP建立长连接
+当需要建立 HTTP 长连接时，HTTP 请求头将包含如下内容：
+Connection: Keep-Alive
+如果服务端同意建立长连接，HTTP 响应头也将包含如下内容：
+Connection: Keep-Alive
+当需要关闭连接时，HTTP 头中会包含如下内容：
+Connection: Close
+慢速攻击：Http协议中规定，HttpRequest以\r\n\r\n结尾来表示客户端发送结束。攻击者打开一个Http 1.1的连接，将Connection设置为Keep-Alive， 保持和服务器的TCP长连接。然后始终不发送\r\n\r\n， 每隔几分钟写入一些无意义的数据流， 拖死机器。
+cc攻击">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/http/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/http/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+http 2.0 新特性 二进制分帧
+在应用层(HTTP2.0)和传输层(TCP、UDP)新增的二进制分帧层。在这层中,数据会被分割成更小的消息和帧,然后可以无序发,最后组装就行
+head压缩
+多路复用
+做到同一个连接并发处理多个请求，而且并发请求的数量比HTTP1.1大了好几个数量级。
+因为请求都在同一个tcp连接上完成
+服务器推送
+服务器可以对一个客户端请求发送多个响应,之前是一个请求一个响应
+实现原理大致: 客户端发送一次请求,服务端的请求并不会关闭,发完第一次,接着发第二次
+目前NGINX的V1.13.9和tomcat已经支持,后端也能实现
+关键字是link
+服务器推送有一个很麻烦的问题。所要推送的资源文件，如果浏览器已经有缓存，推送就是浪费带宽。即使推送的文件版本更新，浏览器也会优先使用本地缓存。
+一种解决办法是，只对第一次访问的用户开启服务器推送。
+来源: 服务器推送实现
+http2.0新特性
+http各版本之间的区别
+HTTP协议的Keep-Alive 可以看到里面的请求头部和响应头部都有一个key-valueConnection: Keep-Alive，这个键值对的作用是让HTTP保持连接状态(就是俗称的长链接)，因为HTTP 协议采用“请求-应答”模式，当使用普通模式，即非 Keep-Alive 模式时，每个请求/应答客户和服务器都要新建一个连接，完成之后立即断开连接（HTTP 协议为无连接的协议）；当使用 Keep-Alive 模式时，Keep-Alive 功能使客户端到服务器端的连接持续有效。
+在HTTP 1.1版本后，默认都开启Keep-Alive模式，只有加入加入 Connection: close才关闭连接，当然也可以设置Keep-Alive模式的属性，例如 Keep-Alive: timeout=5, max=100，表示这个TCP通道可以保持5秒，max=100，表示这个长连接最多接收100次请求就断开。
+Keep-Alive模式下如何知道某一次数据传输结束
+如果不是Keep-Alive模式，HTTP协议中客户端发送一个请求，服务器响应其请求，返回数据。服务器通常在发送回所请求的数据之后就关闭连接。这样客户端读数据时会返回EOF（-1），就知道数据已经接收完全了。 但是如果开启了 Keep-Alive模式，那么客户端如何知道某一次的响应结束了呢？
+以下有两个方法
+如果是静态的响应数据，可以通过判断响应头部中的Content-Length 字段，判断数据达到这个大小就知道数据传输结束了。 但是返回的数据是动态变化的，服务器不能第一时间知道数据长度，这样就没有 Content-Length 关键字了。这种情况下，服务器是分块传输数据的，Transfer-Encoding：chunk，这时候就要根据传输的数据块chunk来判断，数据传输结束的时候，最后的一个数据块chunk的长度是0。 使用HTTP建立长连接
+当需要建立 HTTP 长连接时，HTTP 请求头将包含如下内容：
+Connection: Keep-Alive
+如果服务端同意建立长连接，HTTP 响应头也将包含如下内容：
+Connection: Keep-Alive
+当需要关闭连接时，HTTP 头中会包含如下内容：
+Connection: Close
+慢速攻击：Http协议中规定，HttpRequest以\r\n\r\n结尾来表示客户端发送结束。攻击者打开一个Http 1.1的连接，将Connection设置为Keep-Alive， 保持和服务器的TCP长连接。然后始终不发送\r\n\r\n， 每隔几分钟写入一些无意义的数据流， 拖死机器。
+cc攻击">
+<meta name="twitter:description" content="[toc]
+http 2.0 新特性 二进制分帧
+在应用层(HTTP2.0)和传输层(TCP、UDP)新增的二进制分帧层。在这层中,数据会被分割成更小的消息和帧,然后可以无序发,最后组装就行
+head压缩
+多路复用
+做到同一个连接并发处理多个请求，而且并发请求的数量比HTTP1.1大了好几个数量级。
+因为请求都在同一个tcp连接上完成
+服务器推送
+服务器可以对一个客户端请求发送多个响应,之前是一个请求一个响应
+实现原理大致: 客户端发送一次请求,服务端的请求并不会关闭,发完第一次,接着发第二次
+目前NGINX的V1.13.9和tomcat已经支持,后端也能实现
+关键字是link
+服务器推送有一个很麻烦的问题。所要推送的资源文件，如果浏览器已经有缓存，推送就是浪费带宽。即使推送的文件版本更新，浏览器也会优先使用本地缓存。
+一种解决办法是，只对第一次访问的用户开启服务器推送。
+来源: 服务器推送实现
+http2.0新特性
+http各版本之间的区别
+HTTP协议的Keep-Alive 可以看到里面的请求头部和响应头部都有一个key-valueConnection: Keep-Alive，这个键值对的作用是让HTTP保持连接状态(就是俗称的长链接)，因为HTTP 协议采用“请求-应答”模式，当使用普通模式，即非 Keep-Alive 模式时，每个请求/应答客户和服务器都要新建一个连接，完成之后立即断开连接（HTTP 协议为无连接的协议）；当使用 Keep-Alive 模式时，Keep-Alive 功能使客户端到服务器端的连接持续有效。
+在HTTP 1.1版本后，默认都开启Keep-Alive模式，只有加入加入 Connection: close才关闭连接，当然也可以设置Keep-Alive模式的属性，例如 Keep-Alive: timeout=5, max=100，表示这个TCP通道可以保持5秒，max=100，表示这个长连接最多接收100次请求就断开。
+Keep-Alive模式下如何知道某一次数据传输结束
+如果不是Keep-Alive模式，HTTP协议中客户端发送一个请求，服务器响应其请求，返回数据。服务器通常在发送回所请求的数据之后就关闭连接。这样客户端读数据时会返回EOF（-1），就知道数据已经接收完全了。 但是如果开启了 Keep-Alive模式，那么客户端如何知道某一次的响应结束了呢？
+以下有两个方法
+如果是静态的响应数据，可以通过判断响应头部中的Content-Length 字段，判断数据达到这个大小就知道数据传输结束了。 但是返回的数据是动态变化的，服务器不能第一时间知道数据长度，这样就没有 Content-Length 关键字了。这种情况下，服务器是分块传输数据的，Transfer-Encoding：chunk，这时候就要根据传输的数据块chunk来判断，数据传输结束的时候，最后的一个数据块chunk的长度是0。 使用HTTP建立长连接
+当需要建立 HTTP 长连接时，HTTP 请求头将包含如下内容：
+Connection: Keep-Alive
+如果服务端同意建立长连接，HTTP 响应头也将包含如下内容：
+Connection: Keep-Alive
+当需要关闭连接时，HTTP 头中会包含如下内容：
+Connection: Close
+慢速攻击：Http协议中规定，HttpRequest以\r\n\r\n结尾来表示客户端发送结束。攻击者打开一个Http 1.1的连接，将Connection设置为Keep-Alive， 保持和服务器的TCP长连接。然后始终不发送\r\n\r\n， 每隔几分钟写入一些无意义的数据流， 拖死机器。
+cc攻击">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/http/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="http-20-新特性">http 2.0 新特性</h1>
+<ol>
+<li>
+<p>二进制分帧</p>
+<blockquote>
+<p>在应用层(HTTP2.0)和传输层(TCP、UDP)新增的二进制分帧层。在这层中,数据会被分割成更小的消息和帧,然后可以无序发,最后组装就行</p>
+</blockquote>
+</li>
+<li>
+<p>head压缩</p>
+</li>
+<li>
+<p>多路复用</p>
+<blockquote>
+<p>做到同一个连接并发处理多个请求，而且并发请求的数量比HTTP1.1大了好几个数量级。</p>
+<p>因为请求都在同一个tcp连接上完成</p>
+</blockquote>
+</li>
+<li>
+<p>服务器推送</p>
+<blockquote>
+<p>服务器可以对一个客户端请求发送多个响应,之前是一个请求一个响应</p>
+<p><strong>实现原理大致</strong>: 客户端发送一次请求,服务端的请求并不会关闭,发完第一次,接着发第二次</p>
+<p><!-- raw HTML omitted -->目前NGINX的V1.13.9和tomcat已经支持,后端也能实现<!-- raw HTML omitted --></p>
+<p>关键字是<code>link</code></p>
+<p>服务器推送有一个很麻烦的问题。所要推送的资源文件，如果浏览器已经有缓存，推送就是浪费带宽。即使推送的文件版本更新，浏览器也会优先使用本地缓存。</p>
+<p>一种解决办法是，只对第一次访问的用户开启服务器推送。</p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p>来源: <a href="https://www.ruanyifeng.com/blog/2018/03/http2_server_push.html">服务器推送实现</a></p>
+<p><a href="https://www.jianshu.com/p/c90e458a26b2">http2.0新特性</a></p>
+<p><a href="https://blog.csdn.net/weixin_48502062/article/details/108330192">http各版本之间的区别</a></p>
+</blockquote>
+<h1 id="http协议的keep-alive">HTTP协议的Keep-Alive</h1>
+<p>可以看到里面的请求头部和响应头部都有一个key-value<code>Connection: Keep-Alive</code>，<strong>这个键值对的作用是让HTTP保持连接状态(就是俗称的长链接)</strong>，因为HTTP 协议采用“请求-应答”模式，当使用普通模式，即非 Keep-Alive 模式时，每个请求/应答客户和服务器都要新建一个连接，完成之后立即断开连接（HTTP 协议为无连接的协议）；当使用 Keep-Alive 模式时，Keep-Alive 功能使客户端到服务器端的连接持续有效。</p>
+<p>在HTTP 1.1版本后，默认都开启Keep-Alive模式，只有加入加入 <code>Connection: close</code>才关闭连接，当然也可以设置Keep-Alive模式的属性，例如 <code>Keep-Alive: timeout=5, max=100</code>，表示这个TCP通道可以保持5秒，max=100，表示这个长连接最多接收100次请求就断开。</p>
+<p><strong>Keep-Alive模式下如何知道某一次数据传输结束</strong></p>
+<p>如果不是Keep-Alive模式，HTTP协议中客户端发送一个请求，服务器响应其请求，返回数据。服务器通常在发送回所请求的数据之后就关闭连接。这样客户端读数据时会返回EOF（-1），就知道数据已经接收完全了。
+但是如果开启了 Keep-Alive模式，那么客户端如何知道某一次的响应结束了呢？</p>
+<p><strong>以下有两个方法</strong></p>
+<ul>
+<li>如果是静态的响应数据，可以通过判断响应头部中的Content-Length 字段，判断数据达到这个大小就知道数据传输结束了。</li>
+<li>但是返回的数据是动态变化的，服务器不能第一时间知道数据长度，这样就没有 Content-Length 关键字了。这种情况下，服务器是分块传输数据的，<code>Transfer-Encoding：chunk</code>，这时候就要根据传输的数据块chunk来判断，数据传输结束的时候，最后的一个数据块chunk的长度是0。</li>
+</ul>
+<p><strong>使用HTTP建立长连接</strong></p>
+<p>当需要建立 HTTP 长连接时，HTTP 请求头将包含如下内容：</p>
+<p><code>Connection: Keep-Alive</code></p>
+<p>如果服务端同意建立长连接，HTTP 响应头也将包含如下内容：</p>
+<p><code>Connection: Keep-Alive</code></p>
+<p>当需要关闭连接时，HTTP 头中会包含如下内容：</p>
+<p><code>Connection: Close</code></p>
+<blockquote>
+<p><strong>慢速攻击</strong>：Http协议中规定，HttpRequest以\r\n\r\n结尾来表示客户端发送结束。攻击者打开一个Http 1.1的连接，将Connection设置为Keep-Alive， 保持和服务器的TCP长连接。然后始终不发送\r\n\r\n， 每隔几分钟写入一些无意义的数据流， 拖死机器。</p>
+<p><a href="https://www.cnblogs.com/sochishun/p/7081739.html#:~:text=CC%E6%94%BB%E5%87%BB%EF%BC%88Challenge,Collapsar%EF%BC%89%E6%98%AFDDOS%EF%BC%88%E5%88%86%E5%B8%83%E5%BC%8F%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%EF%BC%89%E7%9A%84%E4%B8%80%E7%A7%8D%EF%BC%8C%E5%89%8D%E8%BA%AB%E5%90%8D%E4%B8%BAFatboy%E6%94%BB%E5%87%BB%EF%BC%8C%E4%B9%9F%E6%98%AF%E4%B8%80%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84%E7%BD%91%E7%AB%99%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95%E3%80%82">cc攻击</a></p>
+</blockquote>
+<p><a href="https://www.jianshu.com/p/49551bda6619">来源地址</a></p>
+<h1 id="强缓存和协商缓存">强缓存和协商缓存</h1>
+<blockquote>
+<p>这里的服务器值是 资源服务器, 例如 NG</p>
+</blockquote>
+<p>当我们向服务器请求资源后，会根据情况将资源 copy 一份副本存在本地，以方便下次读取。它与本地存储 localStorage 、cookie 等不同，本地存储更多是数据记录，存储量较小，为了本地操作方便。而缓存更多是为了减少资源请求，多用于存储文件，存储量相对较大。</p>
+<p>就浏览器而言，一般缓存我们分为四类，按浏览器读取优先级顺序依次为：<code>Memory Cache</code>、<code>Service Worker Cache</code>、<code>HTTP Cache</code>、<code>Push Cache</code>。而本篇文章主要讲的就是 <code>HTTP Cache </code></p>
+<h2 id="http-cache">HTTP Cache</h2>
+<p>HTTP Cache 是我们开发中接触最多的缓存，它分为强缓存和协商缓存。<strong>优先级:  强缓存 &gt; 协商缓存</strong></p>
+<ul>
+<li>
+<p>强缓存：直接从本地副本比对读取，不去请求服务器，返回的状态码是 200。</p>
+</li>
+<li>
+<p>协商缓存：<strong>会去服务器比对</strong>，若没改变才直接读取本地缓存，返回的状态码是 304。</p>
+<blockquote>
+<p>因为需要问 服务器 看资源是否过期,  所以叫协商缓存</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="强缓存">强缓存</h3>
+<p>强缓存主要包括 <code>expires</code> 和 <code>cache-control</code>。</p>
+<h4 id="expires">expires</h4>
+<p>expires 是 HTTP1.0 中定义的缓存字段。当我们请求一个资源，服务器返回时，可以在 Response Headers 中增加 expires 字段表示资源的过期时间。它是一个时间戳（准确点应该叫格林尼治时间），当客户端再次请求该资源的时候，会把客户端时间与该时间戳进行对比，如果大于该时间戳则已过期，否则直接使用该缓存资源。</p>
+<p>例如: <code>expires: Thu, 03 Jan 2019 11:43:04 GMT</code></p>
+<p>但是，发送请求时是使用的客户端时间去对比。所以存在以下两个问题</p>
+<ol>
+<li>客户端和服务端时间可能快慢不一致</li>
+<li>客户端的时间是可以自行修改的（比如浏览器是跟随系统时间的，修改系统时间会影响到），所以不一定满足预期。</li>
+</ol>
+<h4 id="cache-control">cache-control</h4>
+<p>正由于上面说的可能存在的问题，HTTP1.1 新增了 <code>cache-control</code> 字段来解决该问题，所以当 cache-control 和 expires 都存在时，<strong>cache-control 优先级更高</strong>。该字段是一个时间长度，单位秒，<strong>表示该资源过了多少秒后失效</strong>。当客户端请求资源的时候，发现该资源还在有效时间内则使用该缓存，它<strong>不依赖客户端时间</strong>。</p>
+<p>cache-control 主要有 max-age 和 s-maxage、public 和 private、no-cache 和 no-store 等值。例如: <code>cache-control: public, max-age=3600, s-maxage=3600</code></p>
+<table>
+<thead>
+<tr>
+<th>属性值</th>
+<th>值</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>max-age</td>
+<td>3600</td>
+<td>例如值为3600，表示（当前时间+3600秒）内不与服务器请求新的数据资源,</td>
+</tr>
+<tr>
+<td>s-maxage</td>
+<td></td>
+<td>和max-age一样且优先级更高，在代理服务器中仍生效</td>
+</tr>
+<tr>
+<td>private</td>
+<td></td>
+<td>内容只缓存到私有缓存中(仅客户端可以缓存，代理服务器不可缓存)</td>
+</tr>
+<tr>
+<td>public</td>
+<td></td>
+<td>所有内容都将被缓存(客户端和代理服务器都可缓存)</td>
+</tr>
+<tr>
+<td>no-store</td>
+<td></td>
+<td>不缓存任何数据, 直接向服务器请求最新</td>
+</tr>
+<tr>
+<td>no-cache</td>
+<td></td>
+<td>表示的是不直接询问浏览器缓存情况，而是去向服务器验证当前资源是否更新（即走协商缓存）</td>
+</tr>
+</tbody>
+</table>
+<h4 id="pragma">pragma</h4>
+<p>既然讲到了 no-cache 和 no-store，就顺便把 pragma 也讲了。他的值有 no-cache 和 no-store，表示意思同 cache-control，优先级高于 cache-control 和 expires，即三者同时出现时，先看 <code>pragma -&gt; cache-control -&gt; expires</code>。</p>
+<p><code>pragma: no-cache</code></p>
+<blockquote>
+<p>那时候<code>Cache-control</code>（http1.1）还没出</p>
+</blockquote>
+<h3 id="协商缓存">协商缓存</h3>
+<p>上面的 expires 和 cache-control 都会访问本地缓存直接验证看是否过期，如果没过期直接使用本地缓存，并返回 200。但如果设置了 no-cache 和 no-store 则本地缓存会被忽略，会去请求服务器验证资源是否更新，如果没更新才继续使用本地缓存，此时返回的是 304，这就是协商缓存。协商缓存主要包括<code>last-modified</code>和 <code>etag</code>。</p>
+<blockquote>
+<p>客户端携带上一次的 <code>last-modified</code>和 <code>etag</code> 值到服务端, 服务端进行比较这个两个值是否发生变化, 如果不携带,则默认为要获取新值</p>
+<p><code>if-modified-since</code> 存上次访问返回的<code> last-modified</code> 值</p>
+<p><code>if-none-match</code> 存上次访问返回的 <code>etag</code>  值</p>
+</blockquote>
+<blockquote>
+<p>NGINX 默认是开启<code>Etag</code>和 <code>last-modified</code> 的, 所以es中自定义分词列表的热更新能力就是通过这两个字段实现的</p>
+</blockquote>
+<h4 id="last-modified">last-modified</h4>
+<p>last-modified 记录资源最后修改的时间。启用后，请求资源之后的响应头会增加一个 last-modified 字段，如下：</p>
+<p>例如: <code>last-modified: Thu, 20 Dec 2018 11:36:00 GMT</code></p>
+<p>当再次请求该资源时，请求头中会带有<code> if-modified-since</code>字段，值是之前返回的<code> last-modified</code> 的值，如：<code>if-modified-since:Thu, 20 Dec 2018 11:36:00 GMT</code>。服务端会对比该字段和资源的最后修改时间，若一致则证明没有被修改，告知浏览器可直接使用缓存并返回 304；若不一致则直接返回修改后的资源，并修改 <code>last-modified</code> 为新的值。</p>
+<p>但 <code>last-modified</code> 有以下两个问题：</p>
+<ol>
+<li>只要编辑了，不管内容是否真的有改变，都会以这最后修改的时间作为判断依据，当成新资源返回，从而导致了没必要的请求响应</li>
+<li>时间的精确度只能到秒，如果在一秒内的修改是检测不到更新的，仍会告知浏览器使用旧的缓存。</li>
+</ol>
+<h4 id="etag-entitytags">ETag (EntityTags)</h4>
+<p>为了解决<code>last-modified</code> 上述问题，有了 <code>etag</code>。 <code>etag </code>会基于资源的内容编码生成一串唯一的标识字符串，只要内容不同，就会生成不同的 <code>etag</code>。启用 etag 之后，请求资源后的响应返回会增加一个 etag 字段，如下： <code>etag: &quot;FllOiaIvA1f-ftHGziLgMIMVkVw_&quot;</code></p>
+<p>当再次请求该资源时，请求头会带有 <code>if-none-match</code> 字段，值是之前返回的 etag 值，如：<code>if-none-match:&quot;FllOiaIvA1f-ftHGziLgMIMVkVw_&quot;</code>。服务端会根据该资源当前的内容生成对应的标识字符串和该字段进行对比，若一致则代表未改变可直接使用本地缓存并返回 304；若不一致则返回新的资源（状态码200）并修改返回的 etag 字段为新的值。</p>
+<p>可以看出 etag 比 last-modified 更加精准地感知了变化，所以 <strong>etag 优先级也更高</strong>。不过从上面也可以看出 etag 存在的问题，就是<!-- raw HTML omitted -->每次生成标识字符串会增加服务器的开销<!-- raw HTML omitted -->。</p>
+<p><strong>弱etag</strong></p>
+<p><code>ETag: W/&quot;630c1e6c-3485&quot;</code>  在商城中看到的是带了<code>W/</code>的, 这表示弱校验 , 全称是 <code>weak</code>, 强校验是字节级别的, 弱校验是语义级别的</p>
+<p>在Apache服务器中 Apache默认通过FileEtag中<code>FileEtag | Node Mtime Size</code>的配置自动生成ETag (节点/修改时间/文件大小 三个因素), 如果文件在一秒内频繁修改,并不改内容,  且etag的生成规则改为 <code>Mtime</code>, 则etag在这一秒内的都是一样的, 此种情况下可以通过  弱etag 来减少刷新缓存 (毕竟强etag是全局唯一的)</p>
+<blockquote>
+<p>etag 的生成规则 http并没有定义 , 因此具体的etag生成逻辑由服务端实现</p>
+</blockquote>
+<p><a href="https://juejin.cn/post/7078272638203723789">一文讲透HTTP缓存之ETag - 掘金 (juejin.cn)</a></p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Conditional_requests#validators">HTTP 条件请求 - HTTP |MDN (mozilla.org)</a></p>
+<h2 id="案例分析">案例分析</h2>
+<p>假设当前有这么一个 index 页面，返回的响应信息如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>cache-control: max-age=72000
+</span></span><span style="display:flex;"><span>expires: Tue, 20 Nov 2018 20:41:14 GMT
+</span></span><span style="display:flex;"><span>last-modified: Tue, 20 Nov 2018 00:41:14 GMT
+</span></span></code></pre></div><p><strong>标签进入、输入url回车进入</strong></p>
+<p>这种情况下会根据实际设计的缓存策略去判断。</p>
+<ol>
+<li>由于该例没有设置 no-cache 和 no-store，所以默认先走强缓存路线。根据 <code>cache-control</code> （<code>expires</code> 优先级低）判断缓存是否过期，若没有过期则此时返回 200(from cache)。</li>
+<li>若本地缓存已经过期再走协商缓存路线，根据之前的 last-modified 值去与服务器比对，若这个时间之后没有改过则去读取本地缓存，返回 304(not modified)。</li>
+<li>否则返回新的资源，状态码 200(ok)，并更新返回响应的 last-modified 值。</li>
+</ol>
+<p><strong>按刷新按钮、F5 刷新、网页右键“重新加载”</strong></p>
+<p>不使用强缓存,直接使用 协商缓存</p>
+<p><strong>ctrl + F5 强制刷新</strong></p>
+<p>强缓存和协商缓存都不走, 直接获取最新资源</p>
+<p><a href="https://www.cnblogs.com/sexintercourse/p/16602415.html">HTTP中的强缓存与协商缓存 - 漫思 - 博客园 (cnblogs.com)</a></p>
+<p><a href="https://www.jianshu.com/p/fb59c770160c">强缓存和协商缓存 - 简书 (jianshu.com)</a></p>
+<h1 id="http3">http3</h1>
+<p><img src="http.assets/webp.webp" alt="img"></p>
+<ol>
+<li>HTTP3<strong>基于UDP协议</strong>重新定义了连接，在<strong>QUIC</strong>层实现了无序、并发字节流的传输，解决了队头阻塞问题（包括基于QPACK解决了动态表的队头阻塞）；</li>
+<li>HTTP3<strong>重新定义了TLS协议加密QUIC(Quick UDP Internet Connection)头部</strong>的方式，既提高了网络攻击成本，又降低了建立连接的速度（仅需1个RTT就可以同时完成建链与密钥协商）；</li>
+<li>HTTP3 将Packet、QUIC Frame、HTTP3 Frame分离，实现了连接迁移功能，降低了5G环境下高速移动设备的连接维护成本。</li>
+</ol>
+<blockquote>
+<p><strong>基于TCP实现的HTTP2遗留下3个问题：</strong></p>
+<ol>
+<li>有序字节流引出的<strong>队头阻塞</strong>（Head-of-line blocking），使得HTTP2的多路复用能力大打折扣；</li>
+<li><strong>TCP与TLS叠加了握手时延</strong>，建链时长还有1倍的下降空间；</li>
+<li>基于TCP四元组确定一个连接，这种诞生于有线网络的设计，并不适合移动状态下的无线网络，这意味着<strong>IP地址的频繁变动会导致TCP连接、TLS会话反复握手，成本高昂</strong>。</li>
+</ol>
+</blockquote>
+<h1 id="预检请求">预检请求</h1>
+<p>发生跨域请求时, 浏览器不知道当前请求是否被服务端允许, 所以需要发送一个请求去验证一下, 此为预检请求.(浏览器自动发起)</p>
+<p><strong>预检请求长什么样?</strong></p>
+<p><img src=".%5Chttp.assets%5Cimage-20230719135510056.png" alt="image-20230719135510056"></p>
+<p>可以看到有两个一样的请求, post请求是我们正常的业务请求, 而options就是预检请求, 但预检请求是不带body,也不会修改服务器的资源,也不会返回响应体.</p>
+<p><strong>什么时候会发生预检请求?</strong></p>
+<ol>
+<li>
+<p>发生了跨域请求</p>
+<blockquote>
+<p>协议 + 域名 + 端口 组成源,  当  起始源和目标源 不同时认为是跨域请求</p>
+</blockquote>
+</li>
+<li>
+<p>该请求是非简单请求</p>
+<blockquote>
+<p>浏览器将CORS请求分成两类：<code>简单请求（simple request）</code>和<code>非简单请求（not-so-simple request</code>）。</p>
+<p>只要同时满足以下两大条件，就属于简单请求。</p>
+<ol>
+<li>请求方法是以下三种方法之一：
+HEAD
+GET
+POST</li>
+<li>HTTP的头信息不超出以下几种字段：
+Accept
+Accept-Language
+Content-Language
+Last-Event-ID
+Content-Type：只限于三个值<code>application/x-www-form-urlencoded</code>、<code>multipart/form-data</code>、<code>text/plain</code></li>
+</ol>
+<p>也就</p>
+<p>我们常用的业务接口, 一般是json格式传参, 或者加了自定义的请求头参数, 也就是说这些接口都是<code>非简单请求</code></p>
+</blockquote>
+</li>
+<li>
+<p>预检缓存过期或者禁止了缓存 (浏览器控制台上可以禁用缓存)</p>
+</li>
+</ol>
+<p><strong>详解</strong></p>
+<p>非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询请求，称为&quot;预检&quot;请求（preflight）。</p>
+<p>浏览器先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些HTTP动词和头信息字段。只有得到肯定答复，浏览器才会发出正式的<code>XMLHttpRequest</code>请求，否则就报错。<strong>预请求实际上是对服务端的一种权限请求</strong></p>
+<p><strong>请求头</strong></p>
+<p>&ldquo;预检&quot;请求用的请求方法是<code>OPTIONS</code>，表示这个请求是用来询问的。头信息里面，</p>
+<p>关键字段是<code>Origin</code>，表示请求来自哪个源。</p>
+<p><code>Access-Control-Request-Method</code>: 用来列出浏览器的CORS请求会用到哪些HTTP方法</p>
+<p><code>Access-Control-Request-Headers</code>: 该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，例如<code>X-Custom-Header,authorization,saas-auth</code></p>
+<p><strong>响应头</strong></p>
+<p><code>Access-Control-Allow-Origin</code>: 表示允许的来源, * 表示允许任意来源</p>
+<p><code>Access-Control-Allow-Methods</code>:  它的值是逗号分隔的一个字符串，表明服务器支持的<strong>所有</strong>跨域请求的方法(这样可以避免多次&quot;预检&quot;请求。)</p>
+<p><code>Access-Control-Allow-Headers</code>: 它是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在&quot;预检&quot;中请求的字段</p>
+<p><code>Access-Control-Max-Age</code>:  该字段可选，用来指定本次预检请求的有效期，单位为秒。</p>
+<p><a href="https://zhuanlan.zhihu.com/p/46405073">预检请求 OPTIONS - 知乎 (zhihu.com)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/528620968">http CORS options请求（预检请求）详解 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://www.infoq.cn/article/WhCObxfbgtphY7ijv1kp">5分钟看懂HTTP3_文化 &amp; 方法_Mehdi Zed_InfoQ精选文章</a></p>
+<p><a href="https://juejin.cn/post/7072545788785590303">http3.0初体验 - 掘金 (juejin.cn)</a></p>
+<p><a href="https://www.jianshu.com/p/dd9719c4c2c1">HTTP协议-HTTP3 - 简书 (jianshu.com)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/431672713">深入剖析HTTP3协议 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://ispacesoft.com/58707.html">HTTP3.0和QUIC协议那些事 - 思创斯聊编程 (ispacesoft.com)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%B5%8B%E8%AF%95/%E6%B5%8B%E8%AF%95%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84ie%E6%B5%8F%E8%A7%88%E5%99%A8/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/https/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/http/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/http/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/http/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/%E7%BD%91%E7%BB%9C\/http\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/%E7%BD%91%E7%BB%9C\/http\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%B5%8B%E8%AF%95/%E6%B5%8B%E8%AF%95%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84ie%E6%B5%8F%E8%A7%88%E5%99%A8/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/https/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/http/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/http/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/http/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2F%25E7%25BD%2591%25E7%25BB%259C%2Fhttp%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2F%25E7%25BD%2591%25E7%25BB%259C%2Fhttp%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2F%25E7%25BD%2591%25E7%25BB%259C%2Fhttp%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

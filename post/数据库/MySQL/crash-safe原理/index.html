@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n一、前言 MySQL 保证数据不会丢的能力主要体现在两方面：\n能够恢复到任何时间点的状态； 能够保证MySQL在任何时间段突然奔溃，重启后之前提交的记录都不会丢失； 对于第一点将MySQL恢复到任何时间点的状态，相信很多人都知道，只要保留有足够的binlog，就能通过重跑binlog来实现。\n对于第二点的能力，也就是本文标题所讲的crash-safe。即在 InnoDB 存储引擎中，事务提交过程中任何阶段，MySQL突然奔溃，重启后都能保证事务的完整性，已提交的数据不会丢失，未提交完整的数据会自动进行回滚。这个能力依赖的就是redo log和unod log两个日志。\n因为crash-safe主要体现在事务执行过程中突然奔溃，重启后能保证事务完整性，所以在讲解具体原理之前，先了解下MySQL事务执行有哪些关键阶段，后面才能依据这几个阶段来进行解析。下面以一条更新语句的执行流程为例，话不多说，直接上图：\n从上图可以清晰地看出一条更新语句在MySQL中是怎么执行的，简单进行总结一下：\n从内存中找出这条数据记录，对其进行更新； 将对数据页的更改记录到redo log中； 将逻辑操作记录到binlog中； 对于内存中的数据和日志，都是由后台线程，当触发到落盘规则后再异步进行刷盘； 二、WAL机制 问题：为什么不直接更改磁盘中的数据，而要在内存中更改，然后还需要写日志，最后再落盘这么复杂？\nMySQL更改数据的时候，之所以不直接写磁盘文件中的数据，最主要就是性能问题。因为直接写磁盘文件是随机写，开销大性能低，没办法满足MySQL的性能要求。所以才会设计成先在内存中对数据进行更改，再异步落盘。但是内存总是不可靠，万一断电重启，还没来得及落盘的内存数据就会丢失，所以还需要加上写日志这个步骤，万一断电重启，还能通过日志中的记录进行恢复。\n写日志虽然也是写磁盘，但是它是顺序写，相比随机写开销更小，能提升语句执行的性能\n这个技术就是大多数存储系统基本都会用的WAL(Write Ahead Log)技术，也称为日志先行的技术，指的是对数据文件进行修改前，必须将修改先记录日志。保证了数据一致性和持久性，并且提升语句执行性能。\n三、核心日志模块 更新SQL执行过程中，总共涉及MySQL日志模块其中的三个核心日志，分别是redo log（重做日志）、undo log（回滚日志）、binlog（归档日志）。crash-safe的能力主要依赖的就是这三大日志。\n3.1、重做日志 redo log redo log也称为事务日志，由InnoDB存储引擎层产生。记录的是数据库中每个页的修改，而不是某一行或某几行修改成怎样，可以用来恢复提交后的物理数据页（恢复数据页，且只能恢复到最后一次提交的位置，因为修改会覆盖之前的）。\n前面提到的WAL技术，redo log就是WAL的典型应用，MySQL在有事务提交对数据进行更改时，只会在内存中修改对应的数据页和记录redo log日志，完成后即表示事务提交成功，至于磁盘数据文件的更新则由后台线程异步处理。由于redo log的加入，保证了MySQL数据一致性和持久性（即使数据刷盘之前MySQL奔溃了，重启后仍然能通过redo log里的更改记录进行重放，重新刷盘），此外还能提升语句的执行性能（写redo log是顺序写），由此可见redo log是必不可少的。\nredo log是固定大小的，所以只能循环写，从头开始写，写到末尾就又回到开头，相当于一个环形。当日志写满了，就需要对旧的记录进行擦除，但在擦除之前，需要确保这些要被擦除记录对应在内存中的数据页都已经刷到磁盘中了。在redo log满了到擦除旧记录腾出新空间这段期间，是不能再接收新的更新请求，所以有可能会导致MySQL卡顿。（所以针对并发量大的系统，适当设置redo log的文件大小非常重要！！！）\n3.2、回滚日志 undo log undo log顾名思义，主要就是提供了回滚的作用和多个行版本控制(MVCC)，保证事务的原子性。在数据修改的流程中，会记录一条与当前操作相反的逻辑日志到undo log中（可以认为当delete一条记录时，undo log中会记录一条对应的insert记录，反之亦然，当update一条记录时，它记录一条对应相反的update记录），如果因为某些原因导致事务异常失败了，可以借助该undo log进行回滚，保证事务的完整性，所以undo log也必不可少。\n3.3、归档日志 binlog binlog在MySQL的server层产生，不属于任何引擎，主要记录用户对数据库操作的SQL语句（除了查询语句）。之所以将binlog称为归档日志，是因为binlog不会像redo log一样擦掉之前的记录循环写，而是一直记录（超过有效期(默认不删除)才会被清理），如果超过单日志的最大值（默认1G，可以通过变量 max_binlog_size 设置），则会新起一个文件继续记录。但由于日志可能是基于事务来记录的(如InnoDB表类型)，而事务是绝对不可能也不应该跨文件记录的，如果正好binlog日志文件达到了最大值但事务还没有提交则不会切换新的文件记录，而是继续增大日志，所以 max_binlog_size 指定的值和实际的binlog日志大小不一定相等。\n正是由于binlog有归档的作用，所以binlog主要用作主从同步和数据库基于时间点的还原。\n四、两阶段提交 问题：为什么redo log要分两步写，中间再穿插写binlog呢？\n从上面可以看出，因为redo log影响主库的数据，binlog影响从库的数据，所以redo log和binlog必须保持一致才能保证主从数据一致，这是前提。",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/mysql\/crash-safe%E5%8E%9F%E7%90%86\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+一、前言 MySQL 保证数据不会丢的能力主要体现在两方面：
+能够恢复到任何时间点的状态； 能够保证MySQL在任何时间段突然奔溃，重启后之前提交的记录都不会丢失； 对于第一点将MySQL恢复到任何时间点的状态，相信很多人都知道，只要保留有足够的binlog，就能通过重跑binlog来实现。
+对于第二点的能力，也就是本文标题所讲的crash-safe。即在 InnoDB 存储引擎中，事务提交过程中任何阶段，MySQL突然奔溃，重启后都能保证事务的完整性，已提交的数据不会丢失，未提交完整的数据会自动进行回滚。这个能力依赖的就是redo log和unod log两个日志。
+因为crash-safe主要体现在事务执行过程中突然奔溃，重启后能保证事务完整性，所以在讲解具体原理之前，先了解下MySQL事务执行有哪些关键阶段，后面才能依据这几个阶段来进行解析。下面以一条更新语句的执行流程为例，话不多说，直接上图：
+从上图可以清晰地看出一条更新语句在MySQL中是怎么执行的，简单进行总结一下：
+从内存中找出这条数据记录，对其进行更新； 将对数据页的更改记录到redo log中； 将逻辑操作记录到binlog中； 对于内存中的数据和日志，都是由后台线程，当触发到落盘规则后再异步进行刷盘； 二、WAL机制 问题：为什么不直接更改磁盘中的数据，而要在内存中更改，然后还需要写日志，最后再落盘这么复杂？
+MySQL更改数据的时候，之所以不直接写磁盘文件中的数据，最主要就是性能问题。因为直接写磁盘文件是随机写，开销大性能低，没办法满足MySQL的性能要求。所以才会设计成先在内存中对数据进行更改，再异步落盘。但是内存总是不可靠，万一断电重启，还没来得及落盘的内存数据就会丢失，所以还需要加上写日志这个步骤，万一断电重启，还能通过日志中的记录进行恢复。
+写日志虽然也是写磁盘，但是它是顺序写，相比随机写开销更小，能提升语句执行的性能
+这个技术就是大多数存储系统基本都会用的WAL(Write Ahead Log)技术，也称为日志先行的技术，指的是对数据文件进行修改前，必须将修改先记录日志。保证了数据一致性和持久性，并且提升语句执行性能。
+三、核心日志模块 更新SQL执行过程中，总共涉及MySQL日志模块其中的三个核心日志，分别是redo log（重做日志）、undo log（回滚日志）、binlog（归档日志）。crash-safe的能力主要依赖的就是这三大日志。
+3.1、重做日志 redo log redo log也称为事务日志，由InnoDB存储引擎层产生。记录的是数据库中每个页的修改，而不是某一行或某几行修改成怎样，可以用来恢复提交后的物理数据页（恢复数据页，且只能恢复到最后一次提交的位置，因为修改会覆盖之前的）。
+前面提到的WAL技术，redo log就是WAL的典型应用，MySQL在有事务提交对数据进行更改时，只会在内存中修改对应的数据页和记录redo log日志，完成后即表示事务提交成功，至于磁盘数据文件的更新则由后台线程异步处理。由于redo log的加入，保证了MySQL数据一致性和持久性（即使数据刷盘之前MySQL奔溃了，重启后仍然能通过redo log里的更改记录进行重放，重新刷盘），此外还能提升语句的执行性能（写redo log是顺序写），由此可见redo log是必不可少的。
+redo log是固定大小的，所以只能循环写，从头开始写，写到末尾就又回到开头，相当于一个环形。当日志写满了，就需要对旧的记录进行擦除，但在擦除之前，需要确保这些要被擦除记录对应在内存中的数据页都已经刷到磁盘中了。在redo log满了到擦除旧记录腾出新空间这段期间，是不能再接收新的更新请求，所以有可能会导致MySQL卡顿。（所以针对并发量大的系统，适当设置redo log的文件大小非常重要！！！）
+3.2、回滚日志 undo log undo log顾名思义，主要就是提供了回滚的作用和多个行版本控制(MVCC)，保证事务的原子性。在数据修改的流程中，会记录一条与当前操作相反的逻辑日志到undo log中（可以认为当delete一条记录时，undo log中会记录一条对应的insert记录，反之亦然，当update一条记录时，它记录一条对应相反的update记录），如果因为某些原因导致事务异常失败了，可以借助该undo log进行回滚，保证事务的完整性，所以undo log也必不可少。
+3.3、归档日志 binlog binlog在MySQL的server层产生，不属于任何引擎，主要记录用户对数据库操作的SQL语句（除了查询语句）。之所以将binlog称为归档日志，是因为binlog不会像redo log一样擦掉之前的记录循环写，而是一直记录（超过有效期(默认不删除)才会被清理），如果超过单日志的最大值（默认1G，可以通过变量 max_binlog_size 设置），则会新起一个文件继续记录。但由于日志可能是基于事务来记录的(如InnoDB表类型)，而事务是绝对不可能也不应该跨文件记录的，如果正好binlog日志文件达到了最大值但事务还没有提交则不会切换新的文件记录，而是继续增大日志，所以 max_binlog_size 指定的值和实际的binlog日志大小不一定相等。
+正是由于binlog有归档的作用，所以binlog主要用作主从同步和数据库基于时间点的还原。
+四、两阶段提交 问题：为什么redo log要分两步写，中间再穿插写binlog呢？
+从上面可以看出，因为redo log影响主库的数据，binlog影响从库的数据，所以redo log和binlog必须保持一致才能保证主从数据一致，这是前提。">
+
+
+<meta property="og:description" content="[toc]
+一、前言 MySQL 保证数据不会丢的能力主要体现在两方面：
+能够恢复到任何时间点的状态； 能够保证MySQL在任何时间段突然奔溃，重启后之前提交的记录都不会丢失； 对于第一点将MySQL恢复到任何时间点的状态，相信很多人都知道，只要保留有足够的binlog，就能通过重跑binlog来实现。
+对于第二点的能力，也就是本文标题所讲的crash-safe。即在 InnoDB 存储引擎中，事务提交过程中任何阶段，MySQL突然奔溃，重启后都能保证事务的完整性，已提交的数据不会丢失，未提交完整的数据会自动进行回滚。这个能力依赖的就是redo log和unod log两个日志。
+因为crash-safe主要体现在事务执行过程中突然奔溃，重启后能保证事务完整性，所以在讲解具体原理之前，先了解下MySQL事务执行有哪些关键阶段，后面才能依据这几个阶段来进行解析。下面以一条更新语句的执行流程为例，话不多说，直接上图：
+从上图可以清晰地看出一条更新语句在MySQL中是怎么执行的，简单进行总结一下：
+从内存中找出这条数据记录，对其进行更新； 将对数据页的更改记录到redo log中； 将逻辑操作记录到binlog中； 对于内存中的数据和日志，都是由后台线程，当触发到落盘规则后再异步进行刷盘； 二、WAL机制 问题：为什么不直接更改磁盘中的数据，而要在内存中更改，然后还需要写日志，最后再落盘这么复杂？
+MySQL更改数据的时候，之所以不直接写磁盘文件中的数据，最主要就是性能问题。因为直接写磁盘文件是随机写，开销大性能低，没办法满足MySQL的性能要求。所以才会设计成先在内存中对数据进行更改，再异步落盘。但是内存总是不可靠，万一断电重启，还没来得及落盘的内存数据就会丢失，所以还需要加上写日志这个步骤，万一断电重启，还能通过日志中的记录进行恢复。
+写日志虽然也是写磁盘，但是它是顺序写，相比随机写开销更小，能提升语句执行的性能
+这个技术就是大多数存储系统基本都会用的WAL(Write Ahead Log)技术，也称为日志先行的技术，指的是对数据文件进行修改前，必须将修改先记录日志。保证了数据一致性和持久性，并且提升语句执行性能。
+三、核心日志模块 更新SQL执行过程中，总共涉及MySQL日志模块其中的三个核心日志，分别是redo log（重做日志）、undo log（回滚日志）、binlog（归档日志）。crash-safe的能力主要依赖的就是这三大日志。
+3.1、重做日志 redo log redo log也称为事务日志，由InnoDB存储引擎层产生。记录的是数据库中每个页的修改，而不是某一行或某几行修改成怎样，可以用来恢复提交后的物理数据页（恢复数据页，且只能恢复到最后一次提交的位置，因为修改会覆盖之前的）。
+前面提到的WAL技术，redo log就是WAL的典型应用，MySQL在有事务提交对数据进行更改时，只会在内存中修改对应的数据页和记录redo log日志，完成后即表示事务提交成功，至于磁盘数据文件的更新则由后台线程异步处理。由于redo log的加入，保证了MySQL数据一致性和持久性（即使数据刷盘之前MySQL奔溃了，重启后仍然能通过redo log里的更改记录进行重放，重新刷盘），此外还能提升语句的执行性能（写redo log是顺序写），由此可见redo log是必不可少的。
+redo log是固定大小的，所以只能循环写，从头开始写，写到末尾就又回到开头，相当于一个环形。当日志写满了，就需要对旧的记录进行擦除，但在擦除之前，需要确保这些要被擦除记录对应在内存中的数据页都已经刷到磁盘中了。在redo log满了到擦除旧记录腾出新空间这段期间，是不能再接收新的更新请求，所以有可能会导致MySQL卡顿。（所以针对并发量大的系统，适当设置redo log的文件大小非常重要！！！）
+3.2、回滚日志 undo log undo log顾名思义，主要就是提供了回滚的作用和多个行版本控制(MVCC)，保证事务的原子性。在数据修改的流程中，会记录一条与当前操作相反的逻辑日志到undo log中（可以认为当delete一条记录时，undo log中会记录一条对应的insert记录，反之亦然，当update一条记录时，它记录一条对应相反的update记录），如果因为某些原因导致事务异常失败了，可以借助该undo log进行回滚，保证事务的完整性，所以undo log也必不可少。
+3.3、归档日志 binlog binlog在MySQL的server层产生，不属于任何引擎，主要记录用户对数据库操作的SQL语句（除了查询语句）。之所以将binlog称为归档日志，是因为binlog不会像redo log一样擦掉之前的记录循环写，而是一直记录（超过有效期(默认不删除)才会被清理），如果超过单日志的最大值（默认1G，可以通过变量 max_binlog_size 设置），则会新起一个文件继续记录。但由于日志可能是基于事务来记录的(如InnoDB表类型)，而事务是绝对不可能也不应该跨文件记录的，如果正好binlog日志文件达到了最大值但事务还没有提交则不会切换新的文件记录，而是继续增大日志，所以 max_binlog_size 指定的值和实际的binlog日志大小不一定相等。
+正是由于binlog有归档的作用，所以binlog主要用作主从同步和数据库基于时间点的还原。
+四、两阶段提交 问题：为什么redo log要分两步写，中间再穿插写binlog呢？
+从上面可以看出，因为redo log影响主库的数据，binlog影响从库的数据，所以redo log和binlog必须保持一致才能保证主从数据一致，这是前提。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+一、前言 MySQL 保证数据不会丢的能力主要体现在两方面：
+能够恢复到任何时间点的状态； 能够保证MySQL在任何时间段突然奔溃，重启后之前提交的记录都不会丢失； 对于第一点将MySQL恢复到任何时间点的状态，相信很多人都知道，只要保留有足够的binlog，就能通过重跑binlog来实现。
+对于第二点的能力，也就是本文标题所讲的crash-safe。即在 InnoDB 存储引擎中，事务提交过程中任何阶段，MySQL突然奔溃，重启后都能保证事务的完整性，已提交的数据不会丢失，未提交完整的数据会自动进行回滚。这个能力依赖的就是redo log和unod log两个日志。
+因为crash-safe主要体现在事务执行过程中突然奔溃，重启后能保证事务完整性，所以在讲解具体原理之前，先了解下MySQL事务执行有哪些关键阶段，后面才能依据这几个阶段来进行解析。下面以一条更新语句的执行流程为例，话不多说，直接上图：
+从上图可以清晰地看出一条更新语句在MySQL中是怎么执行的，简单进行总结一下：
+从内存中找出这条数据记录，对其进行更新； 将对数据页的更改记录到redo log中； 将逻辑操作记录到binlog中； 对于内存中的数据和日志，都是由后台线程，当触发到落盘规则后再异步进行刷盘； 二、WAL机制 问题：为什么不直接更改磁盘中的数据，而要在内存中更改，然后还需要写日志，最后再落盘这么复杂？
+MySQL更改数据的时候，之所以不直接写磁盘文件中的数据，最主要就是性能问题。因为直接写磁盘文件是随机写，开销大性能低，没办法满足MySQL的性能要求。所以才会设计成先在内存中对数据进行更改，再异步落盘。但是内存总是不可靠，万一断电重启，还没来得及落盘的内存数据就会丢失，所以还需要加上写日志这个步骤，万一断电重启，还能通过日志中的记录进行恢复。
+写日志虽然也是写磁盘，但是它是顺序写，相比随机写开销更小，能提升语句执行的性能
+这个技术就是大多数存储系统基本都会用的WAL(Write Ahead Log)技术，也称为日志先行的技术，指的是对数据文件进行修改前，必须将修改先记录日志。保证了数据一致性和持久性，并且提升语句执行性能。
+三、核心日志模块 更新SQL执行过程中，总共涉及MySQL日志模块其中的三个核心日志，分别是redo log（重做日志）、undo log（回滚日志）、binlog（归档日志）。crash-safe的能力主要依赖的就是这三大日志。
+3.1、重做日志 redo log redo log也称为事务日志，由InnoDB存储引擎层产生。记录的是数据库中每个页的修改，而不是某一行或某几行修改成怎样，可以用来恢复提交后的物理数据页（恢复数据页，且只能恢复到最后一次提交的位置，因为修改会覆盖之前的）。
+前面提到的WAL技术，redo log就是WAL的典型应用，MySQL在有事务提交对数据进行更改时，只会在内存中修改对应的数据页和记录redo log日志，完成后即表示事务提交成功，至于磁盘数据文件的更新则由后台线程异步处理。由于redo log的加入，保证了MySQL数据一致性和持久性（即使数据刷盘之前MySQL奔溃了，重启后仍然能通过redo log里的更改记录进行重放，重新刷盘），此外还能提升语句的执行性能（写redo log是顺序写），由此可见redo log是必不可少的。
+redo log是固定大小的，所以只能循环写，从头开始写，写到末尾就又回到开头，相当于一个环形。当日志写满了，就需要对旧的记录进行擦除，但在擦除之前，需要确保这些要被擦除记录对应在内存中的数据页都已经刷到磁盘中了。在redo log满了到擦除旧记录腾出新空间这段期间，是不能再接收新的更新请求，所以有可能会导致MySQL卡顿。（所以针对并发量大的系统，适当设置redo log的文件大小非常重要！！！）
+3.2、回滚日志 undo log undo log顾名思义，主要就是提供了回滚的作用和多个行版本控制(MVCC)，保证事务的原子性。在数据修改的流程中，会记录一条与当前操作相反的逻辑日志到undo log中（可以认为当delete一条记录时，undo log中会记录一条对应的insert记录，反之亦然，当update一条记录时，它记录一条对应相反的update记录），如果因为某些原因导致事务异常失败了，可以借助该undo log进行回滚，保证事务的完整性，所以undo log也必不可少。
+3.3、归档日志 binlog binlog在MySQL的server层产生，不属于任何引擎，主要记录用户对数据库操作的SQL语句（除了查询语句）。之所以将binlog称为归档日志，是因为binlog不会像redo log一样擦掉之前的记录循环写，而是一直记录（超过有效期(默认不删除)才会被清理），如果超过单日志的最大值（默认1G，可以通过变量 max_binlog_size 设置），则会新起一个文件继续记录。但由于日志可能是基于事务来记录的(如InnoDB表类型)，而事务是绝对不可能也不应该跨文件记录的，如果正好binlog日志文件达到了最大值但事务还没有提交则不会切换新的文件记录，而是继续增大日志，所以 max_binlog_size 指定的值和实际的binlog日志大小不一定相等。
+正是由于binlog有归档的作用，所以binlog主要用作主从同步和数据库基于时间点的还原。
+四、两阶段提交 问题：为什么redo log要分两步写，中间再穿插写binlog呢？
+从上面可以看出，因为redo log影响主库的数据，binlog影响从库的数据，所以redo log和binlog必须保持一致才能保证主从数据一致，这是前提。">
+<meta name="twitter:description" content="[toc]
+一、前言 MySQL 保证数据不会丢的能力主要体现在两方面：
+能够恢复到任何时间点的状态； 能够保证MySQL在任何时间段突然奔溃，重启后之前提交的记录都不会丢失； 对于第一点将MySQL恢复到任何时间点的状态，相信很多人都知道，只要保留有足够的binlog，就能通过重跑binlog来实现。
+对于第二点的能力，也就是本文标题所讲的crash-safe。即在 InnoDB 存储引擎中，事务提交过程中任何阶段，MySQL突然奔溃，重启后都能保证事务的完整性，已提交的数据不会丢失，未提交完整的数据会自动进行回滚。这个能力依赖的就是redo log和unod log两个日志。
+因为crash-safe主要体现在事务执行过程中突然奔溃，重启后能保证事务完整性，所以在讲解具体原理之前，先了解下MySQL事务执行有哪些关键阶段，后面才能依据这几个阶段来进行解析。下面以一条更新语句的执行流程为例，话不多说，直接上图：
+从上图可以清晰地看出一条更新语句在MySQL中是怎么执行的，简单进行总结一下：
+从内存中找出这条数据记录，对其进行更新； 将对数据页的更改记录到redo log中； 将逻辑操作记录到binlog中； 对于内存中的数据和日志，都是由后台线程，当触发到落盘规则后再异步进行刷盘； 二、WAL机制 问题：为什么不直接更改磁盘中的数据，而要在内存中更改，然后还需要写日志，最后再落盘这么复杂？
+MySQL更改数据的时候，之所以不直接写磁盘文件中的数据，最主要就是性能问题。因为直接写磁盘文件是随机写，开销大性能低，没办法满足MySQL的性能要求。所以才会设计成先在内存中对数据进行更改，再异步落盘。但是内存总是不可靠，万一断电重启，还没来得及落盘的内存数据就会丢失，所以还需要加上写日志这个步骤，万一断电重启，还能通过日志中的记录进行恢复。
+写日志虽然也是写磁盘，但是它是顺序写，相比随机写开销更小，能提升语句执行的性能
+这个技术就是大多数存储系统基本都会用的WAL(Write Ahead Log)技术，也称为日志先行的技术，指的是对数据文件进行修改前，必须将修改先记录日志。保证了数据一致性和持久性，并且提升语句执行性能。
+三、核心日志模块 更新SQL执行过程中，总共涉及MySQL日志模块其中的三个核心日志，分别是redo log（重做日志）、undo log（回滚日志）、binlog（归档日志）。crash-safe的能力主要依赖的就是这三大日志。
+3.1、重做日志 redo log redo log也称为事务日志，由InnoDB存储引擎层产生。记录的是数据库中每个页的修改，而不是某一行或某几行修改成怎样，可以用来恢复提交后的物理数据页（恢复数据页，且只能恢复到最后一次提交的位置，因为修改会覆盖之前的）。
+前面提到的WAL技术，redo log就是WAL的典型应用，MySQL在有事务提交对数据进行更改时，只会在内存中修改对应的数据页和记录redo log日志，完成后即表示事务提交成功，至于磁盘数据文件的更新则由后台线程异步处理。由于redo log的加入，保证了MySQL数据一致性和持久性（即使数据刷盘之前MySQL奔溃了，重启后仍然能通过redo log里的更改记录进行重放，重新刷盘），此外还能提升语句的执行性能（写redo log是顺序写），由此可见redo log是必不可少的。
+redo log是固定大小的，所以只能循环写，从头开始写，写到末尾就又回到开头，相当于一个环形。当日志写满了，就需要对旧的记录进行擦除，但在擦除之前，需要确保这些要被擦除记录对应在内存中的数据页都已经刷到磁盘中了。在redo log满了到擦除旧记录腾出新空间这段期间，是不能再接收新的更新请求，所以有可能会导致MySQL卡顿。（所以针对并发量大的系统，适当设置redo log的文件大小非常重要！！！）
+3.2、回滚日志 undo log undo log顾名思义，主要就是提供了回滚的作用和多个行版本控制(MVCC)，保证事务的原子性。在数据修改的流程中，会记录一条与当前操作相反的逻辑日志到undo log中（可以认为当delete一条记录时，undo log中会记录一条对应的insert记录，反之亦然，当update一条记录时，它记录一条对应相反的update记录），如果因为某些原因导致事务异常失败了，可以借助该undo log进行回滚，保证事务的完整性，所以undo log也必不可少。
+3.3、归档日志 binlog binlog在MySQL的server层产生，不属于任何引擎，主要记录用户对数据库操作的SQL语句（除了查询语句）。之所以将binlog称为归档日志，是因为binlog不会像redo log一样擦掉之前的记录循环写，而是一直记录（超过有效期(默认不删除)才会被清理），如果超过单日志的最大值（默认1G，可以通过变量 max_binlog_size 设置），则会新起一个文件继续记录。但由于日志可能是基于事务来记录的(如InnoDB表类型)，而事务是绝对不可能也不应该跨文件记录的，如果正好binlog日志文件达到了最大值但事务还没有提交则不会切换新的文件记录，而是继续增大日志，所以 max_binlog_size 指定的值和实际的binlog日志大小不一定相等。
+正是由于binlog有归档的作用，所以binlog主要用作主从同步和数据库基于时间点的还原。
+四、两阶段提交 问题：为什么redo log要分两步写，中间再穿插写binlog呢？
+从上面可以看出，因为redo log影响主库的数据，binlog影响从库的数据，所以redo log和binlog必须保持一致才能保证主从数据一致，这是前提。">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="一前言">一、前言</h1>
+<p>MySQL 保证数据不会丢的能力主要体现在两方面：</p>
+<ol>
+<li>能够恢复到任何时间点的状态；</li>
+<li>能够保证MySQL在任何时间段突然奔溃，重启后之前提交的记录都不会丢失；</li>
+</ol>
+<p>对于第一点将MySQL恢复到任何时间点的状态，相信很多人都知道，只要保留有足够的binlog，就能通过重跑binlog来实现。</p>
+<p>对于第二点的能力，也就是本文标题所讲的<strong>crash-safe</strong>。即在 InnoDB 存储引擎中，事务提交过程中任何阶段，MySQL突然奔溃，重启后都能保证事务的完整性，已提交的数据不会丢失，未提交完整的数据会自动进行回滚。这个能力依赖的就是redo log和unod log两个日志。</p>
+<p>因为crash-safe主要体现在事务执行过程中突然奔溃，重启后能保证事务完整性，所以在讲解具体原理之前，先了解下MySQL事务执行有哪些关键阶段，后面才能依据这几个阶段来进行解析。下面以一条更新语句的执行流程为例，话不多说，直接上图：</p>
+<p><img src="crash-safe%E5%8E%9F%E7%90%86.assets/640.jpeg" alt="img"></p>
+<p>从上图可以清晰地看出一条更新语句在MySQL中是怎么执行的，简单进行总结一下：</p>
+<ol>
+<li>从内存中找出这条数据记录，对其进行更新；</li>
+<li>将对数据页的更改记录到redo log中；</li>
+<li>将逻辑操作记录到binlog中；</li>
+<li>对于内存中的数据和日志，都是由后台线程，当触发到落盘规则后再异步进行刷盘；</li>
+</ol>
+<h1 id="二wal机制">二、WAL机制</h1>
+<p><strong>问题：为什么不直接更改磁盘中的数据，而要在内存中更改，然后还需要写日志，最后再落盘这么复杂？</strong></p>
+<p>MySQL更改数据的时候，之所以不直接写磁盘文件中的数据，最主要就是性能问题。因为直接写磁盘文件是随机写，开销大性能低，没办法满足MySQL的性能要求。所以才会设计成先在内存中对数据进行更改，再异步落盘。但是内存总是不可靠，万一断电重启，还没来得及落盘的内存数据就会丢失，所以还需要加上写日志这个步骤，万一断电重启，还能通过日志中的记录进行恢复。</p>
+<p>写日志虽然也是写磁盘，但是它是<strong>顺序写</strong>，相比随机写开销更小，能提升语句执行的性能</p>
+<p>这个技术就是大多数存储系统基本都会用的<strong>WAL(Write Ahead Log)技术，也称为日志先行的技术，指的是对数据文件进行修改前，必须将修改先记录日志。保证了数据一致性和持久性，并且提升语句执行性能。</strong></p>
+<h1 id="三核心日志模块">三、核心日志模块</h1>
+<p>更新SQL执行过程中，总共涉及<strong>MySQL日志模块其中的三个核心日志，分别是redo log（重做日志）、undo log（回滚日志）、binlog（归档日志）</strong>。crash-safe的能力主要依赖的就是这三大日志。</p>
+<h2 id="31重做日志-redo-log">3.1、重做日志 redo log</h2>
+<p>redo log也称为事务日志，由InnoDB存储引擎层产生。<!-- raw HTML omitted -->记录的是数据库中每个页的修改，而不是某一行或某几行修改成怎样，可以用来恢复提交后的物理数据页<!-- raw HTML omitted -->（恢复数据页，且只能恢复到最后一次提交的位置，因为修改会覆盖之前的）。</p>
+<p>前面提到的WAL技术，redo log就是WAL的典型应用，MySQL在有事务提交对数据进行更改时，只会在内存中修改对应的数据页和记录redo log日志，完成后即表示事务提交成功，至于磁盘数据文件的更新则由后台线程异步处理。由于redo log的加入，保证了MySQL数据一致性和持久性（即使数据刷盘之前MySQL奔溃了，重启后仍然能通过redo log里的更改记录进行重放，重新刷盘），此外还能提升语句的执行性能（写redo log是顺序写），由此可见redo log是必不可少的。</p>
+<p>redo log是固定大小的，<!-- raw HTML omitted -->所以只能循环写，从头开始写，写到末尾就又回到开头，相当于一个环形<!-- raw HTML omitted -->。当日志写满了，就需要对旧的记录进行擦除，但在擦除之前，需要确保这些要被擦除记录对应在内存中的数据页都已经刷到磁盘中了。在redo log满了到擦除旧记录腾出新空间这段期间，是不能再接收新的更新请求，所以有可能会导致MySQL卡顿。（所以针对并发量大的系统，适当设置redo log的文件大小非常重要！！！）</p>
+<h2 id="32回滚日志-undo-log">3.2、回滚日志 undo log</h2>
+<p>undo log顾名思义，主要就是提供了<strong>回滚的作用和多个行版本控制(MVCC)</strong>，保证事务的原子性。在数据修改的流程中，会记录一条与当前操作相反的逻辑日志到undo log中（可以认为当delete一条记录时，undo log中会记录一条对应的insert记录，反之亦然，当update一条记录时，它记录一条对应相反的update记录），如果因为某些原因导致事务异常失败了，可以借助该undo log进行回滚，保证事务的完整性，所以undo log也必不可少。</p>
+<h2 id="33归档日志-binlog">3.3、归档日志 binlog</h2>
+<p>binlog在MySQL的server层产生，不属于任何引擎，主要记录用户对数据库操作的SQL语句（除了查询语句）。之所以将binlog称为归档日志，是因为binlog不会像redo log一样擦掉之前的记录循环写，而是一直记录（超过有效期(默认不删除)才会被清理），如果超过单日志的最大值（默认1G，可以通过变量 max_binlog_size 设置），则会新起一个文件继续记录。但由于日志可能是基于事务来记录的(如InnoDB表类型)，而<!-- raw HTML omitted -->事务是绝对不可能也不应该跨文件记录的，如果正好binlog日志文件达到了最大值但事务还没有提交则不会切换新的文件记录，而是继续增大日志<!-- raw HTML omitted -->，所以 <code>max_binlog_size</code> 指定的值和实际的binlog日志大小不一定相等。</p>
+<p>正是由于binlog有归档的作用，所以binlog主要用作主从同步和数据库基于时间点的还原。</p>
+<h1 id="四两阶段提交">四、两阶段提交</h1>
+<p><strong>问题：为什么redo log要分两步写，中间再穿插写binlog呢？</strong></p>
+<p>从上面可以看出，因为redo log影响主库的数据，binlog影响从库的数据，所以redo log和binlog必须保持一致才能保证主从数据一致，这是前提。</p>
+<p>redo log和binlog其实就是很典型的分布式事务场景，因为两者本身就是两个独立的个体，要想保持一致，就必须使用分布式事务的解决方案来处理。而将redo log分成了两步，其实就是使用了两阶段提交协议（Two-phase Commit，2PC）。从图中可看出，事务的提交过程有两个阶段，就是将redo log的写入拆成了两个步骤：prepare和commit，中间再穿插写入binlog。</p>
+<p><img src="crash-safe%E5%8E%9F%E7%90%86.assets/640-16605577822323.jpeg" alt="图片"></p>
+<p>两阶段提交虽然能够保证单事务两个日志的内容一致，但在多事务的情况下，却不能保证两者的提交顺序一致，比如下面这个例子，假设现在有3个事务同时提交：</p>
+<pre tabindex="0"><code>T1 (--prepare--binlog---------------------commit)
+T2 (-----prepare-----binlog----commit)
+T3 (--------prepare-------binlog------commit)
+ 
+解析：
+    redo log prepare的顺序：T1 --》T2 --》T3
+    binlog的写入顺序：T1 --》 T2 --》T3
+    redo log commit的顺序：T2 --》 T3 --》T1
+ 
+结论：由于binlog写入的顺序和redo log提交结束的顺序不一致，导致binlog和redo log所记录的事务提交结束的顺序不一样，最终导致的结果就是主从数据不一致。
+</code></pre><p>因此，在两阶段提交的流程基础上，还需要加一个锁来保证提交的原子性，从而保证多事务的情况下，两个日志的提交顺序一致。所以在早期的MySQL版本中，通过使用prepare_commit_mutex锁来保证事务提交的顺序，在一个事务获取到锁时才能进入prepare，一直到commit结束才能释放锁，下个事务才可以继续进行prepare操作。</p>
+<p>通过加锁虽然完美地解决了顺序一致性的问题，但在并发量较大的时候，就会导致对锁的争用，性能不佳。除了锁的竞争会影响到性能之外，还有一个对性能影响更大的点，就是每个事务提交都会进行两次fsync（写磁盘），一次是redo log落盘，另一次是binlog落盘。</p>
+<h1 id="五组提交">五、组提交</h1>
+<p><strong>问题：针对通过在两阶段提交中加锁控制事务提交顺序这种实现方式遇到的性能瓶颈问题，有没有更好的解决方案呢？</strong></p>
+<p>答案自然是有的，在MySQL 5.6 就引入了binlog组提交，即BLGC（Binary Log Group Commit）。binlog组提交的基本思想是，引入队列机制保证InnoDB commit顺序与binlog落盘顺序一致，并将事务分组，组内的binlog刷盘动作交给一个事务进行，实现组提交目的。具体如图：</p>
+<p><img src="crash-safe%E5%8E%9F%E7%90%86.assets/640-16605590949616.jpeg" alt="图片"></p>
+<p><strong>第一阶段（prepare阶段）：</strong></p>
+<p>持有prepare_commit_mutex，并且write/fsync redo log到磁盘，设置为prepared状态，完成后就释放prepare_commit_mutex，binlog不作任何操作。</p>
+<p><strong>第二个阶段（commit阶段）</strong>：这里拆分成了三步，每一步的任务分配给一个专门的线程处理：</p>
+<ol>
+<li>
+<p><strong>Flush Stage（写入binlog缓存）</strong></p>
+<p>① 持有Lock_log mutex [leader持有，follower等待]</p>
+<p>② 获取队列中的一组binlog(队列中的所有事务)</p>
+<p>③ 写入binlog缓存</p>
+</li>
+<li>
+<p><strong>Sync Stage（将binlog落盘）</strong></p>
+<p>①释放Lock_log mutex，持有Lock_sync mutex[leader持有，follower等待]</p>
+<p>②将一组binlog落盘（fsync动作，最耗时，假设sync_binlog为1）。</p>
+</li>
+<li>
+<p><strong>Commit Stage（InnoDB commit，清楚undo信息）</strong></p>
+<p>①释放Lock_sync mutex，持有Lock_commit mutex[leader持有，follower等待]</p>
+<p>② 遍历队列中的事务，逐一进行InnoDB commit</p>
+<p>③ 释放Lock_commit mutex</p>
+</li>
+</ol>
+<h1 id="六数据恢复流程">六、数据恢复流程</h1>
+<p><strong>问题：假设事务提交过程中，MySQL进程突然奔溃，重启后是怎么保证数据不丢失的？</strong></p>
+<p>下图就是MySQL重启后，提供服务前会先做的事 &ndash; 恢复数据的流程：</p>
+<p><img src="crash-safe%E5%8E%9F%E7%90%86.assets/640-16605592586489.jpeg" alt="图片"></p>
+<p>对上图进行简单描述就是：<strong>奔溃重启后会检查redo log中是完整并且处于prepare状态的事务，然后根据XID（事务ID），从binlog中找到对应的事务，如果找不到，则回滚；找到并且事务完整则重新commit redo log，完成事务的提交。</strong></p>
+<p>下面我们根据事务提交流程，在不同的阶段时刻，看看MySQL突然奔溃后，按照上述流程是如何恢复数据的。</p>
+<ol>
+<li>
+<p><strong>时刻A</strong>（刚在内存中更改完数据页，还没有开始写redo log的时候奔溃）：</p>
+<p>因为内存中的脏页还没刷盘，也没有写redo log和binlog，即这个事务还没有开始提交，所以奔溃恢复跟该事务没有关系；</p>
+</li>
+<li>
+<p><strong>时刻B</strong>（正在写redo log或者已经写完redo log并且落盘后，处于prepare状态，还没有开始写binlog的时候奔溃）：</p>
+<p>恢复后会判断redo log的事务是不是完整的，如果不是则根据undo log回滚；如果是完整的并且是prepare状态，则进一步判断对应的事务binlog是不是完整的，如果不完整则一样根据undo log进行回滚；</p>
+</li>
+<li>
+<p><strong>时刻C</strong>（正在写binlog或者已经写完binlog并且落盘了，还没有开始commit redo log的时候奔溃）：</p>
+<p>恢复后会跟时刻B一样，先检查redo log中是完整并且处于prepare状态的事务，然后判断对应的事务binlog是不是完整的，如果不完整则一样根据undo log回滚，完整则重新commit redo log；</p>
+</li>
+<li>
+<p><strong>时刻D</strong>（正在commit redo log或者事务已经提交完的时候，还没有反馈成功给客户端的时候奔溃）：</p>
+<p>恢复后跟时刻C基本一样，都会对照redo log和binlog的事务完整性，来确认是回滚还是重新提交。</p>
+</li>
+</ol>
+<p><a href="https://mp.weixin.qq.com/s/5i9wmJs4_Er7RaYfNnETyA">MySQL 的 crash-safe 原理解析 (qq.com)</a></p>
+<p><a href="https://tech.youzan.com/shen-ru-qian-chu-mysql-crash-safe/">MySQL slave 的 crash safe (youzan.com)</a></p>
+<p><a href="https://javajgs.com/archives/73030">mysql 几种日志-Java架构师必看 (javajgs.com)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/binlog/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/mysql\/crash-safe%E5%8E%9F%E7%90%86\/';
+        
+          this.page.identifier = '\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/mysql\/crash-safe%E5%8E%9F%E7%90%86\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/binlog/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2Fmysql%2Fcrash-safe%25E5%258E%259F%25E7%2590%2586%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2Fmysql%2Fcrash-safe%25E5%258E%259F%25E7%2590%2586%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2Fmysql%2Fcrash-safe%25E5%258E%259F%25E7%2590%2586%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

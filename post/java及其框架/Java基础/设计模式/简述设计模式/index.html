@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1. 适配器模式 类比插座,有欧洲标准,中国标准,为了在欧洲使用中国的插头,所以需要一个适配器,做到兼容\n在正常开发中,一般是针对一个已有的类,想要用它的功能,由于各种原因,不能直接用,需要写一个中间类,自己调用这个中间类,由中间类去调用已有的类\n优点：\n1.通过适配器，客户端可以直接调用同一接口，因而对客户端来说是透明的。这样做更简单，更直接，更紧凑。\n2.复用了现存的类，解决了现存类和复用环境要求不一致的问题。\n3.将目标类和适配者类解耦，通过引入一个适配器现有的适配者类，而无须修改原有代码。\n一个对象适配器可以把多个不同的适配器类适配到同一个目标，也就是说，同一个适配器可以把适配者类和他的子类都适配到目标接口。\n缺点：\n1.对于适配器来说，更换适配器的实现过程比较复杂 。\n2. 代理模式 优点:\n\\1. 动态代理采用在运行时动态生成代码的方式,取消了对被代理类的扩展限制,遵循了开闭原则\n\\2. 若动态代理要对目标类的增强逻辑进行扩展,结合策略模式,只需要新增策略类便可完成,无需修改代理类的代码\n3.在编码时，代理逻辑与业务逻辑是互相独立的，没有耦合\nhttps:\/\/blog.csdn.net\/wb_snail\/article\/details\/80632038\n2.1. 静态代理 定义：为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。\n作用：增强一个类中的某个方法.对程序进行扩展，Spring框架中AOP。\n2.2 动态代理 1、动态代理：(它与装饰者模式有点相似，它比装饰者模式还要灵活)\n动态代理它可以直接给某一个目标(被代理 对象)对象(实现了某个或者某些接口)生成一个代理对象，而不需要代理类存在，如上图中经理人需要存在。 动态代理与代理模式原理是一样的，只是它没有具体的代理类，直接通过反射生成了一个代理对象 2、动态代理的分类\njdk提供一个Proxy类可以直接给实现接口类的对象直接生成代理对象 API: 调用, 缺少什么参数,传什么 spring中动态代理:cglib 继承 3. 单例模式 一个类能返回对象一个引用(永远是同一个)和一个获得该实例的方法（必须是静态方法，通常使用getInstance这个名 称）；当我们调用这个方法时，如果类持有的引用不为空就返回这个引用，如果类保持的引用为空就创建该类的实例并将实例的引用赋予该类保持的引用；同时我们 还将该类的构造函数定义为私有方法，这样其他处的代码就无法通过调用该类的构造函数来实例化该类的对象，只有通过该类提供的静态方法来得到该类的唯一实例。\n优点：\n1.在单例模式中，活动的单例只有一个实例，对单例类的所有实例化得到的都是相同的一个实例。这样就 防止其它对象对自己的实例化，确保所有的对象都访问一个实例\n2.单例模式具有一定的伸缩性，类自己来控制实例化进程，类就在改变实例化进程上有相应的伸缩性。\n3.提供了对唯一实例的受控访问。\n4.由于在系统内存中只存在一个对象，因此可以 节约系统资源，当 需要频繁创建和销毁的对象时单例模式无疑可以提高系统的性能。\n5.允许可变数目的实例。\n6.避免对共享资源的多重占用。\n缺点：\n1.不适用于变化的对象，如果同一类型的对象总是要在不同的用例场景发生变化，单例就会引起数据的错误，不能保存彼此的状态。\n2.由于单利模式中没有抽象层，因此单例类的扩展有很大的困难。\n3.单例类的职责过重，在一定程度上违背了“单一职责原则”。\n4.滥用单例将带来一些负面问题，如为了节省资源将数据库连接池对象设计为的单例类，可能会导致共享连接池对象的程序过多而出现连接池溢出；如果实例化的对象长时间不被利用，系统会认为是垃圾而被回收，这将导致对象状态的丢失\n适用场景：\n单例模式只允许创建一个对象，因此节省内存，加快对象访问速度，因此对象需要被公用的场合适合使用，如多个模块使用同一个数据源连接对象等等。如：\n1.需要频繁实例化然后销毁的对象。\n2.创建对象时耗时过多或者耗资源过多，但又经常用到的对象。\n3.有状态的工具类对象。\n4.频繁访问数据库或文件的对象。\n以下都是单例模式的经典使用场景：\n1.资源共享的情况下，避免由于资源操作时导致的性能或损耗等。如上述中的日志文件，应用配置。\n2.控制资源的情况下，方便资源之间的互相通信。如线程池等。\n4. 策略模式 在策略模式（Strategy Pattern）中，一个类的行为或其算法可以在运行时更改。这种类型的设计模式属于行为型模式。",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F\/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1. 适配器模式 类比插座,有欧洲标准,中国标准,为了在欧洲使用中国的插头,所以需要一个适配器,做到兼容
+在正常开发中,一般是针对一个已有的类,想要用它的功能,由于各种原因,不能直接用,需要写一个中间类,自己调用这个中间类,由中间类去调用已有的类
+优点：
+1.通过适配器，客户端可以直接调用同一接口，因而对客户端来说是透明的。这样做更简单，更直接，更紧凑。
+2.复用了现存的类，解决了现存类和复用环境要求不一致的问题。
+3.将目标类和适配者类解耦，通过引入一个适配器现有的适配者类，而无须修改原有代码。
+一个对象适配器可以把多个不同的适配器类适配到同一个目标，也就是说，同一个适配器可以把适配者类和他的子类都适配到目标接口。
+缺点：
+1.对于适配器来说，更换适配器的实现过程比较复杂 。
+2. 代理模式 优点:
+\1. 动态代理采用在运行时动态生成代码的方式,取消了对被代理类的扩展限制,遵循了开闭原则
+\2. 若动态代理要对目标类的增强逻辑进行扩展,结合策略模式,只需要新增策略类便可完成,无需修改代理类的代码
+3.在编码时，代理逻辑与业务逻辑是互相独立的，没有耦合
+https://blog.csdn.net/wb_snail/article/details/80632038
+2.1. 静态代理 定义：为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。
+作用：增强一个类中的某个方法.对程序进行扩展，Spring框架中AOP。
+2.2 动态代理 1、动态代理：(它与装饰者模式有点相似，它比装饰者模式还要灵活)
+动态代理它可以直接给某一个目标(被代理 对象)对象(实现了某个或者某些接口)生成一个代理对象，而不需要代理类存在，如上图中经理人需要存在。 动态代理与代理模式原理是一样的，只是它没有具体的代理类，直接通过反射生成了一个代理对象 2、动态代理的分类
+jdk提供一个Proxy类可以直接给实现接口类的对象直接生成代理对象 API: 调用, 缺少什么参数,传什么 spring中动态代理:cglib 继承 3. 单例模式 一个类能返回对象一个引用(永远是同一个)和一个获得该实例的方法（必须是静态方法，通常使用getInstance这个名 称）；当我们调用这个方法时，如果类持有的引用不为空就返回这个引用，如果类保持的引用为空就创建该类的实例并将实例的引用赋予该类保持的引用；同时我们 还将该类的构造函数定义为私有方法，这样其他处的代码就无法通过调用该类的构造函数来实例化该类的对象，只有通过该类提供的静态方法来得到该类的唯一实例。
+优点：
+1.在单例模式中，活动的单例只有一个实例，对单例类的所有实例化得到的都是相同的一个实例。这样就 防止其它对象对自己的实例化，确保所有的对象都访问一个实例
+2.单例模式具有一定的伸缩性，类自己来控制实例化进程，类就在改变实例化进程上有相应的伸缩性。
+3.提供了对唯一实例的受控访问。
+4.由于在系统内存中只存在一个对象，因此可以 节约系统资源，当 需要频繁创建和销毁的对象时单例模式无疑可以提高系统的性能。
+5.允许可变数目的实例。
+6.避免对共享资源的多重占用。
+缺点：
+1.不适用于变化的对象，如果同一类型的对象总是要在不同的用例场景发生变化，单例就会引起数据的错误，不能保存彼此的状态。
+2.由于单利模式中没有抽象层，因此单例类的扩展有很大的困难。
+3.单例类的职责过重，在一定程度上违背了“单一职责原则”。
+4.滥用单例将带来一些负面问题，如为了节省资源将数据库连接池对象设计为的单例类，可能会导致共享连接池对象的程序过多而出现连接池溢出；如果实例化的对象长时间不被利用，系统会认为是垃圾而被回收，这将导致对象状态的丢失
+适用场景：
+单例模式只允许创建一个对象，因此节省内存，加快对象访问速度，因此对象需要被公用的场合适合使用，如多个模块使用同一个数据源连接对象等等。如：
+1.需要频繁实例化然后销毁的对象。
+2.创建对象时耗时过多或者耗资源过多，但又经常用到的对象。
+3.有状态的工具类对象。
+4.频繁访问数据库或文件的对象。
+以下都是单例模式的经典使用场景：
+1.资源共享的情况下，避免由于资源操作时导致的性能或损耗等。如上述中的日志文件，应用配置。
+2.控制资源的情况下，方便资源之间的互相通信。如线程池等。
+4. 策略模式 在策略模式（Strategy Pattern）中，一个类的行为或其算法可以在运行时更改。这种类型的设计模式属于行为型模式。">
+
+
+<meta property="og:description" content="[toc]
+1. 适配器模式 类比插座,有欧洲标准,中国标准,为了在欧洲使用中国的插头,所以需要一个适配器,做到兼容
+在正常开发中,一般是针对一个已有的类,想要用它的功能,由于各种原因,不能直接用,需要写一个中间类,自己调用这个中间类,由中间类去调用已有的类
+优点：
+1.通过适配器，客户端可以直接调用同一接口，因而对客户端来说是透明的。这样做更简单，更直接，更紧凑。
+2.复用了现存的类，解决了现存类和复用环境要求不一致的问题。
+3.将目标类和适配者类解耦，通过引入一个适配器现有的适配者类，而无须修改原有代码。
+一个对象适配器可以把多个不同的适配器类适配到同一个目标，也就是说，同一个适配器可以把适配者类和他的子类都适配到目标接口。
+缺点：
+1.对于适配器来说，更换适配器的实现过程比较复杂 。
+2. 代理模式 优点:
+\1. 动态代理采用在运行时动态生成代码的方式,取消了对被代理类的扩展限制,遵循了开闭原则
+\2. 若动态代理要对目标类的增强逻辑进行扩展,结合策略模式,只需要新增策略类便可完成,无需修改代理类的代码
+3.在编码时，代理逻辑与业务逻辑是互相独立的，没有耦合
+https://blog.csdn.net/wb_snail/article/details/80632038
+2.1. 静态代理 定义：为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。
+作用：增强一个类中的某个方法.对程序进行扩展，Spring框架中AOP。
+2.2 动态代理 1、动态代理：(它与装饰者模式有点相似，它比装饰者模式还要灵活)
+动态代理它可以直接给某一个目标(被代理 对象)对象(实现了某个或者某些接口)生成一个代理对象，而不需要代理类存在，如上图中经理人需要存在。 动态代理与代理模式原理是一样的，只是它没有具体的代理类，直接通过反射生成了一个代理对象 2、动态代理的分类
+jdk提供一个Proxy类可以直接给实现接口类的对象直接生成代理对象 API: 调用, 缺少什么参数,传什么 spring中动态代理:cglib 继承 3. 单例模式 一个类能返回对象一个引用(永远是同一个)和一个获得该实例的方法（必须是静态方法，通常使用getInstance这个名 称）；当我们调用这个方法时，如果类持有的引用不为空就返回这个引用，如果类保持的引用为空就创建该类的实例并将实例的引用赋予该类保持的引用；同时我们 还将该类的构造函数定义为私有方法，这样其他处的代码就无法通过调用该类的构造函数来实例化该类的对象，只有通过该类提供的静态方法来得到该类的唯一实例。
+优点：
+1.在单例模式中，活动的单例只有一个实例，对单例类的所有实例化得到的都是相同的一个实例。这样就 防止其它对象对自己的实例化，确保所有的对象都访问一个实例
+2.单例模式具有一定的伸缩性，类自己来控制实例化进程，类就在改变实例化进程上有相应的伸缩性。
+3.提供了对唯一实例的受控访问。
+4.由于在系统内存中只存在一个对象，因此可以 节约系统资源，当 需要频繁创建和销毁的对象时单例模式无疑可以提高系统的性能。
+5.允许可变数目的实例。
+6.避免对共享资源的多重占用。
+缺点：
+1.不适用于变化的对象，如果同一类型的对象总是要在不同的用例场景发生变化，单例就会引起数据的错误，不能保存彼此的状态。
+2.由于单利模式中没有抽象层，因此单例类的扩展有很大的困难。
+3.单例类的职责过重，在一定程度上违背了“单一职责原则”。
+4.滥用单例将带来一些负面问题，如为了节省资源将数据库连接池对象设计为的单例类，可能会导致共享连接池对象的程序过多而出现连接池溢出；如果实例化的对象长时间不被利用，系统会认为是垃圾而被回收，这将导致对象状态的丢失
+适用场景：
+单例模式只允许创建一个对象，因此节省内存，加快对象访问速度，因此对象需要被公用的场合适合使用，如多个模块使用同一个数据源连接对象等等。如：
+1.需要频繁实例化然后销毁的对象。
+2.创建对象时耗时过多或者耗资源过多，但又经常用到的对象。
+3.有状态的工具类对象。
+4.频繁访问数据库或文件的对象。
+以下都是单例模式的经典使用场景：
+1.资源共享的情况下，避免由于资源操作时导致的性能或损耗等。如上述中的日志文件，应用配置。
+2.控制资源的情况下，方便资源之间的互相通信。如线程池等。
+4. 策略模式 在策略模式（Strategy Pattern）中，一个类的行为或其算法可以在运行时更改。这种类型的设计模式属于行为型模式。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1. 适配器模式 类比插座,有欧洲标准,中国标准,为了在欧洲使用中国的插头,所以需要一个适配器,做到兼容
+在正常开发中,一般是针对一个已有的类,想要用它的功能,由于各种原因,不能直接用,需要写一个中间类,自己调用这个中间类,由中间类去调用已有的类
+优点：
+1.通过适配器，客户端可以直接调用同一接口，因而对客户端来说是透明的。这样做更简单，更直接，更紧凑。
+2.复用了现存的类，解决了现存类和复用环境要求不一致的问题。
+3.将目标类和适配者类解耦，通过引入一个适配器现有的适配者类，而无须修改原有代码。
+一个对象适配器可以把多个不同的适配器类适配到同一个目标，也就是说，同一个适配器可以把适配者类和他的子类都适配到目标接口。
+缺点：
+1.对于适配器来说，更换适配器的实现过程比较复杂 。
+2. 代理模式 优点:
+\1. 动态代理采用在运行时动态生成代码的方式,取消了对被代理类的扩展限制,遵循了开闭原则
+\2. 若动态代理要对目标类的增强逻辑进行扩展,结合策略模式,只需要新增策略类便可完成,无需修改代理类的代码
+3.在编码时，代理逻辑与业务逻辑是互相独立的，没有耦合
+https://blog.csdn.net/wb_snail/article/details/80632038
+2.1. 静态代理 定义：为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。
+作用：增强一个类中的某个方法.对程序进行扩展，Spring框架中AOP。
+2.2 动态代理 1、动态代理：(它与装饰者模式有点相似，它比装饰者模式还要灵活)
+动态代理它可以直接给某一个目标(被代理 对象)对象(实现了某个或者某些接口)生成一个代理对象，而不需要代理类存在，如上图中经理人需要存在。 动态代理与代理模式原理是一样的，只是它没有具体的代理类，直接通过反射生成了一个代理对象 2、动态代理的分类
+jdk提供一个Proxy类可以直接给实现接口类的对象直接生成代理对象 API: 调用, 缺少什么参数,传什么 spring中动态代理:cglib 继承 3. 单例模式 一个类能返回对象一个引用(永远是同一个)和一个获得该实例的方法（必须是静态方法，通常使用getInstance这个名 称）；当我们调用这个方法时，如果类持有的引用不为空就返回这个引用，如果类保持的引用为空就创建该类的实例并将实例的引用赋予该类保持的引用；同时我们 还将该类的构造函数定义为私有方法，这样其他处的代码就无法通过调用该类的构造函数来实例化该类的对象，只有通过该类提供的静态方法来得到该类的唯一实例。
+优点：
+1.在单例模式中，活动的单例只有一个实例，对单例类的所有实例化得到的都是相同的一个实例。这样就 防止其它对象对自己的实例化，确保所有的对象都访问一个实例
+2.单例模式具有一定的伸缩性，类自己来控制实例化进程，类就在改变实例化进程上有相应的伸缩性。
+3.提供了对唯一实例的受控访问。
+4.由于在系统内存中只存在一个对象，因此可以 节约系统资源，当 需要频繁创建和销毁的对象时单例模式无疑可以提高系统的性能。
+5.允许可变数目的实例。
+6.避免对共享资源的多重占用。
+缺点：
+1.不适用于变化的对象，如果同一类型的对象总是要在不同的用例场景发生变化，单例就会引起数据的错误，不能保存彼此的状态。
+2.由于单利模式中没有抽象层，因此单例类的扩展有很大的困难。
+3.单例类的职责过重，在一定程度上违背了“单一职责原则”。
+4.滥用单例将带来一些负面问题，如为了节省资源将数据库连接池对象设计为的单例类，可能会导致共享连接池对象的程序过多而出现连接池溢出；如果实例化的对象长时间不被利用，系统会认为是垃圾而被回收，这将导致对象状态的丢失
+适用场景：
+单例模式只允许创建一个对象，因此节省内存，加快对象访问速度，因此对象需要被公用的场合适合使用，如多个模块使用同一个数据源连接对象等等。如：
+1.需要频繁实例化然后销毁的对象。
+2.创建对象时耗时过多或者耗资源过多，但又经常用到的对象。
+3.有状态的工具类对象。
+4.频繁访问数据库或文件的对象。
+以下都是单例模式的经典使用场景：
+1.资源共享的情况下，避免由于资源操作时导致的性能或损耗等。如上述中的日志文件，应用配置。
+2.控制资源的情况下，方便资源之间的互相通信。如线程池等。
+4. 策略模式 在策略模式（Strategy Pattern）中，一个类的行为或其算法可以在运行时更改。这种类型的设计模式属于行为型模式。">
+<meta name="twitter:description" content="[toc]
+1. 适配器模式 类比插座,有欧洲标准,中国标准,为了在欧洲使用中国的插头,所以需要一个适配器,做到兼容
+在正常开发中,一般是针对一个已有的类,想要用它的功能,由于各种原因,不能直接用,需要写一个中间类,自己调用这个中间类,由中间类去调用已有的类
+优点：
+1.通过适配器，客户端可以直接调用同一接口，因而对客户端来说是透明的。这样做更简单，更直接，更紧凑。
+2.复用了现存的类，解决了现存类和复用环境要求不一致的问题。
+3.将目标类和适配者类解耦，通过引入一个适配器现有的适配者类，而无须修改原有代码。
+一个对象适配器可以把多个不同的适配器类适配到同一个目标，也就是说，同一个适配器可以把适配者类和他的子类都适配到目标接口。
+缺点：
+1.对于适配器来说，更换适配器的实现过程比较复杂 。
+2. 代理模式 优点:
+\1. 动态代理采用在运行时动态生成代码的方式,取消了对被代理类的扩展限制,遵循了开闭原则
+\2. 若动态代理要对目标类的增强逻辑进行扩展,结合策略模式,只需要新增策略类便可完成,无需修改代理类的代码
+3.在编码时，代理逻辑与业务逻辑是互相独立的，没有耦合
+https://blog.csdn.net/wb_snail/article/details/80632038
+2.1. 静态代理 定义：为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。
+作用：增强一个类中的某个方法.对程序进行扩展，Spring框架中AOP。
+2.2 动态代理 1、动态代理：(它与装饰者模式有点相似，它比装饰者模式还要灵活)
+动态代理它可以直接给某一个目标(被代理 对象)对象(实现了某个或者某些接口)生成一个代理对象，而不需要代理类存在，如上图中经理人需要存在。 动态代理与代理模式原理是一样的，只是它没有具体的代理类，直接通过反射生成了一个代理对象 2、动态代理的分类
+jdk提供一个Proxy类可以直接给实现接口类的对象直接生成代理对象 API: 调用, 缺少什么参数,传什么 spring中动态代理:cglib 继承 3. 单例模式 一个类能返回对象一个引用(永远是同一个)和一个获得该实例的方法（必须是静态方法，通常使用getInstance这个名 称）；当我们调用这个方法时，如果类持有的引用不为空就返回这个引用，如果类保持的引用为空就创建该类的实例并将实例的引用赋予该类保持的引用；同时我们 还将该类的构造函数定义为私有方法，这样其他处的代码就无法通过调用该类的构造函数来实例化该类的对象，只有通过该类提供的静态方法来得到该类的唯一实例。
+优点：
+1.在单例模式中，活动的单例只有一个实例，对单例类的所有实例化得到的都是相同的一个实例。这样就 防止其它对象对自己的实例化，确保所有的对象都访问一个实例
+2.单例模式具有一定的伸缩性，类自己来控制实例化进程，类就在改变实例化进程上有相应的伸缩性。
+3.提供了对唯一实例的受控访问。
+4.由于在系统内存中只存在一个对象，因此可以 节约系统资源，当 需要频繁创建和销毁的对象时单例模式无疑可以提高系统的性能。
+5.允许可变数目的实例。
+6.避免对共享资源的多重占用。
+缺点：
+1.不适用于变化的对象，如果同一类型的对象总是要在不同的用例场景发生变化，单例就会引起数据的错误，不能保存彼此的状态。
+2.由于单利模式中没有抽象层，因此单例类的扩展有很大的困难。
+3.单例类的职责过重，在一定程度上违背了“单一职责原则”。
+4.滥用单例将带来一些负面问题，如为了节省资源将数据库连接池对象设计为的单例类，可能会导致共享连接池对象的程序过多而出现连接池溢出；如果实例化的对象长时间不被利用，系统会认为是垃圾而被回收，这将导致对象状态的丢失
+适用场景：
+单例模式只允许创建一个对象，因此节省内存，加快对象访问速度，因此对象需要被公用的场合适合使用，如多个模块使用同一个数据源连接对象等等。如：
+1.需要频繁实例化然后销毁的对象。
+2.创建对象时耗时过多或者耗资源过多，但又经常用到的对象。
+3.有状态的工具类对象。
+4.频繁访问数据库或文件的对象。
+以下都是单例模式的经典使用场景：
+1.资源共享的情况下，避免由于资源操作时导致的性能或损耗等。如上述中的日志文件，应用配置。
+2.控制资源的情况下，方便资源之间的互相通信。如线程池等。
+4. 策略模式 在策略模式（Strategy Pattern）中，一个类的行为或其算法可以在运行时更改。这种类型的设计模式属于行为型模式。">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1-适配器模式"><strong>1. 适配器模式</strong></h1>
+<p>类比插座,有欧洲标准,中国标准,为了在欧洲使用中国的插头,所以需要一个适配器,做到兼容</p>
+<p><strong>在正常开发中,一般是针对一个已有的类,想要用它的功能,由于各种原因,不能直接用,需要写一个中间类,自己调用这个中间类,由中间类去调用已有的类</strong></p>
+<p><strong>优点：</strong></p>
+<p>1.通过适配器，客户端可以直接调用同一接口，因而对客户端来说是透明的。这样做更简单，更直接，更紧凑。</p>
+<p>2.复用了现存的类，解决了现存类和复用环境要求不一致的问题。</p>
+<p>3.将目标类和适配者类解耦，通过引入一个适配器现有的适配者类，而无须修改原有代码。</p>
+<p>一个对象适配器可以把多个不同的适配器类适配到同一个目标，也就是说，同一个适配器可以把适配者类和他的子类都适配到目标接口。</p>
+<p><strong>缺点：</strong></p>
+<p>1.对于适配器来说，更换适配器的实现过程比较复杂 。</p>
+<h1 id="2-代理模式"><strong>2. 代理模式</strong></h1>
+<p>优点:</p>
+<p>\1. 动态代理采用在运行时动态生成代码的方式,取消了对被代理类的扩展限制,遵循了开闭原则</p>
+<p>\2. 若动态代理要对目标类的增强逻辑进行扩展,结合策略模式,只需要新增策略类便可完成,无需修改代理类的代码</p>
+<p>3.在编码时，代理逻辑与业务逻辑是互相独立的，没有耦合</p>
+<blockquote>
+<p><a href="https://blog.csdn.net/wb_snail/article/details/80632038">https://blog.csdn.net/wb_snail/article/details/80632038</a></p>
+</blockquote>
+<h2 id="21-静态代理"><strong>2.1. 静态代理</strong></h2>
+<p>定义：为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。</p>
+<p>作用：增强一个类中的某个方法.对程序进行扩展，Spring框架中AOP。</p>
+<p><img src="https://gitee.com/xiaokunji/my-images/raw/master/myMD/20210712003051.png" alt="img"></p>
+<h2 id="22-动态代理"><strong>2.2 动态代理</strong></h2>
+<p>1、动态代理：(它与装饰者模式有点相似，它比装饰者模式还要灵活)</p>
+<ul>
+<li>动态代理它可以直接给某一个目标(被代理 对象)对象(实现了某个或者某些接口)生成一个代理对象，而不需要代理类存在，如上图中经理人需要存在。</li>
+<li>动态代理与代理模式原理是一样的，只是它没有具体的代理类，直接通过反射生成了一个代理对象</li>
+</ul>
+<p>　2、动态代理的分类</p>
+<ul>
+<li>jdk提供一个Proxy类可以直接给实现接口类的对象直接生成代理对象 API: 调用, 缺少什么参数,传什么</li>
+<li>spring中动态代理:cglib 继承</li>
+</ul>
+<h1 id="3-单例模式"><strong>3. 单例模式</strong></h1>
+<p>一个类能返回对象一个引用(永远是同一个)和一个获得该实例的方法（必须是静态方法，通常使用getInstance这个名 称）；当我们调用这个方法时，如果类持有的引用不为空就返回这个引用，如果类保持的引用为空就创建该类的实例并将实例的引用赋予该类保持的引用；同时我们 还将该类的构造函数定义为私有方法，这样其他处的代码就无法通过调用该类的构造函数来实例化该类的对象，只有通过该类提供的静态方法来得到该类的唯一实例。</p>
+<p><strong>优点：</strong></p>
+<p>1.在单例模式中，活动的单例只有一个实例，对单例类的所有实例化得到的都是相同的一个实例。这样就 防止其它对象对自己的实例化，确保所有的对象都访问一个实例</p>
+<p>2.单例模式具有一定的伸缩性，类自己来控制实例化进程，类就在改变实例化进程上有相应的伸缩性。</p>
+<p>3.提供了对唯一实例的受控访问。</p>
+<p>4.由于在系统内存中只存在一个对象，因此可以 节约系统资源，当 需要频繁创建和销毁的对象时单例模式无疑可以提高系统的性能。</p>
+<p>5.允许可变数目的实例。</p>
+<p>6.避免对共享资源的多重占用。</p>
+<p><strong>缺点：</strong></p>
+<p>1.不适用于变化的对象，如果同一类型的对象总是要在不同的用例场景发生变化，单例就会引起数据的错误，不能保存彼此的状态。</p>
+<p>2.由于单利模式中没有抽象层，因此单例类的扩展有很大的困难。</p>
+<p>3.单例类的职责过重，在一定程度上违背了“单一职责原则”。</p>
+<p>4.滥用单例将带来一些负面问题，如为了节省资源将数据库连接池对象设计为的单例类，可能会导致共享连接池对象的程序过多而出现连接池溢出；如果实例化的对象长时间不被利用，系统会认为是垃圾而被回收，这将导致对象状态的丢失</p>
+<p><strong>适用场景：</strong></p>
+<p>单例模式只允许创建一个对象，因此节省内存，加快对象访问速度，因此对象需要被公用的场合适合使用，如多个模块使用同一个数据源连接对象等等。如：</p>
+<p>1.需要频繁实例化然后销毁的对象。</p>
+<p>2.创建对象时耗时过多或者耗资源过多，但又经常用到的对象。</p>
+<p>3.有状态的工具类对象。</p>
+<p>4.频繁访问数据库或文件的对象。</p>
+<p>以下都是单例模式的经典使用场景：</p>
+<p>1.资源共享的情况下，避免由于资源操作时导致的性能或损耗等。如上述中的日志文件，应用配置。</p>
+<p>2.控制资源的情况下，方便资源之间的互相通信。如线程池等。</p>
+<h1 id="4-策略模式">4. 策略模式</h1>
+<p>在策略模式（Strategy Pattern）中，一个类的行为或其算法可以在运行时更改。这种类型的设计模式属于行为型模式。</p>
+<p><strong>优点：</strong> 1、算法可以自由切换。 2、避免使用多重条件判断。 3、扩展性良好。</p>
+<p><strong>缺点：</strong> 1、策略类会增多。 2、所有策略类都需要对外暴露。</p>
+<p><strong>使用场景：</strong> 1、如果在一个系统里面有许多类，它们之间的区别仅在于它们的行为，那么使用策略模式可以动态地让一个对象在许多行为中选择一种行为。 2、一个系统需要动态地在几种算法中选择一种。 3、如果一个对象有很多的行为，如果不用恰当的模式，这些行为就只好使用多重的条件选择语句来实现。</p>
+<blockquote>
+<p>案例: 天启api中每个接口都需要验签,共通实现同一个验签方法,(抽取一个共同方法),入参选择各自的请求类(验签参数在请求类中),在具体执行验签函数时,则会选择请求类中的验签函数(因为优先使用子类的继承方法)</p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%AE%9E%E6%88%98-%E7%BE%8E%E5%9B%A2/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F\/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F\/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%AE%9E%E6%88%98-%E7%BE%8E%E5%9B%A2/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2F%25E8%25AE%25BE%25E8%25AE%25A1%25E6%25A8%25A1%25E5%25BC%258F%2F%25E7%25AE%2580%25E8%25BF%25B0%25E8%25AE%25BE%25E8%25AE%25A1%25E6%25A8%25A1%25E5%25BC%258F%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2F%25E8%25AE%25BE%25E8%25AE%25A1%25E6%25A8%25A1%25E5%25BC%258F%2F%25E7%25AE%2580%25E8%25BF%25B0%25E8%25AE%25BE%25E8%25AE%25A1%25E6%25A8%25A1%25E5%25BC%258F%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2F%25E8%25AE%25BE%25E8%25AE%25A1%25E6%25A8%25A1%25E5%25BC%258F%2F%25E7%25AE%2580%25E8%25BF%25B0%25E8%25AE%25BE%25E8%25AE%25A1%25E6%25A8%25A1%25E5%25BC%258F%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

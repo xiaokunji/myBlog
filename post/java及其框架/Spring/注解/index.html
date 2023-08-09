@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[TOC]\n一 @Autowired 通过 @Autowired 的使用来消除 set ，get方法 注:区别于Lombok,lombok是生成set和get方法,你能直接使用 ;\n@Autowired 是用来注值的,spring注值本质上是用了set方法来找到对象并初始化的,在这个注解没出来前,需要写get,set方法\n通过(1),可以看到,@Autowired 本质上是用来初始化对象的,(源城时好像是用来初始化实体类,捷顺用来初始化Dao层对象) @Autowired默认按类型装配\n注:捷顺用来初始化Dao层对象,关键是怎么和Mapper连接呢,有两种方案:\n在Dao层接口类上 写 @Mapper 注解,表示这个接口要对接mapper文件 在application.xml中 添加配置: \u0026lt;!-- 自动扫描了所有的XxxxMapper.java，这样就不用一个一个手动配置Mpper的映射了，只要Mapper接口类和Mapper映射文件对应起来就可以了 --\u0026gt; \u0026lt;bean class=\u0026#34;org.mybatis.spring.mapper.MapperScannerConfigurer\u0026#34;\u0026gt; \u0026lt;property name=\u0026#34;basePackage\u0026#34; value=\u0026#34;com.jieshun.jht.integral.dao\u0026#34; \/\u0026gt; \u0026lt;\/bean\u0026gt; 来自 http:\/\/www.cnblogs.com\/zghull\/archive\/2012\/06\/27\/2565480.html\n二 @Resource 这个是用来初始化对象的,这和@Autowired注解不一样,\n@Autowired默认按类型装配 , @Resource按名称装配, 这是使用注解是要自己写名称的,捷顺在Controller里用初始化对象,使用这个注解,在接口实现类(impl)上使用注解 @Service(\u0026ldquo;mebershipService\u0026rdquo;)来表示这个类要放入IOC中,并指定名字,然后使用这个指定的名字就能获得对象,\n如果没有指定名字就会按类型装配\n来自 http:\/\/www.cnblogs.com\/zghull\/archive\/2012\/06\/27\/2565480.html\n三 @Service 当你需要定义某个类为一个bean，则在这个类的类名前一行使用@Service(\u0026ldquo;XXX\u0026rdquo;),就相当于讲这个类定义为一个bean，bean名称为XXX;\n会配合@Resource来使用\n来自 http:\/\/www.cnblogs.com\/Struts-pring\/p\/4951661.html\n​\n四 @Async 用法: 在方法上或者类上标注, 这样调用方法时就会异步执行, 它需要搭配 @EnableAsync注解使用\n它还有一个value值,表示指定使用哪个线程池,不指定就用叫\u0026rsquo;taskExecutor\u0026rsquo;的线程池, 连默认线程池都没有就注解自己的线程池(有内存泄露风险,而且不重用线程)\n原理: Spring容器启动初始化bean时，判断类中是否使用了@Async注解，创建切入点和切入点处理器，根据切入点创建代理，在调用@Async注解标注的方法时，会调用代理，执行切入点处理器invoke方法，将方法的执行提交给线程池，实现异步执行。\n需要注意的一个错误用法是，如果A类的a方法(没有标注@Async)调用它自己的b方法(标注@Async)是不会异步执行的，因为从a方法进入调用的都是它本身，不会进入代理。(称为本地调用)\nmode=AdviceMode.ASPECTJ 指定切面模式就可以生效\nSpring @Async之四：Aysnc的异步执行的线程池实现原理 - duanxz - 博客园 (cnblogs.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/%E6%B3%A8%E8%A7%A3\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[TOC]
+一 @Autowired 通过 @Autowired 的使用来消除 set ，get方法 注:区别于Lombok,lombok是生成set和get方法,你能直接使用 ;
+@Autowired 是用来注值的,spring注值本质上是用了set方法来找到对象并初始化的,在这个注解没出来前,需要写get,set方法
+通过(1),可以看到,@Autowired 本质上是用来初始化对象的,(源城时好像是用来初始化实体类,捷顺用来初始化Dao层对象) @Autowired默认按类型装配
+注:捷顺用来初始化Dao层对象,关键是怎么和Mapper连接呢,有两种方案:
+在Dao层接口类上 写 @Mapper 注解,表示这个接口要对接mapper文件 在application.xml中 添加配置: &lt;!-- 自动扫描了所有的XxxxMapper.java，这样就不用一个一个手动配置Mpper的映射了，只要Mapper接口类和Mapper映射文件对应起来就可以了 --&gt; &lt;bean class=&#34;org.mybatis.spring.mapper.MapperScannerConfigurer&#34;&gt; &lt;property name=&#34;basePackage&#34; value=&#34;com.jieshun.jht.integral.dao&#34; /&gt; &lt;/bean&gt; 来自 http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html
+二 @Resource 这个是用来初始化对象的,这和@Autowired注解不一样,
+@Autowired默认按类型装配 , @Resource按名称装配, 这是使用注解是要自己写名称的,捷顺在Controller里用初始化对象,使用这个注解,在接口实现类(impl)上使用注解 @Service(&ldquo;mebershipService&rdquo;)来表示这个类要放入IOC中,并指定名字,然后使用这个指定的名字就能获得对象,
+如果没有指定名字就会按类型装配
+来自 http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html
+三 @Service 当你需要定义某个类为一个bean，则在这个类的类名前一行使用@Service(&ldquo;XXX&rdquo;),就相当于讲这个类定义为一个bean，bean名称为XXX;
+会配合@Resource来使用
+来自 http://www.cnblogs.com/Struts-pring/p/4951661.html
+​
+四 @Async 用法: 在方法上或者类上标注, 这样调用方法时就会异步执行, 它需要搭配 @EnableAsync注解使用
+它还有一个value值,表示指定使用哪个线程池,不指定就用叫&rsquo;taskExecutor&rsquo;的线程池, 连默认线程池都没有就注解自己的线程池(有内存泄露风险,而且不重用线程)
+原理: Spring容器启动初始化bean时，判断类中是否使用了@Async注解，创建切入点和切入点处理器，根据切入点创建代理，在调用@Async注解标注的方法时，会调用代理，执行切入点处理器invoke方法，将方法的执行提交给线程池，实现异步执行。
+需要注意的一个错误用法是，如果A类的a方法(没有标注@Async)调用它自己的b方法(标注@Async)是不会异步执行的，因为从a方法进入调用的都是它本身，不会进入代理。(称为本地调用)
+mode=AdviceMode.ASPECTJ 指定切面模式就可以生效
+Spring @Async之四：Aysnc的异步执行的线程池实现原理 - duanxz - 博客园 (cnblogs.">
+
+
+<meta property="og:description" content="[TOC]
+一 @Autowired 通过 @Autowired 的使用来消除 set ，get方法 注:区别于Lombok,lombok是生成set和get方法,你能直接使用 ;
+@Autowired 是用来注值的,spring注值本质上是用了set方法来找到对象并初始化的,在这个注解没出来前,需要写get,set方法
+通过(1),可以看到,@Autowired 本质上是用来初始化对象的,(源城时好像是用来初始化实体类,捷顺用来初始化Dao层对象) @Autowired默认按类型装配
+注:捷顺用来初始化Dao层对象,关键是怎么和Mapper连接呢,有两种方案:
+在Dao层接口类上 写 @Mapper 注解,表示这个接口要对接mapper文件 在application.xml中 添加配置: &lt;!-- 自动扫描了所有的XxxxMapper.java，这样就不用一个一个手动配置Mpper的映射了，只要Mapper接口类和Mapper映射文件对应起来就可以了 --&gt; &lt;bean class=&#34;org.mybatis.spring.mapper.MapperScannerConfigurer&#34;&gt; &lt;property name=&#34;basePackage&#34; value=&#34;com.jieshun.jht.integral.dao&#34; /&gt; &lt;/bean&gt; 来自 http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html
+二 @Resource 这个是用来初始化对象的,这和@Autowired注解不一样,
+@Autowired默认按类型装配 , @Resource按名称装配, 这是使用注解是要自己写名称的,捷顺在Controller里用初始化对象,使用这个注解,在接口实现类(impl)上使用注解 @Service(&ldquo;mebershipService&rdquo;)来表示这个类要放入IOC中,并指定名字,然后使用这个指定的名字就能获得对象,
+如果没有指定名字就会按类型装配
+来自 http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html
+三 @Service 当你需要定义某个类为一个bean，则在这个类的类名前一行使用@Service(&ldquo;XXX&rdquo;),就相当于讲这个类定义为一个bean，bean名称为XXX;
+会配合@Resource来使用
+来自 http://www.cnblogs.com/Struts-pring/p/4951661.html
+​
+四 @Async 用法: 在方法上或者类上标注, 这样调用方法时就会异步执行, 它需要搭配 @EnableAsync注解使用
+它还有一个value值,表示指定使用哪个线程池,不指定就用叫&rsquo;taskExecutor&rsquo;的线程池, 连默认线程池都没有就注解自己的线程池(有内存泄露风险,而且不重用线程)
+原理: Spring容器启动初始化bean时，判断类中是否使用了@Async注解，创建切入点和切入点处理器，根据切入点创建代理，在调用@Async注解标注的方法时，会调用代理，执行切入点处理器invoke方法，将方法的执行提交给线程池，实现异步执行。
+需要注意的一个错误用法是，如果A类的a方法(没有标注@Async)调用它自己的b方法(标注@Async)是不会异步执行的，因为从a方法进入调用的都是它本身，不会进入代理。(称为本地调用)
+mode=AdviceMode.ASPECTJ 指定切面模式就可以生效
+Spring @Async之四：Aysnc的异步执行的线程池实现原理 - duanxz - 博客园 (cnblogs.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[TOC]
+一 @Autowired 通过 @Autowired 的使用来消除 set ，get方法 注:区别于Lombok,lombok是生成set和get方法,你能直接使用 ;
+@Autowired 是用来注值的,spring注值本质上是用了set方法来找到对象并初始化的,在这个注解没出来前,需要写get,set方法
+通过(1),可以看到,@Autowired 本质上是用来初始化对象的,(源城时好像是用来初始化实体类,捷顺用来初始化Dao层对象) @Autowired默认按类型装配
+注:捷顺用来初始化Dao层对象,关键是怎么和Mapper连接呢,有两种方案:
+在Dao层接口类上 写 @Mapper 注解,表示这个接口要对接mapper文件 在application.xml中 添加配置: &lt;!-- 自动扫描了所有的XxxxMapper.java，这样就不用一个一个手动配置Mpper的映射了，只要Mapper接口类和Mapper映射文件对应起来就可以了 --&gt; &lt;bean class=&#34;org.mybatis.spring.mapper.MapperScannerConfigurer&#34;&gt; &lt;property name=&#34;basePackage&#34; value=&#34;com.jieshun.jht.integral.dao&#34; /&gt; &lt;/bean&gt; 来自 http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html
+二 @Resource 这个是用来初始化对象的,这和@Autowired注解不一样,
+@Autowired默认按类型装配 , @Resource按名称装配, 这是使用注解是要自己写名称的,捷顺在Controller里用初始化对象,使用这个注解,在接口实现类(impl)上使用注解 @Service(&ldquo;mebershipService&rdquo;)来表示这个类要放入IOC中,并指定名字,然后使用这个指定的名字就能获得对象,
+如果没有指定名字就会按类型装配
+来自 http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html
+三 @Service 当你需要定义某个类为一个bean，则在这个类的类名前一行使用@Service(&ldquo;XXX&rdquo;),就相当于讲这个类定义为一个bean，bean名称为XXX;
+会配合@Resource来使用
+来自 http://www.cnblogs.com/Struts-pring/p/4951661.html
+​
+四 @Async 用法: 在方法上或者类上标注, 这样调用方法时就会异步执行, 它需要搭配 @EnableAsync注解使用
+它还有一个value值,表示指定使用哪个线程池,不指定就用叫&rsquo;taskExecutor&rsquo;的线程池, 连默认线程池都没有就注解自己的线程池(有内存泄露风险,而且不重用线程)
+原理: Spring容器启动初始化bean时，判断类中是否使用了@Async注解，创建切入点和切入点处理器，根据切入点创建代理，在调用@Async注解标注的方法时，会调用代理，执行切入点处理器invoke方法，将方法的执行提交给线程池，实现异步执行。
+需要注意的一个错误用法是，如果A类的a方法(没有标注@Async)调用它自己的b方法(标注@Async)是不会异步执行的，因为从a方法进入调用的都是它本身，不会进入代理。(称为本地调用)
+mode=AdviceMode.ASPECTJ 指定切面模式就可以生效
+Spring @Async之四：Aysnc的异步执行的线程池实现原理 - duanxz - 博客园 (cnblogs.">
+<meta name="twitter:description" content="[TOC]
+一 @Autowired 通过 @Autowired 的使用来消除 set ，get方法 注:区别于Lombok,lombok是生成set和get方法,你能直接使用 ;
+@Autowired 是用来注值的,spring注值本质上是用了set方法来找到对象并初始化的,在这个注解没出来前,需要写get,set方法
+通过(1),可以看到,@Autowired 本质上是用来初始化对象的,(源城时好像是用来初始化实体类,捷顺用来初始化Dao层对象) @Autowired默认按类型装配
+注:捷顺用来初始化Dao层对象,关键是怎么和Mapper连接呢,有两种方案:
+在Dao层接口类上 写 @Mapper 注解,表示这个接口要对接mapper文件 在application.xml中 添加配置: &lt;!-- 自动扫描了所有的XxxxMapper.java，这样就不用一个一个手动配置Mpper的映射了，只要Mapper接口类和Mapper映射文件对应起来就可以了 --&gt; &lt;bean class=&#34;org.mybatis.spring.mapper.MapperScannerConfigurer&#34;&gt; &lt;property name=&#34;basePackage&#34; value=&#34;com.jieshun.jht.integral.dao&#34; /&gt; &lt;/bean&gt; 来自 http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html
+二 @Resource 这个是用来初始化对象的,这和@Autowired注解不一样,
+@Autowired默认按类型装配 , @Resource按名称装配, 这是使用注解是要自己写名称的,捷顺在Controller里用初始化对象,使用这个注解,在接口实现类(impl)上使用注解 @Service(&ldquo;mebershipService&rdquo;)来表示这个类要放入IOC中,并指定名字,然后使用这个指定的名字就能获得对象,
+如果没有指定名字就会按类型装配
+来自 http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html
+三 @Service 当你需要定义某个类为一个bean，则在这个类的类名前一行使用@Service(&ldquo;XXX&rdquo;),就相当于讲这个类定义为一个bean，bean名称为XXX;
+会配合@Resource来使用
+来自 http://www.cnblogs.com/Struts-pring/p/4951661.html
+​
+四 @Async 用法: 在方法上或者类上标注, 这样调用方法时就会异步执行, 它需要搭配 @EnableAsync注解使用
+它还有一个value值,表示指定使用哪个线程池,不指定就用叫&rsquo;taskExecutor&rsquo;的线程池, 连默认线程池都没有就注解自己的线程池(有内存泄露风险,而且不重用线程)
+原理: Spring容器启动初始化bean时，判断类中是否使用了@Async注解，创建切入点和切入点处理器，根据切入点创建代理，在调用@Async注解标注的方法时，会调用代理，执行切入点处理器invoke方法，将方法的执行提交给线程池，实现异步执行。
+需要注意的一个错误用法是，如果A类的a方法(没有标注@Async)调用它自己的b方法(标注@Async)是不会异步执行的，因为从a方法进入调用的都是它本身，不会进入代理。(称为本地调用)
+mode=AdviceMode.ASPECTJ 指定切面模式就可以生效
+Spring @Async之四：Aysnc的异步执行的线程池实现原理 - duanxz - 博客园 (cnblogs.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[TOC]</p>
+<h1 id="一-autowired">一 @Autowired</h1>
+<ul>
+<li>通过 @Autowired 的使用来消除 set ，get方法</li>
+</ul>
+<blockquote>
+<p>注:区别于Lombok,lombok是生成set和get方法,你能直接使用 ;</p>
+</blockquote>
+<p>@Autowired 是用来注值的,spring注值本质上是用了set方法来找到对象并初始化的,在这个注解没出来前,需要写get,set方法</p>
+<ul>
+<li>通过(1),可以看到,@Autowired 本质上是用来初始化对象的,(源城时好像是用来初始化实体类,捷顺用来初始化Dao层对象)</li>
+</ul>
+<p>@Autowired默认按类型装配</p>
+<blockquote>
+<p>注:捷顺用来初始化Dao层对象,关键是怎么和Mapper连接呢,有两种方案:</p>
+<ul>
+<li>在Dao层接口类上 写 @Mapper 注解,表示这个接口要对接mapper文件</li>
+<li>在application.xml中 添加配置:</li>
+</ul>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- 自动扫描了所有的XxxxMapper.java，这样就不用一个一个手动配置Mpper的映射了，只要Mapper接口类和Mapper映射文件对应起来就可以了 --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;bean</span> <span style="color:#a6e22e">class=</span><span style="color:#e6db74">&#34;org.mybatis.spring.mapper.MapperScannerConfigurer&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;property</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;basePackage&#34;</span> <span style="color:#a6e22e">value=</span><span style="color:#e6db74">&#34;com.jieshun.jht.integral.dao&#34;</span> <span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/bean&gt;</span>
+</span></span></code></pre></div><blockquote>
+<p>来自 <a href="http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html">http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html</a></p>
+</blockquote>
+<h1 id="二-resource">二 @Resource</h1>
+<p>这个是用来初始化对象的,这和@Autowired注解不一样,</p>
+<ul>
+<li>@Autowired默认按类型装配 ,</li>
+<li>@Resource按名称装配,</li>
+</ul>
+<p>这是使用注解是要自己写名称的,捷顺在Controller里用初始化对象,使用这个注解,在接口实现类(impl)上使用注解 @Service(&ldquo;mebershipService&rdquo;)来表示这个类要放入IOC中,并指定名字,然后使用这个指定的名字就能获得对象,</p>
+<blockquote>
+<p>如果没有指定名字就会按类型装配</p>
+</blockquote>
+<blockquote>
+<p>来自 <a href="http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html">http://www.cnblogs.com/zghull/archive/2012/06/27/2565480.html</a></p>
+</blockquote>
+<h1 id="三-service">三 @Service</h1>
+<p>当你需要定义某个类为一个bean，则在这个类的类名前一行使用@Service(&ldquo;XXX&rdquo;),就相当于讲这个类定义为一个bean，bean名称为XXX;</p>
+<p>会配合@Resource来使用</p>
+<blockquote>
+<p>来自 <a href="http://www.cnblogs.com/Struts-pring/p/4951661.html">http://www.cnblogs.com/Struts-pring/p/4951661.html</a></p>
+</blockquote>
+<p>​</p>
+<h1 id="四-async">四 @Async</h1>
+<p><strong>用法:</strong> 在方法上或者类上标注, 这样调用方法时就会异步执行,  它需要搭配 <code>@EnableAsync</code>注解使用</p>
+<p>它还有一个value值,表示指定使用哪个线程池,不指定就用叫&rsquo;taskExecutor&rsquo;的线程池, 连默认线程池都没有就注解自己的线程池(有内存泄露风险,而且不重用线程)</p>
+<p><strong>原理:</strong>  Spring容器启动初始化bean时，判断类中是否使用了@Async注解，创建切入点和切入点处理器，根据切入点创建代理，在调用@Async注解标注的方法时，会调用代理，执行切入点处理器invoke方法，将方法的执行提交给线程池，实现异步执行。</p>
+<blockquote>
+<p>需要注意的一个错误用法是，如果A类的a方法(没有标注@Async)调用它自己的b方法(标注@Async)是不会异步执行的，因为从a方法进入调用的都是它本身，不会进入代理。(称为本地调用)</p>
+<p><code>mode=AdviceMode.ASPECTJ</code> 指定切面模式就可以生效</p>
+</blockquote>
+<p><a href="https://www.cnblogs.com/duanxz/p/9438757.html">Spring @Async之四：Aysnc的异步执行的线程池实现原理 - duanxz - 博客园 (cnblogs.com)</a></p>
+<p><a href="https://blog.csdn.net/qq_22076345/article/details/82194482">Spring @Async 注解的使用以及原理（一）<em>灵颖桥人的博客-CSDN博客</em>@async注解</a></p>
+<h1 id="import">@Import</h1>
+<p><strong>@Import注解可以用于导入第三方包</strong> ，当然@Bean注解也可以，但是@Import注解快速导入的方式更加便捷.Import注解本身在springboot中用的很多，特别是ImportSelector方式在springboot中使用的特别多</p>
+<h2 id="import的三种用法">@Import的三种用法</h2>
+<p>@Import的三种用法主要包括：</p>
+<ol>
+<li>直接填class数组方式</li>
+<li>ImportSelector方式【重点】</li>
+<li>ImportBeanDefinitionRegistrar方式</li>
+</ol>
+<h4 id="第一种用法直接填class数组">第一种用法：直接填class数组</h4>
+<p><strong>直接填对应的class数组，class数组可以有0到多个。</strong></p>
+<p>语法如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Import</span><span style="color:#f92672">({</span> 类名<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span> <span style="color:#f92672">,</span> 类名<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">...</span> <span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestDemo</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>对应的import的bean都将加入到spring容器中，这些在容器中bean名称是该类的<strong>全类名</strong> ，比如com.yc.类名</p>
+<h4 id="第二种用法importselector方式重点">第二种用法：ImportSelector方式【重点】</h4>
+<p>这种方式的前提就是一个类要实现ImportSelector接口，假如我要用这种方法，目标对象是Myclass这个类，分析具体如下：</p>
+<p>创建Myclass类并实现ImportSelector接口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Myclass</span> <span style="color:#66d9ef">implements</span> ImportSelector <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String<span style="color:#f92672">[]</span> <span style="color:#a6e22e">selectImports</span><span style="color:#f92672">(</span>AnnotationMetadata annotationMetadata<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 特意换个bean名字
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">[]{</span><span style="color:#e6db74">&#34;com.yc.Test.TestDemo3&#34;</span><span style="color:#f92672">};</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>分析实现接口的selectImports方法中的：</p>
+<ul>
+<li>1、返回值： 就是我们实际上要导入到容器中的组件全类名【<strong>重点</strong> 】</li>
+<li>2、参数： AnnotationMetadata表示当前被@Import注解给标注的所有注解信息【不是重点】</li>
+</ul>
+<blockquote>
+<p>需要注意的是selectImports方法可以返回空数组但是不能返回null，否则会报空指针异常！</p>
+</blockquote>
+<p>案例:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Import</span><span style="color:#f92672">({</span>TestDemo2<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span>Myclass<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestDemo</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> AccountDao2 <span style="color:#a6e22e">accountDao2</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> AccountDao2<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 打印容器中的组件测试
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AnnotationTestDemo</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        AnnotationConfigApplicationContext applicationContext<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> AnnotationConfigApplicationContext<span style="color:#f92672">(</span>TestDemo<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>  <span style="color:#75715e">//这里的参数代表要做操作的类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>        String<span style="color:#f92672">[]</span> beanDefinitionNames <span style="color:#f92672">=</span> applicationContext<span style="color:#f92672">.</span><span style="color:#a6e22e">getBeanDefinitionNames</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String name <span style="color:#f92672">:</span> beanDefinitionNames<span style="color:#f92672">){</span>
+</span></span><span style="display:flex;"><span>            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><blockquote>
+<p>所以初始化TestDemo类时就会有三个对象被初始化</p>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/20191227145414510.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQ0NTQzNTA4,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="第三种用法importbeandefinitionregistrar方式">第三种用法：ImportBeanDefinitionRegistrar方式</h4>
+<p>同样是一个接口，类似于第二种ImportSelector用法，相似度80%，只不过这种用法比较自定义化注册，具体如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Myclass2</span> <span style="color:#66d9ef">implements</span> ImportBeanDefinitionRegistrar <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">registerBeanDefinitions</span><span style="color:#f92672">(</span>AnnotationMetadata annotationMetadata<span style="color:#f92672">,</span> BeanDefinitionRegistry beanDefinitionRegistry<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//指定bean定义信息（包括bean的类型、作用域...）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        RootBeanDefinition rootBeanDefinition <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RootBeanDefinition<span style="color:#f92672">(</span>TestDemo4<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//注册一个bean指定bean名字（id）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        beanDefinitionRegistry<span style="color:#f92672">.</span><span style="color:#a6e22e">registerBeanDefinition</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;TestDemo4444&#34;</span><span style="color:#f92672">,</span>rootBeanDefinition<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><a href="https://www.cnblogs.com/yichunguo/p/12122598.html">spring注解之@Import注解的三种使用方式 - 宜春 - 博客园 (cnblogs.com)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E4%BA%8B%E5%8A%A1/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/%E6%B3%A8%E8%A7%A3\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/%E6%B3%A8%E8%A7%A3\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E4%BA%8B%E5%8A%A1/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E6%B3%A8%E8%A7%A3/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2F%25E6%25B3%25A8%25E8%25A7%25A3%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2F%25E6%25B3%25A8%25E8%25A7%25A3%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2F%25E6%25B3%25A8%25E8%25A7%25A3%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n基于ElasticSearch 6.x 1 字段类型概述 一级分类 二级分类 具体类型 核心类型 字符串类型 string,text,keyword 整数类型 integer,long,short,byte 浮点类型 double,float,half_float,scaled_float 逻辑类型 boolean 日期类型 date 范围类型 range 二进制类型 binary 复合类型 数组类型 array 对象类型 object 嵌套类型 nested 地理类型 地理坐标类型 geo_point 地理地图 geo_shape 特殊类型 IP类型 ip 范围类型 completion 令牌计数类型 token_count 附件类型 attachment 抽取类型 percolator 2 字符串类型 （1）string string类型在ElasticSearch 旧版本中使用较多，从ElasticSearch 5.x开始不再支持string，由text和keyword类型替代。\n（2）text 当一个字段是要被全文搜索的，比如Email内容、产品描述，应该使用text类型。设置text类型以后，字段内容会被分析，在生成倒排索引以前，字符串会被分析器分成一个一个词项。text类型的字段不用于排序，很少用于聚合。\n（3）keyword keyword类型适用于索引结构化的字段，比如email地址、主机名、状态码和标签。如果字段需要进行过滤(比如查找已发布博客中status属性为published的文章)、排序、聚合。keyword类型的字段只能通过精确值搜索到。\n以下 基于 ElasticSearch 7.x :\n关键字族包括以下字段类型：\nkeyword，用于结构化内容，例如 ID、电子邮件地址、主机名、状态代码、邮政编码或标签。 constant_keyword 用于始终包含相同值的关键字字段。 wildcard 为非结构化内容提供。wildcard类型针对具有大值或高基数的字段进行了优化。 Keyword字段通常用于排序、聚合和术语级别的查询，例如术语。\n简单的说,wildcard 相比keyword做了优化,不过也牺牲了一些场景和功能",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+基于ElasticSearch 6.x 1 字段类型概述 一级分类 二级分类 具体类型 核心类型 字符串类型 string,text,keyword 整数类型 integer,long,short,byte 浮点类型 double,float,half_float,scaled_float 逻辑类型 boolean 日期类型 date 范围类型 range 二进制类型 binary 复合类型 数组类型 array 对象类型 object 嵌套类型 nested 地理类型 地理坐标类型 geo_point 地理地图 geo_shape 特殊类型 IP类型 ip 范围类型 completion 令牌计数类型 token_count 附件类型 attachment 抽取类型 percolator 2 字符串类型 （1）string string类型在ElasticSearch 旧版本中使用较多，从ElasticSearch 5.x开始不再支持string，由text和keyword类型替代。
+（2）text 当一个字段是要被全文搜索的，比如Email内容、产品描述，应该使用text类型。设置text类型以后，字段内容会被分析，在生成倒排索引以前，字符串会被分析器分成一个一个词项。text类型的字段不用于排序，很少用于聚合。
+（3）keyword keyword类型适用于索引结构化的字段，比如email地址、主机名、状态码和标签。如果字段需要进行过滤(比如查找已发布博客中status属性为published的文章)、排序、聚合。keyword类型的字段只能通过精确值搜索到。
+以下 基于 ElasticSearch 7.x :
+关键字族包括以下字段类型：
+keyword，用于结构化内容，例如 ID、电子邮件地址、主机名、状态代码、邮政编码或标签。 constant_keyword 用于始终包含相同值的关键字字段。 wildcard 为非结构化内容提供。wildcard类型针对具有大值或高基数的字段进行了优化。 Keyword字段通常用于排序、聚合和术语级别的查询，例如术语。
+简单的说,wildcard 相比keyword做了优化,不过也牺牲了一些场景和功能">
+
+
+<meta property="og:description" content="[toc]
+基于ElasticSearch 6.x 1 字段类型概述 一级分类 二级分类 具体类型 核心类型 字符串类型 string,text,keyword 整数类型 integer,long,short,byte 浮点类型 double,float,half_float,scaled_float 逻辑类型 boolean 日期类型 date 范围类型 range 二进制类型 binary 复合类型 数组类型 array 对象类型 object 嵌套类型 nested 地理类型 地理坐标类型 geo_point 地理地图 geo_shape 特殊类型 IP类型 ip 范围类型 completion 令牌计数类型 token_count 附件类型 attachment 抽取类型 percolator 2 字符串类型 （1）string string类型在ElasticSearch 旧版本中使用较多，从ElasticSearch 5.x开始不再支持string，由text和keyword类型替代。
+（2）text 当一个字段是要被全文搜索的，比如Email内容、产品描述，应该使用text类型。设置text类型以后，字段内容会被分析，在生成倒排索引以前，字符串会被分析器分成一个一个词项。text类型的字段不用于排序，很少用于聚合。
+（3）keyword keyword类型适用于索引结构化的字段，比如email地址、主机名、状态码和标签。如果字段需要进行过滤(比如查找已发布博客中status属性为published的文章)、排序、聚合。keyword类型的字段只能通过精确值搜索到。
+以下 基于 ElasticSearch 7.x :
+关键字族包括以下字段类型：
+keyword，用于结构化内容，例如 ID、电子邮件地址、主机名、状态代码、邮政编码或标签。 constant_keyword 用于始终包含相同值的关键字字段。 wildcard 为非结构化内容提供。wildcard类型针对具有大值或高基数的字段进行了优化。 Keyword字段通常用于排序、聚合和术语级别的查询，例如术语。
+简单的说,wildcard 相比keyword做了优化,不过也牺牲了一些场景和功能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+基于ElasticSearch 6.x 1 字段类型概述 一级分类 二级分类 具体类型 核心类型 字符串类型 string,text,keyword 整数类型 integer,long,short,byte 浮点类型 double,float,half_float,scaled_float 逻辑类型 boolean 日期类型 date 范围类型 range 二进制类型 binary 复合类型 数组类型 array 对象类型 object 嵌套类型 nested 地理类型 地理坐标类型 geo_point 地理地图 geo_shape 特殊类型 IP类型 ip 范围类型 completion 令牌计数类型 token_count 附件类型 attachment 抽取类型 percolator 2 字符串类型 （1）string string类型在ElasticSearch 旧版本中使用较多，从ElasticSearch 5.x开始不再支持string，由text和keyword类型替代。
+（2）text 当一个字段是要被全文搜索的，比如Email内容、产品描述，应该使用text类型。设置text类型以后，字段内容会被分析，在生成倒排索引以前，字符串会被分析器分成一个一个词项。text类型的字段不用于排序，很少用于聚合。
+（3）keyword keyword类型适用于索引结构化的字段，比如email地址、主机名、状态码和标签。如果字段需要进行过滤(比如查找已发布博客中status属性为published的文章)、排序、聚合。keyword类型的字段只能通过精确值搜索到。
+以下 基于 ElasticSearch 7.x :
+关键字族包括以下字段类型：
+keyword，用于结构化内容，例如 ID、电子邮件地址、主机名、状态代码、邮政编码或标签。 constant_keyword 用于始终包含相同值的关键字字段。 wildcard 为非结构化内容提供。wildcard类型针对具有大值或高基数的字段进行了优化。 Keyword字段通常用于排序、聚合和术语级别的查询，例如术语。
+简单的说,wildcard 相比keyword做了优化,不过也牺牲了一些场景和功能">
+<meta name="twitter:description" content="[toc]
+基于ElasticSearch 6.x 1 字段类型概述 一级分类 二级分类 具体类型 核心类型 字符串类型 string,text,keyword 整数类型 integer,long,short,byte 浮点类型 double,float,half_float,scaled_float 逻辑类型 boolean 日期类型 date 范围类型 range 二进制类型 binary 复合类型 数组类型 array 对象类型 object 嵌套类型 nested 地理类型 地理坐标类型 geo_point 地理地图 geo_shape 特殊类型 IP类型 ip 范围类型 completion 令牌计数类型 token_count 附件类型 attachment 抽取类型 percolator 2 字符串类型 （1）string string类型在ElasticSearch 旧版本中使用较多，从ElasticSearch 5.x开始不再支持string，由text和keyword类型替代。
+（2）text 当一个字段是要被全文搜索的，比如Email内容、产品描述，应该使用text类型。设置text类型以后，字段内容会被分析，在生成倒排索引以前，字符串会被分析器分成一个一个词项。text类型的字段不用于排序，很少用于聚合。
+（3）keyword keyword类型适用于索引结构化的字段，比如email地址、主机名、状态码和标签。如果字段需要进行过滤(比如查找已发布博客中status属性为published的文章)、排序、聚合。keyword类型的字段只能通过精确值搜索到。
+以下 基于 ElasticSearch 7.x :
+关键字族包括以下字段类型：
+keyword，用于结构化内容，例如 ID、电子邮件地址、主机名、状态代码、邮政编码或标签。 constant_keyword 用于始终包含相同值的关键字字段。 wildcard 为非结构化内容提供。wildcard类型针对具有大值或高基数的字段进行了优化。 Keyword字段通常用于排序、聚合和术语级别的查询，例如术语。
+简单的说,wildcard 相比keyword做了优化,不过也牺牲了一些场景和功能">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<blockquote>
+<p><!-- raw HTML omitted -->基于ElasticSearch 6.x <!-- raw HTML omitted --></p>
+</blockquote>
+<h1 id="1-字段类型概述">1 字段类型概述</h1>
+<table>
+<thead>
+<tr>
+<th>一级分类</th>
+<th>二级分类</th>
+<th>具体类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>核心类型</td>
+<td>字符串类型</td>
+<td>string,text,keyword</td>
+</tr>
+<tr>
+<td>整数类型</td>
+<td>integer,long,short,byte</td>
+<td></td>
+</tr>
+<tr>
+<td>浮点类型</td>
+<td>double,float,half_float,scaled_float</td>
+<td></td>
+</tr>
+<tr>
+<td>逻辑类型</td>
+<td>boolean</td>
+<td></td>
+</tr>
+<tr>
+<td>日期类型</td>
+<td>date</td>
+<td></td>
+</tr>
+<tr>
+<td>范围类型</td>
+<td>range</td>
+<td></td>
+</tr>
+<tr>
+<td>二进制类型</td>
+<td>binary</td>
+<td></td>
+</tr>
+<tr>
+<td>复合类型</td>
+<td>数组类型</td>
+<td>array</td>
+</tr>
+<tr>
+<td>对象类型</td>
+<td>object</td>
+<td></td>
+</tr>
+<tr>
+<td>嵌套类型</td>
+<td>nested</td>
+<td></td>
+</tr>
+<tr>
+<td>地理类型</td>
+<td>地理坐标类型</td>
+<td>geo_point</td>
+</tr>
+<tr>
+<td>地理地图</td>
+<td>geo_shape</td>
+<td></td>
+</tr>
+<tr>
+<td>特殊类型</td>
+<td>IP类型</td>
+<td>ip</td>
+</tr>
+<tr>
+<td>范围类型</td>
+<td>completion</td>
+<td></td>
+</tr>
+<tr>
+<td>令牌计数类型</td>
+<td>token_count</td>
+<td></td>
+</tr>
+<tr>
+<td>附件类型</td>
+<td>attachment</td>
+<td></td>
+</tr>
+<tr>
+<td>抽取类型</td>
+<td>percolator</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h1 id="2-字符串类型">2 字符串类型</h1>
+<p><strong>（1）string</strong>
+string类型在ElasticSearch 旧版本中使用较多，从ElasticSearch 5.x开始不再支持string，由text和keyword类型替代。</p>
+<p><strong>（2）text</strong>
+当一个字段是要被全文搜索的，比如Email内容、产品描述，应该使用text类型。设置text类型以后，字段内容会被分析，在生成倒排索引以前，字符串会被分析器分成一个一个词项。text类型的字段不用于排序，很少用于聚合。</p>
+<p><strong>（3）keyword</strong>
+keyword类型适用于索引结构化的字段，比如email地址、主机名、状态码和标签。如果字段需要进行过滤(比如查找已发布博客中status属性为published的文章)、排序、聚合。keyword类型的字段只能通过精确值搜索到。</p>
+<p>以下 基于 ElasticSearch 7.x :</p>
+<p>关键字族包括以下字段类型：</p>
+<ul>
+<li><code>keyword</code>，用于结构化内容，例如 ID、电子邮件地址、主机名、状态代码、邮政编码或标签。</li>
+<li><code>constant_keyword</code> 用于始终包含相同值的关键字字段。</li>
+<li><code>wildcard</code> 为非结构化内容提供。<code>wildcard</code>类型针对具有大值或高基数的字段进行了优化。</li>
+</ul>
+<p><code>Keyword</code>字段通常用于排序、聚合和术语级别的查询，例如术语。</p>
+<blockquote>
+<p>简单的说,wildcard 相比keyword做了优化,不过也牺牲了一些场景和功能</p>
+<p><!-- raw HTML omitted -->格力中使用wildcard是为了解决cpu过高的问题<!-- raw HTML omitted --></p>
+<p><a href="https://blog.csdn.net/UbuntuTouch/article/details/108120879">详细解释-译文</a></p>
+</blockquote>
+<h1 id="3-整数类型">3 整数类型</h1>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>取值范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>byte</td>
+<td>-128~127</td>
+</tr>
+<tr>
+<td>short</td>
+<td>-32768~32767</td>
+</tr>
+<tr>
+<td>integer</td>
+<td>-231~231-1</td>
+</tr>
+<tr>
+<td>long</td>
+<td>-263~263-1</td>
+</tr>
+</tbody>
+</table>
+<p>在满足需求的情况下，尽可能选择范围小的数据类型。比如，某个字段的取值最大值不会超过100，那么选择byte类型即可。迄今为止吉尼斯记录的人类的年龄的最大值为134岁，对于年龄字段，short足矣。字段的长度越短，索引和搜索的效率越高。</p>
+<h1 id="4-浮点类型">4 浮点类型</h1>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>取值范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>doule</td>
+<td>64位双精度IEEE 754浮点类型</td>
+</tr>
+<tr>
+<td>float</td>
+<td>32位单精度IEEE 754浮点类型</td>
+</tr>
+<tr>
+<td>half_float</td>
+<td>16位半精度IEEE 754浮点类型</td>
+</tr>
+<tr>
+<td>scaled_float</td>
+<td>缩放类型的的浮点数</td>
+</tr>
+</tbody>
+</table>
+<p>对于float、half_float和scaled_float,-0.0和+0.0是不同的值，使用term查询查找-0.0不会匹配+0.0，同样range查询中上边界是-0.0不会匹配+0.0，下边界是+0.0不会匹配-0.0。</p>
+<p>其中scaled_float，比如价格只需要精确到分，price为57.34的字段缩放因子为100，存起来就是5734
+优先考虑使用带缩放因子的scaled_float浮点类型。</p>
+<h1 id="5-date类型">5 date类型</h1>
+<p>我们人类使用的计时系统是相当复杂的：秒是基本单位, 60秒为1分钟, 60分钟为1小时, 24小时是一天……如果计算机也使用相同的方式来计时, 那显然就要用多个变量来分别存放年月日时分秒, 不停的进行进位运算, 而且还要处理偶尔的闰年和闰秒以及协调不同的时区. 基于”追求简单”的设计理念, UNIX在内部采用了一种最简单的计时方式：</p>
+<pre tabindex="0"><code>计算从UNIX诞生的UTC时间1970年1月1日0时0分0秒起, 流逝的秒数. 
+UTC时间1970年1月1日0时0分0秒就是UNIX时间0, UTC时间1970年1月2日0时0分0秒就是UNIX时间86400. 
+这个计时系统被所有的UNIX和类UNIX系统继承了下来, 而且影响了许多非UNIX系统.  123
+</code></pre><p>日期类型表示格式可以是以下几种：
+（1）日期格式的<strong>字符串</strong>，比如 “2018-01-13” 或 “2018-01-13 12:10:30”
+（2）long类型的<strong>毫秒数</strong>( milliseconds-since-the-epoch，epoch就是指UNIX诞生的UTC时间1970年1月1日0时0分0秒)
+（3）integer的<strong>秒数</strong>(seconds-since-the-epoch)</p>
+<p>ElasticSearch 内部会将日期数据转换为UTC，并存储为milliseconds-since-the-epoch的long型整数。</p>
+<blockquote>
+<p>例如: <code>2018-01-01 00:00:00</code>将被转换为<code>2017-12-31T23:00:00 UTC</code>.</p>
+<p><strong>另外需要注意的是, <code>now</code>是不受<code>time_zone</code>影响的.</strong></p>
+<p><a href="https://www.cnblogs.com/shoufeng/p/11266136.html">https://www.cnblogs.com/shoufeng/p/11266136.html</a></p>
+</blockquote>
+<h1 id="6-boolean类型">6 boolean类型</h1>
+<p>逻辑类型（布尔类型）可以接受true/false/”true”/”false”值</p>
+<h1 id="7-binary类型">7 binary类型</h1>
+<p>二进制字段是指用base64来表示索引中存储的二进制数据，可用来存储二进制形式的数据，例如图像。默认情况下，该类型的字段只存储不索引。二进制类型只支持index_name属性。</p>
+<h1 id="7-array类型">7 array类型</h1>
+<p>在ElasticSearch中，没有专门的数组（Array）数据类型，但是，在默认情况下，任意一个字段都可以包含0或多个值，这意味着每个字段默认都是数组类型，只不过，数组类型的各个元素值的数据类型必须相同。在ElasticSearch中，数组是开箱即用的（out of box），不需要进行任何配置，就可以直接使用。</p>
+<p>在同一个数组中，数组元素的数据类型是相同的，ElasticSearch不支持元素为多个数据类型：[ 10, “some string” ]，常用的数组类型是：</p>
+<p>（1）字符数组: [ “one”, “two” ]</p>
+<p>（2）整数数组: productid:[ 1, 2 ]</p>
+<p>（3）对象（文档）数组: “user”:[ { “name”: “Mary”, “age”: 12 }, { “name”: “John”, “age”: 10 }]，ElasticSearch内部把对象数组展开为 {“user.name”: [“Mary”, “John”], “user.age”: [12,10]}</p>
+<h1 id="8-object类型">8 object类型</h1>
+<p>JSON天生具有层级关系，文档会包含嵌套的对象</p>
+<h1 id="9-ip类型">9 ip类型</h1>
+<p>ip类型的字段用于存储IPv4或者IPv6的地址</p>
+<blockquote>
+<p>来源: <a href="https://blog.csdn.net/chengyuqiang/article/details/79048800">https://blog.csdn.net/chengyuqiang/article/details/79048800</a></p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%89%93%E5%88%86%E6%9C%BA%E5%88%B6/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%89%93%E5%88%86%E6%9C%BA%E5%88%B6/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2F%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2F%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2F%25E6%2595%25B0%25E6%258D%25AE%25E7%25B1%25BB%25E5%259E%258B%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

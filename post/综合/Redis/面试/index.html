@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\nRedis的单线程指什么 Redis 单线程主要指的是网络IO和键值对读写是由一个线程来完成的，Redis在处理客户端的请求的时候包括获取(Socket)，解析，执行，内容返回(Socket写)等由一个顺序串行的主线程处理，这即为单线程\n但Redis的其它功能，比如持久化，异步删除，集群数据同步等等，都是由额外的线程执行的，是多线程\n即Redis工作线程是单线程的，但是，整个Redis来说是多线程的\nRedis单线程为什么很快 1、基于内存操作：Redis的所有数据都存在内存中，因此所有的运算都是内存级别\n2、数据结构简单：Redis的数据结构简单，查找和操作时间大部分时间复杂度是O(1)\n3、多路复用和非阻塞：Redis使用多路复用功能来监听多个Socket链接客服端，这样可以一个线程处理多个请求，减少线程切换带来的开销，同时也避免了IO阻塞操作\n4、避免上下文切换：因为是单线程模型，因此避免了多线程切换和多线程竞争，减少时间和性能的消耗\nRedis系列第一讲：Redis是单线程吗 - 掘金 (juejin.cn)\n谈谈redis的对象机制（redisObject) Redis的5种基础数据类型，在底层是采用对象机制实现的。\nRedis的每种对象其实都由对象结构(redisObject) 与 对应编码的数据结构组合而成，而每种对象类型对应若干编码方式，不同的编码方式所对应的底层数据结构是不同的。\nredisObject 是 Redis 类型系统的核心, 数据库中的每个键、值, 以及 Redis 本身处理的参数, 都表示为这种数据类型。\nRedis相关知识\u0026mdash;-对象机制_小舟~的博客-CSDN博客\nredis 优化措施 避免大key的存在\n设置合理的淘汰策略\n内存尽可能大; 淘汰策略改为随机淘汰，随机淘汰比 LRU 要快很多（视业务情况调整）\n谨慎fork操作带来的阻塞\n控制 Redis 实例的内存：尽量在 10G 以下，执行 fork 的耗时与实例大小有关，实例越大，耗时越久\n关闭操作系统的内存大页\n应用在申请内存时,linux会给一个完整的内存页大小, 申请的多了, 分配内存也就大了 , 耗时也就长了\n对于 Redis 这种对性能和延迟极其敏感的数据库来说，我们希望 Redis 在每次申请内存时，耗时尽量短\n开启AOF后设置 重写时不刷盘\n# AOF rewrite 期间，AOF 后台子线程不进行刷盘操作 # 相当于在这期间，临时把 appendfsync 设置为了 none no-appendfsync-on-rewrite yes 建议使用 固态硬盘, 加快数据落磁盘",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/redis\/%E9%9D%A2%E8%AF%95\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+Redis的单线程指什么 Redis 单线程主要指的是网络IO和键值对读写是由一个线程来完成的，Redis在处理客户端的请求的时候包括获取(Socket)，解析，执行，内容返回(Socket写)等由一个顺序串行的主线程处理，这即为单线程
+但Redis的其它功能，比如持久化，异步删除，集群数据同步等等，都是由额外的线程执行的，是多线程
+即Redis工作线程是单线程的，但是，整个Redis来说是多线程的
+Redis单线程为什么很快 1、基于内存操作：Redis的所有数据都存在内存中，因此所有的运算都是内存级别
+2、数据结构简单：Redis的数据结构简单，查找和操作时间大部分时间复杂度是O(1)
+3、多路复用和非阻塞：Redis使用多路复用功能来监听多个Socket链接客服端，这样可以一个线程处理多个请求，减少线程切换带来的开销，同时也避免了IO阻塞操作
+4、避免上下文切换：因为是单线程模型，因此避免了多线程切换和多线程竞争，减少时间和性能的消耗
+Redis系列第一讲：Redis是单线程吗 - 掘金 (juejin.cn)
+谈谈redis的对象机制（redisObject) Redis的5种基础数据类型，在底层是采用对象机制实现的。
+Redis的每种对象其实都由对象结构(redisObject) 与 对应编码的数据结构组合而成，而每种对象类型对应若干编码方式，不同的编码方式所对应的底层数据结构是不同的。
+redisObject 是 Redis 类型系统的核心, 数据库中的每个键、值, 以及 Redis 本身处理的参数, 都表示为这种数据类型。
+Redis相关知识&mdash;-对象机制_小舟~的博客-CSDN博客
+redis 优化措施 避免大key的存在
+设置合理的淘汰策略
+内存尽可能大; 淘汰策略改为随机淘汰，随机淘汰比 LRU 要快很多（视业务情况调整）
+谨慎fork操作带来的阻塞
+控制 Redis 实例的内存：尽量在 10G 以下，执行 fork 的耗时与实例大小有关，实例越大，耗时越久
+关闭操作系统的内存大页
+应用在申请内存时,linux会给一个完整的内存页大小, 申请的多了, 分配内存也就大了 , 耗时也就长了
+对于 Redis 这种对性能和延迟极其敏感的数据库来说，我们希望 Redis 在每次申请内存时，耗时尽量短
+开启AOF后设置 重写时不刷盘
+# AOF rewrite 期间，AOF 后台子线程不进行刷盘操作 # 相当于在这期间，临时把 appendfsync 设置为了 none no-appendfsync-on-rewrite yes 建议使用 固态硬盘, 加快数据落磁盘">
+
+
+<meta property="og:description" content="[toc]
+Redis的单线程指什么 Redis 单线程主要指的是网络IO和键值对读写是由一个线程来完成的，Redis在处理客户端的请求的时候包括获取(Socket)，解析，执行，内容返回(Socket写)等由一个顺序串行的主线程处理，这即为单线程
+但Redis的其它功能，比如持久化，异步删除，集群数据同步等等，都是由额外的线程执行的，是多线程
+即Redis工作线程是单线程的，但是，整个Redis来说是多线程的
+Redis单线程为什么很快 1、基于内存操作：Redis的所有数据都存在内存中，因此所有的运算都是内存级别
+2、数据结构简单：Redis的数据结构简单，查找和操作时间大部分时间复杂度是O(1)
+3、多路复用和非阻塞：Redis使用多路复用功能来监听多个Socket链接客服端，这样可以一个线程处理多个请求，减少线程切换带来的开销，同时也避免了IO阻塞操作
+4、避免上下文切换：因为是单线程模型，因此避免了多线程切换和多线程竞争，减少时间和性能的消耗
+Redis系列第一讲：Redis是单线程吗 - 掘金 (juejin.cn)
+谈谈redis的对象机制（redisObject) Redis的5种基础数据类型，在底层是采用对象机制实现的。
+Redis的每种对象其实都由对象结构(redisObject) 与 对应编码的数据结构组合而成，而每种对象类型对应若干编码方式，不同的编码方式所对应的底层数据结构是不同的。
+redisObject 是 Redis 类型系统的核心, 数据库中的每个键、值, 以及 Redis 本身处理的参数, 都表示为这种数据类型。
+Redis相关知识&mdash;-对象机制_小舟~的博客-CSDN博客
+redis 优化措施 避免大key的存在
+设置合理的淘汰策略
+内存尽可能大; 淘汰策略改为随机淘汰，随机淘汰比 LRU 要快很多（视业务情况调整）
+谨慎fork操作带来的阻塞
+控制 Redis 实例的内存：尽量在 10G 以下，执行 fork 的耗时与实例大小有关，实例越大，耗时越久
+关闭操作系统的内存大页
+应用在申请内存时,linux会给一个完整的内存页大小, 申请的多了, 分配内存也就大了 , 耗时也就长了
+对于 Redis 这种对性能和延迟极其敏感的数据库来说，我们希望 Redis 在每次申请内存时，耗时尽量短
+开启AOF后设置 重写时不刷盘
+# AOF rewrite 期间，AOF 后台子线程不进行刷盘操作 # 相当于在这期间，临时把 appendfsync 设置为了 none no-appendfsync-on-rewrite yes 建议使用 固态硬盘, 加快数据落磁盘">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+Redis的单线程指什么 Redis 单线程主要指的是网络IO和键值对读写是由一个线程来完成的，Redis在处理客户端的请求的时候包括获取(Socket)，解析，执行，内容返回(Socket写)等由一个顺序串行的主线程处理，这即为单线程
+但Redis的其它功能，比如持久化，异步删除，集群数据同步等等，都是由额外的线程执行的，是多线程
+即Redis工作线程是单线程的，但是，整个Redis来说是多线程的
+Redis单线程为什么很快 1、基于内存操作：Redis的所有数据都存在内存中，因此所有的运算都是内存级别
+2、数据结构简单：Redis的数据结构简单，查找和操作时间大部分时间复杂度是O(1)
+3、多路复用和非阻塞：Redis使用多路复用功能来监听多个Socket链接客服端，这样可以一个线程处理多个请求，减少线程切换带来的开销，同时也避免了IO阻塞操作
+4、避免上下文切换：因为是单线程模型，因此避免了多线程切换和多线程竞争，减少时间和性能的消耗
+Redis系列第一讲：Redis是单线程吗 - 掘金 (juejin.cn)
+谈谈redis的对象机制（redisObject) Redis的5种基础数据类型，在底层是采用对象机制实现的。
+Redis的每种对象其实都由对象结构(redisObject) 与 对应编码的数据结构组合而成，而每种对象类型对应若干编码方式，不同的编码方式所对应的底层数据结构是不同的。
+redisObject 是 Redis 类型系统的核心, 数据库中的每个键、值, 以及 Redis 本身处理的参数, 都表示为这种数据类型。
+Redis相关知识&mdash;-对象机制_小舟~的博客-CSDN博客
+redis 优化措施 避免大key的存在
+设置合理的淘汰策略
+内存尽可能大; 淘汰策略改为随机淘汰，随机淘汰比 LRU 要快很多（视业务情况调整）
+谨慎fork操作带来的阻塞
+控制 Redis 实例的内存：尽量在 10G 以下，执行 fork 的耗时与实例大小有关，实例越大，耗时越久
+关闭操作系统的内存大页
+应用在申请内存时,linux会给一个完整的内存页大小, 申请的多了, 分配内存也就大了 , 耗时也就长了
+对于 Redis 这种对性能和延迟极其敏感的数据库来说，我们希望 Redis 在每次申请内存时，耗时尽量短
+开启AOF后设置 重写时不刷盘
+# AOF rewrite 期间，AOF 后台子线程不进行刷盘操作 # 相当于在这期间，临时把 appendfsync 设置为了 none no-appendfsync-on-rewrite yes 建议使用 固态硬盘, 加快数据落磁盘">
+<meta name="twitter:description" content="[toc]
+Redis的单线程指什么 Redis 单线程主要指的是网络IO和键值对读写是由一个线程来完成的，Redis在处理客户端的请求的时候包括获取(Socket)，解析，执行，内容返回(Socket写)等由一个顺序串行的主线程处理，这即为单线程
+但Redis的其它功能，比如持久化，异步删除，集群数据同步等等，都是由额外的线程执行的，是多线程
+即Redis工作线程是单线程的，但是，整个Redis来说是多线程的
+Redis单线程为什么很快 1、基于内存操作：Redis的所有数据都存在内存中，因此所有的运算都是内存级别
+2、数据结构简单：Redis的数据结构简单，查找和操作时间大部分时间复杂度是O(1)
+3、多路复用和非阻塞：Redis使用多路复用功能来监听多个Socket链接客服端，这样可以一个线程处理多个请求，减少线程切换带来的开销，同时也避免了IO阻塞操作
+4、避免上下文切换：因为是单线程模型，因此避免了多线程切换和多线程竞争，减少时间和性能的消耗
+Redis系列第一讲：Redis是单线程吗 - 掘金 (juejin.cn)
+谈谈redis的对象机制（redisObject) Redis的5种基础数据类型，在底层是采用对象机制实现的。
+Redis的每种对象其实都由对象结构(redisObject) 与 对应编码的数据结构组合而成，而每种对象类型对应若干编码方式，不同的编码方式所对应的底层数据结构是不同的。
+redisObject 是 Redis 类型系统的核心, 数据库中的每个键、值, 以及 Redis 本身处理的参数, 都表示为这种数据类型。
+Redis相关知识&mdash;-对象机制_小舟~的博客-CSDN博客
+redis 优化措施 避免大key的存在
+设置合理的淘汰策略
+内存尽可能大; 淘汰策略改为随机淘汰，随机淘汰比 LRU 要快很多（视业务情况调整）
+谨慎fork操作带来的阻塞
+控制 Redis 实例的内存：尽量在 10G 以下，执行 fork 的耗时与实例大小有关，实例越大，耗时越久
+关闭操作系统的内存大页
+应用在申请内存时,linux会给一个完整的内存页大小, 申请的多了, 分配内存也就大了 , 耗时也就长了
+对于 Redis 这种对性能和延迟极其敏感的数据库来说，我们希望 Redis 在每次申请内存时，耗时尽量短
+开启AOF后设置 重写时不刷盘
+# AOF rewrite 期间，AOF 后台子线程不进行刷盘操作 # 相当于在这期间，临时把 appendfsync 设置为了 none no-appendfsync-on-rewrite yes 建议使用 固态硬盘, 加快数据落磁盘">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="redis的单线程指什么">Redis的单线程指什么</h1>
+<p>Redis 单线程主要指的是网络IO和键值对读写是由一个线程来完成的，Redis在<!-- raw HTML omitted -->处理客户端的请求<!-- raw HTML omitted -->的时候包括获取(Socket)，解析，执行，内容返回(Socket写)等由一个顺序串行的主线程处理，这即为单线程</p>
+<p>但Redis的其它功能，比如持久化，异步删除，集群数据同步等等，都是由额外的线程执行的，是多线程</p>
+<p><strong>即Redis工作线程是单线程的，但是，整个Redis来说是多线程的</strong></p>
+<h1 id="redis单线程为什么很快">Redis单线程为什么很快</h1>
+<p>1、基于内存操作：Redis的所有数据都存在内存中，因此所有的运算都是内存级别</p>
+<p>2、数据结构简单：Redis的数据结构简单，查找和操作时间大部分时间复杂度是O(1)</p>
+<p>3、多路复用和非阻塞：Redis使用多路复用功能来监听多个Socket链接客服端，这样可以一个线程处理多个请求，减少线程切换带来的开销，同时也避免了IO阻塞操作</p>
+<p>4、避免上下文切换：因为是单线程模型，因此避免了多线程切换和多线程竞争，减少时间和性能的消耗</p>
+<p><a href="https://juejin.cn/post/7031953350157402148">Redis系列第一讲：Redis是单线程吗 - 掘金 (juejin.cn)</a></p>
+<h1 id="谈谈redis的对象机制redisobject">谈谈redis的对象机制（redisObject)</h1>
+<p>Redis的5种基础数据类型，在底层是采用对象机制实现的。</p>
+<p>Redis的每种对象其实都由对象结构(redisObject) 与 对应编码的数据结构组合而成，而每种对象类型对应若干编码方式，不同的编码方式所对应的底层数据结构是不同的。</p>
+<p>redisObject 是 Redis 类型系统的核心, 数据库中的每个键、值, 以及 Redis 本身处理的参数, 都表示为这种数据类型。</p>
+<p><img src=".%5C%E9%9D%A2%E8%AF%95.assets%5Cimage-20220727113818732.png" alt="image-20220727113818732"></p>
+<p><a href="https://blog.csdn.net/CarrotZsy/article/details/115964515">Redis相关知识&mdash;-对象机制_小舟~的博客-CSDN博客</a></p>
+<h1 id="redis-优化措施">redis 优化措施</h1>
+<ol>
+<li>
+<p>避免大key的存在</p>
+</li>
+<li>
+<p>设置合理的淘汰策略</p>
+<blockquote>
+<p>内存尽可能大; 淘汰策略改为随机淘汰，随机淘汰比 LRU 要快很多（视业务情况调整）</p>
+</blockquote>
+</li>
+<li>
+<p>谨慎fork操作带来的阻塞</p>
+<blockquote>
+<p>控制 Redis 实例的内存：尽量在 10G 以下，执行 fork 的耗时与实例大小有关，实例越大，耗时越久</p>
+</blockquote>
+</li>
+<li>
+<p>关闭操作系统的内存大页</p>
+<blockquote>
+<p>应用在申请内存时,linux会给一个完整的内存页大小, 申请的多了, 分配内存也就大了 , 耗时也就长了</p>
+<p>对于 Redis 这种对性能和延迟极其敏感的数据库来说，我们希望 Redis 在每次申请内存时，耗时尽量短</p>
+</blockquote>
+</li>
+<li>
+<p>开启AOF后设置 重写时不刷盘</p>
+<blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># AOF rewrite 期间，AOF 后台子线程不进行刷盘操作</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 相当于在这期间，临时把 appendfsync 设置为了 none</span>
+</span></span><span style="display:flex;"><span>no-appendfsync-on-rewrite yes
+</span></span></code></pre></div><p>建议使用 固态硬盘, 加快数据落磁盘</p>
+</blockquote>
+</li>
+<li>
+<p>关闭swap 内存</p>
+<blockquote>
+<p>操作系统为了缓解内存不足对应用程序的影响，允许把一部分内存中的数据换到磁盘上，以达到应用程序对内存使用的缓冲，这些内存数据被换到磁盘上的区域，就是 Swap。</p>
+</blockquote>
+<p><a href="https://pdai.tech/md/db/nosql-redis/db-redis-x-performance.html">Redis进阶 - 性能调优：Redis性能调优详解 | Java 全栈知识体系 (pdai.tech)</a></p>
+</li>
+</ol>
+<h1 id="热key的处理">热key的处理</h1>
+<ol>
+<li>
+<p>利用二级缓存</p>
+<p>将热key加载到jvm中, 利用本地缓存抗住</p>
+</li>
+<li>
+<p>备份热key</p>
+<p>将热key多备份几份,用后缀区分,  这样请求就会分发到不同的key上了</p>
+</li>
+</ol>
+<p><strong>检测热key</strong></p>
+<ol>
+<li>经验预估, 比如秒杀key</li>
+<li>客户端收集并统计</li>
+<li>redis 自带的命令 , <code>monitor</code>和<code>hotkeys</code> 但都有性能问题</li>
+</ol>
+<p><a href="https://www.cnblogs.com/rjzheng/p/10874537.html">【原创】谈谈redis的热key问题如何解决 - 孤独烟 - 博客园 (cnblogs.com)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9B%AA%E5%B4%A9%E5%92%8C%E7%A9%BF%E9%80%8F%E5%92%8C%E5%87%BB%E7%A9%BF/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/redis\/%E9%9D%A2%E8%AF%95\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/redis\/%E9%9D%A2%E8%AF%95\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9B%AA%E5%B4%A9%E5%92%8C%E7%A9%BF%E9%80%8F%E5%92%8C%E5%87%BB%E7%A9%BF/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/rocketmq/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Fredis%2F%25E9%259D%25A2%25E8%25AF%2595%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Fredis%2F%25E9%259D%25A2%25E8%25AF%2595%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Fredis%2F%25E9%259D%25A2%25E8%25AF%2595%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

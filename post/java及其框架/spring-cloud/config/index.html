@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n介绍 可以理解为配置中心,把配置放在某个地方(jdbc,git,svn,vault),统一管理.\n和注册中心类似,分为客户端和服务端,服务端就是提供配置的,客户端就获取配置, 仅SpringCloudConfig不支持自动动态获取配置,需要结合bus(总线)来实现才行 使用配置中心后,会优先使用配置中心的地址,一旦配置中心连不通才会使用本地配置文件 以后再补充吧 使用 1. 基本使用 以snv为例\n服务端:\npom.xml\n\u0026lt;!-- 基础配置 --\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;org.springframework.boot\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;spring-boot-starter-web\u0026lt;\/artifactId\u0026gt; \u0026lt;\/dependency\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;org.springframework.cloud\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;spring-cloud-config-server\u0026lt;\/artifactId\u0026gt; \u0026lt;\/dependency\u0026gt; \u0026lt;!-- svn --\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;org.tmatesoft.svnkit\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;svnkit\u0026lt;\/artifactId\u0026gt; \u0026lt;\/dependency\u0026gt; 启动主类:\n@SpringBootApplication @EnableConfigServer \/\/表示使用配置中心 public class SpringBootTestConfigApplication { public static void main(String[] args) { SpringApplication.run(SpringBootTestConfigApplication.class, args); } } application.properties\nserver.port=8999 server.servlet.context-path=\/test spring.cloud.config.server.svn.uri=http:\/\/10.101.222.10\/jht\/标准项目\/JSCP\/code\/trunk\/jportal\/jportal-server\/src\/main\/ spring.cloud.config.server.svn.username=xiaokunqi spring.cloud.config.server.svn.password=xiaokunqi spring.cloud.config.server.default-label=resources # 具体某个文件夹下 spring.profiles.active=subversion 使用网址可以访问到配置: http:\/\/localhost:8999\/test\/application\/jdbc 2. 客户端 pom.xml\n\u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;org.springframework.cloud\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;spring-cloud-starter-config\u0026lt;\/artifactId\u0026gt; \u0026lt;\/dependency\u0026gt; 增加一个文件 bootstrap.properties",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring-cloud\/config\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+介绍 可以理解为配置中心,把配置放在某个地方(jdbc,git,svn,vault),统一管理.
+和注册中心类似,分为客户端和服务端,服务端就是提供配置的,客户端就获取配置, 仅SpringCloudConfig不支持自动动态获取配置,需要结合bus(总线)来实现才行 使用配置中心后,会优先使用配置中心的地址,一旦配置中心连不通才会使用本地配置文件 以后再补充吧 使用 1. 基本使用 以snv为例
+服务端:
+pom.xml
+&lt;!-- 基础配置 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt; &lt;/dependency&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-config-server&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- svn --&gt; &lt;dependency&gt; &lt;groupId&gt;org.tmatesoft.svnkit&lt;/groupId&gt; &lt;artifactId&gt;svnkit&lt;/artifactId&gt; &lt;/dependency&gt; 启动主类:
+@SpringBootApplication @EnableConfigServer //表示使用配置中心 public class SpringBootTestConfigApplication { public static void main(String[] args) { SpringApplication.run(SpringBootTestConfigApplication.class, args); } } application.properties
+server.port=8999 server.servlet.context-path=/test spring.cloud.config.server.svn.uri=http://10.101.222.10/jht/标准项目/JSCP/code/trunk/jportal/jportal-server/src/main/ spring.cloud.config.server.svn.username=xiaokunqi spring.cloud.config.server.svn.password=xiaokunqi spring.cloud.config.server.default-label=resources # 具体某个文件夹下 spring.profiles.active=subversion 使用网址可以访问到配置: http://localhost:8999/test/application/jdbc 2. 客户端 pom.xml
+&lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-starter-config&lt;/artifactId&gt; &lt;/dependency&gt; 增加一个文件 bootstrap.properties">
+
+
+<meta property="og:description" content="[toc]
+介绍 可以理解为配置中心,把配置放在某个地方(jdbc,git,svn,vault),统一管理.
+和注册中心类似,分为客户端和服务端,服务端就是提供配置的,客户端就获取配置, 仅SpringCloudConfig不支持自动动态获取配置,需要结合bus(总线)来实现才行 使用配置中心后,会优先使用配置中心的地址,一旦配置中心连不通才会使用本地配置文件 以后再补充吧 使用 1. 基本使用 以snv为例
+服务端:
+pom.xml
+&lt;!-- 基础配置 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt; &lt;/dependency&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-config-server&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- svn --&gt; &lt;dependency&gt; &lt;groupId&gt;org.tmatesoft.svnkit&lt;/groupId&gt; &lt;artifactId&gt;svnkit&lt;/artifactId&gt; &lt;/dependency&gt; 启动主类:
+@SpringBootApplication @EnableConfigServer //表示使用配置中心 public class SpringBootTestConfigApplication { public static void main(String[] args) { SpringApplication.run(SpringBootTestConfigApplication.class, args); } } application.properties
+server.port=8999 server.servlet.context-path=/test spring.cloud.config.server.svn.uri=http://10.101.222.10/jht/标准项目/JSCP/code/trunk/jportal/jportal-server/src/main/ spring.cloud.config.server.svn.username=xiaokunqi spring.cloud.config.server.svn.password=xiaokunqi spring.cloud.config.server.default-label=resources # 具体某个文件夹下 spring.profiles.active=subversion 使用网址可以访问到配置: http://localhost:8999/test/application/jdbc 2. 客户端 pom.xml
+&lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-starter-config&lt;/artifactId&gt; &lt;/dependency&gt; 增加一个文件 bootstrap.properties">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/config/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/config/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+介绍 可以理解为配置中心,把配置放在某个地方(jdbc,git,svn,vault),统一管理.
+和注册中心类似,分为客户端和服务端,服务端就是提供配置的,客户端就获取配置, 仅SpringCloudConfig不支持自动动态获取配置,需要结合bus(总线)来实现才行 使用配置中心后,会优先使用配置中心的地址,一旦配置中心连不通才会使用本地配置文件 以后再补充吧 使用 1. 基本使用 以snv为例
+服务端:
+pom.xml
+&lt;!-- 基础配置 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt; &lt;/dependency&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-config-server&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- svn --&gt; &lt;dependency&gt; &lt;groupId&gt;org.tmatesoft.svnkit&lt;/groupId&gt; &lt;artifactId&gt;svnkit&lt;/artifactId&gt; &lt;/dependency&gt; 启动主类:
+@SpringBootApplication @EnableConfigServer //表示使用配置中心 public class SpringBootTestConfigApplication { public static void main(String[] args) { SpringApplication.run(SpringBootTestConfigApplication.class, args); } } application.properties
+server.port=8999 server.servlet.context-path=/test spring.cloud.config.server.svn.uri=http://10.101.222.10/jht/标准项目/JSCP/code/trunk/jportal/jportal-server/src/main/ spring.cloud.config.server.svn.username=xiaokunqi spring.cloud.config.server.svn.password=xiaokunqi spring.cloud.config.server.default-label=resources # 具体某个文件夹下 spring.profiles.active=subversion 使用网址可以访问到配置: http://localhost:8999/test/application/jdbc 2. 客户端 pom.xml
+&lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-starter-config&lt;/artifactId&gt; &lt;/dependency&gt; 增加一个文件 bootstrap.properties">
+<meta name="twitter:description" content="[toc]
+介绍 可以理解为配置中心,把配置放在某个地方(jdbc,git,svn,vault),统一管理.
+和注册中心类似,分为客户端和服务端,服务端就是提供配置的,客户端就获取配置, 仅SpringCloudConfig不支持自动动态获取配置,需要结合bus(总线)来实现才行 使用配置中心后,会优先使用配置中心的地址,一旦配置中心连不通才会使用本地配置文件 以后再补充吧 使用 1. 基本使用 以snv为例
+服务端:
+pom.xml
+&lt;!-- 基础配置 --&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt; &lt;/dependency&gt; &lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-config-server&lt;/artifactId&gt; &lt;/dependency&gt; &lt;!-- svn --&gt; &lt;dependency&gt; &lt;groupId&gt;org.tmatesoft.svnkit&lt;/groupId&gt; &lt;artifactId&gt;svnkit&lt;/artifactId&gt; &lt;/dependency&gt; 启动主类:
+@SpringBootApplication @EnableConfigServer //表示使用配置中心 public class SpringBootTestConfigApplication { public static void main(String[] args) { SpringApplication.run(SpringBootTestConfigApplication.class, args); } } application.properties
+server.port=8999 server.servlet.context-path=/test spring.cloud.config.server.svn.uri=http://10.101.222.10/jht/标准项目/JSCP/code/trunk/jportal/jportal-server/src/main/ spring.cloud.config.server.svn.username=xiaokunqi spring.cloud.config.server.svn.password=xiaokunqi spring.cloud.config.server.default-label=resources # 具体某个文件夹下 spring.profiles.active=subversion 使用网址可以访问到配置: http://localhost:8999/test/application/jdbc 2. 客户端 pom.xml
+&lt;dependency&gt; &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt; &lt;artifactId&gt;spring-cloud-starter-config&lt;/artifactId&gt; &lt;/dependency&gt; 增加一个文件 bootstrap.properties">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/config/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="介绍">介绍</h1>
+<p>  可以理解为配置中心,把配置放在某个地方(jdbc,git,svn,vault),统一管理.</p>
+<ul>
+<li>和注册中心类似,分为客户端和服务端,服务端就是提供配置的,客户端就获取配置,</li>
+<li>仅SpringCloudConfig不支持自动动态获取配置,需要结合bus(总线)来实现才行</li>
+<li>使用配置中心后,会优先使用配置中心的地址,一旦配置中心连不通才会使用本地配置文件
+以后再补充吧</li>
+</ul>
+<h1 id="使用">使用</h1>
+<h2 id="1-基本使用">1. 基本使用</h2>
+<blockquote>
+<p>以snv为例</p>
+</blockquote>
+<ol>
+<li>
+<p>服务端:</p>
+<p><code>pom.xml</code></p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- 基础配置 --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-starter-web<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;artifactId&gt;</span>spring-cloud-config-server<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- svn --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;groupId&gt;</span>org.tmatesoft.svnkit<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;artifactId&gt;</span>svnkit<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><p>启动主类:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@SpringBootApplication</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EnableConfigServer</span> <span style="color:#75715e">//表示使用配置中心
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SpringBootTestConfigApplication</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		SpringApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">run</span><span style="color:#f92672">(</span>SpringBootTestConfigApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> args<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>application.properties</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">server.port</span><span style="color:#f92672">=</span><span style="color:#e6db74">8999</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">server.servlet.context-path</span><span style="color:#f92672">=</span><span style="color:#e6db74">/test</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.server.svn.uri</span><span style="color:#f92672">=</span><span style="color:#e6db74">http://10.101.222.10/jht/标准项目/JSCP/code/trunk/jportal/jportal-server/src/main/</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.server.svn.username</span><span style="color:#f92672">=</span><span style="color:#e6db74">xiaokunqi</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.server.svn.password</span><span style="color:#f92672">=</span><span style="color:#e6db74">xiaokunqi</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.server.default-label</span><span style="color:#f92672">=</span><span style="color:#e6db74">resources # 具体某个文件夹下</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.profiles.active</span><span style="color:#f92672">=</span><span style="color:#e6db74">subversion</span>
+</span></span></code></pre></div><p>使用网址可以访问到配置: <code>http://localhost:8999/test/application/jdbc</code>
+2. 客户端
+pom.xml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;artifactId&gt;</span>spring-cloud-starter-config<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><p>增加一个文件 <code>bootstrap.properties</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#75715e">#配置中心(服务端)地址+名字</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.uri</span><span style="color:#f92672">=</span><span style="color:#e6db74">http://localhost:8999/test</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.name</span><span style="color:#f92672">=</span><span style="color:#e6db74">${spring.application.name} #取当前应用的名字</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.profile</span><span style="color:#f92672">=</span><span style="color:#e6db74">jdbc</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#查询格式: name-profile.properties = jportal-jdbc.properties</span>
+</span></span></code></pre></div><blockquote>
+<p><!-- raw HTML omitted -->bootstrap.properties 优先级会大于application.properties<!-- raw HTML omitted -->,或者说config只会读bootstrap.properties,我写在application中没有生效</p>
+</blockquote>
+<ol start="3">
+<li>启动</li>
+</ol>
+<p>先启动配置中心再启动客户端</p>
+<h2 id="2-使用jdbc配置">2. 使用jdbc配置</h2>
+<p>在生产中使用svn不太好,使用jdbc更好,就是把配置文件放在数据库中,config会默认使用</p>
+<p><code>SELECT KEY, VALUE from PROPERTIES where APPLICATION=? and PROFILE=? and LABEL=?</code></p>
+<p>查询数据,但是key和vaule在mysql中是关键字,如果使用默认sql,则如此:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> <span style="color:#f92672">`</span><span style="color:#66d9ef">KEY</span><span style="color:#f92672">`</span>, <span style="color:#f92672">`</span>VALUE<span style="color:#f92672">`</span> <span style="color:#66d9ef">from</span> PROPERTIES <span style="color:#66d9ef">where</span> APPLICATION<span style="color:#f92672">=?</span> <span style="color:#66d9ef">and</span> PROFILE<span style="color:#f92672">=?</span> <span style="color:#66d9ef">and</span> LABEL<span style="color:#f92672">=?</span>
+</span></span></code></pre></div><p>有application,profile,label三个字段唯一标识一个文件(文件中就可以有很多配置了)</p>
+<ol>
+<li>客户端
+<code>bootstrap.properties</code></li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#75715e">#在基础配置中增加,这个配置在基础配置中可以不写</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.label</span><span style="color:#f92672">=</span><span style="color:#e6db74">dev  # 可以理解为分支,其他数据一样,写成test,就能读取数据库中test的配置文件,就可以做到配置文件的切换了</span>
+</span></span></code></pre></div><ol start="2">
+<li>服务端
+pom.xml</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span> <span style="color:#75715e">&lt;!-- MYSQL --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>mysql<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>mysql-connector-java<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-starter-jdbc<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><p><code>application.properties</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">spring.profiles.active</span><span style="color:#f92672">=</span><span style="color:#e6db74">jdbc</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.server.jdbc.sql</span><span style="color:#f92672">=</span><span style="color:#e6db74">select keye , valuee from config_info where application=? and profile = ? and lable = ? # 指定sql,这里换了个名字,加了e,</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.driver-class-name</span><span style="color:#f92672">=</span><span style="color:#e6db74">com.mysql.jdbc.Driver</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.url</span><span style="color:#f92672">=</span><span style="color:#e6db74">jdbc:mysql://10.10.203.10:3306/jplatdv?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;allowMultiQueries=true</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.username</span><span style="color:#f92672">=</span><span style="color:#e6db74">test</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.password</span><span style="color:#f92672">=</span><span style="color:#e6db74">Jht123456</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.type</span><span style="color:#f92672">=</span><span style="color:#e6db74">com.alibaba.druid.pool.DruidDataSource</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.initialSize</span><span style="color:#f92672">=</span><span style="color:#e6db74">5    </span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.minIdle</span><span style="color:#f92672">=</span><span style="color:#e6db74">5    </span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.maxActive</span><span style="color:#f92672">=</span><span style="color:#e6db74">20       </span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.maxWait</span><span style="color:#f92672">=</span><span style="color:#e6db74">60000</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.server.jdbc</span><span style="color:#f92672">=</span><span style="color:#e6db74">true</span>
+</span></span></code></pre></div><p>在数据库中创建表,用来存储配置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">CREATE</span> <span style="color:#66d9ef">TABLE</span> config_info  (
+</span></span><span style="display:flex;"><span>  id varchar(<span style="color:#ae81ff">255</span>)     <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  keye varchar(<span style="color:#ae81ff">255</span>)     <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  valuee varchar(<span style="color:#ae81ff">255</span>)     <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  application varchar(<span style="color:#ae81ff">255</span>)     <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  profile varchar(<span style="color:#ae81ff">255</span>)    <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>,
+</span></span><span style="display:flex;"><span>  lable varchar(<span style="color:#ae81ff">255</span>)      <span style="color:#66d9ef">NULL</span> <span style="color:#66d9ef">DEFAULT</span> <span style="color:#66d9ef">NULL</span>
+</span></span><span style="display:flex;"><span>)
+</span></span></code></pre></div><p>插入一些例子</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;1&#39;</span>, <span style="color:#e6db74">&#39;spring.datasource.driver-class-name&#39;</span>, <span style="color:#e6db74">&#39;com.mysql.jdbc.Driver&#39;</span>, <span style="color:#e6db74">&#39;jportal-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jdbc&#39;</span>, <span style="color:#e6db74">&#39;resource&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;2&#39;</span>, <span style="color:#e6db74">&#39;spring.datasource.url&#39;</span>, <span style="color:#e6db74">&#39;jdbc:mysql://10.10.203.10:3306/jplatdv?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;allowMultiQueries=true&#39;</span>, <span style="color:#e6db74">&#39;jportal-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jdbc&#39;</span>, <span style="color:#e6db74">&#39;resource&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;3&#39;</span>, <span style="color:#e6db74">&#39;spring.datasource.username&#39;</span>, <span style="color:#e6db74">&#39;test&#39;</span>, <span style="color:#e6db74">&#39;jportal-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jdbc&#39;</span>, <span style="color:#e6db74">&#39;resource&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;4&#39;</span>, <span style="color:#e6db74">&#39;spring.datasource.password&#39;</span>, <span style="color:#e6db74">&#39;Jht123456&#39;</span>, <span style="color:#e6db74">&#39;jportal-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jdbc&#39;</span>, <span style="color:#e6db74">&#39;resource&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;spring.datasource.type&#39;</span>, <span style="color:#e6db74">&#39;com.alibaba.druid.pool.DruidDataSource&#39;</span>, <span style="color:#e6db74">&#39;jportal-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jdbc&#39;</span>, <span style="color:#e6db74">&#39;resource&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;6&#39;</span>, <span style="color:#e6db74">&#39;spring.datasource.initialSize&#39;</span>, <span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;jportal-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jdbc&#39;</span>, <span style="color:#e6db74">&#39;resource&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;7&#39;</span>, <span style="color:#e6db74">&#39;spring.datasource.minIdle&#39;</span>, <span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;jportal-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jdbc&#39;</span>, <span style="color:#e6db74">&#39;resource&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;8&#39;</span>, <span style="color:#e6db74">&#39;spring.datasource.maxActive&#39;</span>, <span style="color:#e6db74">&#39;5&#39;</span>, <span style="color:#e6db74">&#39;jportal-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jdbc&#39;</span>, <span style="color:#e6db74">&#39;resource&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;9&#39;</span>, <span style="color:#e6db74">&#39;mybatis.mapper-locations&#39;</span>, <span style="color:#e6db74">&#39;classpath*:mapper/mysql/*Mapper.xml&#39;</span>, <span style="color:#e6db74">&#39;jportal-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jdbc&#39;</span>, <span style="color:#e6db74">&#39;resource&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;10&#39;</span>, <span style="color:#e6db74">&#39;jportal.server.name&#39;</span>, <span style="color:#e6db74">&#39;jportal-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jportal&#39;</span>, <span style="color:#e6db74">&#39;constants&#39;</span>, <span style="color:#e6db74">&#39;dev&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;11&#39;</span>, <span style="color:#e6db74">&#39;business.server.name&#39;</span>, <span style="color:#e6db74">&#39;business-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jportal&#39;</span>, <span style="color:#e6db74">&#39;constants&#39;</span>, <span style="color:#e6db74">&#39;dev&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;12&#39;</span>, <span style="color:#e6db74">&#39;logger.server.name&#39;</span>, <span style="color:#e6db74">&#39;logger-server-xkj&#39;</span>, <span style="color:#e6db74">&#39;jportal&#39;</span>, <span style="color:#e6db74">&#39;constants&#39;</span>, <span style="color:#e6db74">&#39;dev&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> config_info <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;13&#39;</span>, <span style="color:#e6db74">&#39;RAND_CODE_STRING&#39;</span>, <span style="color:#e6db74">&#39;1&#39;</span>, <span style="color:#e6db74">&#39;jportal&#39;</span>, <span style="color:#e6db74">&#39;constants&#39;</span>, <span style="color:#e6db74">&#39;dev&#39;</span>);
+</span></span></code></pre></div><p>访问网址:<code>http://localhost:8999/test/jportal-server-xkj/jdbc/dev</code>就能看到配置了</p>
+<h2 id="3将配置中心加到注册中心">3.将配置中心加到注册中心</h2>
+<p>将配置中心加到注册中心,这样可以实现配置中心高可用,客户端还不用根据ip和端口,可以通过注册中心找到服务</p>
+<ol>
+<li>服务端
+pom.xml</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.cloud<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;artifactId&gt;</span>spring-cloud-starter-eureka<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;version&gt;</span>1.3.1.RELEASE<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><p><code>application.properties</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#75715e">#注册中心地址</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">eureka.client.serviceUrl.defaultZone</span><span style="color:#f92672">=</span><span style="color:#e6db74">http://10.101.90.171:10001/eureka/</span>
+</span></span></code></pre></div><ol start="2">
+<li>客户端
+注释掉<code>spring.cloud.config.uri</code>,因为不需要指定了.
+添加如下配置:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.discovery.enabled</span><span style="color:#f92672">=</span><span style="color:#e6db74">true</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.cloud.config.discovery.serviceId</span><span style="color:#f92672">=</span><span style="color:#e6db74">test // 配置中心的名字</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">eureka.client.serviceUrl.defaultZone</span><span style="color:#f92672">=</span><span style="color:#e6db74">http://10.101.90.171:10001/eureka/</span>
+</span></span></code></pre></div><blockquote>
+<p>有找到特别适用的场景,即使可以动态获取配置,感觉也很鸡肋,哪会轻易动配置,公司想要的场景是,开发-测试-运维能共同使用的配置中心,配置大家都能看到并使用,遗弃目前的人工交接配置</p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/bus/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/eureka/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/config/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/config/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/config/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring-cloud\/config\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring-cloud\/config\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/bus/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/eureka/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/config/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/config/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-cloud/config/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring-cloud%2Fconfig%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring-cloud%2Fconfig%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring-cloud%2Fconfig%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

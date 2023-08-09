@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n介绍 能用注解的方式来写代码.\n比如:在编译的时候回自动生成get和set方法(不是生成代码,是生成字节码,反编译后可以看到)\n安装 windows环境\n下载lombok.jar包https:\/\/projectlombok.org\/download.html\n运行Lombok.jar:\nJava -jar D:\\software\\lombok.jar D:\\software\\lombok.jar 这是windows下lombok.jar所在的位置 数秒后将弹出一框，以确认eclipse的安装路径 (无法运行就跳过2,3步骤)\n确认完eclipse的安装路径后，点击install\/update按钮，即可安装完成\n安装完成之后，请确认eclipse安装路径下(与eclipse.ini 同级目录下)是否多了一个lombok.jar包，并且其 配置文件eclipse.ini中是否 添加了如下内容: -javaagent:lombok.jar -Xbootclasspath\/a:lombok.jar 如果上面的答案均为true，那么恭喜你已经安装成功，否则将缺少的部分添加到相应的位置即可\n重启eclipse或myeclipse,然后clean工程\n来自 https:\/\/www.cnblogs.com\/justuntil\/p\/7120534.html\n使用 \u0026lt;dependency\u0026gt;\r\u0026lt;groupId\u0026gt;org.projectlombok\u0026lt;\/groupId\u0026gt;\r\u0026lt;artifactId\u0026gt;lombok\u0026lt;\/artifactId\u0026gt;\r\u0026lt;version\u0026gt;1.16.20\u0026lt;\/version\u0026gt;\r\u0026lt;scope\u0026gt;provided\u0026lt;\/scope\u0026gt;\r\u0026lt;\/dependency\u0026gt; @Getter\r@Setter\r@ToString\rpublic class SysUserEntity{\rprivate String name;\rprivate String age;\r} 然后就可以直接使用get和set方法,tostring方法,还有其他注解,就不写出来了\n来自 https:\/\/www.cnblogs.com\/qnight\/p\/8997493.html\n注解 @NoNull\n对方法上的参数进行判null处理,如果为空抛NullPointerException异常\n@CleanUp\n自动资源管理器,能自动关闭流,这个注解会吞噬原有的异常(就是自己的代码有流异常),小心使用\n使用: @Cleanup InputStream in = new FileInputStream(args[0]);\n@Getter\/@Setter\n生成get\/set方法\n@ToString\n生成toString方法\n@EqualsAndHashCode\n生成equal和hash方法\n@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/lombok\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+介绍 能用注解的方式来写代码.
+比如:在编译的时候回自动生成get和set方法(不是生成代码,是生成字节码,反编译后可以看到)
+安装 windows环境
+下载lombok.jar包https://projectlombok.org/download.html
+运行Lombok.jar:
+Java -jar D:\software\lombok.jar D:\software\lombok.jar 这是windows下lombok.jar所在的位置 数秒后将弹出一框，以确认eclipse的安装路径 (无法运行就跳过2,3步骤)
+确认完eclipse的安装路径后，点击install/update按钮，即可安装完成
+安装完成之后，请确认eclipse安装路径下(与eclipse.ini 同级目录下)是否多了一个lombok.jar包，并且其 配置文件eclipse.ini中是否 添加了如下内容: -javaagent:lombok.jar -Xbootclasspath/a:lombok.jar 如果上面的答案均为true，那么恭喜你已经安装成功，否则将缺少的部分添加到相应的位置即可
+重启eclipse或myeclipse,然后clean工程
+来自 https://www.cnblogs.com/justuntil/p/7120534.html
+使用 &lt;dependency&gt;&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;&lt;artifactId&gt;lombok&lt;/artifactId&gt;&lt;version&gt;1.16.20&lt;/version&gt;&lt;scope&gt;provided&lt;/scope&gt;&lt;/dependency&gt; @Getter@Setter@ToStringpublic class SysUserEntity{private String name;private String age;} 然后就可以直接使用get和set方法,tostring方法,还有其他注解,就不写出来了
+来自 https://www.cnblogs.com/qnight/p/8997493.html
+注解 @NoNull
+对方法上的参数进行判null处理,如果为空抛NullPointerException异常
+@CleanUp
+自动资源管理器,能自动关闭流,这个注解会吞噬原有的异常(就是自己的代码有流异常),小心使用
+使用: @Cleanup InputStream in = new FileInputStream(args[0]);
+@Getter/@Setter
+生成get/set方法
+@ToString
+生成toString方法
+@EqualsAndHashCode
+生成equal和hash方法
+@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor">
+
+
+<meta property="og:description" content="[toc]
+介绍 能用注解的方式来写代码.
+比如:在编译的时候回自动生成get和set方法(不是生成代码,是生成字节码,反编译后可以看到)
+安装 windows环境
+下载lombok.jar包https://projectlombok.org/download.html
+运行Lombok.jar:
+Java -jar D:\software\lombok.jar D:\software\lombok.jar 这是windows下lombok.jar所在的位置 数秒后将弹出一框，以确认eclipse的安装路径 (无法运行就跳过2,3步骤)
+确认完eclipse的安装路径后，点击install/update按钮，即可安装完成
+安装完成之后，请确认eclipse安装路径下(与eclipse.ini 同级目录下)是否多了一个lombok.jar包，并且其 配置文件eclipse.ini中是否 添加了如下内容: -javaagent:lombok.jar -Xbootclasspath/a:lombok.jar 如果上面的答案均为true，那么恭喜你已经安装成功，否则将缺少的部分添加到相应的位置即可
+重启eclipse或myeclipse,然后clean工程
+来自 https://www.cnblogs.com/justuntil/p/7120534.html
+使用 &lt;dependency&gt;&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;&lt;artifactId&gt;lombok&lt;/artifactId&gt;&lt;version&gt;1.16.20&lt;/version&gt;&lt;scope&gt;provided&lt;/scope&gt;&lt;/dependency&gt; @Getter@Setter@ToStringpublic class SysUserEntity{private String name;private String age;} 然后就可以直接使用get和set方法,tostring方法,还有其他注解,就不写出来了
+来自 https://www.cnblogs.com/qnight/p/8997493.html
+注解 @NoNull
+对方法上的参数进行判null处理,如果为空抛NullPointerException异常
+@CleanUp
+自动资源管理器,能自动关闭流,这个注解会吞噬原有的异常(就是自己的代码有流异常),小心使用
+使用: @Cleanup InputStream in = new FileInputStream(args[0]);
+@Getter/@Setter
+生成get/set方法
+@ToString
+生成toString方法
+@EqualsAndHashCode
+生成equal和hash方法
+@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+介绍 能用注解的方式来写代码.
+比如:在编译的时候回自动生成get和set方法(不是生成代码,是生成字节码,反编译后可以看到)
+安装 windows环境
+下载lombok.jar包https://projectlombok.org/download.html
+运行Lombok.jar:
+Java -jar D:\software\lombok.jar D:\software\lombok.jar 这是windows下lombok.jar所在的位置 数秒后将弹出一框，以确认eclipse的安装路径 (无法运行就跳过2,3步骤)
+确认完eclipse的安装路径后，点击install/update按钮，即可安装完成
+安装完成之后，请确认eclipse安装路径下(与eclipse.ini 同级目录下)是否多了一个lombok.jar包，并且其 配置文件eclipse.ini中是否 添加了如下内容: -javaagent:lombok.jar -Xbootclasspath/a:lombok.jar 如果上面的答案均为true，那么恭喜你已经安装成功，否则将缺少的部分添加到相应的位置即可
+重启eclipse或myeclipse,然后clean工程
+来自 https://www.cnblogs.com/justuntil/p/7120534.html
+使用 &lt;dependency&gt;&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;&lt;artifactId&gt;lombok&lt;/artifactId&gt;&lt;version&gt;1.16.20&lt;/version&gt;&lt;scope&gt;provided&lt;/scope&gt;&lt;/dependency&gt; @Getter@Setter@ToStringpublic class SysUserEntity{private String name;private String age;} 然后就可以直接使用get和set方法,tostring方法,还有其他注解,就不写出来了
+来自 https://www.cnblogs.com/qnight/p/8997493.html
+注解 @NoNull
+对方法上的参数进行判null处理,如果为空抛NullPointerException异常
+@CleanUp
+自动资源管理器,能自动关闭流,这个注解会吞噬原有的异常(就是自己的代码有流异常),小心使用
+使用: @Cleanup InputStream in = new FileInputStream(args[0]);
+@Getter/@Setter
+生成get/set方法
+@ToString
+生成toString方法
+@EqualsAndHashCode
+生成equal和hash方法
+@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor">
+<meta name="twitter:description" content="[toc]
+介绍 能用注解的方式来写代码.
+比如:在编译的时候回自动生成get和set方法(不是生成代码,是生成字节码,反编译后可以看到)
+安装 windows环境
+下载lombok.jar包https://projectlombok.org/download.html
+运行Lombok.jar:
+Java -jar D:\software\lombok.jar D:\software\lombok.jar 这是windows下lombok.jar所在的位置 数秒后将弹出一框，以确认eclipse的安装路径 (无法运行就跳过2,3步骤)
+确认完eclipse的安装路径后，点击install/update按钮，即可安装完成
+安装完成之后，请确认eclipse安装路径下(与eclipse.ini 同级目录下)是否多了一个lombok.jar包，并且其 配置文件eclipse.ini中是否 添加了如下内容: -javaagent:lombok.jar -Xbootclasspath/a:lombok.jar 如果上面的答案均为true，那么恭喜你已经安装成功，否则将缺少的部分添加到相应的位置即可
+重启eclipse或myeclipse,然后clean工程
+来自 https://www.cnblogs.com/justuntil/p/7120534.html
+使用 &lt;dependency&gt;&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;&lt;artifactId&gt;lombok&lt;/artifactId&gt;&lt;version&gt;1.16.20&lt;/version&gt;&lt;scope&gt;provided&lt;/scope&gt;&lt;/dependency&gt; @Getter@Setter@ToStringpublic class SysUserEntity{private String name;private String age;} 然后就可以直接使用get和set方法,tostring方法,还有其他注解,就不写出来了
+来自 https://www.cnblogs.com/qnight/p/8997493.html
+注解 @NoNull
+对方法上的参数进行判null处理,如果为空抛NullPointerException异常
+@CleanUp
+自动资源管理器,能自动关闭流,这个注解会吞噬原有的异常(就是自己的代码有流异常),小心使用
+使用: @Cleanup InputStream in = new FileInputStream(args[0]);
+@Getter/@Setter
+生成get/set方法
+@ToString
+生成toString方法
+@EqualsAndHashCode
+生成equal和hash方法
+@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="介绍">介绍</h1>
+<p>能用注解的方式来写代码.</p>
+<p>比如:在编译的时候回自动生成get和set方法(不是生成代码,是生成字节码,反编译后可以看到)</p>
+<h1 id="安装">安装</h1>
+<p><strong>windows环境</strong></p>
+<ol>
+<li>
+<p>下载lombok.jar包https://projectlombok.org/download.html</p>
+</li>
+<li>
+<p>运行Lombok.jar:</p>
+</li>
+</ol>
+<p><code>Java -jar D:\software\lombok.jar D:\software\lombok.jar </code>
+这是windows下lombok.jar所在的位置
+数秒后将弹出一框，以确认eclipse的安装路径 (无法运行就跳过2,3步骤)</p>
+<ol start="3">
+<li>
+<p>确认完eclipse的安装路径后，点击install/update按钮，即可安装完成</p>
+</li>
+<li>
+<p>安装完成之后，请确认eclipse安装路径下(与eclipse.ini 同级目录下)是否多了一个lombok.jar包，并且其
+配置文件eclipse.ini中是否 添加了如下内容:
+-javaagent:lombok.jar
+-Xbootclasspath/a:lombok.jar
+如果上面的答案均为true，那么恭喜你已经安装成功，否则将缺少的部分添加到相应的位置即可</p>
+</li>
+<li>
+<p>重启eclipse或myeclipse,然后clean工程</p>
+</li>
+</ol>
+<blockquote>
+<p>来自 <a href="https://www.cnblogs.com/justuntil/p/7120534.html">https://www.cnblogs.com/justuntil/p/7120534.html</a></p>
+</blockquote>
+<h1 id="使用">使用</h1>
+<pre tabindex="0"><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+    &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+    &lt;version&gt;1.16.20&lt;/version&gt;
+    &lt;scope&gt;provided&lt;/scope&gt;
+&lt;/dependency&gt;
+</code></pre><pre tabindex="0"><code>@Getter
+@Setter
+@ToString
+public class SysUserEntity{
+	private String name;
+	private String age;
+}
+</code></pre><p>然后就可以直接使用get和set方法,tostring方法,还有其他注解,就不写出来了</p>
+<blockquote>
+<p>来自 <a href="https://www.cnblogs.com/qnight/p/8997493.html">https://www.cnblogs.com/qnight/p/8997493.html</a></p>
+</blockquote>
+<h1 id="注解">注解</h1>
+<ol>
+<li>
+<p><code>@NoNull</code></p>
+<p>对方法上的参数进行判null处理,如果为空抛<code>NullPointerException</code>异常</p>
+</li>
+<li>
+<p><code>@CleanUp</code></p>
+<p>自动资源管理器,能自动关闭流,这个注解会吞噬原有的异常(就是自己的代码有流异常),小心使用</p>
+<p>使用: <code> @Cleanup InputStream in = new FileInputStream(args[0]);</code></p>
+</li>
+<li>
+<p><code>@Getter/@Setter</code></p>
+</li>
+</ol>
+<p>生成get/set方法</p>
+<ol start="4">
+<li>
+<p><code>@ToString</code></p>
+<p>生成toString方法</p>
+</li>
+<li>
+<p><code>@EqualsAndHashCode</code></p>
+</li>
+</ol>
+<p>生成equal和hash方法</p>
+<ol start="6">
+<li>
+<p><code>@NoArgsConstructor, @RequiredArgsConstructor and @AllArgsConstructor</code></p>
+<p>生成构造函数,不带参数的; 构造参数含@nonNull属性的 ; 带全部参数的</p>
+<blockquote>
+<p>spring 有构造方式注入,可以结合<code>@RequiredArgsConstructor </code>实现</p>
+</blockquote>
+</li>
+<li>
+<p><code>@Date</code></p>
+<p>包含<code>@ToString, @EqualsAndHashCode, @Getter,@RequiredArgsConstructor</code>,<code>@setter</code>但不包括final属性的参数</p>
+</li>
+<li>
+<p><code>@Value</code></p>
+<p>用在类或者方法上,将整个类变成final</p>
+</li>
+<li>
+<p><code>@Build</code></p>
+<p>构造器,能挨个给属性值注参,用了注解后,类里的参数默认值为null(即使你有自己的默认值),构造器不是私有的,大家都能调用,还有其他坑,建议先不使用
+使用:<code>Officer.build().id(&quot;00001&quot;).name(&quot;simon qi&quot;)</code></p>
+</li>
+<li>
+<p><code>@Synchronized</code></p>
+<p>给某个类加 Synchronized 锁</p>
+</li>
+<li>
+<p><code>@Log, @Slf4j, @CommonsLog</code></p>
+<p>日志注解, 分别属于<code>java.util.logging.Logger</code>,<code>org.slf4j.Logger</code>,<code>org.apache.commons.logging.Log</code></p>
+</li>
+<li>
+<p><code>@SneakyThrows</code></p>
+<p>翻译就是暗中抛出异常 , 当我们需要抛出异常，在当前方法上调用，不用显示的在方法名后面写 throw</p>
+<p><code>@SneakyThrows(Exception.class)</code></p>
+</li>
+</ol>
+<p>来自: <a href="https://projectlombok.org/features/all">https://projectlombok.org/features/all</a></p>
+<p><a href="https://www.cnblogs.com/qnight/p/8997493.html">学习Spring Boot：（十五）使用Lombok来优雅的编码 - KronChan - 博客园 (cnblogs.com)</a></p>
+<p><a href="https://blog.csdn.net/cauchy6317/article/details/102579178">Lombok之@XXXArgsConstructor系列注解使用_cauchy6317的博客-CSDN博客_allargsconstructor注解</a></p>
+<h1 id="扩展">扩展</h1>
+<p>使用@Data用在派生类(有继承关系的)上会警告,如下:</p>
+<p><code>Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.</code></p>
+<p>大致意思是默认子类的equals和hashCode方法，不会包含或者考虑基类的属性。我们可以通过反编译工具查看项目target/classes目录下的User.class的hashCode方法，默认情况下属性都是使用的他自身的属性。</p>
+<ol>
+<li>解决方式一：直接在子类上声明 <code>@EqualsAndHashCode(callSuper = true)</code></li>
+<li>解决方式二[推荐]：在项目的<code>src/main/java</code>根目录下创建<code>lombok.config</code>配置文件</li>
+</ol>
+<p>内容如下:</p>
+<pre tabindex="0"><code># 该配置声明这个配置文件是一个根配置文件，他会从该配置文件所在的目录开始扫描
+config.stopBubbling=true
+#全局配置 equalsAndHashCode 的 callSuper 属性为true，这样就不用每个类都要去写了
+lombok.equalsAndHashCode.callSuper=call
+</code></pre><p>来源: <a href="https://blog.csdn.net/qq_15071263/article/details/91660519#3srcmainjavalombok_15">https://blog.csdn.net/qq_15071263/article/details/91660519#3srcmainjavalombok_15</a></p>
+<p><a href="https://blog.csdn.net/feinifi/article/details/85275280">https://blog.csdn.net/feinifi/article/details/85275280</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/spi/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/lombok\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/lombok\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/spi/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2Flombok%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2Flombok%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2Flombok%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

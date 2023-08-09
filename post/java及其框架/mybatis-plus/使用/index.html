@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n该文章包括:\n使用提供的curd 条件构造器 自定义sql 分页插件 sql执行效率插件 配置文件: application.properties\nspring.datasource.driver-class-name=com.mysql.jdbc.Driver spring.datasource.url=jdbc:mysql:\/\/10.10.203.10:3306\/jplatdvv?useUnicode=true\u0026amp;characterEncoding=utf-8\u0026amp;useSSL=false\u0026amp;allowMultiQueries=true\u0026amp;allowPublicKeyRetrieval=true spring.datasource.username=test spring.datasource.password=Jht123456 #spring.datasource.type=com.alibaba.druid.pool.DruidDataSource spring.datasource.initialSize=5 spring.datasource.minIdle=5 spring.datasource.maxActive=20 spring.datasource.maxWait=60000 #mybatisMapper文件配置地址 #mybatis框架的配置不起作用了 mybatis-plus.mapper-locations=classpath*:mapper\/*Mapper.xml 启动类: SpringBootTestMybatisPlusApplication.java\npackage com.example.demo; import org.springframework.boot.SpringApplication; import org.springframework.boot.autoconfigure.SpringBootApplication; import org.springframework.context.annotation.Bean; import org.springframework.transaction.annotation.EnableTransactionManagement; import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor; import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor; @SpringBootApplication @EnableTransactionManagement public class SpringBootTestMybatisPlusApplication { public static void main(String[] args) { SpringApplication.run(SpringBootTestMybatisPlusApplication.class, args); } \/** * SQL执行效率插件 *\/ @Bean \/\/ @Profile({\u0026#34;dev\u0026#34;,\u0026#34;test\u0026#34;})\/\/ 设置 dev test 环境开启 public PerformanceInterceptor performanceInterceptor() { return new PerformanceInterceptor(); } \/** * 分页插件 *\/ @Bean public PaginationInterceptor paginationInterceptor() { return new PaginationInterceptor(); } } 实体类 package com.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/mybatis-plus\/%E4%BD%BF%E7%94%A8\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+该文章包括:
+使用提供的curd 条件构造器 自定义sql 分页插件 sql执行效率插件 配置文件: application.properties
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver spring.datasource.url=jdbc:mysql://10.10.203.10:3306/jplatdvv?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;allowMultiQueries=true&amp;allowPublicKeyRetrieval=true spring.datasource.username=test spring.datasource.password=Jht123456 #spring.datasource.type=com.alibaba.druid.pool.DruidDataSource spring.datasource.initialSize=5 spring.datasource.minIdle=5 spring.datasource.maxActive=20 spring.datasource.maxWait=60000 #mybatisMapper文件配置地址 #mybatis框架的配置不起作用了 mybatis-plus.mapper-locations=classpath*:mapper/*Mapper.xml 启动类: SpringBootTestMybatisPlusApplication.java
+package com.example.demo; import org.springframework.boot.SpringApplication; import org.springframework.boot.autoconfigure.SpringBootApplication; import org.springframework.context.annotation.Bean; import org.springframework.transaction.annotation.EnableTransactionManagement; import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor; import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor; @SpringBootApplication @EnableTransactionManagement public class SpringBootTestMybatisPlusApplication { public static void main(String[] args) { SpringApplication.run(SpringBootTestMybatisPlusApplication.class, args); } /** * SQL执行效率插件 */ @Bean // @Profile({&#34;dev&#34;,&#34;test&#34;})// 设置 dev test 环境开启 public PerformanceInterceptor performanceInterceptor() { return new PerformanceInterceptor(); } /** * 分页插件 */ @Bean public PaginationInterceptor paginationInterceptor() { return new PaginationInterceptor(); } } 实体类 package com.">
+
+
+<meta property="og:description" content="[toc]
+该文章包括:
+使用提供的curd 条件构造器 自定义sql 分页插件 sql执行效率插件 配置文件: application.properties
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver spring.datasource.url=jdbc:mysql://10.10.203.10:3306/jplatdvv?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;allowMultiQueries=true&amp;allowPublicKeyRetrieval=true spring.datasource.username=test spring.datasource.password=Jht123456 #spring.datasource.type=com.alibaba.druid.pool.DruidDataSource spring.datasource.initialSize=5 spring.datasource.minIdle=5 spring.datasource.maxActive=20 spring.datasource.maxWait=60000 #mybatisMapper文件配置地址 #mybatis框架的配置不起作用了 mybatis-plus.mapper-locations=classpath*:mapper/*Mapper.xml 启动类: SpringBootTestMybatisPlusApplication.java
+package com.example.demo; import org.springframework.boot.SpringApplication; import org.springframework.boot.autoconfigure.SpringBootApplication; import org.springframework.context.annotation.Bean; import org.springframework.transaction.annotation.EnableTransactionManagement; import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor; import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor; @SpringBootApplication @EnableTransactionManagement public class SpringBootTestMybatisPlusApplication { public static void main(String[] args) { SpringApplication.run(SpringBootTestMybatisPlusApplication.class, args); } /** * SQL执行效率插件 */ @Bean // @Profile({&#34;dev&#34;,&#34;test&#34;})// 设置 dev test 环境开启 public PerformanceInterceptor performanceInterceptor() { return new PerformanceInterceptor(); } /** * 分页插件 */ @Bean public PaginationInterceptor paginationInterceptor() { return new PaginationInterceptor(); } } 实体类 package com.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+该文章包括:
+使用提供的curd 条件构造器 自定义sql 分页插件 sql执行效率插件 配置文件: application.properties
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver spring.datasource.url=jdbc:mysql://10.10.203.10:3306/jplatdvv?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;allowMultiQueries=true&amp;allowPublicKeyRetrieval=true spring.datasource.username=test spring.datasource.password=Jht123456 #spring.datasource.type=com.alibaba.druid.pool.DruidDataSource spring.datasource.initialSize=5 spring.datasource.minIdle=5 spring.datasource.maxActive=20 spring.datasource.maxWait=60000 #mybatisMapper文件配置地址 #mybatis框架的配置不起作用了 mybatis-plus.mapper-locations=classpath*:mapper/*Mapper.xml 启动类: SpringBootTestMybatisPlusApplication.java
+package com.example.demo; import org.springframework.boot.SpringApplication; import org.springframework.boot.autoconfigure.SpringBootApplication; import org.springframework.context.annotation.Bean; import org.springframework.transaction.annotation.EnableTransactionManagement; import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor; import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor; @SpringBootApplication @EnableTransactionManagement public class SpringBootTestMybatisPlusApplication { public static void main(String[] args) { SpringApplication.run(SpringBootTestMybatisPlusApplication.class, args); } /** * SQL执行效率插件 */ @Bean // @Profile({&#34;dev&#34;,&#34;test&#34;})// 设置 dev test 环境开启 public PerformanceInterceptor performanceInterceptor() { return new PerformanceInterceptor(); } /** * 分页插件 */ @Bean public PaginationInterceptor paginationInterceptor() { return new PaginationInterceptor(); } } 实体类 package com.">
+<meta name="twitter:description" content="[toc]
+该文章包括:
+使用提供的curd 条件构造器 自定义sql 分页插件 sql执行效率插件 配置文件: application.properties
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver spring.datasource.url=jdbc:mysql://10.10.203.10:3306/jplatdvv?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;allowMultiQueries=true&amp;allowPublicKeyRetrieval=true spring.datasource.username=test spring.datasource.password=Jht123456 #spring.datasource.type=com.alibaba.druid.pool.DruidDataSource spring.datasource.initialSize=5 spring.datasource.minIdle=5 spring.datasource.maxActive=20 spring.datasource.maxWait=60000 #mybatisMapper文件配置地址 #mybatis框架的配置不起作用了 mybatis-plus.mapper-locations=classpath*:mapper/*Mapper.xml 启动类: SpringBootTestMybatisPlusApplication.java
+package com.example.demo; import org.springframework.boot.SpringApplication; import org.springframework.boot.autoconfigure.SpringBootApplication; import org.springframework.context.annotation.Bean; import org.springframework.transaction.annotation.EnableTransactionManagement; import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor; import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor; @SpringBootApplication @EnableTransactionManagement public class SpringBootTestMybatisPlusApplication { public static void main(String[] args) { SpringApplication.run(SpringBootTestMybatisPlusApplication.class, args); } /** * SQL执行效率插件 */ @Bean // @Profile({&#34;dev&#34;,&#34;test&#34;})// 设置 dev test 环境开启 public PerformanceInterceptor performanceInterceptor() { return new PerformanceInterceptor(); } /** * 分页插件 */ @Bean public PaginationInterceptor paginationInterceptor() { return new PaginationInterceptor(); } } 实体类 package com.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<p>该文章包括:</p>
+<ul>
+<li>使用提供的curd</li>
+<li>条件构造器</li>
+<li>自定义sql</li>
+<li>分页插件</li>
+<li>sql执行效率插件</li>
+</ul>
+<h1 id="配置文件">配置文件:</h1>
+<p>application.properties</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.driver-class-name</span><span style="color:#f92672">=</span><span style="color:#e6db74">com.mysql.jdbc.Driver</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.url</span><span style="color:#f92672">=</span><span style="color:#e6db74">jdbc:mysql://10.10.203.10:3306/jplatdvv?useUnicode=true&amp;characterEncoding=utf-8&amp;useSSL=false&amp;allowMultiQueries=true&amp;allowPublicKeyRetrieval=true</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.username</span><span style="color:#f92672">=</span><span style="color:#e6db74">test</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.password</span><span style="color:#f92672">=</span><span style="color:#e6db74">Jht123456</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#spring.datasource.type=com.alibaba.druid.pool.DruidDataSource     </span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.initialSize</span><span style="color:#f92672">=</span><span style="color:#e6db74">5    </span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.minIdle</span><span style="color:#f92672">=</span><span style="color:#e6db74">5    </span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.maxActive</span><span style="color:#f92672">=</span><span style="color:#e6db74">20       </span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">spring.datasource.maxWait</span><span style="color:#f92672">=</span><span style="color:#e6db74">60000</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#mybatisMapper文件配置地址</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#mybatis框架的配置不起作用了</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">mybatis-plus.mapper-locations</span><span style="color:#f92672">=</span><span style="color:#e6db74">classpath*:mapper/*Mapper.xml </span>
+</span></span></code></pre></div><h1 id="启动类">启动类:</h1>
+<p>SpringBootTestMybatisPlusApplication.java</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> com.example.demo<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.boot.SpringApplication<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.boot.autoconfigure.SpringBootApplication<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.context.annotation.Bean<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.transaction.annotation.EnableTransactionManagement<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@SpringBootApplication</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EnableTransactionManagement</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SpringBootTestMybatisPlusApplication</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		SpringApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">run</span><span style="color:#f92672">(</span>SpringBootTestMybatisPlusApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> args<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * SQL执行效率插件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//    @Profile({&#34;dev&#34;,&#34;test&#34;})// 设置 dev test 环境开启
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> PerformanceInterceptor <span style="color:#a6e22e">performanceInterceptor</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> PerformanceInterceptor<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 分页插件
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> PaginationInterceptor <span style="color:#a6e22e">paginationInterceptor</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> PaginationInterceptor<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="实体类">实体类</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> com.example.demo.entity<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.baomidou.mybatisplus.annotation.TableField<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.baomidou.mybatisplus.annotation.TableName<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 使用帮助实体类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @author xkj
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@TableName</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;jpf_help_info&#34;</span><span style="color:#f92672">)</span> <span style="color:#75715e">// 指定表名,默认使用类名(驼峰转下划线)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">@Data</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HelpInfo</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/** 帮助ID */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> String id<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/** 帮助编码 */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> String helpNo<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/** 帮助内容 */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> String content<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/** 帮助标题 */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> String title<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/** 创建人ID */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> String createId<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/** 创建人名称 */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@TableField</span><span style="color:#f92672">(</span>exist<span style="color:#f92672">=</span><span style="color:#66d9ef">false</span><span style="color:#f92672">)</span> <span style="color:#75715e">// 标明该字段不是数据库字段,默认所有的属性都是数据库字段
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">private</span> String createName<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/** 修改人ID */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> String updateId<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/** 修改人名称 */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@TableField</span><span style="color:#f92672">(</span>exist<span style="color:#f92672">=</span><span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> String updateName<span style="color:#f92672">;</span>
+</span></span></code></pre></div><h1 id="控制类">控制类</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> com.example.demo.web<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.slf4j.Logger<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.slf4j.LoggerFactory<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.beans.factory.annotation.Autowired<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.util.StringUtils<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.web.bind.annotation.RequestMapping<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.web.bind.annotation.RestController<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.baomidou.mybatisplus.core.metadata.IPage<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.baomidou.mybatisplus.extension.plugins.pagination.Page<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.example.demo.dao.HelpDao<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.example.demo.entity.HelpInfo<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@RequestMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;test&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@RestController</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestController</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Logger logger <span style="color:#f92672">=</span> LoggerFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">getLogger</span><span style="color:#f92672">(</span>TestController<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> HelpDao helpDao<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@RequestMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;helpPage&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> IPage<span style="color:#f92672">&lt;</span>HelpInfo<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getHelpPage</span><span style="color:#f92672">(</span>String content<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		IPage<span style="color:#f92672">&lt;</span>HelpInfo<span style="color:#f92672">&gt;</span> page<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> Page<span style="color:#f92672">&lt;&gt;(</span>1<span style="color:#f92672">,</span>4<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		QueryWrapper<span style="color:#f92672">&lt;</span>HelpInfo<span style="color:#f92672">&gt;</span> wrapper<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> QueryWrapper<span style="color:#f92672">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>		wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">select</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;HELP_NO&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;TITLE&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;CONTENT&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">eq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;id&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">like</span><span style="color:#f92672">(!</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>content<span style="color:#f92672">),</span> <span style="color:#e6db74">&#34;CONTENT&#34;</span><span style="color:#f92672">,</span> content<span style="color:#f92672">);</span> <span style="color:#75715e">// 默认用 and 连接
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		IPage<span style="color:#f92672">&lt;</span>HelpInfo<span style="color:#f92672">&gt;</span> helpInfos <span style="color:#f92672">=</span> helpDao<span style="color:#f92672">.</span><span style="color:#a6e22e">selectPage</span><span style="color:#f92672">(</span>page<span style="color:#f92672">,</span>wrapper<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		logger<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;返参:{}&#34;</span><span style="color:#f92672">,</span>helpInfos<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> helpInfos<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@RequestMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;helpOne&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> HelpInfo <span style="color:#a6e22e">getHelpOne</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		QueryWrapper<span style="color:#f92672">&lt;</span>HelpInfo<span style="color:#f92672">&gt;</span> wrapper<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> QueryWrapper<span style="color:#f92672">&lt;&gt;()</span> <span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>		wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">select</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;HELP_NO&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;TITLE&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;CONTENT&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">eq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;id&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">or</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">eq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;update_Id&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;19&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//				.apply(&#34;left join jpf_account&#34;)  // apply 允许自定义sql
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">last</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;limit 1&#34;</span><span style="color:#f92672">);</span><span style="color:#75715e">// last : 无视java代码顺序,会直接放到sql最后面
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				
+</span></span><span style="display:flex;"><span>		HelpInfo helpInfo <span style="color:#f92672">=</span> helpDao<span style="color:#f92672">.</span><span style="color:#a6e22e">selectOne</span><span style="color:#f92672">(</span>wrapper<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		logger<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;返参:{}&#34;</span><span style="color:#f92672">,</span>helpInfo<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> helpInfo<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@RequestMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;helpQuery&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> HelpInfo <span style="color:#a6e22e">getHelpQuery</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		QueryWrapper<span style="color:#f92672">&lt;</span>HelpInfo<span style="color:#f92672">&gt;</span> wrapper<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> QueryWrapper<span style="color:#f92672">&lt;&gt;()</span> <span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>		wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">eq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;id&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">or</span><span style="color:#f92672">().</span><span style="color:#a6e22e">eq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;update_Id&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;19&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">last</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;limit 1&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		logger<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;CustomSqlSegment:{}&#34;</span><span style="color:#f92672">,</span>wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">getCustomSqlSegment</span><span style="color:#f92672">());</span><span style="color:#75715e">// sql条件, 带where
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#75715e">// CustomSqlSegment:WHERE id = #{ew.paramNameValuePairs.MPGENVAL1} OR update_Id = #{ew.paramNameValuePairs.MPGENVAL2} limit 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		logger<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;SqlSegment:{}&#34;</span><span style="color:#f92672">,</span>wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">getSqlSegment</span><span style="color:#f92672">());</span><span style="color:#75715e">// sql条件, 不带where
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#75715e">// SqlSegment:id = #{ew.paramNameValuePairs.MPGENVAL1} OR update_Id = #{ew.paramNameValuePairs.MPGENVAL2} limit 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		HelpInfo helpInfo <span style="color:#f92672">=</span> helpDao<span style="color:#f92672">.</span><span style="color:#a6e22e">getHelpQuery</span><span style="color:#f92672">(</span>wrapper<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		logger<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;返参:{}&#34;</span><span style="color:#f92672">,</span>helpInfo<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> helpInfo<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@RequestMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;helpQueryByMe&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> HelpInfo <span style="color:#a6e22e">getHelpQueryByMe</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		QueryWrapper<span style="color:#f92672">&lt;</span>HelpInfo<span style="color:#f92672">&gt;</span> wrapper<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> QueryWrapper<span style="color:#f92672">&lt;&gt;()</span> <span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>		wrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">eq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;id&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">or</span><span style="color:#f92672">().</span><span style="color:#a6e22e">eq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;update_Id&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;19&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">last</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;limit 1&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">select</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;HELP_NO&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;TITLE&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;CONTENT&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		String id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>		HelpInfo helpInfo <span style="color:#f92672">=</span> helpDao<span style="color:#f92672">.</span><span style="color:#a6e22e">getHelpQueryByMe</span><span style="color:#f92672">(</span>id<span style="color:#f92672">);</span> <span style="color:#75715e">// 允许完全自定义sql,和mybatis一样使用(spring boot的配置不一样)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		logger<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;返参:{}&#34;</span><span style="color:#f92672">,</span>helpInfo<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> helpInfo<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="业务层">业务层</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 可以使用 ServiceImpl类下的方法, 更多的操作数据的操作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">@Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AccountServiceImpl</span> <span style="color:#66d9ef">extends</span> ServiceImpl<span style="color:#f92672">&lt;</span>AccountMapper<span style="color:#f92672">,</span> JbpAccount<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">implements</span> AccountService <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="dao层">dao层</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> com.example.demo.dao<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.apache.ibatis.annotations.Mapper<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.apache.ibatis.annotations.Param<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.baomidou.mybatisplus.core.conditions.Wrapper<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.baomidou.mybatisplus.core.mapper.BaseMapper<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.example.demo.entity.HelpInfo<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Mapper</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">HelpDao</span> <span style="color:#66d9ef">extends</span> BaseMapper<span style="color:#f92672">&lt;</span>HelpInfo<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> HelpInfo <span style="color:#a6e22e">getHelpQuery</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@Param</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;ew&#34;</span><span style="color:#f92672">)</span> Wrapper<span style="color:#f92672">&lt;</span>HelpInfo<span style="color:#f92672">&gt;</span> wrapper<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> HelpInfo <span style="color:#a6e22e">getHelpQueryByMe</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@Param</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;id&#34;</span><span style="color:#f92672">)</span> String id<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="mapper文件">Mapper文件</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!DOCTYPE mapper PUBLIC &#34;-//mybatis.org//DTD Mapper 3.0//EN&#34; &#34;http://mybatis.org/dtd/mybatis-3-mapper.dtd&#34;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;mapper</span> <span style="color:#a6e22e">namespace=</span><span style="color:#e6db74">&#34;com.example.demo.dao.HelpDao&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#f92672">&lt;select</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;getHelpQuery&#34;</span> <span style="color:#a6e22e">resultType=</span><span style="color:#e6db74">&#34;com.example.demo.entity.HelpInfo&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>	 	 SELECT * FROM jpf_help_info ${ew.customSqlSegment}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- 	 	 customSqlSegment: mybatis-Plus 框架的一个变量,里面是带where 的 sql, 可看代码 --&gt;</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#f92672">&lt;/select&gt;</span>
+</span></span><span style="display:flex;"><span>	 
+</span></span><span style="display:flex;"><span>	 <span style="color:#f92672">&lt;select</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;getHelpQueryByMe&#34;</span> <span style="color:#a6e22e">resultType=</span><span style="color:#e6db74">&#34;com.example.demo.entity.HelpInfo&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>	 	SELECT * FROM jpf_help_info where id = #{id}
+</span></span><span style="display:flex;"><span>	 <span style="color:#f92672">&lt;/select&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/mapper&gt;</span>
+</span></span></code></pre></div>
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BB%8B%E7%BB%8D/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/mybatis-plus\/%E4%BD%BF%E7%94%A8\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/mybatis-plus\/%E4%BD%BF%E7%94%A8\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BB%8B%E7%BB%8D/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fmybatis-plus%2F%25E4%25BD%25BF%25E7%2594%25A8%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fmybatis-plus%2F%25E4%25BD%25BF%25E7%2594%25A8%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fmybatis-plus%2F%25E4%25BD%25BF%25E7%2594%25A8%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

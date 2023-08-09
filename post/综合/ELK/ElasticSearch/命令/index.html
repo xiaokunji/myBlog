@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n前言 本文以命令行为主\n其本质还是发送http请求去操作数据\n1. 基本格式 es是以RESTFul风格来命名API的，其API的基本格式如下：\nhttp:\/\/\u0026lt;ip\u0026gt;:\u0026lt;port\u0026gt;\/\u0026lt;索引\u0026gt;\/\u0026lt;类型\u0026gt;\/\u0026lt;文档id\u0026gt;\n这里需要注意的是，该格式从es7.0.0开始，移除Type（类型）这个概念，新的基本格式如下：\nhttp:\/\/\u0026lt;ip\u0026gt;:\u0026lt;port\u0026gt;\/\u0026lt;索引\u0026gt;\/_doc\/\u0026lt;文档id\u0026gt;\nType（类型）字段那里变为固定值 _doc\nes的动作是以http方法来决定的: 常用的http方法: GET\/PUT\/POST\/DELETE\npost 主做修改, put主做创建\npost也有创建的功能,特别是插入数据生成随机id时\n2. 命令 2.1 创建索引 curl -XPUT http:\/\/localhost:9200\/xkj_test 没有指定mappings,故为非结构化索引,也没有字段\n\/\/ 结构化索引: 指定了mappings curl -X PUT \u0026#39;localhost:9200\/accounts\u0026#39; -d \u0026#39; { \u0026#34;mappings\u0026#34;: { \/\/ mappings 映射 \u0026#34;man\u0026#34;: { \/\/ type \u0026#34;properties\u0026#34;: { \/\/ 具体属性 \u0026#34;name\u0026#34;: { \/\/ 字段名 \u0026#34;type\u0026#34;:\u0026#34;text\u0026#34; \/\/ 字段类型 \/\/ ....还有其他可以选,比如拆分规则,权重值 }, \u0026#34;country\u0026#34;: { \u0026#34;type\u0026#34;:\u0026#34;keyword\u0026#34; }, \u0026#34;age\u0026#34;: { \u0026#34;type\u0026#34;:\u0026#34;integer\u0026#34; }, \u0026#34;date\u0026#34;: { \u0026#34;type\u0026#34;: \u0026#34;date\u0026#34;, \u0026#34;format\u0026#34;: \u0026#34;yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis\u0026#34; } } }, \/\/ \u0026#34;worman\u0026#34;: {} \/\/ 6.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/%E5%91%BD%E4%BB%A4\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+前言 本文以命令行为主
+其本质还是发送http请求去操作数据
+1. 基本格式 es是以RESTFul风格来命名API的，其API的基本格式如下：
+http://&lt;ip&gt;:&lt;port&gt;/&lt;索引&gt;/&lt;类型&gt;/&lt;文档id&gt;
+这里需要注意的是，该格式从es7.0.0开始，移除Type（类型）这个概念，新的基本格式如下：
+http://&lt;ip&gt;:&lt;port&gt;/&lt;索引&gt;/_doc/&lt;文档id&gt;
+Type（类型）字段那里变为固定值 _doc
+es的动作是以http方法来决定的: 常用的http方法: GET/PUT/POST/DELETE
+post 主做修改, put主做创建
+post也有创建的功能,特别是插入数据生成随机id时
+2. 命令 2.1 创建索引 curl -XPUT http://localhost:9200/xkj_test 没有指定mappings,故为非结构化索引,也没有字段
+// 结构化索引: 指定了mappings curl -X PUT &#39;localhost:9200/accounts&#39; -d &#39; { &#34;mappings&#34;: { // mappings 映射 &#34;man&#34;: { // type &#34;properties&#34;: { // 具体属性 &#34;name&#34;: { // 字段名 &#34;type&#34;:&#34;text&#34; // 字段类型 // ....还有其他可以选,比如拆分规则,权重值 }, &#34;country&#34;: { &#34;type&#34;:&#34;keyword&#34; }, &#34;age&#34;: { &#34;type&#34;:&#34;integer&#34; }, &#34;date&#34;: { &#34;type&#34;: &#34;date&#34;, &#34;format&#34;: &#34;yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis&#34; } } }, // &#34;worman&#34;: {} // 6.">
+
+
+<meta property="og:description" content="[toc]
+前言 本文以命令行为主
+其本质还是发送http请求去操作数据
+1. 基本格式 es是以RESTFul风格来命名API的，其API的基本格式如下：
+http://&lt;ip&gt;:&lt;port&gt;/&lt;索引&gt;/&lt;类型&gt;/&lt;文档id&gt;
+这里需要注意的是，该格式从es7.0.0开始，移除Type（类型）这个概念，新的基本格式如下：
+http://&lt;ip&gt;:&lt;port&gt;/&lt;索引&gt;/_doc/&lt;文档id&gt;
+Type（类型）字段那里变为固定值 _doc
+es的动作是以http方法来决定的: 常用的http方法: GET/PUT/POST/DELETE
+post 主做修改, put主做创建
+post也有创建的功能,特别是插入数据生成随机id时
+2. 命令 2.1 创建索引 curl -XPUT http://localhost:9200/xkj_test 没有指定mappings,故为非结构化索引,也没有字段
+// 结构化索引: 指定了mappings curl -X PUT &#39;localhost:9200/accounts&#39; -d &#39; { &#34;mappings&#34;: { // mappings 映射 &#34;man&#34;: { // type &#34;properties&#34;: { // 具体属性 &#34;name&#34;: { // 字段名 &#34;type&#34;:&#34;text&#34; // 字段类型 // ....还有其他可以选,比如拆分规则,权重值 }, &#34;country&#34;: { &#34;type&#34;:&#34;keyword&#34; }, &#34;age&#34;: { &#34;type&#34;:&#34;integer&#34; }, &#34;date&#34;: { &#34;type&#34;: &#34;date&#34;, &#34;format&#34;: &#34;yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis&#34; } } }, // &#34;worman&#34;: {} // 6.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+前言 本文以命令行为主
+其本质还是发送http请求去操作数据
+1. 基本格式 es是以RESTFul风格来命名API的，其API的基本格式如下：
+http://&lt;ip&gt;:&lt;port&gt;/&lt;索引&gt;/&lt;类型&gt;/&lt;文档id&gt;
+这里需要注意的是，该格式从es7.0.0开始，移除Type（类型）这个概念，新的基本格式如下：
+http://&lt;ip&gt;:&lt;port&gt;/&lt;索引&gt;/_doc/&lt;文档id&gt;
+Type（类型）字段那里变为固定值 _doc
+es的动作是以http方法来决定的: 常用的http方法: GET/PUT/POST/DELETE
+post 主做修改, put主做创建
+post也有创建的功能,特别是插入数据生成随机id时
+2. 命令 2.1 创建索引 curl -XPUT http://localhost:9200/xkj_test 没有指定mappings,故为非结构化索引,也没有字段
+// 结构化索引: 指定了mappings curl -X PUT &#39;localhost:9200/accounts&#39; -d &#39; { &#34;mappings&#34;: { // mappings 映射 &#34;man&#34;: { // type &#34;properties&#34;: { // 具体属性 &#34;name&#34;: { // 字段名 &#34;type&#34;:&#34;text&#34; // 字段类型 // ....还有其他可以选,比如拆分规则,权重值 }, &#34;country&#34;: { &#34;type&#34;:&#34;keyword&#34; }, &#34;age&#34;: { &#34;type&#34;:&#34;integer&#34; }, &#34;date&#34;: { &#34;type&#34;: &#34;date&#34;, &#34;format&#34;: &#34;yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis&#34; } } }, // &#34;worman&#34;: {} // 6.">
+<meta name="twitter:description" content="[toc]
+前言 本文以命令行为主
+其本质还是发送http请求去操作数据
+1. 基本格式 es是以RESTFul风格来命名API的，其API的基本格式如下：
+http://&lt;ip&gt;:&lt;port&gt;/&lt;索引&gt;/&lt;类型&gt;/&lt;文档id&gt;
+这里需要注意的是，该格式从es7.0.0开始，移除Type（类型）这个概念，新的基本格式如下：
+http://&lt;ip&gt;:&lt;port&gt;/&lt;索引&gt;/_doc/&lt;文档id&gt;
+Type（类型）字段那里变为固定值 _doc
+es的动作是以http方法来决定的: 常用的http方法: GET/PUT/POST/DELETE
+post 主做修改, put主做创建
+post也有创建的功能,特别是插入数据生成随机id时
+2. 命令 2.1 创建索引 curl -XPUT http://localhost:9200/xkj_test 没有指定mappings,故为非结构化索引,也没有字段
+// 结构化索引: 指定了mappings curl -X PUT &#39;localhost:9200/accounts&#39; -d &#39; { &#34;mappings&#34;: { // mappings 映射 &#34;man&#34;: { // type &#34;properties&#34;: { // 具体属性 &#34;name&#34;: { // 字段名 &#34;type&#34;:&#34;text&#34; // 字段类型 // ....还有其他可以选,比如拆分规则,权重值 }, &#34;country&#34;: { &#34;type&#34;:&#34;keyword&#34; }, &#34;age&#34;: { &#34;type&#34;:&#34;integer&#34; }, &#34;date&#34;: { &#34;type&#34;: &#34;date&#34;, &#34;format&#34;: &#34;yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis&#34; } } }, // &#34;worman&#34;: {} // 6.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="前言">前言</h1>
+<p>本文以命令行为主</p>
+<blockquote>
+<p>其本质还是发送http请求去操作数据</p>
+</blockquote>
+<h1 id="1-基本格式">1. 基本格式</h1>
+<p>es是以RESTFul风格来命名API的，其API的基本格式如下：</p>
+<p><code>http://&lt;ip&gt;:&lt;port&gt;/&lt;索引&gt;/&lt;类型&gt;/&lt;文档id&gt;</code></p>
+<p>这里需要注意的是，该格式从es7.0.0开始，移除Type（类型）这个概念，新的基本格式如下：</p>
+<p><code>http://&lt;ip&gt;:&lt;port&gt;/&lt;索引&gt;/_doc/&lt;文档id&gt;</code></p>
+<p>Type（类型）字段那里变为固定值 _doc</p>
+<p>es的动作是以http方法来决定的: 常用的http方法: <code>GET/PUT/POST/DELETE</code></p>
+<blockquote>
+<p>post 主做修改, put主做创建</p>
+<p>post也有创建的功能,特别是插入数据生成随机id时</p>
+</blockquote>
+<h1 id="2-命令">2. 命令</h1>
+<h2 id="21-创建索引">2.1 创建索引</h2>
+<p><code>curl -XPUT http://localhost:9200/xkj_test</code>   没有指定mappings,故为非结构化索引,也没有字段</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#75715e">// 结构化索引: 指定了mappings
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">curl</span> <span style="color:#960050;background-color:#1e0010">-X</span> <span style="color:#960050;background-color:#1e0010">PUT</span> <span style="color:#960050;background-color:#1e0010">&#39;localhost:</span><span style="color:#ae81ff">9200</span><span style="color:#960050;background-color:#1e0010">/accounts&#39;</span> <span style="color:#960050;background-color:#1e0010">-d</span> <span style="color:#960050;background-color:#1e0010">&#39;</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;mappings&#34;</span>: { <span style="color:#75715e">// mappings 映射
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#f92672">&#34;man&#34;</span>: { <span style="color:#75715e">// type
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#f92672">&#34;properties&#34;</span>: { <span style="color:#75715e">// 具体属性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">&#34;name&#34;</span>: { <span style="color:#75715e">// 字段名
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                    <span style="color:#f92672">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;text&#34;</span> <span style="color:#75715e">// 字段类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                    <span style="color:#75715e">// ....还有其他可以选,比如拆分规则,权重值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                },
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;country&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;keyword&#34;</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;age&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;integer&#34;</span>
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">&#34;date&#34;</span>: {
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;date&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#f92672">&#34;format&#34;</span>: <span style="color:#e6db74">&#34;yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis&#34;</span>
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//         &#34;worman&#34;: {} // 6.x版本只支持一个type
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>   		}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}&#39;</span>
+</span></span></code></pre></div><blockquote>
+<p>其核心是里面的json字符串</p>
+</blockquote>
+<p><img src="https://img2018.cnblogs.com/blog/1242227/201907/1242227-20190721123224362-996727299.png" alt="一张网图"></p>
+<h2 id="22-插入数据">2.2 插入数据</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl</span> <span style="color:#960050;background-color:#1e0010">-X</span> <span style="color:#960050;background-color:#1e0010">POST</span> <span style="color:#960050;background-color:#1e0010">&#39;localhost:</span><span style="color:#ae81ff">9200</span><span style="color:#960050;background-color:#1e0010">/accounts/person/</span><span style="color:#ae81ff">1000</span><span style="color:#960050;background-color:#1e0010">&#39;</span> <span style="color:#960050;background-color:#1e0010">-d</span> <span style="color:#960050;background-color:#1e0010">&#39;</span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 这个1000表示id,如果不写es会自动生成一个,如果连索引和类型也没有也会一并创建,如果id已存在则修改
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;user&#34;</span>: <span style="color:#e6db74">&#34;张三&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;title&#34;</span>: <span style="color:#e6db74">&#34;工程师&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;desc&#34;</span>: <span style="color:#e6db74">&#34;数据库管理&#34;</span>
+</span></span><span style="display:flex;"><span>}<span style="color:#960050;background-color:#1e0010">&#39;</span> 
+</span></span></code></pre></div><blockquote>
+<p>格式是 <code>ip:port/索引/类型/id</code>, 参数是各属性的json字符串</p>
+</blockquote>
+<h2 id="23-修改数据">2.3 修改数据</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">post</span> <span style="color:#960050;background-color:#1e0010">http:</span><span style="color:#75715e">//localhost:9200/test/_doc/1/_update
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;script&#34;</span>: {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;lang&#34;</span>: <span style="color:#e6db74">&#34;painless&#34;</span>,
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;inline&#34;</span>: <span style="color:#e6db74">&#34;ctx._source.age += 30&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><blockquote>
+<p>关键字”script”: 标志以脚本的方式修改文档</p>
+<p>“lang”：表示以何种脚本语言进行修改，“painless”表示以es内置的脚本语言进行修改。此外es还支持多种脚本语言，如Python，js等等</p>
+<p>“inline”：指定脚本内容 “ctx”代表es上下文，_source 代表文档</p>
+</blockquote>
+<p>根据条件修改信息:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST</span> <span style="color:#960050;background-color:#1e0010">my_index/_update_by_query</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;script&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;source&#34;</span>: <span style="color:#e6db74">&#34;ctx._source[&#39;ipsub&#39;]=0&#34;</span> 
+</span></span><span style="display:flex;"><span>  },
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;query&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;bool&#34;</span>: {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;must_not&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&#34;exists&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;field&#34;</span>: <span style="color:#e6db74">&#34;ipsub&#34;</span>
+</span></span><span style="display:flex;"><span>          }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>      ]
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><blockquote>
+<p>上面语句是根据是否存在&quot;ipsub&quot;字段，如果不存在，给信息增加字段&quot;ipsub&quot;，并且赋值0</p>
+</blockquote>
+<h2 id="24-查看">2.4 查看</h2>
+<ol>
+<li>查看xkj_test索引数据格式</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl</span> <span style="color:#960050;background-color:#1e0010">-X</span> <span style="color:#960050;background-color:#1e0010">GET</span> <span style="color:#960050;background-color:#1e0010">http:</span><span style="color:#75715e">//localhost:9200/xkj_test/
+</span></span></span></code></pre></div><ol start="2">
+<li>查看xkj_test索引下指定id查看</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl</span> <span style="color:#960050;background-color:#1e0010">-X</span> <span style="color:#960050;background-color:#1e0010">GET</span> <span style="color:#960050;background-color:#1e0010">&#39;localhost:</span><span style="color:#ae81ff">9200</span><span style="color:#960050;background-color:#1e0010">/xkj_test/person/</span><span style="color:#ae81ff">1000</span><span style="color:#960050;background-color:#1e0010">?pretty=</span><span style="color:#66d9ef">true</span><span style="color:#960050;background-color:#1e0010">&#39;</span>
+</span></span></code></pre></div><ol start="3">
+<li>根据条件查询</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl</span> <span style="color:#960050;background-color:#1e0010">-X</span> <span style="color:#960050;background-color:#1e0010">POST</span> <span style="color:#960050;background-color:#1e0010">&#39;localhost:</span><span style="color:#ae81ff">9200</span><span style="color:#960050;background-color:#1e0010">/accounts/person/_search&#39;</span>  <span style="color:#960050;background-color:#1e0010">-d</span> <span style="color:#960050;background-color:#1e0010">&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 要带上  _search 关键字
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;query&#34;</span> : { <span style="color:#f92672">&#34;match&#34;</span> : [{ <span style="color:#f92672">&#34;desc&#34;</span> : <span style="color:#e6db74">&#34;软件&#34;</span> },{ <span style="color:#f92672">&#34;desc&#34;</span> : <span style="color:#e6db74">&#34;软件 工程&#34;</span> }]}
+</span></span><span style="display:flex;"><span>}<span style="color:#960050;background-color:#1e0010">&#39;</span>
+</span></span></code></pre></div><blockquote>
+<p>and 查询:  match写多个条件</p>
+<p>or 查询: 利用空格的分词,达到or的效果(我猜的)</p>
+<p><code>_score</code> ：匹配度</p>
+<p><code>_source</code>：文档的字段</p>
+<p>来源: <a href="https://www.jianshu.com/p/083d99a1db6e">https://www.jianshu.com/p/083d99a1db6e</a></p>
+</blockquote>
+<p><!-- raw HTML omitted -->es的查询五花八门,最好的技术书籍就是官网,以后好好看,如果要查数据,借助可视化界面就够用了<!-- raw HTML omitted --></p>
+<blockquote>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html</a></p>
+</blockquote>
+<h2 id="25-删除">2.5 删除</h2>
+<p><strong>删除xkj_test索引</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">delete</span> <span style="color:#960050;background-color:#1e0010">http:</span><span style="color:#75715e">//localhost:9200/xkj_test/
+</span></span></span></code></pre></div><p><strong>删除xkj_test索引下的数据(指定id)</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">delete</span> <span style="color:#960050;background-color:#1e0010">http:</span><span style="color:#75715e">//localhost:9200/xkj_test/_doc/1
+</span></span></span></code></pre></div><p><strong>根据条件删除xkj_test索引下test1类型的数据</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">post</span> <span style="color:#960050;background-color:#1e0010">http:</span><span style="color:#75715e">//localhost:9200/xkj_test/test1/_delete_by_query
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;query&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;range&#34;</span>: {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;createDate&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;lt&#34;</span>: <span style="color:#e6db74">&#34;now-31d&#34;</span>
+</span></span><span style="display:flex;"><span>      }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><blockquote>
+<p>解释: 删除 createDate 字段下31天前的数据</p>
+<p>利用_delete_by_query插件去批量删除</p>
+<p><a href="https://blog.csdn.net/weixin_44034192/article/details/89372934">https://blog.csdn.net/weixin_44034192/article/details/89372934</a></p>
+</blockquote>
+<h2 id="26-简单排序">2.6 简单排序</h2>
+<p>按照指定字段排序,(默认按照分数排序)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET books/_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;sort&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;price&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;order&#34;: &#34;desc&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">     &#34;age&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;order&#34;: &#34;desc&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 按照价格降序排,再按年龄排
+</span></span></span></code></pre></div><blockquote>
+<p>在 Elasticsearch 中，默认排序是<strong>按照相关性的评分（_score）<strong>进行降序排序，也可以按照</strong>字段的值排序</strong>、<strong>多级排序</strong>、<strong>多值字段排序、基于 geo（地理位置）排序以及自定义脚本排序</strong>，除此之外，对于相关性的评分也可以用 rescore 二次、三次打分，它可以限定重新打分的窗口大小（window size），并针对作用范围内的文档修改其得分，从而达到精细化控制结果相关性的目的。</p>
+</blockquote>
+<h1 id="3-复杂查询">3. 复杂查询</h1>
+<h2 id="31-query-and-filter-context">3.1 Query and filter context</h2>
+<p>查询子句的行为取决于它是用在查询上下文（query context）还是用在过滤器上下文（filter context）：</p>
+<h3 id="311-query-context">3.1.1 Query context</h3>
+<p>在查询上下文中的查询子句回答了“这个文档与这个查询子句的匹配程度是怎样的？”问题。除了决定文档是否匹配以外，查询子句<strong>还会计算一个“_score”</strong>，它表示文档与其他文档的相关程度(分数)。</p>
+<h3 id="312-filter-context">3.1.2 Filter context</h3>
+<p>在过滤器上下文中，一个查询子句回答了“这个文档与查询子句匹配吗？”的问题。这个答案是简单的Yes或者No，<strong>也不会计算分数</strong>。过滤上下文主要用于过滤结构化数据</p>
+<blockquote>
+<p>PS：Query VS Filter</p>
+<ol>
+<li>查询反应的是文档与查询子句的匹配程度，而过滤反应的是文档是否匹配查询子句</li>
+<li>一个是筛选是否满足条件，情况无非两种：是或不是；一个是看满足条件的记录与查询条件的匹配程度</li>
+<li>哪些满足条件，这是过滤；满足条件的这些记录与条件的匹配程度，这是查询</li>
+<li>过滤不会计算评分，查询会计算评分</li>
+</ol>
+</blockquote>
+<h2 id="32-全文查询-full-text">3.2 全文查询( Full text)</h2>
+<h3 id="311--match--query">3.1.1  match  query</h3>
+<p>match查询接受文本/数值/日期类型的数据，分析它们，并构造一个查询。</p>
+<blockquote>
+<p><strong>相当于模糊查询</strong></p>
+</blockquote>
+<p>match是一种布尔类型的查询。这意味着它对提供的文本进行分析，并在分析的过程中为提供的文本构造一个布尔查询。operator 选项可以设置为 or 或者 and 以此来控制布尔子句（默认是 or ）。例如</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;match&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;skuName&#34; : &#34;空调&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}&#39;
+</span></span></span></code></pre></div><h3 id="312-match-phrase-query">3.1.2 Match Phrase Query</h3>
+<p>match_phrase 查询与 match类似，但是它是用于<strong>精确匹配或单词接近匹配</strong>的。例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;match_phrase&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;skuName&#34; : &#34;this is a test&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}&#39;
+</span></span></span></code></pre></div><h3 id="313-multi-match-query">3.1.3 Multi Match Query</h3>
+<p>multi_match 相当于 match 的多字段版本, multi_match可以指定多个字段，而match只能针对一个字段</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;multi_match&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;query&#34;:    &#34;this is a test&#34;, 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;fields&#34;: [ &#34;subject&#34;, &#34;skuName&#34; ] 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">fields 里的字段用 * 支持模糊匹配,  写成这种 [ &#34;subject^3&#34;, &#34;skuName&#34; ] 表示subject比skuName重要3倍
+</span></span></span></code></pre></div><h3 id="314-query-string-query">3.1.4 Query String Query</h3>
+<p>支持Lucene查询字符串语法，允许指定 AND | OR | NOT ，并且在单个查询字符串中进行多字段查询, 分词后对每个词都查询</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;query_string&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;default_field&#34; : &#34;skuName&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;query&#34; : &#34;this  that  thus&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 在skuName中查询 this , that , thus 三个词 , 其实质解析成: &#34; this OR that OR thus&#34;, 你可以替换OR为AND/NOT
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 还可以指定快 例如:  &#34;query&#34; : &#34;(new york city) OR (big apple)&#34;  这样将被拆分成 “new york city” 和 “big apple” 两部分，并且每一部分都被分析器独立分析
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;query_string&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;fields&#34; : [&#34;content&#34;, &#34;name&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;query&#34; : &#34;this AND that&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 等价于
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;query_string&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;query&#34;: &#34;(content:this OR name:this) AND (content:that OR name:that)&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span></code></pre></div><blockquote>
+<p>注意，<strong>按操作符拆分</strong></p>
+<p>query_string的参数包括：</p>
+<p>query　　实例被解析的查询文本</p>
+<p>default_field　　如果没有指定前缀字段的话，这是默认的查询字段。（默认查询所有字段）</p>
+<p>default_operator　　如果没有明确指定操作符的话，那么这是默认的操作符。例如，如果默认操作符是OR的话，那么“my name is jack”将被翻译成“my OR name OR is OR jack”，同理，如果是AND，则被翻译成“my AND name AND is AND jack”</p>
+<p>analyzer　　用来解析查询字符串的解析器的名字</p>
+<p>allow_leading_wildcard　　如果设置了，那么 * 或 ? 允许作为第一个字符。默认是true</p>
+<p>lenient　　如果设置为true，则格式失败将被忽略</p>
+</blockquote>
+<h2 id="32-单词级查询term-text">3.2 单词级查询(term text)</h2>
+<p>全文本查询会在执行之前对查询字符串进行分析，而单词级别查询会对存储在反向索引中的精确的term进行操作。</p>
+<p>这些查询通常用于结构化的数据，比如：numbers ， dates ，enums 等，而不是对全文本字段。</p>
+<p>（PS：也就是说，全文本查询之前要先对文本内容进行分词，而单词级别的查询直接在相应字段的反向索引中精确查找，单词级别的查询一般用于数值、日期等类型的字段上）</p>
+<h3 id="321--term-query">3.2.1  Term Query</h3>
+<p>在指定的字段中查找包含指定的精确的term的文档</p>
+<p>term查询将在反向索引（或者叫倒排索引）中查找包含特定的精确的term的文档。例如：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X POST &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;term&#34; : { &#34;user&#34; : &#34;Kimchy&#34; } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 查询倒排索引(切词后)中user包含&#34;kimchy&#34;字符串的值,
+</span></span></span></code></pre></div><h3 id="322--terms-query">3.2.2  Terms Query</h3>
+<p>查找包含指定字段中指定的任何确切term的文档</p>
+<p>筛选出与所提供的terms中任何一个匹配的文档</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;terms&#34; : { &#34;user&#34; : [&#34;kimchy&#34;, &#34;elasticsearch&#34;]}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 查询 切词后包含&#34;kimchy&#34;或者 &#34;elasticsearch&#34;文档
+</span></span></span></code></pre></div><h3 id="323-range-query">3.2.3 Range Query</h3>
+<p>查找指定字段在指定范围内包含值（日期、数字或字符串）的文档。</p>
+<p>下面的例子返回age字段的值在10到20之间的文档：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;range&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;age&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                &#34;gte&#34; : 10,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                &#34;lte&#34; : 20,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                &#34;boost&#34; : 2.0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span></code></pre></div><blockquote>
+<p>range查询可以接受下列参数：</p>
+<p>gte　　大于或等于</p>
+<p>gt　　 大于</p>
+<p>lte　　 小于或等于</p>
+<p>lt　　  小于</p>
+<p>boost　　设置boost值，默认是1.0</p>
+</blockquote>
+<p>在日期范围查询的时候，我们可以指定日期格式。例如：(时间格式es会自动转化,用字符串去查时间格式也能行)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;range&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;born&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                &#34;gte&#34;: &#34;01/01/2012&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                &#34;lte&#34;: &#34;2013&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                &#34;format&#34;: &#34;dd/MM/yyyy||yyyy&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 这个例子是查询在2012-01-01到2013-12-31之间出生的人
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;range&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;timestamp&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                &#34;gte&#34;: &#34;2015-01-01 00:00:00&#34;, 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                &#34;lte&#34;: &#34;now&#34;, 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                &#34;time_zone&#34;: &#34;+01:00&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span></code></pre></div><h3 id="324-exsit-query">3.2.4 Exsit Query</h3>
+<p>在特定的字段中查找非空值的文档</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;exists&#34; : { &#34;field&#34; : &#34;user&#34; }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span></code></pre></div><h3 id="325-prefix-query">3.2.5 Prefix Query</h3>
+<p>查找包含带有指定前缀的term的文档</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{ 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">	&#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    	&#34;prefix&#34; : { &#34;user&#34; : &#34;ki&#34; }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span></code></pre></div><h3 id="326-wildcard-query">3.2.6 Wildcard Query</h3>
+<p>支持通配符查询，*表示任意字符，?表示任意单个字符</p>
+<blockquote>
+<p>这个查询效率比较慢</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;wildcard&#34; : { &#34;user&#34; : &#34;ki*y&#34; }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span></code></pre></div><h3 id="327-regexp-query">3.2.7 Regexp Query</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">curl -X GET &#34;localhost:9200/_search&#34; -H &#39;Content-Type: application/json&#39; -d&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;regexp&#34;:{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;name.first&#34;: &#34;s.*y&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&#39;
+</span></span></span></code></pre></div><blockquote>
+<p>prefix 和 wildcard 和 regexp 三者工作方式是一样的 ,需要扫描倒排索引中的词列表才能找到所有匹配的词，然后依次获取每个词相关的文档 ID</p>
+<p>性能对比: prefix &gt; wildcard &gt; regexp</p>
+<p><strong>wildcard 和 regexp要避免左模糊查询</strong></p>
+<p><a href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/_wildcard_and_regexp_queries.html">官网</a></p>
+</blockquote>
+<h2 id="33-聚合查询">3.3 聚合查询</h2>
+<p>Elasticsearch 的聚合（Aggregations）功能十分强大，允许在数据上做复杂的分析统计。Elasticsearch 提供的聚合分析功能主要有<strong>指标聚合（metrics aggregations）</strong>、<strong>桶聚合（bucket aggregations）</strong>、<strong>管道聚合（pipeline aggregations）</strong>  三大类，</p>
+<p>所有的聚合，无论它们是什么类型，都遵从以下的规则。</p>
+<ul>
+<li>使用查询中同样的 JSON 请求来定义它们，而且你是使用键 aggregations 或者是 aggs 来进行标记。需要给每个聚合起一个名字，指定它的类型以及和该类型相关的选项。</li>
+<li>它们运行在查询的结果之上。和查询不匹配的文档不会计算在内，除非你使用 global 聚集将不匹配的文档囊括其中。</li>
+<li>可以进一步过滤查询的结果，而不影响聚集。</li>
+</ul>
+<p>以下是聚合的基本结构：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#e6db74">&#34;aggregations&#34;</span> <span style="color:#960050;background-color:#1e0010">:</span> { <span style="color:#960050;background-color:#1e0010">&lt;!--</span> <span style="color:#960050;background-color:#1e0010">最外层的聚合键，也可以缩写为</span> <span style="color:#960050;background-color:#1e0010">aggs</span> <span style="color:#960050;background-color:#1e0010">--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;&lt;aggregation_name&gt;&#34;</span> : { <span style="color:#960050;background-color:#1e0010">&lt;!--</span> <span style="color:#960050;background-color:#1e0010">聚合的自定义名字</span> <span style="color:#960050;background-color:#1e0010">--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;&lt;aggregation_type&gt;&#34;</span> : { <span style="color:#960050;background-color:#1e0010">&lt;!--</span> <span style="color:#960050;background-color:#1e0010">聚合的类型，指标相关的，如</span> <span style="color:#960050;background-color:#1e0010">max、min、avg、sum，桶相关的</span> <span style="color:#960050;background-color:#1e0010">terms、filter</span> <span style="color:#960050;background-color:#1e0010">等</span> <span style="color:#960050;background-color:#1e0010">--&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#960050;background-color:#1e0010">&lt;aggregation_body&gt;</span> <span style="color:#960050;background-color:#1e0010">&lt;!--</span> <span style="color:#960050;background-color:#1e0010">聚合体：对哪些字段进行聚合，可以取字段的值，也可以是脚本计算的结果</span> <span style="color:#960050;background-color:#1e0010">--&gt;</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        [,<span style="color:#e6db74">&#34;meta&#34;</span> <span style="color:#960050;background-color:#1e0010">:</span> {  <span style="color:#960050;background-color:#1e0010">[&lt;meta_data_body&gt;]</span> } ]<span style="color:#960050;background-color:#1e0010">?</span> <span style="color:#960050;background-color:#1e0010">&lt;!--</span> <span style="color:#960050;background-color:#1e0010">元</span> <span style="color:#960050;background-color:#1e0010">--&gt;</span>
+</span></span><span style="display:flex;"><span>        [,<span style="color:#e6db74">&#34;aggregations&#34;</span> <span style="color:#960050;background-color:#1e0010">:</span> { <span style="color:#960050;background-color:#1e0010">[&lt;sub_aggregation&gt;]+</span> } ]<span style="color:#960050;background-color:#1e0010">?</span> <span style="color:#960050;background-color:#1e0010">&lt;!--</span> <span style="color:#960050;background-color:#1e0010">在聚合里面在定义子聚合</span> <span style="color:#960050;background-color:#1e0010">--&gt;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    [,<span style="color:#e6db74">&#34;&lt;aggregation_name_2&gt;&#34;</span> <span style="color:#960050;background-color:#1e0010">:</span> { <span style="color:#960050;background-color:#1e0010">...</span> } ]<span style="color:#960050;background-color:#1e0010">*</span> <span style="color:#960050;background-color:#1e0010">&lt;!--</span> <span style="color:#960050;background-color:#1e0010">聚合的自定义名字</span> <span style="color:#ae81ff">2</span> <span style="color:#960050;background-color:#1e0010">--&gt;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>在最上层有一个 aggregations 的键，可以缩写为 aggs</strong>。</li>
+<li>在下面一层，需要为聚合指定一个名字。可以在请求的返回中看到这个名字。在同一个请求中使用多个聚合时，这一点非常有用，它让你可以很容易地理解每组结果的含义。</li>
+<li>最后，必须要指定聚合的类型。</li>
+</ul>
+<blockquote>
+<p>关于聚合分析的值来源，可以<strong>取字段的值</strong>，也可以是<strong>脚本计算的结果</strong>。</p>
+<p>但是用脚本计算的结果时，需要注意脚本的性能和安全性；尽管多数聚集类型允许使用脚本，但是脚本使得聚集变得缓慢，因为脚本必须在每篇文档上运行。为了避免脚本的运行，可以在索引阶段进行计算。</p>
+<p>此外，脚本也可以被人可能利用进行恶意代码攻击，尽量使用沙盒（sandbox）内的脚本语言。</p>
+<p><strong>text类型默认不支持聚合</strong></p>
+</blockquote>
+<p>查询所有球员的平均年龄是多少，并对球员的平均薪水加 188（也可以理解为每名球员加 188 后的平均薪水）。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /player/_search?size=0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;avg_age&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;avg&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34;: &#34;age&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;avg_salary_188&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;avg&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;script&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;source&#34;: &#34;doc.salary.value + 188&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 默认情况下，包含聚合的搜索会返回搜索命中和聚合结果, size 表示返回命中的文档数量,设为0表示只返回聚合结果
+</span></span></span></code></pre></div><h3 id="331--metrics-aggregations">3.3.1  Metrics aggregations</h3>
+<p>指标聚合（又称度量聚合）主要从不同文档的分组中提取统计数据，或者，从来自其他聚合的文档桶来提取统计数据。</p>
+<p>这些统计数据通常来自数值型字段，如最小或者平均价格。用户可以单独获取每项统计数据，或者也可以使用 stats 聚合来同时获取它们。更高级的统计数据，如平方和或者是标准差，可以通过 extended stats 聚合来获取。</p>
+<h4 id="3311-min-aggregation">3.3.1.1 Min Aggregation</h4>
+<p>Min Aggregation 用于最小值统计。例如，统计 sales 索引中价格最低的是哪本书，查询语句如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /sales/_search?size=0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;min_price&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;min&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34; : &#34;price&#34; 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>聚合结果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;min_price&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;value&#34;: 18.0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h4 id="3312-max-aggregation">3.3.1.2 Max Aggregation</h4>
+<p>Max Aggregation 用于最大值统计。例如，统计 sales 索引中type是hat的且价格最高的是哪本书，并且计算出对应的价格的 2 倍值，查询语句如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /sales/_search?size=0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;query&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;constant_score&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;filter&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;match&#34; : { &#34;type&#34; : &#34;hat&#34; }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">       }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">   },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;max_price&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;max&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34; : &#34;price&#34; ,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;missing&#34;: 60
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;max_price_2&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;max&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34; : &#34;price&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;script&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;source&#34;: &#34;_value * 2.0&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p><strong>指定的 field，在脚本中可以用 _value 取字段的值</strong>。</p>
+<p><strong>如果指定字段没有值，可以通过 missing 指定默认值；若未指定默认值，缺失该字段值的文档将被忽略（计算）</strong>。</p>
+<p>聚合结果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;max_price&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;value&#34;: 188.0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;max_price_2&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;value&#34;: 376.0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h4 id="3313-avg-aggregation">3.3.1.3 Avg Aggregation</h4>
+<p>Avg Aggregation 用于计算平均值。例如，统计 exams 索引中考试的平均分数，</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /exams/_search?size=0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;avg_grade&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;avg&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34; : &#34;grade&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;avg_grade&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;value&#34;: 78.0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>除了常规的平均值聚合计算外，elasticsearch 还提供了加权平均值的聚合计算， 详情参见 <a href="https://blog.csdn.net/wjzt7322/article/details/103566139">Elasticsearch 指标聚合之 Weighted Avg Aggregation</a>。</p>
+<blockquote>
+<p>用加权平均值代替原本值</p>
+</blockquote>
+<h4 id="3314--sum-aggregation">3.3.1.4  Sum Aggregation</h4>
+<p>Sum Aggregation 用于计算总和。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /exams/_search?size=0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;hat_prices&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;sum&#34; : { &#34;field&#34; : &#34;price&#34; } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;hat_prices&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;value&#34;: 567.0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h4 id="3315--count-aggregation">3.3.1.5  Count Aggregation</h4>
+<p>Count Aggregation 可按字段统计文档数量。例如，统计 books 索引中包含 author 字段的文档数量，查询语句如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /books/_search?size=0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;doc_count&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;value_count&#34; : { &#34;field&#34; : &#34;author&#34; } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;doc_count&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;value&#34;: 5
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h4 id="3316-cardinality-aggregation">3.3.1.6 Cardinality Aggregation</h4>
+<p>Cardinality Aggregation 用于基数统计，其作用是先执行类似 SQL 中的 distinct 操作，去掉集合中的重复项，然后统计排重后的集合长度。</p>
+<p>例如，在 books 索引中对 language 字段进行 cardinality 操作可以统计出编程语言的种类数，查询语句如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /books/_search?size=0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;all_lan&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;cardinality&#34; : { &#34;field&#34; : &#34;language&#34; } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;title_cnt&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;cardinality&#34; : { &#34;field&#34; : &#34;title.keyword&#34; } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p><strong>假设 title 字段为文本类型（text），去重时需要指定 keyword，表示把 title 作为整体去重，即不分词统计</strong>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;all_lan&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;value&#34;: 8
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;title_cnt&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;value&#34;: 18
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h4 id="3317-stats-aggregation">3.3.1.7 Stats Aggregation</h4>
+<p>Stats Aggregation 用于基本统计，会一次返回 count、max、min、avg 和 sum 这 5 个指标。例如，在 exams 索引中对 grade 字段进行分数相关的基本统计，查询语句如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /exams/_search?size=0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;grades_stats&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;stats&#34; : { &#34;field&#34; : &#34;grade&#34; } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h4 id="3318--extended-stats-aggregation">3.3.1.8  Extended Stats Aggregation</h4>
+<p>Extended Stats Aggregation 用于高级统计，和基本统计功能类似，但是会比基本统计多出以下几个统计结果，sum_of_squares（平方和）、variance（方差）、std_deviation（标准差）、std_deviation_bounds（平均值加/减两个标准差的区间）。在 exams 索引中对 grade 字段进行分数相关的高级统计，查询语句如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /exams/_search?size=0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;grades_stats&#34; : { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;extended_stats&#34; : { &#34;field&#34; : &#34;grade&#34; } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h4 id="3319-percentiles-aggregation">3.3.1.9 Percentiles Aggregation</h4>
+<p>Percentiles Aggregation 用于百分位统计。百分位数是一个统计学术语，如果将一组数据从大到小排序，并计算相应的累计百分位，某一百分位所对应数据的值就称为这一百分位的百分位数。默认情况下，累计百分位为 [ 1, 5, 25, 50, 75, 95, 99 ],也可以用<code>percents</code>指定范围。以下例子给出了在 latency 索引中对 load_time 字段进行加载时间的百分位统计，查询语句如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET latency/_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;size&#34;: 0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;load_time_outlier&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;percentiles&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34; : &#34;load_time&#34; ,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;percents&#34;:[30,45] //查询第30%和45%的数据
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p><strong>需要注意的是，如上的 <code>load_time</code> 字段必须是数字类型</strong>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;load_time_outlier&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;values&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;1.0&#34;: 5.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;5.0&#34;: 25.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;25.0&#34;: 165.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;50.0&#34;: 445.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;75.0&#34;: 725.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;95.0&#34;: 945.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;99.0&#34;: 985.0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><blockquote>
+<p>第1%位的数据是5</p>
+<p>第5%位的数据是25</p>
+<p>&hellip;&hellip;</p>
+<p>第99%位的数据是99</p>
+</blockquote>
+<h4 id="33110-percentiles-ranks-aggregation">3.3.1.10 Percentiles Ranks Aggregation</h4>
+<p>Percentiles Ranks Aggregation 与 Percentiles Aggregation 统计恰恰相反，就是想看当前数值处在什么范围内（百分位）， 假如你查一下当前值 500 和 600 所处的百分位，发现是 90.01 和 100，那么说明有 90.01 % 的数值都在 500 以内，100 % 的数值在 600 以内。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET latency/_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;size&#34;: 0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;aggs&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;load_time_ranks&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;percentile_ranks&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;field&#34; : &#34;load_time&#34;, 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;values&#34; : [500, 600]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p><strong><code>同样 load_time</code> 字段必须是数字类型</strong>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;load_time_ranks&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;values&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;500.0&#34;: 90.01,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;600.0&#34;: 100.0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>可以设置 <code>keyed</code> 参数为 <code>true</code>，将对应的 values 作为桶 key 一起返回，默认是 <code>false</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET latency/_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;size&#34;: 0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;load_time_ranks&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;percentile_ranks&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34;: &#34;load_time&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;values&#34;: [500, 600],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;keyed&#34;: true
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;load_time_ranks&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;values&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;key&#34;: 500.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;value&#34;: 90.01
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;key&#34;: 600.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;value&#34;: 100.0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h3 id="332--bucket-aggregations">3.3.2  bucket aggregations</h3>
+<p>bucket 可以理解为一个桶，它会遍历文档中的内容，凡是符合某一要求的就放入一个桶中，分桶相当于 SQL 中的 group by。从另外一个角度，可以将指标聚合看成单桶聚合，即把所有文档放到一个桶中，而桶聚合是多桶型聚合，它根据相应的条件进行分组。</p>
+<blockquote>
+<p>桶数最多 65536 个,可修改</p>
+</blockquote>
+<h4 id="3321-terms-aggregation">3.3.2.1 Terms Aggregation</h4>
+<p>Terms Aggregation 用于词项的分组聚合。最为经典的用例是获取 X 中最频繁（top frequent）的项目，其中 X 是文档中的某个字段，如用户的名称、标签或分类。由于 terms 聚集统计的是每个词条，而不是整个字段值，因此通常需要在一个非分析型的字段上运行这种聚集。原因是, 你期望“big data”作为词组统计，而不是“big”单独统计一次，“data”再单独统计一次。</p>
+<blockquote>
+<p>支持字段类型 Keyword, Numeric, ip, boolean, binary.</p>
+</blockquote>
+<p>用户可以使用 terms 聚集，从分析型字段（如内容）中抽取最为频繁的词条。还可以使用这种信息来生成一个单词云。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;profit_terms&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;terms&#34;: { 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34;: &#34;skuName&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>结果:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;genres&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;doc_count_error_upper_bound&#34;: 0,   // 错误文档的个数
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;sum_other_doc_count&#34;: 0,    // 未统计的文档个数
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;buckets&#34;: [                        
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;key&#34;: &#34;electronic&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;doc_count&#34;: 6
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;key&#34;: &#34;rock&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;doc_count&#34;: 3
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;key&#34;: &#34;jazz&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;doc_count&#34;: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><blockquote>
+<p>返回值中,默认按doc_count数量降序排序, 可以用order字段指定排序规则</p>
+<p>可以用size字段控制返回的桶数</p>
+</blockquote>
+<h4 id="3222--filter-aggregation">3.2.2.2  Filter Aggregation</h4>
+<p>Filter Aggregation 是过滤器聚合，可以把符合过滤器中的条件的文档分到一个桶中，即是单分组聚合。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;age_terms&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;filter&#34;: {&#34;term&#34;:{&#34;gender&#34;:&#34;F&#34;}},
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;avg_age&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;avg&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;field&#34;: &#34;age&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><blockquote>
+<p>在聚合操作中加入过滤,比 过滤后再聚合要差, 上面的效率比下面的效率要差</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /sales/_search?size=0&amp;filter_path=aggregations
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;query&#34;: { &#34;term&#34;: { &#34;type&#34;: &#34;t-shirt&#34; } },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;avg_price&#34;: { &#34;avg&#34;: { &#34;field&#34;: &#34;price&#34; } }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h4 id="3223-filters-aggregation">3.2.2.3 Filters Aggregation</h4>
+<p>Filters Aggregation 是多过滤器聚合，可以把符合多个过滤条件的文档分到不同的桶中，即每个分组关联一个过滤条件，并收集所有满足自身过滤条件的文档。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;size&#34;: 0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;messages&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;filters&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;filters&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;errors&#34;: { &#34;match&#34;: { &#34;body&#34;: &#34;error&#34; } },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;warnings&#34;: { &#34;match&#34;: { &#34;body&#34;: &#34;warning&#34; } }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>在这个例子里，我们分析日志信息。聚合会创建两个关于日志数据的分组，一个收集包含错误信息的文档，另一个收集包含告警信息的文档。而且每个分组会按月份划分。</p>
+<blockquote>
+<p>filters 写多个过滤器比 写过filter效率好</p>
+</blockquote>
+<h4 id="3224-range-aggregation">3.2.2.4 Range Aggregation</h4>
+<p>Range Aggregation 范围聚合是一个基于多组值来源的聚合，可以让用户定义一系列范围，每个范围代表一个分组。在聚合执行的过程中，从每个文档提取出来的值都会检查每个分组的范围，并且使相关的文档落入分组中。注意，范围聚合的每个范围内包含 from 值但是排除 to 值。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;age_range&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;range&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34;: &#34;age&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;ranges&#34;: [{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;to&#34;: 25
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;from&#34;: 25,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;to&#34;: 35
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;from&#34;: 35
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          }]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;bmax&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;max&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">              &#34;field&#34;: &#34;balance&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h4 id="3225-date-range-aggr">3.2.2.5 Date Range Aggr</h4>
+<p>日期范围聚合是专用于日期值的范围聚合。该聚合和正常的 范围 聚合的区别主要在于：该聚合可以用 日期数学 表达式表示 from 值 和 to 值，还可以指定 返回 from 和 to 响应字段的日期格式。注意，该聚合包含 from 值，但不包含 to 值。(左闭右开的区间)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /sales/_search?size=0
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;range&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;date_range&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34;: &#34;date&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;format&#34;: &#34;MM-yyyy&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;ranges&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          { &#34;to&#34;: &#34;now-10M/M&#34; },  
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          { &#34;from&#34;: &#34;now-10M/M&#34; } 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><blockquote>
+<p>to:  &lt; 现在减去 10 个月，向下舍入到月初</p>
+<p>from: &gt;= 现在减去 10 个月，向下舍入到月初</p>
+<p>在上面的例子中，我们创建了两个范围桶，第一个桶会将早于 10 个月之前的所有文档存储，第二个桶会将从 10 月之前开始的文档存储。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;range&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;buckets&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                    &#34;to&#34;: 1.4436576E12,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                    &#34;to_as_string&#34;: &#34;10-2015&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                    &#34;doc_count&#34;: 7,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                    &#34;key&#34;: &#34;*-10-2015&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                    &#34;from&#34;: 1.4436576E12,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                    &#34;from_as_string&#34;: &#34;10-2015&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                    &#34;doc_count&#34;: 0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                    &#34;key&#34;: &#34;10-2015-*&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">                }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><blockquote>
+<p>时间格式和java的一样</p>
+<p><a href="https://learnku.com/docs/elasticsearch73/7.3/526-date-range-aggregation/7774">es-中文文档</a></p>
+</blockquote>
+<h4 id="3226-range-aggr">3.2.2.6 Range Aggr</h4>
+<p>基于多桶值源的聚合，使用户能够定义一组范围 - 每个范围代表一个桶。 在聚合过程中，将从每个文档中提取的值根据每个存储区范围进行检查，并将相关/匹配文档“存储”到“存储区”中。 请注意，该聚合包含 from 值，但不包含 to 值</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggs&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;price_ranges&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;range&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;field&#34;: &#34;price&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;ranges&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          { &#34;to&#34;: 100.0 },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          { &#34;from&#34;: 100.0, &#34;to&#34;: 200.0 },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          { &#34;from&#34;: 200.0 }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>结果:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  ...
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;aggregations&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;price_ranges&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;buckets&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;key&#34;: &#34;*-100.0&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;to&#34;: 100.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;doc_count&#34;: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;key&#34;: &#34;100.0-200.0&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;from&#34;: 100.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;to&#34;: 200.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;doc_count&#34;: 2
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;key&#34;: &#34;200.0-*&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;from&#34;: 200.0,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;doc_count&#34;: 3
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h2 id="34-复合查询">3.4 复合查询</h2>
+<p>复合查询包装其他复合查询或叶查询，以组合它们的结果和分数，改变它们的行为，或者从查询切换到过滤上下文。</p>
+<blockquote>
+<p>简单的说是 将多种查询条件组合到一起</p>
+</blockquote>
+<h3 id="341-bool-query">3.4.1 Bool query</h3>
+<ul>
+<li>
+<p>filter</p>
+<p>子句在过滤器上下文中执行，这意味着计分被忽略，并且子句被视为用于缓存。(<strong>过滤掉不要的数据</strong>)</p>
+</li>
+<li>
+<p>must</p>
+<p>子句（查询）必须出现在匹配的文档中，并将有助于得分。(<strong>用来做匹配的,表示需要出现在文档里</strong>)</p>
+</li>
+<li>
+<p>must_not</p>
+<p>子句（查询）不得出现在匹配的文档中。子句在过滤器上下文中执行，这意味着计分被忽略，并且子句被视为用于缓存。</p>
+</li>
+<li>
+<p>should</p>
+<p>子句（查询）应出现在匹配的文档中。【注意should的最小匹配数】</p>
+</li>
+</ul>
+<blockquote>
+<p>关于should子句，特别要注意：</p>
+<p>如果这个布尔查询位于<code>query context</code>，并且有must或者filter子句，那么即使should子句没有匹配任何文档，也没关系</p>
+<p>如果是位于<code>filter context</code>，或者既没有must也没有filter，那么至少有&quot;指定&quot;个should查询必须匹配文档。这个行为可以通过设置<code>minimum_should_match</code>参数来显式地控制。(至少满足几个should子句), 可以是正负整数/正负百分比等各种比例 (<strong>默认值是0</strong>)</p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzIxMjE3NjYwOQ==&amp;mid=2247483976&amp;idx=1&amp;sn=f9fc58f7f38ef79d4a652a9578ce1181&amp;chksm=974b59c6a03cd0d036f9e1cc9d211b999c9d3acdd664f4a250a1573089fdfe747c7784191066&amp;cur_album_id=1337850434433744897&amp;scene=190#rd">参数详情</a></p>
+</blockquote>
+<p><img src="https://img2018.cnblogs.com/blog/874963/201812/874963-20181201134433373-297882943.png" alt="image"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET product/_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;bool&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">     &#34;filter&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">       {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">         &#34;range&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">           &#34;sellPrice&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">             &#34;gte&#34;: 1
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">           }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">         }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">       }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">     ],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">     &#34;must&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">       {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">         &#34;match&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">           &#34;skuName&#34;: &#34;空调&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">         }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">       }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">     ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010"> , &#34;_source&#34;: &#34;skuName&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 查询skuName中&#34;空调&#34;的文档,并且过滤出sellPrice大于等于1的文档
+</span></span></span></code></pre></div><blockquote>
+<p>filter 子句类可包含 bool query，实现更复杂的逻辑, (俄罗斯套娃之深圳分套)</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 多个条件
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET service-java-logs-2021.07.16/_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;_source&#34;: &#34;message&#34;, 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;bool&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;must&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;match_phrase&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;message&#34;: &#34;ERROR&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      ],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;must_not&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;wildcard&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;message&#34;: &#34;*navigation*&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;match&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;message&#34;: &#34;defaultParameterMap&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;match&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;message&#34;: &#34;parameters&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      ], 
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;filter&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;term&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;log.file.path.keyword&#34;: &#34;/opt/online-shop-manage/logs/online-shop-manage-provider.log&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      ]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h3 id="342--boosting-query">3.4.2  boosting query</h3>
+<blockquote>
+<p>来源:</p>
+<p><a href="https://www.cnblogs.com/hong-fithing/p/11221020.html">https://www.cnblogs.com/hong-fithing/p/11221020.html</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2017/08/elasticsearch.html">http://www.ruanyifeng.com/blog/2017/08/elasticsearch.html</a></p>
+<p><a href="https://www.cnblogs.com/hirampeng/p/10035858.html">https://www.cnblogs.com/hirampeng/p/10035858.html</a></p>
+<p><a href="https://www.cnblogs.com/cjsblog/p/9910788.html">https://www.cnblogs.com/cjsblog/p/9910788.html</a></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzIxMjE3NjYwOQ==&amp;mid=2247483976&amp;idx=1&amp;sn=f9fc58f7f38ef79d4a652a9578ce1181&amp;chksm=974b59c6a03cd0d036f9e1cc9d211b999c9d3acdd664f4a250a1573089fdfe747c7784191066&amp;cur_album_id=1337850434433744897&amp;scene=190#rd">微信es系列</a></p>
+<p><a href="https://www.knowledgedict.com/tutorial/elasticsearch-sort.html">https://www.knowledgedict.com/tutorial/elasticsearch-sort.html</a></p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%AD%98%E5%82%A8/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/%E5%91%BD%E4%BB%A4\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/%E5%91%BD%E4%BB%A4\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%AD%98%E5%82%A8/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2F%25E5%2591%25BD%25E4%25BB%25A4%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2F%25E5%2591%25BD%25E4%25BB%25A4%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2F%25E5%2591%25BD%25E4%25BB%25A4%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

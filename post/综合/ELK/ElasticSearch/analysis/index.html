@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1. 什么是analysis? analysis是Elasticsearch在文档发送之前对文档正文执行的过程，以添加到反向索引中（inverted index）。 在将文档添加到索引之前，Elasticsearch会为每个分析的字段执行许多步骤：\nCharacter filtering (字符过滤器): 使用字符过滤器转换字符 Breaking text into tokens (把文字转化为标记): 将文本分成一组一个或多个标记 Token filtering：使用标记过滤器转换每个标记(大小写转化\/删除无用词等等) Token indexing：把这些标记存于index中 文本分词会发生在两个地方：\n创建索引:当索引文档字符类型为text时，在建立索引时将会对该字段进行分词。 搜索：当对一个text类型的字段进行全文检索时，会对用户输入的文本进行分词。 2. 主要组成 总体说来一个analyzer可以分为如下的几个部分：\n0个或1个以上的character filter\n接收原字符流，通过添加、删除或者替换操作改变原字符流。例如：去除文本中的html标签，或者将罗马数字转换成阿拉伯数字等。一个字符过滤器可以有零个或者多个。\n1个tokenizer\n简单的说就是将一整段文本拆分成一个个的词。例如拆分英文，通过空格能将句子拆分成一个个的词，但是对于中文来说，无法使用这种方式来实现。在一个分词器中,有且只有一个tokenizeer\n0个或1个以上的token filter\n将切分的单词添加、删除或者改变。例如将所有英文单词小写，或者将英文中的停词a删除等。在token filters中，不允许将token(分出的词)的position或者offset改变。同时，在一个分词器中，可以有零个或者多个token filters.\n单词的过滤顺序按照 filter过滤器的顺序\n3. 使用分析器 默认ES使用standard analyzer\n3.1 Elasticsearch的内置分析器 Analyzer\nStandard Analyzer - 默认分词器，按词切分，小写处理 Simple Analyzer - 按照非字母切分(符号被过滤), 小写处理 Stop Analyzer - 小写处理，停用词过滤(the,a,is) Whitespace Analyzer - 按照空格切分，不转小写 Keyword Analyzer - 不分词，直接将输入当作输出 Patter Analyzer - 正则表达式，默认\\W\u002b(非字符分割) Language - 提供了30多种常见语言的分词器 Customer Analyzer 自定义分词器 参考链接",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/analysis\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1. 什么是analysis? analysis是Elasticsearch在文档发送之前对文档正文执行的过程，以添加到反向索引中（inverted index）。 在将文档添加到索引之前，Elasticsearch会为每个分析的字段执行许多步骤：
+Character filtering (字符过滤器): 使用字符过滤器转换字符 Breaking text into tokens (把文字转化为标记): 将文本分成一组一个或多个标记 Token filtering：使用标记过滤器转换每个标记(大小写转化/删除无用词等等) Token indexing：把这些标记存于index中 文本分词会发生在两个地方：
+创建索引:当索引文档字符类型为text时，在建立索引时将会对该字段进行分词。 搜索：当对一个text类型的字段进行全文检索时，会对用户输入的文本进行分词。 2. 主要组成 总体说来一个analyzer可以分为如下的几个部分：
+0个或1个以上的character filter
+接收原字符流，通过添加、删除或者替换操作改变原字符流。例如：去除文本中的html标签，或者将罗马数字转换成阿拉伯数字等。一个字符过滤器可以有零个或者多个。
+1个tokenizer
+简单的说就是将一整段文本拆分成一个个的词。例如拆分英文，通过空格能将句子拆分成一个个的词，但是对于中文来说，无法使用这种方式来实现。在一个分词器中,有且只有一个tokenizeer
+0个或1个以上的token filter
+将切分的单词添加、删除或者改变。例如将所有英文单词小写，或者将英文中的停词a删除等。在token filters中，不允许将token(分出的词)的position或者offset改变。同时，在一个分词器中，可以有零个或者多个token filters.
+单词的过滤顺序按照 filter过滤器的顺序
+3. 使用分析器 默认ES使用standard analyzer
+3.1 Elasticsearch的内置分析器 Analyzer
+Standard Analyzer - 默认分词器，按词切分，小写处理 Simple Analyzer - 按照非字母切分(符号被过滤), 小写处理 Stop Analyzer - 小写处理，停用词过滤(the,a,is) Whitespace Analyzer - 按照空格切分，不转小写 Keyword Analyzer - 不分词，直接将输入当作输出 Patter Analyzer - 正则表达式，默认\W&#43;(非字符分割) Language - 提供了30多种常见语言的分词器 Customer Analyzer 自定义分词器 参考链接">
+
+
+<meta property="og:description" content="[toc]
+1. 什么是analysis? analysis是Elasticsearch在文档发送之前对文档正文执行的过程，以添加到反向索引中（inverted index）。 在将文档添加到索引之前，Elasticsearch会为每个分析的字段执行许多步骤：
+Character filtering (字符过滤器): 使用字符过滤器转换字符 Breaking text into tokens (把文字转化为标记): 将文本分成一组一个或多个标记 Token filtering：使用标记过滤器转换每个标记(大小写转化/删除无用词等等) Token indexing：把这些标记存于index中 文本分词会发生在两个地方：
+创建索引:当索引文档字符类型为text时，在建立索引时将会对该字段进行分词。 搜索：当对一个text类型的字段进行全文检索时，会对用户输入的文本进行分词。 2. 主要组成 总体说来一个analyzer可以分为如下的几个部分：
+0个或1个以上的character filter
+接收原字符流，通过添加、删除或者替换操作改变原字符流。例如：去除文本中的html标签，或者将罗马数字转换成阿拉伯数字等。一个字符过滤器可以有零个或者多个。
+1个tokenizer
+简单的说就是将一整段文本拆分成一个个的词。例如拆分英文，通过空格能将句子拆分成一个个的词，但是对于中文来说，无法使用这种方式来实现。在一个分词器中,有且只有一个tokenizeer
+0个或1个以上的token filter
+将切分的单词添加、删除或者改变。例如将所有英文单词小写，或者将英文中的停词a删除等。在token filters中，不允许将token(分出的词)的position或者offset改变。同时，在一个分词器中，可以有零个或者多个token filters.
+单词的过滤顺序按照 filter过滤器的顺序
+3. 使用分析器 默认ES使用standard analyzer
+3.1 Elasticsearch的内置分析器 Analyzer
+Standard Analyzer - 默认分词器，按词切分，小写处理 Simple Analyzer - 按照非字母切分(符号被过滤), 小写处理 Stop Analyzer - 小写处理，停用词过滤(the,a,is) Whitespace Analyzer - 按照空格切分，不转小写 Keyword Analyzer - 不分词，直接将输入当作输出 Patter Analyzer - 正则表达式，默认\W&#43;(非字符分割) Language - 提供了30多种常见语言的分词器 Customer Analyzer 自定义分词器 参考链接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1. 什么是analysis? analysis是Elasticsearch在文档发送之前对文档正文执行的过程，以添加到反向索引中（inverted index）。 在将文档添加到索引之前，Elasticsearch会为每个分析的字段执行许多步骤：
+Character filtering (字符过滤器): 使用字符过滤器转换字符 Breaking text into tokens (把文字转化为标记): 将文本分成一组一个或多个标记 Token filtering：使用标记过滤器转换每个标记(大小写转化/删除无用词等等) Token indexing：把这些标记存于index中 文本分词会发生在两个地方：
+创建索引:当索引文档字符类型为text时，在建立索引时将会对该字段进行分词。 搜索：当对一个text类型的字段进行全文检索时，会对用户输入的文本进行分词。 2. 主要组成 总体说来一个analyzer可以分为如下的几个部分：
+0个或1个以上的character filter
+接收原字符流，通过添加、删除或者替换操作改变原字符流。例如：去除文本中的html标签，或者将罗马数字转换成阿拉伯数字等。一个字符过滤器可以有零个或者多个。
+1个tokenizer
+简单的说就是将一整段文本拆分成一个个的词。例如拆分英文，通过空格能将句子拆分成一个个的词，但是对于中文来说，无法使用这种方式来实现。在一个分词器中,有且只有一个tokenizeer
+0个或1个以上的token filter
+将切分的单词添加、删除或者改变。例如将所有英文单词小写，或者将英文中的停词a删除等。在token filters中，不允许将token(分出的词)的position或者offset改变。同时，在一个分词器中，可以有零个或者多个token filters.
+单词的过滤顺序按照 filter过滤器的顺序
+3. 使用分析器 默认ES使用standard analyzer
+3.1 Elasticsearch的内置分析器 Analyzer
+Standard Analyzer - 默认分词器，按词切分，小写处理 Simple Analyzer - 按照非字母切分(符号被过滤), 小写处理 Stop Analyzer - 小写处理，停用词过滤(the,a,is) Whitespace Analyzer - 按照空格切分，不转小写 Keyword Analyzer - 不分词，直接将输入当作输出 Patter Analyzer - 正则表达式，默认\W&#43;(非字符分割) Language - 提供了30多种常见语言的分词器 Customer Analyzer 自定义分词器 参考链接">
+<meta name="twitter:description" content="[toc]
+1. 什么是analysis? analysis是Elasticsearch在文档发送之前对文档正文执行的过程，以添加到反向索引中（inverted index）。 在将文档添加到索引之前，Elasticsearch会为每个分析的字段执行许多步骤：
+Character filtering (字符过滤器): 使用字符过滤器转换字符 Breaking text into tokens (把文字转化为标记): 将文本分成一组一个或多个标记 Token filtering：使用标记过滤器转换每个标记(大小写转化/删除无用词等等) Token indexing：把这些标记存于index中 文本分词会发生在两个地方：
+创建索引:当索引文档字符类型为text时，在建立索引时将会对该字段进行分词。 搜索：当对一个text类型的字段进行全文检索时，会对用户输入的文本进行分词。 2. 主要组成 总体说来一个analyzer可以分为如下的几个部分：
+0个或1个以上的character filter
+接收原字符流，通过添加、删除或者替换操作改变原字符流。例如：去除文本中的html标签，或者将罗马数字转换成阿拉伯数字等。一个字符过滤器可以有零个或者多个。
+1个tokenizer
+简单的说就是将一整段文本拆分成一个个的词。例如拆分英文，通过空格能将句子拆分成一个个的词，但是对于中文来说，无法使用这种方式来实现。在一个分词器中,有且只有一个tokenizeer
+0个或1个以上的token filter
+将切分的单词添加、删除或者改变。例如将所有英文单词小写，或者将英文中的停词a删除等。在token filters中，不允许将token(分出的词)的position或者offset改变。同时，在一个分词器中，可以有零个或者多个token filters.
+单词的过滤顺序按照 filter过滤器的顺序
+3. 使用分析器 默认ES使用standard analyzer
+3.1 Elasticsearch的内置分析器 Analyzer
+Standard Analyzer - 默认分词器，按词切分，小写处理 Simple Analyzer - 按照非字母切分(符号被过滤), 小写处理 Stop Analyzer - 小写处理，停用词过滤(the,a,is) Whitespace Analyzer - 按照空格切分，不转小写 Keyword Analyzer - 不分词，直接将输入当作输出 Patter Analyzer - 正则表达式，默认\W&#43;(非字符分割) Language - 提供了30多种常见语言的分词器 Customer Analyzer 自定义分词器 参考链接">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1-什么是analysis">1. 什么是analysis?</h1>
+<p>analysis是Elasticsearch在文档发送之前对文档正文执行的过程，以添加到反向索引中（inverted index）。 在将文档添加到索引之前，Elasticsearch会为每个分析的字段执行许多步骤：</p>
+<ul>
+<li>Character filtering (字符过滤器): 使用字符过滤器转换字符</li>
+<li>Breaking text into tokens (把文字转化为标记): 将文本分成一组一个或多个标记</li>
+<li>Token filtering：使用标记过滤器转换每个标记(大小写转化/删除无用词等等)</li>
+<li>Token indexing：把这些标记存于index中</li>
+</ul>
+<p>文本分词会发生在两个地方：</p>
+<ul>
+<li><code>创建索引</code>:当索引文档字符类型为<code>text</code>时，在建立索引时将会对该字段进行分词。</li>
+<li><code>搜索</code>：当对一个<code>text</code>类型的字段进行全文检索时，会对用户输入的文本进行分词。</li>
+</ul>
+<h1 id="2-主要组成">2. 主要组成</h1>
+<p>总体说来一个analyzer可以分为如下的几个部分：</p>
+<ul>
+<li>
+<p>0个或1个以上的character filter</p>
+<blockquote>
+<p>接收原字符流，通过添加、删除或者替换操作改变原字符流。例如：去除文本中的html标签，或者将罗马数字转换成阿拉伯数字等。一个字符过滤器可以有零个或者多个。</p>
+</blockquote>
+</li>
+<li>
+<p>1个tokenizer</p>
+<blockquote>
+<p>简单的说就是将一整段文本拆分成一个个的词。例如拆分英文，通过空格能将句子拆分成一个个的词，但是对于中文来说，无法使用这种方式来实现。在一个分词器中,有且只有一个tokenizeer</p>
+</blockquote>
+</li>
+<li>
+<p>0个或1个以上的token filter</p>
+<blockquote>
+<p>将切分的单词添加、删除或者改变。例如将所有英文单词小写，或者将英文中的停词a删除等。在token filters中，不允许将token(分出的词)的position或者offset改变。同时，在一个分词器中，可以有零个或者多个token filters.</p>
+<p><!-- raw HTML omitted -->单词的过滤顺序按照 filter过滤器的顺序<!-- raw HTML omitted --></p>
+</blockquote>
+</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20190923230030142.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1VidW50dVRvdWNo,size_16,color_FFFFFF,t_70" alt="img"></p>
+<h1 id="3-使用分析器">3. 使用分析器</h1>
+<p>默认ES使用<code>standard analyzer</code></p>
+<h2 id="31-elasticsearch的内置分析器">3.1 Elasticsearch的内置分析器</h2>
+<p><strong>Analyzer</strong></p>
+<ul>
+<li>Standard Analyzer - 默认分词器，按词切分，小写处理</li>
+<li>Simple Analyzer - 按照非字母切分(符号被过滤), 小写处理</li>
+<li>Stop Analyzer - 小写处理，停用词过滤(the,a,is)</li>
+<li>Whitespace Analyzer - 按照空格切分，不转小写</li>
+<li>Keyword Analyzer - 不分词，直接将输入当作输出</li>
+<li>Patter Analyzer - 正则表达式，默认\W+(非字符分割)</li>
+<li>Language - 提供了30多种常见语言的分词器</li>
+<li>Customer Analyzer 自定义分词器</li>
+</ul>
+<p><a href="https://www.cnblogs.com/qdhxhz/p/11585639.html">参考链接</a></p>
+<p><strong>Character Filter</strong></p>
+<table>
+<thead>
+<tr>
+<th>character filter</th>
+<th style="text-align:center">logical name</th>
+<th style="text-align:left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mapping char filter</td>
+<td style="text-align:center">mapping</td>
+<td style="text-align:left">根据配置的映射关系替换字符</td>
+</tr>
+<tr>
+<td>html strip char filter</td>
+<td style="text-align:center">html_strip</td>
+<td style="text-align:left">去掉HTML元素</td>
+</tr>
+<tr>
+<td>pattern replace char filter</td>
+<td style="text-align:center">pattern_replace</td>
+<td style="text-align:left">用正则表达式处理字符串</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tokenizer</strong></p>
+<table>
+<thead>
+<tr>
+<th>tokenizer</th>
+<th style="text-align:center">logical name</th>
+<th style="text-align:left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>standard tokenizer</td>
+<td style="text-align:center">standard</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>edge ngram tokenizer</td>
+<td style="text-align:center">edgeNGram</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>keyword tokenizer</td>
+<td style="text-align:center">keyword</td>
+<td style="text-align:left">不分词</td>
+</tr>
+<tr>
+<td>letter analyzer</td>
+<td style="text-align:center">letter</td>
+<td style="text-align:left">按单词分</td>
+</tr>
+<tr>
+<td>lowercase analyzer</td>
+<td style="text-align:center">lowercase</td>
+<td style="text-align:left">letter tokenizer, lower case filter</td>
+</tr>
+<tr>
+<td>ngram analyzers</td>
+<td style="text-align:center">nGram</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>whitespace analyzer</td>
+<td style="text-align:center">whitespace</td>
+<td style="text-align:left">以空格为分隔符拆分</td>
+</tr>
+<tr>
+<td>pattern analyzer</td>
+<td style="text-align:center">pattern</td>
+<td style="text-align:left">定义分隔符的正则表达式</td>
+</tr>
+<tr>
+<td>uax email url analyzer</td>
+<td style="text-align:center">uax_url_email</td>
+<td style="text-align:left">不拆分 url 和 email</td>
+</tr>
+<tr>
+<td>path hierarchy analyzer</td>
+<td style="text-align:center">path_hierarchy</td>
+<td style="text-align:left">处理类似 <code>/path/to/somthing</code>样式的字符串</td>
+</tr>
+</tbody>
+</table>
+<p>Token Filter</p>
+<table>
+<thead>
+<tr>
+<th>token filter</th>
+<th style="text-align:center">logical name</th>
+<th style="text-align:left">description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>standard filter</td>
+<td style="text-align:center">standard</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>ascii folding filter</td>
+<td style="text-align:center">asciifolding</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>length filter</td>
+<td style="text-align:center">length</td>
+<td style="text-align:left">去掉太长或者太短的</td>
+</tr>
+<tr>
+<td>lowercase filter</td>
+<td style="text-align:center">lowercase</td>
+<td style="text-align:left">转成小写</td>
+</tr>
+<tr>
+<td>ngram filter</td>
+<td style="text-align:center">nGram</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>edge ngram filter</td>
+<td style="text-align:center">edgeNGram</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>porter stem filter</td>
+<td style="text-align:center">porterStem</td>
+<td style="text-align:left">波特词干算法</td>
+</tr>
+<tr>
+<td>shingle filter</td>
+<td style="text-align:center">shingle</td>
+<td style="text-align:left">定义分隔符的正则表达式</td>
+</tr>
+<tr>
+<td>stop filter</td>
+<td style="text-align:center">stop</td>
+<td style="text-align:left">移除 stop words</td>
+</tr>
+<tr>
+<td>word delimiter filter</td>
+<td style="text-align:center">word_delimiter</td>
+<td style="text-align:left">将一个单词再拆成子分词</td>
+</tr>
+<tr>
+<td>stemmer token filter</td>
+<td style="text-align:center">stemmer</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>stemmer override filter</td>
+<td style="text-align:center">stemmer_override</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>keyword marker filter</td>
+<td style="text-align:center">keyword_marker</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>keyword repeat filter</td>
+<td style="text-align:center">keyword_repeat</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>kstem filter</td>
+<td style="text-align:center">kstem</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>snowball filter</td>
+<td style="text-align:center">snowball</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>phonetic filter</td>
+<td style="text-align:center">phonetic</td>
+<td style="text-align:left"><a href="https://link.jianshu.com?t=https://github.com/elasticsearch/elasticsearch-analysis-phonetic">插件</a></td>
+</tr>
+<tr>
+<td>synonym filter</td>
+<td style="text-align:center">synonyms</td>
+<td style="text-align:left">处理同义词</td>
+</tr>
+<tr>
+<td>compound word filter</td>
+<td style="text-align:center">dictionary_decompounder, hyphenation_decompounder</td>
+<td style="text-align:left">分解复合词</td>
+</tr>
+<tr>
+<td>reverse filter</td>
+<td style="text-align:center">reverse</td>
+<td style="text-align:left">反转字符串</td>
+</tr>
+<tr>
+<td>elision filter</td>
+<td style="text-align:center">elision</td>
+<td style="text-align:left">去掉缩略语</td>
+</tr>
+<tr>
+<td>truncate filter</td>
+<td style="text-align:center">truncate</td>
+<td style="text-align:left">截断字符串</td>
+</tr>
+<tr>
+<td>unique filter</td>
+<td style="text-align:center">unique</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>pattern capture filter</td>
+<td style="text-align:center">pattern_capture</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>pattern replace filte</td>
+<td style="text-align:center">pattern_replace</td>
+<td style="text-align:left">用正则表达式替换</td>
+</tr>
+<tr>
+<td>trim filter</td>
+<td style="text-align:center">trim</td>
+<td style="text-align:left">去掉空格</td>
+</tr>
+<tr>
+<td>limit token count filter</td>
+<td style="text-align:center">limit</td>
+<td style="text-align:left">限制 token 数量</td>
+</tr>
+<tr>
+<td>hunspell filter</td>
+<td style="text-align:center">hunspell</td>
+<td style="text-align:left">拼写检查</td>
+</tr>
+<tr>
+<td>common grams filter</td>
+<td style="text-align:center">common_grams</td>
+<td style="text-align:left"></td>
+</tr>
+<tr>
+<td>normalization filter</td>
+<td style="text-align:center">arabic_normalization, persian_normalization</td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://www.jianshu.com/p/edbef5c9d635">内置 Analyzer 一览表</a></p>
+<h2 id="32-分析器测试">3.2 分析器测试</h2>
+<p>可以通过<code>_analyzer</code>API来测试分词的效果。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST _analyze
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;analyzer&#34;: &#34;standard&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;text&#34;: &#34;The quick Brown Fox&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><blockquote>
+<p><strong>结果</strong>: 按空格切分,所以会有四个词</p>
+</blockquote>
+<p>可以按照下面的规则组合使用：</p>
+<ul>
+<li>0个或者多个<code>character filters</code></li>
+<li>一个<code>tokenizer</code></li>
+<li>0个或者多个<code>token filters</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST _analyze
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;tokenizer&#34;: &#34;standard&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;filter&#34;: [&#34;lowercase&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;text&#34;: &#34;The quick Brown Fox&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><blockquote>
+<p><strong>结果</strong>: 按空格切分,所以会有四个词,但每个词都是小写</p>
+</blockquote>
+<h2 id="33-自定义分析器">3.3 自定义分析器</h2>
+<p>当内置的分词器无法满足需求时，可以创建<code>custom</code>类型的分词器。</p>
+<ul>
+<li><code>tokenizer</code>:内置或定制的tokenizer.(必须)</li>
+<li><code>char_filter</code>:内置或定制的char_filter(非必须)</li>
+<li><code>filter</code>:内置或定制的token filter(非必须)</li>
+<li><code>position_increment_gap</code>:当值为文本数组时，设置改值会在文本的中间插入假空隙。设置该属性，对与后面的查询会有影响。默认该值为100.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">PUT my_index
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;settings&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;analysis&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;analyzer&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;my_custom_analyzer&#34;:{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;type&#34;:&#34;custom&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;tokenizer&#34;:&#34;standard&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;char_filter&#34;:[&#34;html_strip&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;filter&#34;:[&#34;lowercase&#34;,&#34;asciifolding&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>上面的示例中定义了一个名为<code>my_custom_analyzer</code>的分析器，该分析器的<code>type</code>为<code>custom</code>，<code>tokenizer</code>为<code>standard</code>，<code>char_filter</code>为<code>hmtl_strip</code>,<code>filter</code>定义了两个分别为：<code>lowercase</code>和<code>asciifolding</code>.</p>
+<p>测试一下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST my_index/_analyze
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;text&#34;: &#34;Is this &lt;b&gt;déjà vu&lt;/b&gt;?&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;analyzer&#34;: &#34;my_custom_analyzer&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>结果:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;tokens&#34;</span> : [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;token&#34;</span> : <span style="color:#e6db74">&#34;is&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;start_offset&#34;</span> : <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;end_offset&#34;</span> : <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span> : <span style="color:#e6db74">&#34;&lt;ALPHANUM&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;position&#34;</span> : <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;token&#34;</span> : <span style="color:#e6db74">&#34;this&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;start_offset&#34;</span> : <span style="color:#ae81ff">3</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;end_offset&#34;</span> : <span style="color:#ae81ff">7</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span> : <span style="color:#e6db74">&#34;&lt;ALPHANUM&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;position&#34;</span> : <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;token&#34;</span> : <span style="color:#e6db74">&#34;deja&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;start_offset&#34;</span> : <span style="color:#ae81ff">11</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;end_offset&#34;</span> : <span style="color:#ae81ff">15</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span> : <span style="color:#e6db74">&#34;&lt;ALPHANUM&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;position&#34;</span> : <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;token&#34;</span> : <span style="color:#e6db74">&#34;vu&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;start_offset&#34;</span> : <span style="color:#ae81ff">16</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;end_offset&#34;</span> : <span style="color:#ae81ff">22</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span> : <span style="color:#e6db74">&#34;&lt;ALPHANUM&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;position&#34;</span> : <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="4-分析器作用位置及使用">4. 分析器作用位置及使用</h1>
+<p>分析器的使用地方有两个：</p>
+<ul>
+<li>创建索引时</li>
+<li>进行搜索时</li>
+</ul>
+<h2 id="41-创建索引时指定分析器">4.1 创建索引时指定分析器</h2>
+<p>如果设置手动设置了分析器，ES将按照下面顺序来确定使用哪个分析器：</p>
+<ul>
+<li>先判断字段是否有设置分析器，如果有，则使用字段属性上的分析器设置</li>
+<li>如果设置了<code>analysis.analyzer.default</code>，则使用该设置的分析器</li>
+<li>如果上面两个都未设置，则使用默认的<code>standard</code>分析器</li>
+</ul>
+<p>为字段指定分析器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">PUT my_index
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;mappings&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;properties&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;title&#34;:{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;type&#34;:&#34;text&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;analyzer&#34;: &#34;whitespace&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>设置索引默认分析器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">PUT my_index
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;settings&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;analysis&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;analyzer&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;default&#34;:{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;type&#34;:&#34;simple&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><h2 id="42-搜索时如何确定分析器">4.2 搜索时如何确定分析器</h2>
+<p>在搜索时，通过下面参数依次检查搜索时使用的分词器：</p>
+<ul>
+<li>搜索时指定analyzer参数</li>
+<li>创建mapping时指定字段的search_analyzer属性</li>
+<li>创建索引时指定<code>setting</code>的<code>analysis.analyzer.default_search</code></li>
+<li>查看创建索引时字段指定的analyzer属性</li>
+<li>如果上面几种都未设置，则使用默认的standard分词器。</li>
+</ul>
+<p>搜索时指定analyzer查询参数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET my_index/_search
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;query&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;match&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;message&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;query&#34;: &#34;Quick foxes&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;analyzer&#34;: &#34;stop&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>指定字段的<code>seach_analyzer</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">PUT my_index
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;mappings&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;properties&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;title&#34;:{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;type&#34;:&#34;text&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;analyzer&#34;: &#34;whitespace&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;search_analyzer&#34;: &#34;simple&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">//  上面指定创建索引时使用的默认分析器为whitespace分词器，而搜索的默认分词器为 simple分词器。
+</span></span></span></code></pre></div><p>指定索引的默认搜索分词器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">PUT my_index
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;settings&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;analysis&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;analyzer&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;default&#34;:{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;type&#34;:&#34;simple&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;default_seach&#34;:{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;type&#34;:&#34;whitespace&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// 上面指定创建索引时使用的默认分词器为simple分词器，而搜索的默认分词器为whitespace分词器。
+</span></span></span></code></pre></div><h1 id="5-常用分析器">5. 常用分析器</h1>
+<h2 id="51-繁简转换分析器">5.1 繁简转换分析器</h2>
+<p>简体和繁体的几个主要情况：</p>
+<ul>
+<li>
+<p>字形差异，汉字字形本身存在着明显差异，如劉与刘，一般是单个字。</p>
+</li>
+<li>
+<p>词汇的差异，习惯、文化环境造成的用法差异，如滑鼠与鼠标，一般是多字词语。</p>
+</li>
+<li>
+<p>多种形态共存，有很多代表不同意思的繁体最后简化成了一个字，所以就出现了多音和多义的简体字，如：飆、飈、𩙪都对应于一个简体：飚。</p>
+</li>
+</ul>
+<p>对应第一种，我们可以采用替换的办法，将所有的繁体都替换成对应的简体，在创建索引的时候，就进行标准化，比较好实现，(此文仅针对第一种)</p>
+<p>第二种我们可以采用收集相应的词汇转换关系，进行替换，不过因为是多字词语的替换，所以这里面还需要提取处理好分词，不然就有可能替换错误反而引起歧义的问题。</p>
+<p>第三种情况，因为繁体和简体是一对多的情况，我们将繁体通过映射表转成简体相对容易，反过来将简体转换成繁体将遇到调整，可能需要结合前后语义来选择正确的繁体。</p>
+<h3 id="511-安装与验证">5.1.1 安装与验证</h3>
+<p><code>Github</code> 上的地址是：https://github.com/medcl/elasticsearch-analysis-stconvert/releases</p>
+<p><!-- raw HTML omitted -->下载之后解压到es的安装目录下的plugins 子目录,重启es即可<!-- raw HTML omitted --> (必须选择对应版本)</p>
+<p>验证:</p>
+<p><img src="https://elastic-search-in-action.medcl.com/media/15501507055384/15509999877512.jpg" alt="image"></p>
+<blockquote>
+<p>如果你的集群里面有不止一个 Elasticsearch 的节点，你需要在每一台 Elasticsearch 的实例上执行相同的插件安装，并进行重启让其加载生效。</p>
+</blockquote>
+<h3 id="512-插件介绍">5.1.2 插件介绍</h3>
+<p>STConvert 这个插件一共提供了 4 个不同的组件:</p>
+<ul>
+<li>一个名为 <code>stconvert</code> 的 Analyzer，可以将简体转换成繁体</li>
+<li>一个名为 <code>stconvert</code> 的 Tokenizer，可以将简体转换成繁体</li>
+<li>一个名为 <code>stconvert</code> 的 Token Filter，可以将简体转换成繁体</li>
+<li>一个名为 <code>stconvert</code> 的 Char Filter，可以将简体转换成繁体</li>
+</ul>
+<p>每个组件都可以有以下3个参数用来进行自定义配置，分别是：</p>
+<ul>
+<li>参数 <code>convert_type</code> 设置转换的方向，默认是 <code>s2t</code>，表示简体到繁体，如果要将繁体转换为简体，则设置为 <code>t2s</code></li>
+<li>参数 <code>keep_both</code> 用于设置是否保留转换之前的内容，一般来说保留原始内容可以提高我们的搜索命中率(也就是说可以同时搜索繁体和简体)，默认是 <code>false</code>，也就是不保留</li>
+<li>参数 <code>delimiter</code> 主要是用于，当保留原始内容的时候，如何分割两部分内容，默认的值是逗号 <code>,</code></li>
+</ul>
+<blockquote>
+<p>t:  Traditional  (传统的) =&gt;  Traditional Chinese (繁体)</p>
+<p>s: Simplified (简化的)  =&gt; Simplified Chinese (简体)</p>
+</blockquote>
+<h3 id="513-简转繁">5.1.3 简转繁</h3>
+<p>简转繁好做,因为插件默认就是做这个的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">GET /_analyze
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;tokenizer&#34; : &#34;standard&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;filter&#34; : [&#34;lowercase&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;char_filter&#34; : [&#34;stconvert&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;text&#34; : &#34;我爱China。&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><blockquote>
+<p>我们指定了 Tokenizer 为 <code>standard</code>，也指定了 <code>lowercase</code> 作为分词之后的 Filter，这样就跟标准的 Standard Analyzer 的分析效果一样了，我们还新增了一个 Char Filter 的参数设置，使用的是我们新安装的简繁体转换插件提供的 <code>stconvert</code>，也就是将简体转成繁体,其结果如下</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;tokens&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;token&#34;</span>: <span style="color:#e6db74">&#34;我&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;start_offset&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;end_offset&#34;</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;&lt;IDEOGRAPHIC&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;position&#34;</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;token&#34;</span>: <span style="color:#e6db74">&#34;愛&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;start_offset&#34;</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;end_offset&#34;</span>: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;&lt;IDEOGRAPHIC&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;position&#34;</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;token&#34;</span>: <span style="color:#e6db74">&#34;china&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;start_offset&#34;</span>: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;end_offset&#34;</span>: <span style="color:#ae81ff">7</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;&lt;ALPHANUM&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;position&#34;</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><blockquote>
+<p>可以看到，除了和 Standard 分词效果一样的地方以外，我们还额外的将中文字符都转成了繁体，<code>爱</code> 字转成了 <code>愛</code>，而 <code>我</code> 没有变化，是因为它的繁体也是 <code>我</code>。建议我们在真正动手进行自定义分词之前，通过这样的方式先进行分词效果的测试，得到满意的结果之后再进行具体的自定义 Analyzer 的创建工作。</p>
+</blockquote>
+<h3 id="514-繁转简">5.1.4 繁转简</h3>
+<p>创建索引时指定分析器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">PUT /my_index
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;settings&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;analysis&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;analyzer&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;my_analyzer&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;tokenizer&#34;: &#34;standard&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;filter&#34;: [&#34;lowercase&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;char_filter&#34;: [&#34;tsconvert&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      },
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;char_filter&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;tsconvert&#34; : {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;type&#34; : &#34;stconvert&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;delimiter&#34; : &#34;#&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;keep_both&#34; : false,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;convert_type&#34; : &#34;t2s&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">// delimiter 和 keep_both 属性可以不写
+</span></span></span></code></pre></div><p>测试:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">POST /my_index/_analyze
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">	&#34;analyzer&#34;: &#34;my_analyzer&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">	&#34;text&#34;: &#34;我愛China。&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}
+</span></span></span></code></pre></div><p>经过执行，得到的分析结果如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;tokens&#34;</span>: [
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;token&#34;</span>: <span style="color:#e6db74">&#34;我&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;start_offset&#34;</span>: <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;end_offset&#34;</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;&lt;IDEOGRAPHIC&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;position&#34;</span>: <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;token&#34;</span>: <span style="color:#e6db74">&#34;爱&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;start_offset&#34;</span>: <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;end_offset&#34;</span>: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;&lt;IDEOGRAPHIC&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;position&#34;</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;token&#34;</span>: <span style="color:#e6db74">&#34;china&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;start_offset&#34;</span>: <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;end_offset&#34;</span>: <span style="color:#ae81ff">7</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;&lt;ALPHANUM&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&#34;position&#34;</span>: <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="52-ik分析器">5.2 Ik分析器</h2>
+<p>IK分析插件将Lucene IK分析器（http://code.google.com/p/ik-analyzer/）集成到elasticsearch中，支持自定义字典。</p>
+<h3 id="521-安装与验证">5.2.1 安装与验证</h3>
+<p><code>Github</code> 上的地址是：https://github.com/medcl/elasticsearch-analysis-ik/releases</p>
+<p><!-- raw HTML omitted -->下载之后解压到es的安装目录下的plugins 子目录,重启es即可<!-- raw HTML omitted --> (必须选择对应版本)</p>
+<h3 id="522-插件介绍">5.2.2 插件介绍</h3>
+<ul>
+<li>Analyzer: <code>ik_smart</code> , <code>ik_max_word</code> ,</li>
+<li>Tokenizer: <code>ik_smart</code> , <code>ik_max_word</code></li>
+</ul>
+<blockquote>
+<p><code>ik_max_word</code> 和 <code>ik_smart</code> 什么区别?</p>
+<p><code>ik_max_word</code>: <!-- raw HTML omitted -->会将文本做最细粒度的拆分<!-- raw HTML omitted -->，比如会将“中华人民共和国国歌”拆分为“中华人民共和国,中华人民,中华,华人,人民共和国,人民,人,民,共和国,共和,和,国国,国歌”，会穷尽各种可能的组合，适合 Term Query；</p>
+<p><code>ik_smart</code>: <!-- raw HTML omitted -->会做最粗粒度的拆分<!-- raw HTML omitted -->，比如会将“中华人民共和国国歌”拆分为“中华人民共和国,国歌”，适合 Phrase 查询。</p>
+</blockquote>
+<h3 id="523-基本使用">5.2.3 基本使用</h3>
+<p><strong>使用analyzer</strong>:</p>
+<p><img src="https://img-blog.csdnimg.cn/2020072414541039.png" alt="image"></p>
+<p><img src="https://img-blog.csdnimg.cn/20200724145528317.png" alt="image"></p>
+<p><strong>使用tokenizer</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">PUT product
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">{
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  &#34;settings&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    &#34;analysis&#34;: {   
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      &#34;analyzer&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        &#34;my_analyzer&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;type&#34;: &#34;custom&#34;,       
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;filter&#34;: [
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">            &#34;lowercase&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          ],
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">          &#34;tokenizer&#34;: &#34;ik_smart&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">        }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">      }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">  }
+</span></span></span></code></pre></div><h3 id="524-自定义分词库">5.2.4 自定义分词库</h3>
+<p>配置 在ik分析器的config目录下的 <code>IKAnalyzer.cfg.xml</code></p>
+<p>内容如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!DOCTYPE properties SYSTEM &#34;http://java.sun.com/dtd/properties.dtd&#34;&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;properties&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;comment&gt;</span>IK Analyzer 扩展配置<span style="color:#f92672">&lt;/comment&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">&lt;!--用户可以在这里配置自己的扩展字典 --&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;entry</span> <span style="color:#a6e22e">key=</span><span style="color:#e6db74">&#34;ext_dict&#34;</span><span style="color:#f92672">&gt;</span>custom/mydict.dic;custom/single_word_low_freq.dic<span style="color:#f92672">&lt;/entry&gt;</span>
+</span></span><span style="display:flex;"><span>	 <span style="color:#75715e">&lt;!--用户可以在这里配置自己的扩展停止词字典--&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;entry</span> <span style="color:#a6e22e">key=</span><span style="color:#e6db74">&#34;ext_stopwords&#34;</span><span style="color:#f92672">&gt;</span>custom/ext_stopword.dic<span style="color:#f92672">&lt;/entry&gt;</span>
+</span></span><span style="display:flex;"><span> 	<span style="color:#75715e">&lt;!--用户可以在这里配置远程扩展字典 --&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;entry</span> <span style="color:#a6e22e">key=</span><span style="color:#e6db74">&#34;remote_ext_dict&#34;</span><span style="color:#f92672">&gt;</span>location<span style="color:#f92672">&lt;/entry&gt;</span>
+</span></span><span style="display:flex;"><span> 	<span style="color:#75715e">&lt;!--用户可以在这里配置远程扩展停止词字典--&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;entry</span> <span style="color:#a6e22e">key=</span><span style="color:#e6db74">&#34;remote_ext_stopwords&#34;</span><span style="color:#f92672">&gt;</span>http://xxx.com/xxx.dic<span style="color:#f92672">&lt;/entry&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/properties&gt;</span>
+</span></span></code></pre></div><blockquote>
+<p>扩展词: 不想被分词的词: 比如, 乔碧罗, 神罗天征等</p>
+<p>停止词: 不想要的词,搜索时不会搜它, 比如: 个 ,啊, the , a 等</p>
+</blockquote>
+<p><strong>远程词典具备热更新的能力</strong>, 满足以下前两点即可实现热更新</p>
+<p>其中 <code>location</code> 是指一个 url，比如 <code>http://yoursite.com/getCustomDict</code>，该请求只需满足以下两点即可完成分词热更新。</p>
+<ol>
+<li>
+<p>该 http 请求需要返回两个头部(header)，一个是 <code>Last-Modified</code>，一个是 <code>ETag</code>，这两者都是字符串类型，只要有一个发生变化，该插件就会去抓取新的分词进而更新词库。</p>
+<blockquote>
+<p>写个接口,返回修改时间和ETag即可</p>
+<p>或者用Ng转发静态文件, 会自动加上这个两个配置,当文件改动时,这两个值自动改变</p>
+</blockquote>
+</li>
+<li>
+<p>该 http 请求返回的内容格式是一行一个分词，换行符用 <code>\n</code> 即可。</p>
+</li>
+<li>
+<p>url返回一个UTF-8格式的文本即可</p>
+</li>
+</ol>
+<blockquote>
+<p>如果有多个文件,用英文分号隔开<code>;</code></p>
+</blockquote>
+<blockquote>
+<p>监控流程</p>
+<ol start="0">
+<li>
+<p><!-- raw HTML omitted -->读取 <code>IKAnalyzer.cfg.xml</code>配置文件,并解析其中的配置<!-- raw HTML omitted --></p>
+</li>
+<li>
+<p>向词库服务器发送Head请求</p>
+</li>
+<li>
+<p>从响应中获取<code>Last- Modify</code>、 <code>Etags</code>字段值，判断是否变化</p>
+</li>
+<li>
+<p>如果未变化，体眠1min,返回第0步</p>
+<p>​	如果有变化，重新加戟词典</p>
+</li>
+<li>
+<p>休眠1min,返回第0步</p>
+</li>
+</ol>
+</blockquote>
+<p><strong>自定义词汇只会对新加的数据生效,不会对存量数据生效,需要更新一次才行</strong></p>
+<blockquote>
+<p>数据在写入时就已分词存储,所以自定义词汇不会对存量数据生效</p>
+</blockquote>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html">官方</a> 提供更新方式 <code>POST product/_update_by_query?conflicts=proceed</code></p>
+<blockquote>
+<p>update_by_query原理</p>
+<p>开始时获取一个索引的快照，并且使用内部版本来号来进行更新。这意味着如果文档在获得快照后，对索引处理 过程中版本发生更改，将会发生版本冲突。当快照的版本和索引版本一直时则进行更新，并且递增文档版本号。</p>
+<p>当遇到冲突而导致整个更新过程失败时，更新过程是不会回滚的。如果不想因为冲突导致整个更新过程终止，可以在url中添加参数conflicts=proceed。或者在请求body中添加”conflicts”:”proceed”</p>
+<p>不光这里可以用,修改es文档也是用<code>_update_by_query</code></p>
+<p>执行结果如图:(消耗时间单位 : 毫秒)</p>
+<p>格力的es集群,执行效率大概是2300条/s, 26万数据,大概花了1.7分钟</p>
+<p><img src="https://img-blog.csdnimg.cn/20210106175123919.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MDExNDE1,size_16,color_FFFFFF,t_70" alt="image"></p>
+<p>更新可能耗时太久导致客户端连接超时,可以用命令查看任务执行情况(未结束的任务)</p>
+<p><code>GET _tasks?actions=*update*&amp;detailed</code></p>
+</blockquote>
+<h2 id="53-同义词分析器">5.3 同义词分析器</h2>
+<p><a href="https://www.jianshu.com/p/7dc93f4fbb46">配置同义词</a></p>
+<h2 id="54-拼音分析器">5.4 拼音分析器</h2>
+<p><a href="https://github.com/medcl/elasticsearch-analysis-pinyin">Pinyin Analysis for Elasticsearch</a></p>
+<p>参考链接:</p>
+<p><a href="https://www.jianshu.com/p/bebea42b5040">分析器-简书</a></p>
+<p><a href="https://www.cnblogs.com/sanduzxcvbnm/p/12084607.html">分析器-博客园</a></p>
+<p><a href="https://elastic-search-in-action.medcl.com/3.site_search/3.3.search_box/unify_traditional_chinese_and_simplified_chinese/">繁简转换</a></p>
+<p><a href="https://blog.csdn.net/zq199419951001/article/details/89884461">ES的同义词、扩展词、停止词热更新方案</a></p>
+<p><a href="https://github.com/medcl/elasticsearch-analysis-ik">ik分析器-github</a></p>
+<p><a href="https://www.jianshu.com/p/f7634252ff9a">ik分析器-简书</a></p>
+<p><a href="https://blog.csdn.net/willingtolove/article/details/118382154">ik分析器-csdn</a></p>
+<p><a href="http://3dobe.com/archives/44/">IK分词器原理与源码分析</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/docker/%E5%AE%89%E8%A3%85/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/es%E4%BC%98%E5%8C%96/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/analysis\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/elk\/elasticsearch\/analysis\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/docker/%E5%AE%89%E8%A3%85/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/es%E4%BC%98%E5%8C%96/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2Fanalysis%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2Fanalysis%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Felk%2Felasticsearch%2Fanalysis%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

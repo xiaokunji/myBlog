@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"**1.**为什么说比特币是高度透明和隐秘的?使用比特币交易后可不可以查看交易双方?通过比特币地址为什么不能查找到人?\n答:(1) 透明是说所有的交易信息每人都能查看,隐秘是说:交易双方的信息都是加密的,\n​ (2)可以查看,只能查看最近的交易记录,双方的标识id会变化(加密)\n(3)区块链技术作为比特币的底层支撑，可以清晰的记录并查到所有比特币地址、支付以及交易路径，通过分析交易模式，追查到资金的走向以及公钥背后实际的当事人是很有可能的。黑客如果不会洗钱(币),钱就等于是死钱了\n来自 http:\/\/www.wanbizu.com\/news\/201705229806.html ,\n**2.**每产生新的比特币,新的比特币会记录以前的记录吗?如果记录,随着记录的增多,以后产生的比特币会不会疲于更新?如果不同步,也就说明区块链的内容不一样?\n答:(1)当前块只会记录(从生产开始算)10分钟内的交易内容\n(2)内容的确不一样,但是都是承接的\n\u0026ldquo;可以这么理解，比特币系统是一个巨大的、不断更新的账本。每一页都叫做一个区块，按照时间顺序连起来，就叫做比特币的区块链。每10分钟新增一个区块，里面的内容是过去10分钟系统内发生的一些交易。每一笔交易都会完完整整记录在这个账本里，比特币就是账本里记录的钱\u0026rdquo;\n来自* \u0026lt;http:\/\/tieba.baidu.com\/p\/5606568292\u0026gt;\n3.51%算力攻击\n答:所谓51%攻击，就是利用比特币使用算力作为竞争条件的特点，使用算力优势撤销自己已经发生的付款交易。如果有人掌握了50%以上的算力，他能够比其他人更快地找到开采区块需要的那个随机数，因此他实际上拥有了绝对哪个一区块的有效权利\n来自* \u0026lt;http:\/\/8btc.com\/article-1949-1.html\u0026gt;\n交易生效是需要下一个块生成才确定的,如果有人掌握50%算力,就有能力算出另一个(并列)块,因为算力够强,继续生成下一块,而区块链会选择最长的链作为主链,从而虚假块成为主链,真正的交易块被遗弃\n但是基本拥有51%算力基本不可能,目前算力是 236万万亿次哈希碰撞每秒 ,而世界第一的神威太湖之光 仅9.3亿亿次每秒,\n**4.**比特币同时多处交易,怎么保证数据的同步?(等6个块)\n答:每次交易只部分块记录(块会记录块产生后的10分钟内的所有交易记录),发生一次就在块中记录一次,然后hash不停在计算,更新后面的块,等6个块就完全确定了交易\n**5.**如果比特币只记录10分钟内的记录,那就意味着有些块记录特别少,有些块记录特别多?\n答: 是先有交易才会有块,等达到一定的交易量时才会被矿工拿着这些交易记录去挖矿,所以交易记录不会有重复\n一次交易流程大致如此:\n1.产生新交易: 我产生一个交易A\n2.签名加密: 验证这个交易是不是我发起的,钱是不是我的\n3.交易在比特币网络中传播: 验证完成后,要别人验证,是不是我的钱,钱够不够之类的\n4.整合交易\u0026amp;构建新区块: 验证交易后，每个比特币网络节点会将这些交易添加到自己的内存池中，内存池也称作交易池，用来暂存尚未被加入到区块的交易记录。而挖矿节点除了收集和验证交易以外，还会将这些交易打包到一个候选的区块中,会把交易A连同其它一些近期被创建的交易整合,打包.挖矿节点需要为内存池中的每笔交易分配一个优先级，并选择较高优先级的交易记录来构建候选区块，在区块被填满后，内存池中的剩余交易会成为下一个区块的候选交易。然后挖矿节点就准备拿候选区块来挖矿\n5.挖矿: 猜测一个数值(nonce),进行计算(相当复杂的),猜出一个小于nonce值就是正确的hash,即正确的块,获得\u0026quot;记账权\u0026quot;,那些交易记录将存在这个块中,节点(矿工)将获得奖励(网络中还有比特币时奖励比特币和交易费,没有比特币就奖励交易费)\n6.新区块连接到区块链:比特币交易生命周期的最后一步是将新区块连接至有最大工作量证明的链中。一个节点一旦验证了一个新的区块，它将尝试将新的区块连接到到现存的区块链组装起来。\n我有一个交易记录A,交易 A 会被一个或者多个签名加密(这些签名用来说明交易 A 是我发起的,不是别人)。而后，交易 A 被广播到比特币网络中，最快收到广播信息的是相邻的2- 3 个节点，这些节点都会参与验证这笔交易，于此同时将交易在网络中再次进行广播，直到这笔交易 A 被网络中大多数节点(所有下载比特币客户端的设备都有可能成为这样的节点)接收,最终，交易 A 被一个正在参与挖矿的节点验证，交易 A 连同其它一些近期被创建的交易一起被打包到一个区块 B ()中，并被添加到区块链上，这时整个区块链就被延长并新增了一个区块 B 。区块 B 获得 6 次以上的“确认”时就被认为是不可撤销的，\n来自* \u0026lt;http:\/\/www.yixieshi.com\/110742.html\u0026gt;",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/%E5%A4%A7%E6%95%B0%E6%8D%AE\/%E5%8C%BA%E5%9D%97%E9%93%BE\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="**1.**为什么说比特币是高度透明和隐秘的?使用比特币交易后可不可以查看交易双方?通过比特币地址为什么不能查找到人?
+答:(1) 透明是说所有的交易信息每人都能查看,隐秘是说:交易双方的信息都是加密的,
+​ (2)可以查看,只能查看最近的交易记录,双方的标识id会变化(加密)
+(3)区块链技术作为比特币的底层支撑，可以清晰的记录并查到所有比特币地址、支付以及交易路径，通过分析交易模式，追查到资金的走向以及公钥背后实际的当事人是很有可能的。黑客如果不会洗钱(币),钱就等于是死钱了
+来自 http://www.wanbizu.com/news/201705229806.html ,
+**2.**每产生新的比特币,新的比特币会记录以前的记录吗?如果记录,随着记录的增多,以后产生的比特币会不会疲于更新?如果不同步,也就说明区块链的内容不一样?
+答:(1)当前块只会记录(从生产开始算)10分钟内的交易内容
+(2)内容的确不一样,但是都是承接的
+&ldquo;可以这么理解，比特币系统是一个巨大的、不断更新的账本。每一页都叫做一个区块，按照时间顺序连起来，就叫做比特币的区块链。每10分钟新增一个区块，里面的内容是过去10分钟系统内发生的一些交易。每一笔交易都会完完整整记录在这个账本里，比特币就是账本里记录的钱&rdquo;
+来自* &lt;http://tieba.baidu.com/p/5606568292&gt;
+3.51%算力攻击
+答:所谓51%攻击，就是利用比特币使用算力作为竞争条件的特点，使用算力优势撤销自己已经发生的付款交易。如果有人掌握了50%以上的算力，他能够比其他人更快地找到开采区块需要的那个随机数，因此他实际上拥有了绝对哪个一区块的有效权利
+来自* &lt;http://8btc.com/article-1949-1.html&gt;
+交易生效是需要下一个块生成才确定的,如果有人掌握50%算力,就有能力算出另一个(并列)块,因为算力够强,继续生成下一块,而区块链会选择最长的链作为主链,从而虚假块成为主链,真正的交易块被遗弃
+但是基本拥有51%算力基本不可能,目前算力是 236万万亿次哈希碰撞每秒 ,而世界第一的神威太湖之光 仅9.3亿亿次每秒,
+**4.**比特币同时多处交易,怎么保证数据的同步?(等6个块)
+答:每次交易只部分块记录(块会记录块产生后的10分钟内的所有交易记录),发生一次就在块中记录一次,然后hash不停在计算,更新后面的块,等6个块就完全确定了交易
+**5.**如果比特币只记录10分钟内的记录,那就意味着有些块记录特别少,有些块记录特别多?
+答: 是先有交易才会有块,等达到一定的交易量时才会被矿工拿着这些交易记录去挖矿,所以交易记录不会有重复
+一次交易流程大致如此:
+1.产生新交易: 我产生一个交易A
+2.签名加密: 验证这个交易是不是我发起的,钱是不是我的
+3.交易在比特币网络中传播: 验证完成后,要别人验证,是不是我的钱,钱够不够之类的
+4.整合交易&amp;构建新区块: 验证交易后，每个比特币网络节点会将这些交易添加到自己的内存池中，内存池也称作交易池，用来暂存尚未被加入到区块的交易记录。而挖矿节点除了收集和验证交易以外，还会将这些交易打包到一个候选的区块中,会把交易A连同其它一些近期被创建的交易整合,打包.挖矿节点需要为内存池中的每笔交易分配一个优先级，并选择较高优先级的交易记录来构建候选区块，在区块被填满后，内存池中的剩余交易会成为下一个区块的候选交易。然后挖矿节点就准备拿候选区块来挖矿
+5.挖矿: 猜测一个数值(nonce),进行计算(相当复杂的),猜出一个小于nonce值就是正确的hash,即正确的块,获得&quot;记账权&quot;,那些交易记录将存在这个块中,节点(矿工)将获得奖励(网络中还有比特币时奖励比特币和交易费,没有比特币就奖励交易费)
+6.新区块连接到区块链:比特币交易生命周期的最后一步是将新区块连接至有最大工作量证明的链中。一个节点一旦验证了一个新的区块，它将尝试将新的区块连接到到现存的区块链组装起来。
+我有一个交易记录A,交易 A 会被一个或者多个签名加密(这些签名用来说明交易 A 是我发起的,不是别人)。而后，交易 A 被广播到比特币网络中，最快收到广播信息的是相邻的2- 3 个节点，这些节点都会参与验证这笔交易，于此同时将交易在网络中再次进行广播，直到这笔交易 A 被网络中大多数节点(所有下载比特币客户端的设备都有可能成为这样的节点)接收,最终，交易 A 被一个正在参与挖矿的节点验证，交易 A 连同其它一些近期被创建的交易一起被打包到一个区块 B ()中，并被添加到区块链上，这时整个区块链就被延长并新增了一个区块 B 。区块 B 获得 6 次以上的“确认”时就被认为是不可撤销的，
+来自* &lt;http://www.yixieshi.com/110742.html&gt;">
+
+
+<meta property="og:description" content="**1.**为什么说比特币是高度透明和隐秘的?使用比特币交易后可不可以查看交易双方?通过比特币地址为什么不能查找到人?
+答:(1) 透明是说所有的交易信息每人都能查看,隐秘是说:交易双方的信息都是加密的,
+​ (2)可以查看,只能查看最近的交易记录,双方的标识id会变化(加密)
+(3)区块链技术作为比特币的底层支撑，可以清晰的记录并查到所有比特币地址、支付以及交易路径，通过分析交易模式，追查到资金的走向以及公钥背后实际的当事人是很有可能的。黑客如果不会洗钱(币),钱就等于是死钱了
+来自 http://www.wanbizu.com/news/201705229806.html ,
+**2.**每产生新的比特币,新的比特币会记录以前的记录吗?如果记录,随着记录的增多,以后产生的比特币会不会疲于更新?如果不同步,也就说明区块链的内容不一样?
+答:(1)当前块只会记录(从生产开始算)10分钟内的交易内容
+(2)内容的确不一样,但是都是承接的
+&ldquo;可以这么理解，比特币系统是一个巨大的、不断更新的账本。每一页都叫做一个区块，按照时间顺序连起来，就叫做比特币的区块链。每10分钟新增一个区块，里面的内容是过去10分钟系统内发生的一些交易。每一笔交易都会完完整整记录在这个账本里，比特币就是账本里记录的钱&rdquo;
+来自* &lt;http://tieba.baidu.com/p/5606568292&gt;
+3.51%算力攻击
+答:所谓51%攻击，就是利用比特币使用算力作为竞争条件的特点，使用算力优势撤销自己已经发生的付款交易。如果有人掌握了50%以上的算力，他能够比其他人更快地找到开采区块需要的那个随机数，因此他实际上拥有了绝对哪个一区块的有效权利
+来自* &lt;http://8btc.com/article-1949-1.html&gt;
+交易生效是需要下一个块生成才确定的,如果有人掌握50%算力,就有能力算出另一个(并列)块,因为算力够强,继续生成下一块,而区块链会选择最长的链作为主链,从而虚假块成为主链,真正的交易块被遗弃
+但是基本拥有51%算力基本不可能,目前算力是 236万万亿次哈希碰撞每秒 ,而世界第一的神威太湖之光 仅9.3亿亿次每秒,
+**4.**比特币同时多处交易,怎么保证数据的同步?(等6个块)
+答:每次交易只部分块记录(块会记录块产生后的10分钟内的所有交易记录),发生一次就在块中记录一次,然后hash不停在计算,更新后面的块,等6个块就完全确定了交易
+**5.**如果比特币只记录10分钟内的记录,那就意味着有些块记录特别少,有些块记录特别多?
+答: 是先有交易才会有块,等达到一定的交易量时才会被矿工拿着这些交易记录去挖矿,所以交易记录不会有重复
+一次交易流程大致如此:
+1.产生新交易: 我产生一个交易A
+2.签名加密: 验证这个交易是不是我发起的,钱是不是我的
+3.交易在比特币网络中传播: 验证完成后,要别人验证,是不是我的钱,钱够不够之类的
+4.整合交易&amp;构建新区块: 验证交易后，每个比特币网络节点会将这些交易添加到自己的内存池中，内存池也称作交易池，用来暂存尚未被加入到区块的交易记录。而挖矿节点除了收集和验证交易以外，还会将这些交易打包到一个候选的区块中,会把交易A连同其它一些近期被创建的交易整合,打包.挖矿节点需要为内存池中的每笔交易分配一个优先级，并选择较高优先级的交易记录来构建候选区块，在区块被填满后，内存池中的剩余交易会成为下一个区块的候选交易。然后挖矿节点就准备拿候选区块来挖矿
+5.挖矿: 猜测一个数值(nonce),进行计算(相当复杂的),猜出一个小于nonce值就是正确的hash,即正确的块,获得&quot;记账权&quot;,那些交易记录将存在这个块中,节点(矿工)将获得奖励(网络中还有比特币时奖励比特币和交易费,没有比特币就奖励交易费)
+6.新区块连接到区块链:比特币交易生命周期的最后一步是将新区块连接至有最大工作量证明的链中。一个节点一旦验证了一个新的区块，它将尝试将新的区块连接到到现存的区块链组装起来。
+我有一个交易记录A,交易 A 会被一个或者多个签名加密(这些签名用来说明交易 A 是我发起的,不是别人)。而后，交易 A 被广播到比特币网络中，最快收到广播信息的是相邻的2- 3 个节点，这些节点都会参与验证这笔交易，于此同时将交易在网络中再次进行广播，直到这笔交易 A 被网络中大多数节点(所有下载比特币客户端的设备都有可能成为这样的节点)接收,最终，交易 A 被一个正在参与挖矿的节点验证，交易 A 连同其它一些近期被创建的交易一起被打包到一个区块 B ()中，并被添加到区块链上，这时整个区块链就被延长并新增了一个区块 B 。区块 B 获得 6 次以上的“确认”时就被认为是不可撤销的，
+来自* &lt;http://www.yixieshi.com/110742.html&gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%8C%BA%E5%9D%97%E9%93%BE/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%8C%BA%E5%9D%97%E9%93%BE/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="**1.**为什么说比特币是高度透明和隐秘的?使用比特币交易后可不可以查看交易双方?通过比特币地址为什么不能查找到人?
+答:(1) 透明是说所有的交易信息每人都能查看,隐秘是说:交易双方的信息都是加密的,
+​ (2)可以查看,只能查看最近的交易记录,双方的标识id会变化(加密)
+(3)区块链技术作为比特币的底层支撑，可以清晰的记录并查到所有比特币地址、支付以及交易路径，通过分析交易模式，追查到资金的走向以及公钥背后实际的当事人是很有可能的。黑客如果不会洗钱(币),钱就等于是死钱了
+来自 http://www.wanbizu.com/news/201705229806.html ,
+**2.**每产生新的比特币,新的比特币会记录以前的记录吗?如果记录,随着记录的增多,以后产生的比特币会不会疲于更新?如果不同步,也就说明区块链的内容不一样?
+答:(1)当前块只会记录(从生产开始算)10分钟内的交易内容
+(2)内容的确不一样,但是都是承接的
+&ldquo;可以这么理解，比特币系统是一个巨大的、不断更新的账本。每一页都叫做一个区块，按照时间顺序连起来，就叫做比特币的区块链。每10分钟新增一个区块，里面的内容是过去10分钟系统内发生的一些交易。每一笔交易都会完完整整记录在这个账本里，比特币就是账本里记录的钱&rdquo;
+来自* &lt;http://tieba.baidu.com/p/5606568292&gt;
+3.51%算力攻击
+答:所谓51%攻击，就是利用比特币使用算力作为竞争条件的特点，使用算力优势撤销自己已经发生的付款交易。如果有人掌握了50%以上的算力，他能够比其他人更快地找到开采区块需要的那个随机数，因此他实际上拥有了绝对哪个一区块的有效权利
+来自* &lt;http://8btc.com/article-1949-1.html&gt;
+交易生效是需要下一个块生成才确定的,如果有人掌握50%算力,就有能力算出另一个(并列)块,因为算力够强,继续生成下一块,而区块链会选择最长的链作为主链,从而虚假块成为主链,真正的交易块被遗弃
+但是基本拥有51%算力基本不可能,目前算力是 236万万亿次哈希碰撞每秒 ,而世界第一的神威太湖之光 仅9.3亿亿次每秒,
+**4.**比特币同时多处交易,怎么保证数据的同步?(等6个块)
+答:每次交易只部分块记录(块会记录块产生后的10分钟内的所有交易记录),发生一次就在块中记录一次,然后hash不停在计算,更新后面的块,等6个块就完全确定了交易
+**5.**如果比特币只记录10分钟内的记录,那就意味着有些块记录特别少,有些块记录特别多?
+答: 是先有交易才会有块,等达到一定的交易量时才会被矿工拿着这些交易记录去挖矿,所以交易记录不会有重复
+一次交易流程大致如此:
+1.产生新交易: 我产生一个交易A
+2.签名加密: 验证这个交易是不是我发起的,钱是不是我的
+3.交易在比特币网络中传播: 验证完成后,要别人验证,是不是我的钱,钱够不够之类的
+4.整合交易&amp;构建新区块: 验证交易后，每个比特币网络节点会将这些交易添加到自己的内存池中，内存池也称作交易池，用来暂存尚未被加入到区块的交易记录。而挖矿节点除了收集和验证交易以外，还会将这些交易打包到一个候选的区块中,会把交易A连同其它一些近期被创建的交易整合,打包.挖矿节点需要为内存池中的每笔交易分配一个优先级，并选择较高优先级的交易记录来构建候选区块，在区块被填满后，内存池中的剩余交易会成为下一个区块的候选交易。然后挖矿节点就准备拿候选区块来挖矿
+5.挖矿: 猜测一个数值(nonce),进行计算(相当复杂的),猜出一个小于nonce值就是正确的hash,即正确的块,获得&quot;记账权&quot;,那些交易记录将存在这个块中,节点(矿工)将获得奖励(网络中还有比特币时奖励比特币和交易费,没有比特币就奖励交易费)
+6.新区块连接到区块链:比特币交易生命周期的最后一步是将新区块连接至有最大工作量证明的链中。一个节点一旦验证了一个新的区块，它将尝试将新的区块连接到到现存的区块链组装起来。
+我有一个交易记录A,交易 A 会被一个或者多个签名加密(这些签名用来说明交易 A 是我发起的,不是别人)。而后，交易 A 被广播到比特币网络中，最快收到广播信息的是相邻的2- 3 个节点，这些节点都会参与验证这笔交易，于此同时将交易在网络中再次进行广播，直到这笔交易 A 被网络中大多数节点(所有下载比特币客户端的设备都有可能成为这样的节点)接收,最终，交易 A 被一个正在参与挖矿的节点验证，交易 A 连同其它一些近期被创建的交易一起被打包到一个区块 B ()中，并被添加到区块链上，这时整个区块链就被延长并新增了一个区块 B 。区块 B 获得 6 次以上的“确认”时就被认为是不可撤销的，
+来自* &lt;http://www.yixieshi.com/110742.html&gt;">
+<meta name="twitter:description" content="**1.**为什么说比特币是高度透明和隐秘的?使用比特币交易后可不可以查看交易双方?通过比特币地址为什么不能查找到人?
+答:(1) 透明是说所有的交易信息每人都能查看,隐秘是说:交易双方的信息都是加密的,
+​ (2)可以查看,只能查看最近的交易记录,双方的标识id会变化(加密)
+(3)区块链技术作为比特币的底层支撑，可以清晰的记录并查到所有比特币地址、支付以及交易路径，通过分析交易模式，追查到资金的走向以及公钥背后实际的当事人是很有可能的。黑客如果不会洗钱(币),钱就等于是死钱了
+来自 http://www.wanbizu.com/news/201705229806.html ,
+**2.**每产生新的比特币,新的比特币会记录以前的记录吗?如果记录,随着记录的增多,以后产生的比特币会不会疲于更新?如果不同步,也就说明区块链的内容不一样?
+答:(1)当前块只会记录(从生产开始算)10分钟内的交易内容
+(2)内容的确不一样,但是都是承接的
+&ldquo;可以这么理解，比特币系统是一个巨大的、不断更新的账本。每一页都叫做一个区块，按照时间顺序连起来，就叫做比特币的区块链。每10分钟新增一个区块，里面的内容是过去10分钟系统内发生的一些交易。每一笔交易都会完完整整记录在这个账本里，比特币就是账本里记录的钱&rdquo;
+来自* &lt;http://tieba.baidu.com/p/5606568292&gt;
+3.51%算力攻击
+答:所谓51%攻击，就是利用比特币使用算力作为竞争条件的特点，使用算力优势撤销自己已经发生的付款交易。如果有人掌握了50%以上的算力，他能够比其他人更快地找到开采区块需要的那个随机数，因此他实际上拥有了绝对哪个一区块的有效权利
+来自* &lt;http://8btc.com/article-1949-1.html&gt;
+交易生效是需要下一个块生成才确定的,如果有人掌握50%算力,就有能力算出另一个(并列)块,因为算力够强,继续生成下一块,而区块链会选择最长的链作为主链,从而虚假块成为主链,真正的交易块被遗弃
+但是基本拥有51%算力基本不可能,目前算力是 236万万亿次哈希碰撞每秒 ,而世界第一的神威太湖之光 仅9.3亿亿次每秒,
+**4.**比特币同时多处交易,怎么保证数据的同步?(等6个块)
+答:每次交易只部分块记录(块会记录块产生后的10分钟内的所有交易记录),发生一次就在块中记录一次,然后hash不停在计算,更新后面的块,等6个块就完全确定了交易
+**5.**如果比特币只记录10分钟内的记录,那就意味着有些块记录特别少,有些块记录特别多?
+答: 是先有交易才会有块,等达到一定的交易量时才会被矿工拿着这些交易记录去挖矿,所以交易记录不会有重复
+一次交易流程大致如此:
+1.产生新交易: 我产生一个交易A
+2.签名加密: 验证这个交易是不是我发起的,钱是不是我的
+3.交易在比特币网络中传播: 验证完成后,要别人验证,是不是我的钱,钱够不够之类的
+4.整合交易&amp;构建新区块: 验证交易后，每个比特币网络节点会将这些交易添加到自己的内存池中，内存池也称作交易池，用来暂存尚未被加入到区块的交易记录。而挖矿节点除了收集和验证交易以外，还会将这些交易打包到一个候选的区块中,会把交易A连同其它一些近期被创建的交易整合,打包.挖矿节点需要为内存池中的每笔交易分配一个优先级，并选择较高优先级的交易记录来构建候选区块，在区块被填满后，内存池中的剩余交易会成为下一个区块的候选交易。然后挖矿节点就准备拿候选区块来挖矿
+5.挖矿: 猜测一个数值(nonce),进行计算(相当复杂的),猜出一个小于nonce值就是正确的hash,即正确的块,获得&quot;记账权&quot;,那些交易记录将存在这个块中,节点(矿工)将获得奖励(网络中还有比特币时奖励比特币和交易费,没有比特币就奖励交易费)
+6.新区块连接到区块链:比特币交易生命周期的最后一步是将新区块连接至有最大工作量证明的链中。一个节点一旦验证了一个新的区块，它将尝试将新的区块连接到到现存的区块链组装起来。
+我有一个交易记录A,交易 A 会被一个或者多个签名加密(这些签名用来说明交易 A 是我发起的,不是别人)。而后，交易 A 被广播到比特币网络中，最快收到广播信息的是相邻的2- 3 个节点，这些节点都会参与验证这笔交易，于此同时将交易在网络中再次进行广播，直到这笔交易 A 被网络中大多数节点(所有下载比特币客户端的设备都有可能成为这样的节点)接收,最终，交易 A 被一个正在参与挖矿的节点验证，交易 A 连同其它一些近期被创建的交易一起被打包到一个区块 B ()中，并被添加到区块链上，这时整个区块链就被延长并新增了一个区块 B 。区块 B 获得 6 次以上的“确认”时就被认为是不可撤销的，
+来自* &lt;http://www.yixieshi.com/110742.html&gt;">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%8C%BA%E5%9D%97%E9%93%BE/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>**1.**为什么说比特币是高度透明和隐秘的?使用比特币交易后可不可以查看交易双方?通过比特币地址为什么不能查找到人?</p>
+<p>答:(1) 透明是说所有的交易信息每人都能查看,隐秘是说:交易双方的信息都是加密的,</p>
+<p>​    (2)可以查看,只能查看最近的交易记录,双方的标识id会变化(加密)</p>
+<p>(3)区块链技术作为比特币的底层支撑，可以清晰的记录并查到所有比特币地址、支付以及交易路径，通过分析交易模式，追查到资金的走向以及公钥背后实际的当事人是很有可能的。黑客如果不会洗钱(币),钱就等于是死钱了</p>
+<blockquote>
+<p>来自 <a href="http://www.wanbizu.com/news/201705229806.html">http://www.wanbizu.com/news/201705229806.html</a> ,</p>
+</blockquote>
+<p>**2.**每产生新的比特币,新的比特币会记录以前的记录吗?如果记录,随着记录的增多,以后产生的比特币会不会疲于更新?如果不同步,也就说明区块链的内容不一样?</p>
+<p>答:(1)当前块只会记录(从生产开始算)10分钟内的交易内容</p>
+<p>(2)内容的确不一样,但是都是承接的</p>
+<p>&ldquo;可以这么理解，比特币系统是一个巨大的、不断更新的账本。每一页都叫做一个区块，按照时间顺序连起来，就叫做比特币的区块链。每10分钟新增一个区块，里面的内容是过去10分钟系统内发生的一些交易。每一笔交易都会完完整整记录在这个账本里，比特币就是账本里记录的钱&rdquo;</p>
+<blockquote>
+<p>来自* <em>&lt;</em><a href="http://tieba.baidu.com/p/5606568292"><em>http://tieba.baidu.com/p/5606568292</em></a><em>&gt;</em></p>
+</blockquote>
+<p><strong>3</strong>.51%算力攻击</p>
+<p>答:所谓51%攻击，就是利用比特币使用算力作为竞争条件的特点，使用算力优势撤销自己已经发生的付款交易。如果有人掌握了50%以上的算力，他能够比其他人更快地找到开采区块需要的那个随机数，因此他实际上拥有了绝对哪个一区块的有效权利</p>
+<blockquote>
+<p>来自* <em>&lt;</em><a href="http://8btc.com/article-1949-1.html"><em>http://8btc.com/article-1949-1.html</em></a><em>&gt;</em></p>
+</blockquote>
+<p>交易生效是需要下一个块生成才确定的,如果有人掌握50%算力,就有能力算出另一个(并列)块,因为算力够强,继续生成下一块,而区块链会选择最长的链作为主链,从而虚假块成为主链,真正的交易块被遗弃</p>
+<p>但是基本拥有51%算力基本不可能,目前算力是 236万万亿次哈希碰撞每秒 ,而世界第一的神威太湖之光 仅9.3亿亿次每秒,</p>
+<p>**4.**比特币同时多处交易,怎么保证数据的同步?(等6个块)</p>
+<p>答:每次交易只部分块记录(块会记录块产生后的10分钟内的所有交易记录),发生一次就在块中记录一次,然后hash不停在计算,更新后面的块,等6个块就完全确定了交易</p>
+<p>**5.**如果比特币只记录10分钟内的记录,那就意味着有些块记录特别少,有些块记录特别多?</p>
+<p>答: 是先有交易才会有块,等达到一定的交易量时才会被矿工拿着这些交易记录去挖矿,所以交易记录不会有重复</p>
+<p><strong>一次交易流程大致如此:</strong></p>
+<p>1.产生新交易: 我产生一个交易A</p>
+<p>2.签名加密: 验证这个交易是不是我发起的,钱是不是我的</p>
+<p>3.交易在比特币网络中传播: 验证完成后,要别人验证,是不是我的钱,钱够不够之类的</p>
+<p>4.整合交易&amp;构建新区块: 验证交易后，每个比特币网络节点会将这些交易添加到自己的内存池中，内存池也称作交易池，用来暂存尚未被加入到区块的交易记录。而挖矿节点除了收集和验证交易以外，还会将这些交易打包到一个候选的区块中,会把交易A连同其它一些近期被创建的交易整合,打包.挖矿节点需要为内存池中的每笔交易分配一个优先级，并选择较高优先级的交易记录来构建候选区块，在区块被填满后，内存池中的剩余交易会成为下一个区块的候选交易。然后挖矿节点就准备拿候选区块来挖矿</p>
+<p>5.挖矿: 猜测一个数值(nonce),进行计算(相当复杂的),猜出一个小于nonce值就是正确的hash,即正确的块,获得&quot;记账权&quot;,那些交易记录将存在这个块中,节点(矿工)将获得奖励(网络中还有比特币时奖励比特币和交易费,没有比特币就奖励交易费)</p>
+<p>6.新区块连接到区块链:比特币交易生命周期的最后一步是将新区块连接至有最大工作量证明的链中。一个节点一旦验证了一个新的区块，它将尝试将新的区块连接到到现存的区块链组装起来。</p>
+<p>我有一个交易记录A,交易 A 会被一个或者多个签名加密(这些签名用来说明交易 A 是我发起的,不是别人)。而后，交易 A 被广播到比特币网络中，最快收到广播信息的是相邻的2- 3 个节点，这些节点都会参与验证这笔交易，于此同时将交易在网络中再次进行广播，直到这笔交易 A 被网络中大多数节点(所有下载比特币客户端的设备都有可能成为这样的节点)接收,最终，交易 A 被一个正在参与挖矿的节点验证，交易 A 连同其它一些近期被创建的交易一起被打包到一个区块 B ()中，并被添加到区块链上，这时整个区块链就被延长并新增了一个区块 B 。区块 B 获得 6 次以上的“确认”时就被认为是不可撤销的，</p>
+<blockquote>
+<p>来自* <em>&lt;</em><a href="http://www.yixieshi.com/110742.html"><em>http://www.yixieshi.com/110742.html</em></a><em>&gt;</em></p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E7%BB%BC%E5%90%88/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%8C%BA%E5%9D%97%E9%93%BE/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%8C%BA%E5%9D%97%E9%93%BE/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%8C%BA%E5%9D%97%E9%93%BE/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/%E5%A4%A7%E6%95%B0%E6%8D%AE\/%E5%8C%BA%E5%9D%97%E9%93%BE\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86\/%E5%A4%A7%E6%95%B0%E6%8D%AE\/%E5%8C%BA%E5%9D%97%E9%93%BE\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E7%BB%BC%E5%90%88/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%8C%BA%E5%9D%97%E9%93%BE/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%8C%BA%E5%9D%97%E9%93%BE/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%8C%BA%E5%9D%97%E9%93%BE/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2F%25E5%25A4%25A7%25E6%2595%25B0%25E6%258D%25AE%2F%25E5%258C%25BA%25E5%259D%2597%25E9%2593%25BE%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2F%25E5%25A4%25A7%25E6%2595%25B0%25E6%258D%25AE%2F%25E5%258C%25BA%25E5%259D%2597%25E9%2593%25BE%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2F%25E4%25B8%25AA%25E4%25BA%25BA%25E5%25B0%258F%25E7%259F%25A5%25E8%25AF%2586%2F%25E5%25A4%25A7%25E6%2595%25B0%25E6%258D%25AE%2F%25E5%258C%25BA%25E5%259D%2597%25E9%2593%25BE%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

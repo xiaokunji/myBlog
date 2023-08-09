@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1. 使用 1.1. 引包 \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;com.baomidou\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;dynamic-datasource-spring-boot-starter\u0026lt;\/artifactId\u0026gt; \u0026lt;version\u0026gt;3.3.6\u0026lt;\/version\u0026gt; \u0026lt;\/dependency\u0026gt; 用最新版的就好 Maven Repository: dynamic-datasource-spring-boot-starter 不过做开发的经验来看, 应该选 倒数第二个大版本里最新的版本, 这样既能用更多的功能,又能保证没有大bug, 除非最新版本有你需要的功能\n1.2 增加配置 spring: datasource: dynamic: primary: master #设置默认的数据源或者数据源组,默认值即为master, 所以此处不写也可以 strict: false #设置严格模式,默认false不启动. 启动后在未匹配到指定数据源时候回抛出异常,不启动会使用默认数据源. datasource: master: # 第一个数据源的名称 url: jdbc:mysql:\/\/127.0.0.1:3306\/dynamic username: root password: 123456 driver-class-name: com.mysql.jdbc.Driver db_1: # 第二个数据源的名称 url: jdbc:gbase:\/\/127.0.0.1:5258\/dynamic username: root password: 123456 driver-class-name: com.mysql.jdbc.Driver 如果是多主多从或者一主多从，那么就用分组的功能实现, 即: 数据组名称_xxx，下划线前面的就是数据组名称，后面就是数据源名, 相同组名称的数据源会放在一个组下。切换数据源时，可以指定具体数据源名称，也可以指定组名然后会自动采用负载均衡算法切换,\n例如: 上面配置中的\u0026quot;db_1\u0026quot;, 表示db分组, 1 名称的数据源, 如果再增加一个\u0026quot;db_2\u0026quot;, 则表示这两个数据源是同一个分组, 当在@DS中只指定\u0026quot;db\u0026quot;, 则会在这个分组中采用负载均衡方式选数据源(默认是轮询)\n1.3 使用@DS注解 @DS注解, 是用来表示使用哪个数据源的, 也是切换数据源功能的核心注解, 它可以用来类和方法上, 方法上的优先级更高, 例如 service层, Mapper层,都可以, 如果没有配置,则会使用默认数据源",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/mybatis-plus\/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1. 使用 1.1. 引包 &lt;dependency&gt; &lt;groupId&gt;com.baomidou&lt;/groupId&gt; &lt;artifactId&gt;dynamic-datasource-spring-boot-starter&lt;/artifactId&gt; &lt;version&gt;3.3.6&lt;/version&gt; &lt;/dependency&gt; 用最新版的就好 Maven Repository: dynamic-datasource-spring-boot-starter 不过做开发的经验来看, 应该选 倒数第二个大版本里最新的版本, 这样既能用更多的功能,又能保证没有大bug, 除非最新版本有你需要的功能
+1.2 增加配置 spring: datasource: dynamic: primary: master #设置默认的数据源或者数据源组,默认值即为master, 所以此处不写也可以 strict: false #设置严格模式,默认false不启动. 启动后在未匹配到指定数据源时候回抛出异常,不启动会使用默认数据源. datasource: master: # 第一个数据源的名称 url: jdbc:mysql://127.0.0.1:3306/dynamic username: root password: 123456 driver-class-name: com.mysql.jdbc.Driver db_1: # 第二个数据源的名称 url: jdbc:gbase://127.0.0.1:5258/dynamic username: root password: 123456 driver-class-name: com.mysql.jdbc.Driver 如果是多主多从或者一主多从，那么就用分组的功能实现, 即: 数据组名称_xxx，下划线前面的就是数据组名称，后面就是数据源名, 相同组名称的数据源会放在一个组下。切换数据源时，可以指定具体数据源名称，也可以指定组名然后会自动采用负载均衡算法切换,
+例如: 上面配置中的&quot;db_1&quot;, 表示db分组, 1 名称的数据源, 如果再增加一个&quot;db_2&quot;, 则表示这两个数据源是同一个分组, 当在@DS中只指定&quot;db&quot;, 则会在这个分组中采用负载均衡方式选数据源(默认是轮询)
+1.3 使用@DS注解 @DS注解, 是用来表示使用哪个数据源的, 也是切换数据源功能的核心注解, 它可以用来类和方法上, 方法上的优先级更高, 例如 service层, Mapper层,都可以, 如果没有配置,则会使用默认数据源">
+
+
+<meta property="og:description" content="[toc]
+1. 使用 1.1. 引包 &lt;dependency&gt; &lt;groupId&gt;com.baomidou&lt;/groupId&gt; &lt;artifactId&gt;dynamic-datasource-spring-boot-starter&lt;/artifactId&gt; &lt;version&gt;3.3.6&lt;/version&gt; &lt;/dependency&gt; 用最新版的就好 Maven Repository: dynamic-datasource-spring-boot-starter 不过做开发的经验来看, 应该选 倒数第二个大版本里最新的版本, 这样既能用更多的功能,又能保证没有大bug, 除非最新版本有你需要的功能
+1.2 增加配置 spring: datasource: dynamic: primary: master #设置默认的数据源或者数据源组,默认值即为master, 所以此处不写也可以 strict: false #设置严格模式,默认false不启动. 启动后在未匹配到指定数据源时候回抛出异常,不启动会使用默认数据源. datasource: master: # 第一个数据源的名称 url: jdbc:mysql://127.0.0.1:3306/dynamic username: root password: 123456 driver-class-name: com.mysql.jdbc.Driver db_1: # 第二个数据源的名称 url: jdbc:gbase://127.0.0.1:5258/dynamic username: root password: 123456 driver-class-name: com.mysql.jdbc.Driver 如果是多主多从或者一主多从，那么就用分组的功能实现, 即: 数据组名称_xxx，下划线前面的就是数据组名称，后面就是数据源名, 相同组名称的数据源会放在一个组下。切换数据源时，可以指定具体数据源名称，也可以指定组名然后会自动采用负载均衡算法切换,
+例如: 上面配置中的&quot;db_1&quot;, 表示db分组, 1 名称的数据源, 如果再增加一个&quot;db_2&quot;, 则表示这两个数据源是同一个分组, 当在@DS中只指定&quot;db&quot;, 则会在这个分组中采用负载均衡方式选数据源(默认是轮询)
+1.3 使用@DS注解 @DS注解, 是用来表示使用哪个数据源的, 也是切换数据源功能的核心注解, 它可以用来类和方法上, 方法上的优先级更高, 例如 service层, Mapper层,都可以, 如果没有配置,则会使用默认数据源">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1. 使用 1.1. 引包 &lt;dependency&gt; &lt;groupId&gt;com.baomidou&lt;/groupId&gt; &lt;artifactId&gt;dynamic-datasource-spring-boot-starter&lt;/artifactId&gt; &lt;version&gt;3.3.6&lt;/version&gt; &lt;/dependency&gt; 用最新版的就好 Maven Repository: dynamic-datasource-spring-boot-starter 不过做开发的经验来看, 应该选 倒数第二个大版本里最新的版本, 这样既能用更多的功能,又能保证没有大bug, 除非最新版本有你需要的功能
+1.2 增加配置 spring: datasource: dynamic: primary: master #设置默认的数据源或者数据源组,默认值即为master, 所以此处不写也可以 strict: false #设置严格模式,默认false不启动. 启动后在未匹配到指定数据源时候回抛出异常,不启动会使用默认数据源. datasource: master: # 第一个数据源的名称 url: jdbc:mysql://127.0.0.1:3306/dynamic username: root password: 123456 driver-class-name: com.mysql.jdbc.Driver db_1: # 第二个数据源的名称 url: jdbc:gbase://127.0.0.1:5258/dynamic username: root password: 123456 driver-class-name: com.mysql.jdbc.Driver 如果是多主多从或者一主多从，那么就用分组的功能实现, 即: 数据组名称_xxx，下划线前面的就是数据组名称，后面就是数据源名, 相同组名称的数据源会放在一个组下。切换数据源时，可以指定具体数据源名称，也可以指定组名然后会自动采用负载均衡算法切换,
+例如: 上面配置中的&quot;db_1&quot;, 表示db分组, 1 名称的数据源, 如果再增加一个&quot;db_2&quot;, 则表示这两个数据源是同一个分组, 当在@DS中只指定&quot;db&quot;, 则会在这个分组中采用负载均衡方式选数据源(默认是轮询)
+1.3 使用@DS注解 @DS注解, 是用来表示使用哪个数据源的, 也是切换数据源功能的核心注解, 它可以用来类和方法上, 方法上的优先级更高, 例如 service层, Mapper层,都可以, 如果没有配置,则会使用默认数据源">
+<meta name="twitter:description" content="[toc]
+1. 使用 1.1. 引包 &lt;dependency&gt; &lt;groupId&gt;com.baomidou&lt;/groupId&gt; &lt;artifactId&gt;dynamic-datasource-spring-boot-starter&lt;/artifactId&gt; &lt;version&gt;3.3.6&lt;/version&gt; &lt;/dependency&gt; 用最新版的就好 Maven Repository: dynamic-datasource-spring-boot-starter 不过做开发的经验来看, 应该选 倒数第二个大版本里最新的版本, 这样既能用更多的功能,又能保证没有大bug, 除非最新版本有你需要的功能
+1.2 增加配置 spring: datasource: dynamic: primary: master #设置默认的数据源或者数据源组,默认值即为master, 所以此处不写也可以 strict: false #设置严格模式,默认false不启动. 启动后在未匹配到指定数据源时候回抛出异常,不启动会使用默认数据源. datasource: master: # 第一个数据源的名称 url: jdbc:mysql://127.0.0.1:3306/dynamic username: root password: 123456 driver-class-name: com.mysql.jdbc.Driver db_1: # 第二个数据源的名称 url: jdbc:gbase://127.0.0.1:5258/dynamic username: root password: 123456 driver-class-name: com.mysql.jdbc.Driver 如果是多主多从或者一主多从，那么就用分组的功能实现, 即: 数据组名称_xxx，下划线前面的就是数据组名称，后面就是数据源名, 相同组名称的数据源会放在一个组下。切换数据源时，可以指定具体数据源名称，也可以指定组名然后会自动采用负载均衡算法切换,
+例如: 上面配置中的&quot;db_1&quot;, 表示db分组, 1 名称的数据源, 如果再增加一个&quot;db_2&quot;, 则表示这两个数据源是同一个分组, 当在@DS中只指定&quot;db&quot;, 则会在这个分组中采用负载均衡方式选数据源(默认是轮询)
+1.3 使用@DS注解 @DS注解, 是用来表示使用哪个数据源的, 也是切换数据源功能的核心注解, 它可以用来类和方法上, 方法上的优先级更高, 例如 service层, Mapper层,都可以, 如果没有配置,则会使用默认数据源">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1-使用">1. 使用</h1>
+<h2 id="11-引包">1.1. 引包</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>com.baomidou<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>dynamic-datasource-spring-boot-starter<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;version&gt;</span>3.3.6<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><p>用最新版的就好 <a href="https://mvnrepository.com/artifact/com.baomidou/dynamic-datasource-spring-boot-starter">Maven Repository:  dynamic-datasource-spring-boot-starter </a></p>
+<blockquote>
+<p>不过做开发的经验来看, 应该选 倒数第二个大版本里最新的版本, 这样既能用更多的功能,又能保证没有大bug, 除非最新版本有你需要的功能</p>
+</blockquote>
+<h2 id="12-增加配置">1.2 增加配置</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">datasource</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">dynamic</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">primary</span>: <span style="color:#ae81ff">master</span> <span style="color:#75715e">#设置默认的数据源或者数据源组,默认值即为master, 所以此处不写也可以</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">strict</span>: <span style="color:#66d9ef">false</span> <span style="color:#75715e">#设置严格模式,默认false不启动. 启动后在未匹配到指定数据源时候回抛出异常,不启动会使用默认数据源.</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">datasource</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">master</span>: <span style="color:#75715e"># 第一个数据源的名称</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">url</span>: <span style="color:#ae81ff">jdbc:mysql://127.0.0.1:3306/dynamic</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">username</span>: <span style="color:#ae81ff">root</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">password</span>: <span style="color:#ae81ff">123456</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">driver-class-name</span>: <span style="color:#ae81ff">com.mysql.jdbc.Driver</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">db_1</span>: <span style="color:#75715e"># 第二个数据源的名称</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">url</span>: <span style="color:#ae81ff">jdbc:gbase://127.0.0.1:5258/dynamic</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">username</span>: <span style="color:#ae81ff">root</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">password</span>: <span style="color:#ae81ff">123456</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">driver-class-name</span>: <span style="color:#ae81ff">com.mysql.jdbc.Driver</span>
+</span></span></code></pre></div><p>如果是多主多从或者一主多从，那么就用分组的功能实现, 即:  <strong>数据组名称_xxx</strong>，下划线前面的就是数据组名称，后面就是数据源名, 相同组名称的数据源会放在一个组下。切换数据源时，可以指定<strong>具体数据源名称</strong>，也可以指定<strong>组名</strong>然后会自动采用负载均衡算法切换,</p>
+<p>例如: 上面配置中的&quot;db_1&quot;, 表示db分组, 1 名称的数据源, 如果再增加一个&quot;db_2&quot;, 则表示这两个数据源是同一个分组, 当在<code>@DS</code>中只指定&quot;db&quot;, 则会在这个分组中采用负载均衡方式选数据源(默认是轮询)</p>
+<h2 id="13-使用ds注解">1.3 使用@DS注解</h2>
+<p>@DS注解, 是用来表示使用哪个数据源的, 也是切换数据源功能的核心注解, <strong>它可以用来类和方法上, 方法上的优先级更高</strong>, 例如 service层, Mapper层,都可以, 如果没有配置,则会使用默认数据源</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@DS</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;master&#34;</span><span style="color:#f92672">)</span> <span style="color:#75715e">// 在类上加
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserServiceImpl</span> <span style="color:#66d9ef">implements</span> UserService <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> JdbcTemplate jdbcTemplate<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Object<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">selectAll</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> jdbcTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">queryForList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;select * from user&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">@DS</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;db_1&#34;</span><span style="color:#f92672">)</span> <span style="color:#75715e">// 在方法上加
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Object<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">selectByCondition</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> jdbcTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">queryForList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;select * from user where age &gt;10&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>官方建议不建议@DS放在Mapper上, 所以网上有很多例子是放在service上,</p>
+<p>但是这有个问题, 当在service中需要访问两个数据库时, 就会无法切换数据源, 毕竟@DS是加在service上, 在同一个service上操作, 自然不会切换, 官方也给出解决方案, 在方法上进一步指定数据源, (伪代码)例如:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Person</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    dbService1 db_1<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    dbService2 db_2<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>        db_1<span style="color:#f92672">.</span><span style="color:#a6e22e">save</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 如果 db_2.save() 不指定数据源, 数据源会使用db_1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        db_2<span style="color:#f92672">.</span><span style="color:#a6e22e">save</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@DS</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;db_1&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">dbService1</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">save</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@DS</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;db_2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">dbService2</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@DS</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;db_2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">save</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><a href="https://segmentfault.com/q/1010000041340273">mybatis-plus中多数据源切换@DS注解到底放在哪一层合适？</a></p>
+<p><a href="https://github.com/baomidou/dynamic-datasource-spring-boot-starter/issues/259">@DS不建议加在mapper上的原因是?</a></p>
+<h1 id="2-源码">2. 源码</h1>
+<p>一般starter自动配置，都是从 <strong>META-INF/spring.factories</strong>文件中指定自动配置类：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">.</span><span style="color:#a6e22e">autoconfigure</span><span style="color:#f92672">.</span><span style="color:#a6e22e">EnableAutoConfiguration</span><span style="color:#f92672">=</span><span style="color:#960050;background-color:#1e0010">\</span>
+</span></span><span style="display:flex;"><span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">baomidou</span><span style="color:#f92672">.</span><span style="color:#a6e22e">dynamic</span><span style="color:#f92672">.</span><span style="color:#a6e22e">datasource</span><span style="color:#f92672">.</span><span style="color:#a6e22e">spring</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">.</span><span style="color:#a6e22e">autoconfigure</span><span style="color:#f92672">.</span><span style="color:#a6e22e">DynamicDataSourceAutoConfiguration</span>
+</span></span></code></pre></div><p>所以打开 <strong>DynamicDataSourceAutoConfiguration</strong>  文件</p>
+<h2 id="21-configuration文件-加载配置与bean注入">2.1 Configuration文件, 加载配置与bean注入</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 动态数据源核心自动配置类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">@Slf4j</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@EnableConfigurationProperties</span><span style="color:#f92672">(</span>DynamicDataSourceProperties<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// @AutoConfigureBefore 注解的意思是 在DataSourceAutoConfiguration和DruidDataSourceAutoConfigure之前就注册当前bean
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 这里特别注意一下, 在 V3.3.3 之前, 没有把DruidDataSourceAutoConfigure加进来, 所以导致项目中有druid时,数据源无法切换或没有druid配置则报错
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">@AutoConfigureBefore</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> DataSourceAutoConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//引入了Druid的autoConfig和各种数据源连接池的Creator
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">@Import</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>DynamicDataSourceCreatorAutoConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> DynamicDataSourceAopConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> DynamicDataSourceAssistConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@ConditionalOnProperty</span><span style="color:#f92672">(</span>prefix <span style="color:#f92672">=</span> DynamicDataSourceProperties<span style="color:#f92672">.</span><span style="color:#a6e22e">PREFIX</span><span style="color:#f92672">,</span> name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;enabled&#34;</span><span style="color:#f92672">,</span> havingValue <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;true&#34;</span><span style="color:#f92672">,</span> matchIfMissing <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamicDataSourceAutoConfiguration</span>  <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> DynamicDataSourceProperties properties<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//读取多数据源配置，注入到spring容器中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ConditionalOnMissingBean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DynamicDataSourceProvider <span style="color:#a6e22e">dynamicDataSourceProvider</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> DataSourceProperty<span style="color:#f92672">&gt;</span> datasourceMap <span style="color:#f92672">=</span> properties<span style="color:#f92672">.</span><span style="color:#a6e22e">getDatasource</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> YmlDynamicDataSourceProvider<span style="color:#f92672">(</span>datasourceMap<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//注册自己的动态多数据源DataSource
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ConditionalOnMissingBean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">dataSource</span><span style="color:#f92672">(</span>DynamicDataSourceProvider dynamicDataSourceProvider<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        DynamicRoutingDataSource dataSource <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DynamicRoutingDataSource<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        dataSource<span style="color:#f92672">.</span><span style="color:#a6e22e">setPrimary</span><span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrimary</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        dataSource<span style="color:#f92672">.</span><span style="color:#a6e22e">setStrict</span><span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">getStrict</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        dataSource<span style="color:#f92672">.</span><span style="color:#a6e22e">setStrategy</span><span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">getStrategy</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        dataSource<span style="color:#f92672">.</span><span style="color:#a6e22e">setProvider</span><span style="color:#f92672">(</span>dynamicDataSourceProvider<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        dataSource<span style="color:#f92672">.</span><span style="color:#a6e22e">setP6spy</span><span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">getP6spy</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        dataSource<span style="color:#f92672">.</span><span style="color:#a6e22e">setSeata</span><span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">getSeata</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> dataSource<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//AOP切面，对DS注解过的方法进行增强，达到切换数据源的目的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Role</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> BeanDefinition<span style="color:#f92672">.</span><span style="color:#a6e22e">ROLE_INFRASTRUCTURE</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ConditionalOnMissingBean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DynamicDataSourceAnnotationAdvisor <span style="color:#a6e22e">dynamicDatasourceAnnotationAdvisor</span><span style="color:#f92672">(</span>DsProcessor dsProcessor<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        DynamicDataSourceAnnotationInterceptor interceptor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DynamicDataSourceAnnotationInterceptor<span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">isAllowedPublicOnly</span><span style="color:#f92672">(),</span> dsProcessor<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        DynamicDataSourceAnnotationAdvisor advisor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DynamicDataSourceAnnotationAdvisor<span style="color:#f92672">(</span>interceptor<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        advisor<span style="color:#f92672">.</span><span style="color:#a6e22e">setOrder</span><span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">getOrder</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> advisor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//关于分布式事务加强
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Role</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> BeanDefinition<span style="color:#f92672">.</span><span style="color:#a6e22e">ROLE_INFRASTRUCTURE</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ConditionalOnProperty</span><span style="color:#f92672">(</span>prefix <span style="color:#f92672">=</span> DynamicDataSourceProperties<span style="color:#f92672">.</span><span style="color:#a6e22e">PREFIX</span><span style="color:#f92672">,</span> name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;seata&#34;</span><span style="color:#f92672">,</span> havingValue <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;false&#34;</span><span style="color:#f92672">,</span> matchIfMissing <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Advisor <span style="color:#a6e22e">dynamicTransactionAdvisor</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        AspectJExpressionPointcut pointcut <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> AspectJExpressionPointcut<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        pointcut<span style="color:#f92672">.</span><span style="color:#a6e22e">setExpression</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;@annotation(com.baomidou.dynamic.datasource.annotation.DSTransactional)&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> DefaultPointcutAdvisor<span style="color:#f92672">(</span>pointcut<span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> DynamicTransactionAdvisor<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//动态参数解析器链
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ConditionalOnMissingBean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DsProcessor <span style="color:#a6e22e">dsProcessor</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        DsHeaderProcessor headerProcessor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DsHeaderProcessor<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        DsSessionProcessor sessionProcessor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DsSessionProcessor<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        DsSpelExpressionProcessor spelExpressionProcessor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DsSpelExpressionProcessor<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        headerProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">setNextProcessor</span><span style="color:#f92672">(</span>sessionProcessor<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        sessionProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">setNextProcessor</span><span style="color:#f92672">(</span>spelExpressionProcessor<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> headerProcessor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>我们可以发现，在使用的时候配置的前缀为<code>spring.datasource.dynamic</code>的配置都会被读取到<code>DynamicDataSourceProperties</code>类，作为一个Bean注入到Spring容器。其实这种读取配置文件信息的方式在日常开发中也是很常见的。</p>
+<h3 id="211--配置类">2.1.1  配置类</h3>
+<p><strong>DynamicDataSourceProperties</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@ConfigurationProperties</span><span style="color:#f92672">(</span>prefix <span style="color:#f92672">=</span> DynamicDataSourceProperties<span style="color:#f92672">.</span><span style="color:#a6e22e">PREFIX</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamicDataSourceProperties</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String PREFIX <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;spring.datasource.dynamic&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String HEALTH <span style="color:#f92672">=</span> PREFIX <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.health&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 必须设置默认的库,默认master
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String primary <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;master&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 是否启用严格模式,默认不启动. 严格模式下未匹配到数据源直接报错, 非严格模式下则使用默认数据源primary所设置的数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Boolean strict <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// .......
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="22-注册datasource">2.2 注册DataSource</h2>
+<p>在 <code>DynamicDataSourceAutoConfiguration</code> 类中, 还加载了DataSource, 我们知道 DataSource是spring用来链接数据库的,</p>
+<p>它注册了一个实现类 <code>DynamicRoutingDataSource</code>, 这个类还有一个父类<code>AbstractRoutingDataSource</code>, 我们先看<code>AbstractRoutingDataSource</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 抽象动态获取数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @author TaoYu
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @since 2.2.0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AbstractRoutingDataSource</span> <span style="color:#66d9ef">extends</span> AbstractDataSource <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//抽象方法，由子类实现，让子类决定最终使用的数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">abstract</span> DataSource <span style="color:#a6e22e">determineDataSource</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//重写getConnection()方法，实现切换数据源的功能
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Connection <span style="color:#a6e22e">getConnection</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> SQLException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//这里xid涉及分布式事务的处理
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        String xid <span style="color:#f92672">=</span> TransactionContext<span style="color:#f92672">.</span><span style="color:#a6e22e">getXID</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>xid<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//不使用分布式事务，就是直接返回一个数据连接(实现类: ItemDataSource.class)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> determineDataSource<span style="color:#f92672">().</span><span style="color:#a6e22e">getConnection</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            String ds <span style="color:#f92672">=</span> DynamicDataSourceContextHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">peek</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            ConnectionProxy connection <span style="color:#f92672">=</span> ConnectionFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">getConnection</span><span style="color:#f92672">(</span>ds<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> connection <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">?</span> getConnectionProxy<span style="color:#f92672">(</span>ds<span style="color:#f92672">,</span> determineDataSource<span style="color:#f92672">().</span><span style="color:#a6e22e">getConnection</span><span style="color:#f92672">())</span> <span style="color:#f92672">:</span> connection<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>父类很简单, 只是区分了分布式事务的取connect的方式,所以再来看下其子类<code>DynamicRoutingDataSource</code> 的内容</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Slf4j</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamicRoutingDataSource</span> <span style="color:#66d9ef">extends</span> AbstractRoutingDataSource <span style="color:#66d9ef">implements</span> InitializingBean<span style="color:#f92672">,</span> DisposableBean <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String UNDERLINE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;_&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 所有数据库
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> DataSource<span style="color:#f92672">&gt;</span> dataSourceMap <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 分组数据库
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> GroupDataSource<span style="color:#f92672">&gt;</span> groupDataSources <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Setter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> DynamicDataSourceProvider provider<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Setter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Class<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">extends</span> DynamicDataSourceStrategy<span style="color:#f92672">&gt;</span> strategy <span style="color:#f92672">=</span> LoadBalanceDynamicDataSourceStrategy<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Setter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String primary <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;master&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Setter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Boolean strict <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Setter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Boolean p6spy <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Setter</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Boolean seata <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">determineDataSource</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 获得数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> getDataSource<span style="color:#f92672">(</span>DynamicDataSourceContextHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">peek</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> DataSource <span style="color:#a6e22e">determinePrimaryDataSource</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        log<span style="color:#f92672">.</span><span style="color:#a6e22e">debug</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dynamic-datasource switch to the primary datasource&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> groupDataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">containsKey</span><span style="color:#f92672">(</span>primary<span style="color:#f92672">)</span> <span style="color:#f92672">?</span> groupDataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>primary<span style="color:#f92672">).</span><span style="color:#a6e22e">determineDataSource</span><span style="color:#f92672">()</span> <span style="color:#f92672">:</span> dataSourceMap<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>primary<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// bean的属性加载完后, 执行该方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">afterPropertiesSet</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 检查开启了配置但没有相关依赖
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        checkEnv<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 拿到所有的数据源, Key是数据源的名称，Value则是DataSource。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> DataSource<span style="color:#f92672">&gt;</span> dataSources <span style="color:#f92672">=</span> provider<span style="color:#f92672">.</span><span style="color:#a6e22e">loadDataSources</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 添加并分组数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Map<span style="color:#f92672">.</span><span style="color:#a6e22e">Entry</span><span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> DataSource<span style="color:#f92672">&gt;</span> dsItem <span style="color:#f92672">:</span> dataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">entrySet</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            addDataSource<span style="color:#f92672">(</span>dsItem<span style="color:#f92672">.</span><span style="color:#a6e22e">getKey</span><span style="color:#f92672">(),</span> dsItem<span style="color:#f92672">.</span><span style="color:#a6e22e">getValue</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 检测默认数据源是否设置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>groupDataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">containsKey</span><span style="color:#f92672">(</span>primary<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dynamic-datasource initial loaded [{}] datasource,primary group datasource named [{}]&#34;</span><span style="color:#f92672">,</span> dataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">size</span><span style="color:#f92672">(),</span> primary<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>dataSourceMap<span style="color:#f92672">.</span><span style="color:#a6e22e">containsKey</span><span style="color:#f92672">(</span>primary<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dynamic-datasource initial loaded [{}] datasource,primary datasource named [{}]&#34;</span><span style="color:#f92672">,</span> dataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">size</span><span style="color:#f92672">(),</span> primary<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> RuntimeException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dynamic-datasource Please check the setting of primary&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 获取数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param ds 数据源名称
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">getDataSource</span><span style="color:#f92672">(</span>String ds<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>ds<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 没有ds注解, 则默认用 Primary
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> determinePrimaryDataSource<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>groupDataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">()</span> <span style="color:#f92672">&amp;&amp;</span> groupDataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">containsKey</span><span style="color:#f92672">(</span>ds<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 如果有组, 则用负载均衡的方式取一个
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            log<span style="color:#f92672">.</span><span style="color:#a6e22e">debug</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dynamic-datasource switch to the datasource named [{}]&#34;</span><span style="color:#f92672">,</span> ds<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> groupDataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>ds<span style="color:#f92672">).</span><span style="color:#a6e22e">determineDataSource</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>dataSourceMap<span style="color:#f92672">.</span><span style="color:#a6e22e">containsKey</span><span style="color:#f92672">(</span>ds<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 没有组, 则直接取
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            log<span style="color:#f92672">.</span><span style="color:#a6e22e">debug</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dynamic-datasource switch to the datasource named [{}]&#34;</span><span style="color:#f92672">,</span> ds<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> dataSourceMap<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>ds<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 严格模式下直接报错
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>strict<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> CannotFindDataSourceException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dynamic-datasource could not find a datasource named&#34;</span> <span style="color:#f92672">+</span> ds<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> determinePrimaryDataSource<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// .....
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>它实现了<code>InitializingBean</code>接口，这个接口需要实现<code>afterPropertiesSet()</code>方法，这是一个Bean的生命周期函数，在Bean初始化的时候做一些操作</p>
+<h3 id="221--获取所有的datasource">2.2.1  获取所有的DataSource</h3>
+<p>先看一下它是怎么获得数据源的?  <code>provider.loadDataSources()</code> 是抽象方法, 有两个实现</p>
+<p><code>YmlDynamicDataSourceProvider</code>和<code>AbstractJdbcDataSourceProvider</code>,  在<code>DynamicDataSourceAutoConfiguration</code> 类中, 注入的是<code>YmlDynamicDataSourceProvider</code>, 所以直接看它的实现 , 最后会跳转到<code>AbstractDataSourceProvider</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Slf4j</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AbstractDataSourceProvider</span> <span style="color:#66d9ef">implements</span> DynamicDataSourceProvider <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> DefaultDataSourceCreator defaultDataSourceCreator<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> DataSource<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">createDataSourceMap</span><span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>            Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> DataSourceProperty<span style="color:#f92672">&gt;</span> dataSourcePropertiesMap<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> DataSource<span style="color:#f92672">&gt;</span> dataSourceMap <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;&gt;(</span>dataSourcePropertiesMap<span style="color:#f92672">.</span><span style="color:#a6e22e">size</span><span style="color:#f92672">()</span> <span style="color:#f92672">*</span> 2<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Map<span style="color:#f92672">.</span><span style="color:#a6e22e">Entry</span><span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> DataSourceProperty<span style="color:#f92672">&gt;</span> item <span style="color:#f92672">:</span> dataSourcePropertiesMap<span style="color:#f92672">.</span><span style="color:#a6e22e">entrySet</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            DataSourceProperty dataSourceProperty <span style="color:#f92672">=</span> item<span style="color:#f92672">.</span><span style="color:#a6e22e">getValue</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            String poolName <span style="color:#f92672">=</span> dataSourceProperty<span style="color:#f92672">.</span><span style="color:#a6e22e">getPoolName</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>poolName <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">||</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>poolName<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                poolName <span style="color:#f92672">=</span> item<span style="color:#f92672">.</span><span style="color:#a6e22e">getKey</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            dataSourceProperty<span style="color:#f92672">.</span><span style="color:#a6e22e">setPoolName</span><span style="color:#f92672">(</span>poolName<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//            这里的defaultDataSourceCreator.createDataSource()方法使用到适配器模式。因为每种配置数据源创建的DataSource实现类都不一定相同的，所以需要根据配置的数据源类型进行具体的DataSource创建。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            dataSourceMap<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>poolName<span style="color:#f92672">,</span> defaultDataSourceCreator<span style="color:#f92672">.</span><span style="color:#a6e22e">createDataSource</span><span style="color:#f92672">(</span>dataSourceProperty<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> dataSourceMap<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h4 id="2211-构建datasource">2.2.1.1 构建DataSource</h4>
+<p>来看一下<code>defaultDataSourceCreator.createDataSource()</code>的逻辑</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">createDataSource</span><span style="color:#f92672">(</span>DataSourceProperty dataSourceProperty<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        DataSourceCreator dataSourceCreator <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">//this.creators是所有适配的DataSourceCreator实现类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>DataSourceCreator creator <span style="color:#f92672">:</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">creators</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//根据配置匹配对应的dataSourceCreator
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>creator<span style="color:#f92672">.</span><span style="color:#a6e22e">support</span><span style="color:#f92672">(</span>dataSourceProperty<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//如果匹配，则使用对应的dataSourceCreator
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                dataSourceCreator <span style="color:#f92672">=</span> creator<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>dataSourceCreator <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> IllegalStateException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;creator must not be null,please check the DataSourceCreator&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        String publicKey <span style="color:#f92672">=</span> dataSourceProperty<span style="color:#f92672">.</span><span style="color:#a6e22e">getPublicKey</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>publicKey<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            dataSourceProperty<span style="color:#f92672">.</span><span style="color:#a6e22e">setPublicKey</span><span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">getPublicKey</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        Boolean lazy <span style="color:#f92672">=</span> dataSourceProperty<span style="color:#f92672">.</span><span style="color:#a6e22e">getLazy</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>lazy <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            dataSourceProperty<span style="color:#f92672">.</span><span style="color:#a6e22e">setLazy</span><span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">getLazy</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">//然后再调用createDataSource方法进行创建对应DataSource
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        DataSource dataSource <span style="color:#f92672">=</span> dataSourceCreator<span style="color:#f92672">.</span><span style="color:#a6e22e">createDataSource</span><span style="color:#f92672">(</span>dataSourceProperty<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// (如果有则运行, 可以自定义)运行 建表语句和数据脚本
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">runScrip</span><span style="color:#f92672">(</span>dataSource<span style="color:#f92672">,</span> dataSourceProperty<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> wrapDataSource<span style="color:#f92672">(</span>dataSource<span style="color:#f92672">,</span> dataSourceProperty<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>创建DataSource的有很多实现类, 每种数据源都有自己的实现</p>
+<p>对应的全部实现类是放在creator包下：</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2319212a11c4446784d5ee196f8f67d7~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
+<p>创建dataSource就很简单了, 就是把账号/密码/url等参数设置进去</p>
+<h3 id="222-对数据源分组">2.2.2 对数据源分组</h3>
+<p>再回到之前的，当拿到DataSource的Map集合之后，再做什么呢？</p>
+<p>接着调<code>addDataSource()</code>方法，这个方法是根据下划线&quot;_&ldquo;对数据源进行分组，最后放到<code>groupDataSources</code>成员变量里面。 <code>com.baomidou.dynamic.datasource.DynamicRoutingDataSource#addDataSource</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String UNDERLINE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;_&#34;</span><span style="color:#f92672">;</span>  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 轮询策略
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">private</span> Class<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">extends</span> DynamicDataSourceStrategy<span style="color:#f92672">&gt;</span> strategy <span style="color:#f92672">=</span> LoadBalanceDynamicDataSourceStrategy<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 新数据源添加到分组
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param ds         新数据源的名字
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param dataSource 新数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addGroupDataSource</span><span style="color:#f92672">(</span>String ds<span style="color:#f92672">,</span> DataSource dataSource<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>ds<span style="color:#f92672">.</span><span style="color:#a6e22e">contains</span><span style="color:#f92672">(</span>UNDERLINE<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        String group <span style="color:#f92672">=</span> ds<span style="color:#f92672">.</span><span style="color:#a6e22e">split</span><span style="color:#f92672">(</span>UNDERLINE<span style="color:#f92672">)[</span>0<span style="color:#f92672">];</span>
+</span></span><span style="display:flex;"><span>        GroupDataSource groupDataSource <span style="color:#f92672">=</span> groupDataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>group<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>groupDataSource <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//顺便设置负载均衡策略，strategy默认是LoadBalanceDynamicDataSourceStrategy
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                groupDataSource <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> GroupDataSource<span style="color:#f92672">(</span>group<span style="color:#f92672">,</span> strategy<span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredConstructor</span><span style="color:#f92672">().</span><span style="color:#a6e22e">newInstance</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>                groupDataSources<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>group<span style="color:#f92672">,</span> groupDataSource<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> RuntimeException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dynamic-datasource - add the datasource named &#34;</span> <span style="color:#f92672">+</span> ds <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; error&#34;</span><span style="color:#f92672">,</span> e<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        groupDataSource<span style="color:#f92672">.</span><span style="color:#a6e22e">addDatasource</span><span style="color:#f92672">(</span>ds<span style="color:#f92672">,</span> dataSource<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>至此, 项目启动时, 多数据做的事就完了, 那我们执行sql时, 它是怎么切换的呢?</p>
+<h2 id="23-切换数据源">2.3 切换数据源</h2>
+<p>在前面的<code>DynamicRoutingDataSource</code>我们知道, 这是mybatisPlus写的获取数据源的类 ,   它最终是通过<code>com.baomidou.dynamic.datasource.DynamicRoutingDataSource#determineDataSource</code>获得数据源的,  在  2.2.1 也有描述.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>   <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">determineDataSource</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 从threadLocal中获取当前数据源key (就是@DS注解里的字符串)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        String dsKey <span style="color:#f92672">=</span> DynamicDataSourceContextHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">peek</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 根据key获取数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> getDataSource<span style="color:#f92672">(</span>dsKey<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>那么上面的<code>DynamicDataSourceContextHolder</code>这个类是干嘛的呢？注解@DS的值又是怎么传进来的呢？</p>
+<p>我们先看看这个类</p>
+<h3 id="231-dynamicdatasourcecontextholder">2.3.1 DynamicDataSourceContextHolder</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 核心基于ThreadLocal的切换数据源工具类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamicDataSourceContextHolder</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 为什么要用链表存储(准确的是栈)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * &lt;pre&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 为了支持嵌套切换，如ABC三个service都是不同的数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 其中A的某个业务要调B的方法，B的方法需要调用C的方法。一级一级调用切换，形成了链。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 传统的只设置当前线程的方式不能满足此业务需求，必须使用栈，后进先出。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * &lt;/pre&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> ThreadLocal<span style="color:#f92672">&lt;</span>Deque<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;&gt;</span> LOOKUP_KEY_HOLDER <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> NamedThreadLocal<span style="color:#f92672">&lt;</span>Deque<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;&gt;(</span><span style="color:#e6db74">&#34;dynamic-datasource&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> Deque<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">initialValue</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ArrayDeque<span style="color:#f92672">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">};</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 获得当前线程数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 数据源名称
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">peek</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> LOOKUP_KEY_HOLDER<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">().</span><span style="color:#a6e22e">peek</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 设置当前线程数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * &lt;p&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 如非必要不要手动调用，调用后确保最终清除
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * &lt;/p&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param ds 数据源名称
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">push</span><span style="color:#f92672">(</span>String ds<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        String dataSourceStr <span style="color:#f92672">=</span> StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">(</span>ds<span style="color:#f92672">)</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">:</span> ds<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        LOOKUP_KEY_HOLDER<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">().</span><span style="color:#a6e22e">push</span><span style="color:#f92672">(</span>dataSourceStr<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> dataSourceStr<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ....
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>这里用的是<code>NamedThreadLocal</code>, 比<code>ThreadLocal</code>多了一个名字字段而已, 大家知道<code>ThreadLocal</code> 的特性: 线程隔离/内存泄露风险, 所以 <strong>当开多线程会让多数据源切换失败(看你@DS注解打在哪和具体使用); 网上说用到 <code>DynamicDataSourceContextHolder</code>类时, 都是<code>push()</code>和<code>clean()</code>/<code>poll()</code>一起使用.其实就是避免内存泄露</strong></p>
+<p>既然有<code>peek()</code>, 那肯定有<code>push()</code>, 我们来反推一下, 看一下哪些地方在调用<code>push()</code>,  可以发现有两个地方, 分别是</p>
+<p><code>DynamicDataSourceAnnotationInterceptor</code> 和  <code>MasterSlaveAutoRoutingPlugin</code>,</p>
+<p><code>MasterSlaveAutoRoutingPlugin</code>是做主从数据库切换的, 我们自然看 <code>DynamicDataSourceAnnotationInterceptor</code></p>
+<h3 id="232-dynamicdatasourceannotationinterceptor">2.3.2 DynamicDataSourceAnnotationInterceptor</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamicDataSourceAnnotationInterceptor</span> <span style="color:#66d9ef">implements</span> MethodInterceptor <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * The identification of SPEL.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String DYNAMIC_PREFIX <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> DataSourceClassResolver dataSourceClassResolver<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> DsProcessor dsProcessor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">DynamicDataSourceAnnotationInterceptor</span><span style="color:#f92672">(</span>Boolean allowedPublicOnly<span style="color:#f92672">,</span> DsProcessor dsProcessor<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        dataSourceClassResolver <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DataSourceClassResolver<span style="color:#f92672">(</span>allowedPublicOnly<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">dsProcessor</span> <span style="color:#f92672">=</span> dsProcessor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">invoke</span><span style="color:#f92672">(</span>MethodInvocation invocation<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Throwable <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//找到@DS注解的属性值，也就是数据源名称
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        String dsKey <span style="color:#f92672">=</span> determineDatasourceKey<span style="color:#f92672">(</span>invocation<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//把数据源名称push到当前线程的栈
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        DynamicDataSourceContextHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">push</span><span style="color:#f92672">(</span>dsKey<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//执行当前方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> invocation<span style="color:#f92672">.</span><span style="color:#a6e22e">proceed</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">finally</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//从栈里释放数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            DynamicDataSourceContextHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">poll</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String <span style="color:#a6e22e">determineDatasourceKey</span><span style="color:#f92672">(</span>MethodInvocation invocation<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 从方法上和类上 获取key
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        String key <span style="color:#f92672">=</span> dataSourceClassResolver<span style="color:#f92672">.</span><span style="color:#a6e22e">findDSKey</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">.</span><span style="color:#a6e22e">getMethod</span><span style="color:#f92672">(),</span> invocation<span style="color:#f92672">.</span><span style="color:#a6e22e">getThis</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 如果数据源是以 # 开头, 则进入ds处理器, 这里用的是责任链模式
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(!</span>key<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">()</span> <span style="color:#f92672">&amp;&amp;</span> key<span style="color:#f92672">.</span><span style="color:#a6e22e">startsWith</span><span style="color:#f92672">(</span>DYNAMIC_PREFIX<span style="color:#f92672">))</span> <span style="color:#f92672">?</span> dsProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">determineDatasource</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">,</span> key<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> key<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>它是invoke方法, 一看就是反射标准写法, 看一下它的父类, <code>MethodInterceptor</code>, 它可以对AOP的切面进行增强,</p>
+<p>简单来说, 如果被切到后, 就会调用这个invoke方法</p>
+<blockquote>
+<p><a href="https://www.jianshu.com/p/71c4e8b8f09b">Spring动态代理之MethodInterceptor拦截器详解 - 简书 (jianshu.com)</a></p>
+</blockquote>
+<p>我们继续看切面是如何使用的, 而ds处理器等会讲</p>
+<h3 id="234--dynamicdatasourceannotationadvisor">2.3.4  DynamicDataSourceAnnotationAdvisor</h3>
+<p>直接看 <code>DynamicDataSourceAnnotationInterceptor</code> 在哪里用到了, 会发现回到了<code>DynamicDataSourceAutoConfiguration</code>类</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#a6e22e">@Role</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> BeanDefinition<span style="color:#f92672">.</span><span style="color:#a6e22e">ROLE_INFRASTRUCTURE</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Advisor <span style="color:#a6e22e">dynamicDatasourceAnnotationAdvisor</span><span style="color:#f92672">(</span>DsProcessor dsProcessor<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 创建拦截器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        DynamicDataSourceAnnotationInterceptor interceptor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DynamicDataSourceAnnotationInterceptor<span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">isAllowedPublicOnly</span><span style="color:#f92672">(),</span> dsProcessor<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 把拦截器放到Advisor上
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        DynamicDataSourceAnnotationAdvisor advisor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DynamicDataSourceAnnotationAdvisor<span style="color:#f92672">(</span>interceptor<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        advisor<span style="color:#f92672">.</span><span style="color:#a6e22e">setOrder</span><span style="color:#f92672">(</span>properties<span style="color:#f92672">.</span><span style="color:#a6e22e">getOrder</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> advisor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><blockquote>
+<p>Advisor是Spring AOP的顶层抽象，用来管理Advice和Pointcut</p>
+<p>@Transactional 也是用这种方式做的</p>
+<p><a href="https://cloud.tencent.com/developer/article/1808649">从 AbstractPointcutAdvisor 开始： Spring AOP 之 Advisor、PointcutAdvisor 介绍</a></p>
+</blockquote>
+<p><code>DynamicDataSourceAnnotationAdvisor</code>是用于AOP切面编程的，针对注解@DS的切面进行处理：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamicDataSourceAnnotationAdvisor</span> <span style="color:#66d9ef">extends</span> AbstractPointcutAdvisor <span style="color:#66d9ef">implements</span> BeanFactoryAware <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Advice advice<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Pointcut pointcut<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 初始化时调用了构造方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">DynamicDataSourceAnnotationAdvisor</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@NonNull</span> DynamicDataSourceAnnotationInterceptor dynamicDataSourceAnnotationInterceptor<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">advice</span> <span style="color:#f92672">=</span> dynamicDataSourceAnnotationInterceptor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">pointcut</span> <span style="color:#f92672">=</span> buildPointcut<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Pointcut <span style="color:#a6e22e">getPointcut</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">pointcut</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Advice <span style="color:#a6e22e">getAdvice</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">advice</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Pointcut <span style="color:#a6e22e">buildPointcut</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        Pointcut cpc <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> AnnotationMatchingPointcut<span style="color:#f92672">(</span>DS<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        Pointcut mpc <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> AnnotationMethodPoint<span style="color:#f92672">(</span>DS<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//方法优于类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ComposablePointcut<span style="color:#f92672">(</span>cpc<span style="color:#f92672">).</span><span style="color:#a6e22e">union</span><span style="color:#f92672">(</span>mpc<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span> <span style="color:#75715e">// .....   
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>所以总的来说, 当执行的方法或者类被 @DS切到时, 就会执行增强方法, 把数据源key放到threadLocal中, 获取数据源时从threadLocal中拿到key进而拿到数据源</p>
+<p>至此, 多数据源的初始化和使用时切换就结束了</p>
+<h2 id="24-数据源的处理器">2.4 数据源的处理器</h2>
+<p>在<code>com.baomidou.dynamic.datasource.aop.DynamicDataSourceAnnotationInterceptor#determineDatasourceKey</code>处, 有说过ds处理器, 它是干什么的呢?</p>
+<p>我们常用的指定数据源的方式时是 <code>@DS(&quot;master&quot;)</code> <code>@DS(&quot;salve_1&quot;)</code>, 这些都是固定字符串, 如果我们需要根据租户来切换数据源呢?或者引入灰度系统后按Header的属性来切换呢? 因此plus的提供了各种数据源的处理器</p>
+<ol>
+<li>DsHeaderProcessor : 从header中获取</li>
+<li>DsSessionProcessor: 从session中获取</li>
+<li>DsSpelExpressionProcessor: 解析Spel语法获取</li>
+</ol>
+<blockquote>
+<p>常见的@vaule()注解就支持spel语法, 从配置文件中取值或者写默认值都是spel语法</p>
+<p><a href="https://zhuanlan.zhihu.com/p/174786047#">玩转Spring中强大的spel表达式！ - 知乎 (zhihu.com)</a></p>
+</blockquote>
+<p>继续 <code>com.baomidou.dynamic.datasource.aop.DynamicDataSourceAnnotationInterceptor#determineDatasourceKey</code>, 看一下它的代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>  <span style="color:#66d9ef">private</span> String <span style="color:#a6e22e">determineDatasourceKey</span><span style="color:#f92672">(</span>MethodInvocation invocation<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        String key <span style="color:#f92672">=</span> dataSourceClassResolver<span style="color:#f92672">.</span><span style="color:#a6e22e">findDSKey</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">.</span><span style="color:#a6e22e">getMethod</span><span style="color:#f92672">(),</span> invocation<span style="color:#f92672">.</span><span style="color:#a6e22e">getThis</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">// dsProcessor.determineDatasource() 从处理器获取数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(!</span>key<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">()</span> <span style="color:#f92672">&amp;&amp;</span> key<span style="color:#f92672">.</span><span style="color:#a6e22e">startsWith</span><span style="color:#f92672">(</span>DYNAMIC_PREFIX<span style="color:#f92672">))</span> <span style="color:#f92672">?</span> dsProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">determineDatasource</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">,</span> key<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> key<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><code>dsProcessor</code> 反向定位这个变量, 会追踪到<code>com.baomidou.dynamic.datasource.spring.boot.autoconfigure.DynamicDataSourceAutoConfiguration#dsProcessor</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span> <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ConditionalOnMissingBean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DsProcessor <span style="color:#a6e22e">dsProcessor</span><span style="color:#f92672">(</span>BeanFactory beanFactory<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 先header处理器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        DsHeaderProcessor headerProcessor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DsHeaderProcessor<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        DsSessionProcessor sessionProcessor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DsSessionProcessor<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        DsSpelExpressionProcessor spelExpressionProcessor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DsSpelExpressionProcessor<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        spelExpressionProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">setBeanResolver</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> BeanFactoryResolver<span style="color:#f92672">(</span>beanFactory<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 再session处理器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        headerProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">setNextProcessor</span><span style="color:#f92672">(</span>sessionProcessor<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 最后spel处理器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        sessionProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">setNextProcessor</span><span style="color:#f92672">(</span>spelExpressionProcessor<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> headerProcessor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>回到使用的地方, 进入方法</p>
+<p><code>com.baomidou.dynamic.datasource.processor.DsProcessor</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 决定数据源
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * &lt;pre&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *     调用底层doDetermineDatasource，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *     如果返回的是null则继续执行下一个，否则直接返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * &lt;/pre&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param invocation 方法执行信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param key        DS注解里的内容
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return 数据源名称
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">determineDatasource</span><span style="color:#f92672">(</span>MethodInvocation invocation<span style="color:#f92672">,</span> String key<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// key的格式是否匹配
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>matches<span style="color:#f92672">(</span>key<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 解析数据源key
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            String datasource <span style="color:#f92672">=</span> doDetermineDatasource<span style="color:#f92672">(</span>invocation<span style="color:#f92672">,</span> key<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>datasource <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">&amp;&amp;</span> nextProcessor <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 下一个处理器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> nextProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">determineDatasource</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">,</span> key<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> datasource<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>nextProcessor <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> nextProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">determineDatasource</span><span style="color:#f92672">(</span>invocation<span style="color:#f92672">,</span> key<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>我们以<code>DsHeaderProcessor</code> 为例:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DsHeaderProcessor</span> <span style="color:#66d9ef">extends</span> DsProcessor <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * header prefix
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String HEADER_PREFIX <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#header&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">matches</span><span style="color:#f92672">(</span>String key<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 是否 以#header 开头
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> key<span style="color:#f92672">.</span><span style="color:#a6e22e">startsWith</span><span style="color:#f92672">(</span>HEADER_PREFIX<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">doDetermineDatasource</span><span style="color:#f92672">(</span>MethodInvocation invocation<span style="color:#f92672">,</span> String key<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        HttpServletRequest request <span style="color:#f92672">=</span> <span style="color:#f92672">((</span>ServletRequestAttributes<span style="color:#f92672">)</span> RequestContextHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">getRequestAttributes</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">getRequest</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 从请求头中直接获取(很粗暴,竟然连分隔符都不用), 比如@DS(&#34;#headeruserId&#34;), 这样就会从header中取出userId字段
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> request<span style="color:#f92672">.</span><span style="color:#a6e22e">getHeader</span><span style="color:#f92672">(</span>key<span style="color:#f92672">.</span><span style="color:#a6e22e">substring</span><span style="color:#f92672">(</span>8<span style="color:#f92672">));</span><span style="color:#75715e">// 刚好把 #header 这几个字符截断
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>session处理器是以<code>#session</code> 开头</p>
+<p>按顺序处理都不是后, 就会按<code>DsSpelExpressionProcessor</code> 处理</p>
+<p>举一些例子:</p>
+<p><code>@DS(&quot;#headerUserId&quot;)</code> : 取header中的UserId字段作为数据源key</p>
+<p><code>@DS(&quot;#sessionTentendId&quot;)</code> : 取session中的TentendId字段作为数据源key</p>
+<p><code>@DS(&quot;#person&quot;)</code>: 把方法上的变量person的值作为数据源key  (SPEL语法)</p>
+<blockquote>
+<p>学习SPEL语法就会发现很多奇妙用法, 比如可与获取方法的参数;方法的返参类型; 类的名称等</p>
+</blockquote>
+<h1 id="3-qa">3. Q&amp;A</h1>
+<h2 id="31-transactional-和-ds-注解一起使用时-ds失效的问题">3.1 @Transactional 和 @DS 注解一起使用时, @DS失效的问题</h2>
+<p>这是因为 <code>@Transactional</code> <strong>开启事务后, 就不会重新拿数据源</strong>,因为@DS也得通过切面去获取数据源,  这样就导致了@DS失效.</p>
+<p>要解决的话, 就在要切换数据源的方法上也打上@DS, 或者多个数据源有修改操作可以都打上事务注解并改变传播机制,(但这其实是分布式事务的范畴, 这样操作不能保证事务了, plus也提供了<code>@DSTransactional</code> 来支持, 不够需要借助<code>seata</code>)</p>
+<p><a href="https://blog.csdn.net/weixin_40378837/article/details/106554198">@Transactional跟@DS动态数据源注解冲突_林蜗牛snail的博客-CSDN博客</a></p>
+<blockquote>
+<p>关于 <code>@DSTransactional</code> 以后再补充一下</p>
+</blockquote>
+<h2 id="32--低于v333版本无法切换数据源的问题">3.2  低于V3.3.3版本无法切换数据源的问题</h2>
+<p>这是因为在V3.3.3版本之前, <code>DruidDataSourceAutoConfigure</code>会比<code>DynamicDataSourceAutoConfiguration</code>先注册, 导致数据库有读取<code>druid</code>的配置, 所以会出现 ,没有druid配置启动报错; 数据源无法切换等等原因, 官方在V3.3.3这个版本修复了, 但是这个版本有个其他的重点bug,官方不让下载, 所以github上找不到这个版本的描述, 只在官网有描述</p>
+<blockquote>
+<p>分两步解决的,</p>
+<ol>
+<li>去除 druid pom坐标</li>
+<li>在 <code>DynamicDataSourceAutoConfiguration</code> 上指定优于 <code>DruidDataSourceAutoConfigure</code>加载</li>
+</ol>
+</blockquote>
+<p>解决办法就是排除<code>DruidDataSourceAutoConfigure</code> 类;</p>
+<p><a href="https://blog.csdn.net/w57685321/article/details/106823660">使用dynamic-datasource-spring-boot-starter做多数据源及源码分析_0x2015的博客-CSDN博客</a></p>
+<p><a href="https://juejin.cn/post/7022650688425426974">Mybatis-Plus多数据源解析 - 掘金 (juejin.cn)</a></p>
+<p><a href="https://www.kancloud.cn/tracy5546/dynamic-datasource/content/%E7%89%88%E6%9C%AC%E8%AE%B0%E5%BD%95.md">多数据源官网-版本记录</a></p>
+<p><a href="https://blog.csdn.net/weixin_43846916/article/details/110824726">Mybatis plus的多数据源@DS切换为什么不起作用了，谁的锅，@Transactional</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis/%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/mybatis-plus\/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/mybatis-plus\/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E4%BD%BF%E7%94%A8/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis/%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/mybatis-plus/%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E8%A7%A3%E6%9E%90/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fmybatis-plus%2F%25E5%25A4%259A%25E6%2595%25B0%25E6%258D%25AE%25E6%25BA%2590%25E8%25A7%25A3%25E6%259E%2590%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fmybatis-plus%2F%25E5%25A4%259A%25E6%2595%25B0%25E6%258D%25AE%25E6%25BA%2590%25E8%25A7%25A3%25E6%259E%2590%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fmybatis-plus%2F%25E5%25A4%259A%25E6%2595%25B0%25E6%258D%25AE%25E6%25BA%2590%25E8%25A7%25A3%25E6%259E%2590%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

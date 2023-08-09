@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\nK8s搭建流程-使用kubeadm\n1 准备环境 1.1 服务器要求： 建议最小硬件配置：2核CPU、2G内存、20G硬盘，服务器最好可以访问外网，会有从网上拉取镜像需求，如果服务器不能上网，需要提前下载对应镜像并导入节点。\n1.2 软件环境： 软件 版本 操作系统 CentOS 7.7.1908 (Core) Docker 24.0.4 (当前最新版) Kubernetes 1.23 1.3 服务器规划： 服务器名称 服务器IP 备注 master 10.39.40.1 24u\/93G\/755G 同时作为node节点 node1 10.39.40.2 32u\/132G\/3.6T node2 10.39.40.3 64u\/141G\/1.1T 部署使用root账号, 非root账号很多命令相对麻烦\n2. 主机名解析 编辑所有节点服务器的 \/etc\/hosts 文件 ,添加主机名, 执行命令：\ncat \u0026gt;\u0026gt; \/etc\/hosts \u0026lt;\u0026lt; EOF 10.39.97.19 master 10.39.97.20 node1 EOF 用sudo cat追加文件出错_iteye_2225的博客-CSDN博客\n设置每台节点的hostname, 分别执行\nmaster节点:\nhostnamectl set-hostname master\nnode1节点:\nhostnamectl set-hostname node1\n3.时间同步 启动chronyd服务\nsystemctl start chronyd systemctl enable chronyd date 如果没有安装 chronyd , 可以使用 yum install chrony -y 安装",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/kubernetes\/%E5%AE%89%E8%A3%85\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+K8s搭建流程-使用kubeadm
+1 准备环境 1.1 服务器要求： 建议最小硬件配置：2核CPU、2G内存、20G硬盘，服务器最好可以访问外网，会有从网上拉取镜像需求，如果服务器不能上网，需要提前下载对应镜像并导入节点。
+1.2 软件环境： 软件 版本 操作系统 CentOS 7.7.1908 (Core) Docker 24.0.4 (当前最新版) Kubernetes 1.23 1.3 服务器规划： 服务器名称 服务器IP 备注 master 10.39.40.1 24u/93G/755G 同时作为node节点 node1 10.39.40.2 32u/132G/3.6T node2 10.39.40.3 64u/141G/1.1T 部署使用root账号, 非root账号很多命令相对麻烦
+2. 主机名解析 编辑所有节点服务器的 /etc/hosts 文件 ,添加主机名, 执行命令：
+cat &gt;&gt; /etc/hosts &lt;&lt; EOF 10.39.97.19 master 10.39.97.20 node1 EOF 用sudo cat追加文件出错_iteye_2225的博客-CSDN博客
+设置每台节点的hostname, 分别执行
+master节点:
+hostnamectl set-hostname master
+node1节点:
+hostnamectl set-hostname node1
+3.时间同步 启动chronyd服务
+systemctl start chronyd systemctl enable chronyd date 如果没有安装 chronyd , 可以使用 yum install chrony -y 安装">
+
+
+<meta property="og:description" content="[toc]
+K8s搭建流程-使用kubeadm
+1 准备环境 1.1 服务器要求： 建议最小硬件配置：2核CPU、2G内存、20G硬盘，服务器最好可以访问外网，会有从网上拉取镜像需求，如果服务器不能上网，需要提前下载对应镜像并导入节点。
+1.2 软件环境： 软件 版本 操作系统 CentOS 7.7.1908 (Core) Docker 24.0.4 (当前最新版) Kubernetes 1.23 1.3 服务器规划： 服务器名称 服务器IP 备注 master 10.39.40.1 24u/93G/755G 同时作为node节点 node1 10.39.40.2 32u/132G/3.6T node2 10.39.40.3 64u/141G/1.1T 部署使用root账号, 非root账号很多命令相对麻烦
+2. 主机名解析 编辑所有节点服务器的 /etc/hosts 文件 ,添加主机名, 执行命令：
+cat &gt;&gt; /etc/hosts &lt;&lt; EOF 10.39.97.19 master 10.39.97.20 node1 EOF 用sudo cat追加文件出错_iteye_2225的博客-CSDN博客
+设置每台节点的hostname, 分别执行
+master节点:
+hostnamectl set-hostname master
+node1节点:
+hostnamectl set-hostname node1
+3.时间同步 启动chronyd服务
+systemctl start chronyd systemctl enable chronyd date 如果没有安装 chronyd , 可以使用 yum install chrony -y 安装">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%AE%89%E8%A3%85/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%AE%89%E8%A3%85/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+K8s搭建流程-使用kubeadm
+1 准备环境 1.1 服务器要求： 建议最小硬件配置：2核CPU、2G内存、20G硬盘，服务器最好可以访问外网，会有从网上拉取镜像需求，如果服务器不能上网，需要提前下载对应镜像并导入节点。
+1.2 软件环境： 软件 版本 操作系统 CentOS 7.7.1908 (Core) Docker 24.0.4 (当前最新版) Kubernetes 1.23 1.3 服务器规划： 服务器名称 服务器IP 备注 master 10.39.40.1 24u/93G/755G 同时作为node节点 node1 10.39.40.2 32u/132G/3.6T node2 10.39.40.3 64u/141G/1.1T 部署使用root账号, 非root账号很多命令相对麻烦
+2. 主机名解析 编辑所有节点服务器的 /etc/hosts 文件 ,添加主机名, 执行命令：
+cat &gt;&gt; /etc/hosts &lt;&lt; EOF 10.39.97.19 master 10.39.97.20 node1 EOF 用sudo cat追加文件出错_iteye_2225的博客-CSDN博客
+设置每台节点的hostname, 分别执行
+master节点:
+hostnamectl set-hostname master
+node1节点:
+hostnamectl set-hostname node1
+3.时间同步 启动chronyd服务
+systemctl start chronyd systemctl enable chronyd date 如果没有安装 chronyd , 可以使用 yum install chrony -y 安装">
+<meta name="twitter:description" content="[toc]
+K8s搭建流程-使用kubeadm
+1 准备环境 1.1 服务器要求： 建议最小硬件配置：2核CPU、2G内存、20G硬盘，服务器最好可以访问外网，会有从网上拉取镜像需求，如果服务器不能上网，需要提前下载对应镜像并导入节点。
+1.2 软件环境： 软件 版本 操作系统 CentOS 7.7.1908 (Core) Docker 24.0.4 (当前最新版) Kubernetes 1.23 1.3 服务器规划： 服务器名称 服务器IP 备注 master 10.39.40.1 24u/93G/755G 同时作为node节点 node1 10.39.40.2 32u/132G/3.6T node2 10.39.40.3 64u/141G/1.1T 部署使用root账号, 非root账号很多命令相对麻烦
+2. 主机名解析 编辑所有节点服务器的 /etc/hosts 文件 ,添加主机名, 执行命令：
+cat &gt;&gt; /etc/hosts &lt;&lt; EOF 10.39.97.19 master 10.39.97.20 node1 EOF 用sudo cat追加文件出错_iteye_2225的博客-CSDN博客
+设置每台节点的hostname, 分别执行
+master节点:
+hostnamectl set-hostname master
+node1节点:
+hostnamectl set-hostname node1
+3.时间同步 启动chronyd服务
+systemctl start chronyd systemctl enable chronyd date 如果没有安装 chronyd , 可以使用 yum install chrony -y 安装">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%AE%89%E8%A3%85/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<p><strong>K8s搭建流程-使用kubeadm</strong></p>
+<h1 id="1-准备环境">1 准备环境</h1>
+<h2 id="11-服务器要求">1.1 服务器要求：</h2>
+<p>建议最小硬件配置：2核CPU、2G内存、20G硬盘，服务器最好可以访问外网，会有从网上拉取镜像需求，如果服务器不能上网，需要提前下载对应镜像并导入节点。</p>
+<h2 id="12-软件环境">1.2 软件环境：</h2>
+<table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>CentOS 7.7.1908 (Core)</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>24.0.4 (当前最新版)</td>
+</tr>
+<tr>
+<td>Kubernetes</td>
+<td>1.23</td>
+</tr>
+</tbody>
+</table>
+<h2 id="13-服务器规划">1.3 服务器规划：</h2>
+<table>
+<thead>
+<tr>
+<th>服务器名称</th>
+<th>服务器IP</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>master</td>
+<td>10.39.40.1</td>
+<td>24u/93G/755G 同时作为node节点</td>
+</tr>
+<tr>
+<td>node1</td>
+<td>10.39.40.2</td>
+<td>32u/132G/3.6T</td>
+</tr>
+<tr>
+<td>node2</td>
+<td>10.39.40.3</td>
+<td>64u/141G/1.1T</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>部署使用root账号, 非root账号很多命令相对麻烦</p>
+</blockquote>
+<h1 id="2-主机名解析">2. 主机名解析</h1>
+<p><strong>编辑所有节点服务器的 /etc/hosts 文件 ,添加主机名, 执行命令：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat &gt;&gt; /etc/hosts  <span style="color:#e6db74">&lt;&lt; EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">10.39.97.19  master
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">10.39.97.20  node1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><blockquote>
+<p><a href="https://blog.csdn.net/iteye_2225/article/details/82434589">用sudo cat追加文件出错_iteye_2225的博客-CSDN博客</a></p>
+</blockquote>
+<p><strong>设置每台节点的hostname</strong>, 分别执行</p>
+<p>master节点:</p>
+<p><code>hostnamectl set-hostname  master</code></p>
+<p>node1节点:</p>
+<p><code>hostnamectl set-hostname  node1</code></p>
+<h1 id="3时间同步">3.时间同步</h1>
+<p>启动chronyd服务</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl start chronyd 
+</span></span><span style="display:flex;"><span>systemctl enable chronyd 
+</span></span><span style="display:flex;"><span>date
+</span></span></code></pre></div><blockquote>
+<p>如果没有安装 chronyd , 可以使用 <code>yum install chrony -y</code> 安装</p>
+</blockquote>
+<h1 id="4禁用selinux和firewalld服务">4.禁用selinux和firewalld服务</h1>
+<p>关闭firewalld服务,并 设置开机不启动</p>
+<pre tabindex="0"><code class="language-shel" data-lang="shel">systemctl stop firewalld 
+systemctl disable firewalld
+</code></pre><p>关闭selinux服务，重启后生效</p>
+<p><code>sed -i 's/enforcing/disabled/' /etc/selinux/config</code></p>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/165974960">selinux - linux的安全系统, 可以尽可能的控制权限最小化</a></p>
+</blockquote>
+<h1 id="5禁用swap分区">5.禁用swap分区</h1>
+<blockquote>
+<p>swap分区指的是虚拟内存分区，它的作用是物理内存使用完，之后将磁盘空间虚拟成内存来使用，启用swap设备会对系统的性能产生非常负面的影响，因此kubernetes要求每个节点都要禁用swap设备，但是如果因为某些原因确实不能关闭swap分区，就需要在集群安装过程中通过明确的参数进行配置说明</p>
+</blockquote>
+<p><code>sed -ri 's/.*swap.*/#&amp;/' /etc/fstab  # 永久关闭</code></p>
+<h1 id="6添加网桥过滤和地址转发功能">6.添加网桥过滤和地址转发功能</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat &gt;&gt; /etc/sysctl.d/kubernetes.conf <span style="color:#e6db74">&lt;&lt; EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.bridge.bridge-nf-call-ip6tables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.bridge.bridge-nf-call-iptables = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">net.ipv4.ip_forward = 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#然后执行</span>
+</span></span><span style="display:flex;"><span>sysctl --system  
+</span></span></code></pre></div><p><strong>为使之前的配置生效，重启所有节点服务器</strong></p>
+<p><code>reboot</code></p>
+<h1 id="7docker安装">7.docker安装</h1>
+<h2 id="71-安装docker依赖">7.1 安装docker依赖</h2>
+<p><code>curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun</code></p>
+<blockquote>
+<p>这里使用阿里的镜像一键安装, 默认装最新版, 如果是要指定版本,就采用手动安装的方式,  会帮我们做如下操作</p>
+<ol>
+<li>
+<p>安装yum-utils</p>
+</li>
+<li>
+<p>设置docker仓库镜像为阿里的</p>
+</li>
+<li>
+<p>安装 docker-ce / docker-ce-cli / containerd.io / docker-compose / makecache</p>
+<p><a href="https://www.runoob.com/docker/centos-docker-install.html">CentOS Docker 安装 | 菜鸟教程 (runoob.com)</a></p>
+</li>
+</ol>
+</blockquote>
+<h2 id="72-配置docker-镜像加速器和默认存储目录">7.2 配置docker 镜像加速器和默认存储目录</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span>cat <span style="color:#e6db74">&lt;&lt;EOF&gt; /etc/docker/daemon.json
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;exec-opts&#34;: [&#34;native.cgroupdriver=systemd&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;log-driver&#34;: &#34;json-file&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;log-opts&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;max-size&#34;: &#34;100m&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  },
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;data-root&#34;: &#34;/app/docker-home&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  &#34;registry-mirrors&#34;: [&#34;https://registry.docker-cn.com&#34;, &#34;https://hub-mirror.c.163.com&#34;, &#34;https://docker.mirrors.ustc.edu.cn&#34;,&#34;https://alzgoonw.mirror.aliyuncs.com&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><blockquote>
+<p><a href="https://www.cnblogs.com/hellxz/p/docker-change-data-root.html">【简记】修改Docker数据目录位置，包含镜像位置 - 东北小狐狸 - 博客园 (cnblogs.com)</a></p>
+</blockquote>
+<h2 id="73-启动docker">7.3 启动Docker</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Shell" data-lang="Shell"><span style="display:flex;"><span><span style="color:#75715e"># 设置开机启动</span>
+</span></span><span style="display:flex;"><span>systemctl enable docker 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 启动docker</span>
+</span></span><span style="display:flex;"><span>systemctl start docker
+</span></span></code></pre></div><h2 id="74-验证">7.4 验证</h2>
+<p><code>docker version</code>  检查版本</p>
+<blockquote>
+<p>可以看到 docker版本,  容器数, 镜像数, root dir 路径, 镜像仓库 等等</p>
+</blockquote>
+<p><code>docker run hello-world</code></p>
+<p>执行一个 hello-world , 如果能运行成功, 则表示安装成功, 第一次运行要pull 镜像, 可能会慢一点, 等一会它</p>
+<pre tabindex="0"><code>Unable to find image &#39;hello-world:latest&#39; locally
+latest: Pulling from library/hello-world
+1b930d010525: Pull complete
+Digest: sha256:9572f7cdcee8591948c2963463447a53466950b3fc15a247fcad1917ca215a2f
+Status: Downloaded newer image for hello-world:latest
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the &#34;hello-world&#34; image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+</code></pre><h2 id="75-安装cri-dockerd">7.5 安装cri-dockerd</h2>
+<p>从v1.24起，Docker不能直接作为k8s的<a href="https://kubernetes.io/zh-cn/docs/setup/production-environment/container-runtimes/">容器运行时</a>，因为在k8s v1.24版本移除了叫dockershim的组件，这是由k8s团队直接维护而非Docker团队维护的组件，这意味着Docker和k8s的关系不再像原来那般亲密，开发者需要使用其它符合CRI（<a href="https://github.com/kubernetes/cri-api#readme">容器运行时接口</a>）的容器运行时工具（如containerd, CRI-O等），当然这并不意味着新版本的k8s彻底抛弃Docker（由于Docker庞大的生态和广泛的群众基础，显然这并不容易办到），在原本安装了Docker的基础上，可以通过补充安装<a href="https://github.com/Mirantis/cri-dockerd">cri-dockerd</a>，以满足容器运行时接口的条件，从某种程度上说，cri-dockerd就是翻版的dockershim。</p>
+<p><strong>本篇的k8s 刚好在 1.23版本, 所以不用特意安装</strong></p>
+<p><a href="https://zhuanlan.zhihu.com/p/641521752">Kubernetes最新版2023.07v1.27.4安装和集群搭建保姆级教程 - 知乎 (zhihu.com)</a></p>
+<h1 id="8kubernetes的yum源切换成国内源">8.kubernetes的Yum源切换成国内源</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat &gt;&gt; /etc/yum.repos.d/kubernetes.repo <span style="color:#e6db74">&lt;&lt; EOF
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">[kubernetes]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">name=Kubernetes
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">enabled=1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">gpgcheck=0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">repo_gpgcheck=0
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">EOF</span>
+</span></span></code></pre></div><h1 id="9安装指定版本-kubeadmkubelet和kubect">9.安装指定版本 kubeadm，kubelet和kubect</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>yum install -y kubelet-1.23.0 kubeadm-1.23.0 kubectl-1.23.0
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#设置kubelet开机启动</span>
+</span></span><span style="display:flex;"><span>systemctl enable kubelet
+</span></span></code></pre></div><h1 id="10-通过-kubeadm-部署kubernetes">10. 通过 kubeadm 部署Kubernetes</h1>
+<h2 id="101-部署master节点">10.1 部署master节点</h2>
+<p>Kubernetes 初始化，下面的操作<strong>只需要在master节点</strong>上执行即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm init <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --apiserver-advertise-address<span style="color:#f92672">=</span>10.39.40.1 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --image-repository registry.aliyuncs.com/google_containers <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --kubernetes-version v1.23.0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --service-cidr<span style="color:#f92672">=</span>192.168.128.0/17 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --pod-network-cidr<span style="color:#f92672">=</span>192.168.0.0/17 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --ignore-preflight-errors<span style="color:#f92672">=</span>all
+</span></span></code></pre></div><blockquote>
+<p>&ndash;apiserver-advertise-address #集群通告地址(master 机器IP)
+&ndash;image-repository #由于默认拉取镜像地址k8s.gcr.io国内无法访问，这里指定阿里云镜像仓库地址
+&ndash;kubernetes-version #K8s版本，与上面安装的一致
+&ndash;service-cidr #集群内部service网络
+&ndash;pod-network-cidr #集群内部pod网络，与下面部署的CNI网络组件yaml中保持一致</p>
+</blockquote>
+<blockquote>
+<p><a href="https://developer.aliyun.com/ask/139167">搭建k8s时service-cidr是根据自己本地得ip地址写得 (aliyun.com)</a><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" alt="img"></p>
+</blockquote>
+<p><strong>成功后末尾输出信息如下</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>Your Kubernetes control-plane has initialized successfully!
+</span></span><span style="display:flex;"><span>To start using your cluster, you need to run the following as a regular user<span style="color:#960050;background-color:#1e0010">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  mkdir -p $HOME/.kube
+</span></span><span style="display:flex;"><span>  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+</span></span><span style="display:flex;"><span>  sudo chown $(id -u)<span style="color:#960050;background-color:#1e0010">:</span>$(id -g) $HOME/.kube/config
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>You should now deploy a pod network to the cluster.
+</span></span><span style="display:flex;"><span>Run <span style="color:#e6db74">&#34;kubectl apply -f [podnetwork].yaml&#34;</span> with one of the options listed at<span style="color:#960050;background-color:#1e0010">:</span>
+</span></span><span style="display:flex;"><span>  https<span style="color:#960050;background-color:#1e0010">:</span>//kubernetes.io/docs/concepts/cluster-administration/addons/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Then you can join any number of worker nodes by running the following on each as root<span style="color:#960050;background-color:#1e0010">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#### 这行数据 复制下来, 节点加入进群需要用到此命令</span>
+</span></span><span style="display:flex;"><span>kubeadm join <span style="color:#ae81ff">10.39</span>.40.<span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#ae81ff">6443</span> --token 1j3dl9.1z8wjckd94xluwh6 \
+</span></span><span style="display:flex;"><span>    --discovery-token-ca-cert-hash sha256<span style="color:#960050;background-color:#1e0010">:</span>c464e3ebd7f432f094bacf06269003730f010b431c3fb76acade4f43d4740
+</span></span></code></pre></div><p><strong>创建客户端授权文件</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>mkdir -p $HOME/.kube
+</span></span><span style="display:flex;"><span>sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+</span></span><span style="display:flex;"><span>sudo chown <span style="color:#66d9ef">$(</span>id -u<span style="color:#66d9ef">)</span>:<span style="color:#66d9ef">$(</span>id -g<span style="color:#66d9ef">)</span> $HOME/.kube/config
+</span></span></code></pre></div><blockquote>
+<p>授权kubectl 客户端能连接上 k8s,  这里只在master配置, 如果需要在其他节点配置, 就把 <code>/etc/kubernetes/admin.conf</code> 文件复制到其他节点上</p>
+</blockquote>
+<h2 id="102-将node节点加入集群">10.2 将node节点加入集群</h2>
+<p>在所有node节点上执行以下命令(初始化master 得到的命令)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>kubeadm join 10.39.40.1:6443 --token 1j3dl9.1z8wjckd94xluwh6 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --discovery-token-ca-cert-hash sha256:c464e3ebd7f432f094bacf06269003730f010b431c3fb76acade4f43d4740
+</span></span></code></pre></div><h1 id="11部署容器网络cni">11.部署容器网络（CNI）</h1>
+<blockquote>
+<p>pod之前需要网络通信, 但是k8s没有具体实现, 只是开了CNI能力, 所以需要其他方案来完善</p>
+<p>Calico是一个纯三层的数据中心网络方案，是目前Kubernetes主流的网络方案。 官方的部署文档使用的是 <code>flannel</code></p>
+<p><a href="https://www.infoq.cn/article/gxftm0x8z2zlhw9xlezv">Kubernetes CNI网络最强对比：Flannel、Calico、Canal和Weave_文化 &amp; 方法_Rancher_InfoQ精选文章</a></p>
+</blockquote>
+<p><strong>Master 节点下载Calico YAML 文件</strong></p>
+<p><code>curl https://docs.projectcalico.org/v3.7/manifests/calico.yaml -O</code></p>
+<p>下载完后<strong>修改里面定义Pod网络</strong>（CALICO_IPV4POOL_CIDR），与前面kubeadm init 的 &ndash;pod-network-cidr 指定的一样</p>
+<p><img src="./%E5%AE%89%E8%A3%85.assets/image-20230802201055835.png" alt="image-20230802201055835"></p>
+<p><strong>创建calico网络，Master节点上执行</strong></p>
+<p><code>kubectl apply -f calico.yaml</code></p>
+<p><strong>查看网络状态</strong></p>
+<p><code>kubectl get pods -n kube-system -w</code></p>
+<p>等待一段时间，calico 和 coredns 相关pod处于ready状态, 这个过程要等好几分钟</p>
+<pre tabindex="0"><code>NAMESPACE     NAME                                      READY   STATUS    RESTARTS   AGE
+kube-system   calico-kube-controllers-dbd6bd945-vlqxh   1/1     Running   0          4m51s
+kube-system   calico-node-hkp5s                         1/1     Running   0          4m51s
+kube-system   calico-node-ksxg8                         1/1     Running   0          4m51s
+kube-system   calico-node-srd2r                         1/1     Running   0          4m51s
+kube-system   coredns-7f6cbbb7b8-svhdg                  1/1     Running   0          22h
+kube-system   coredns-7f6cbbb7b8-vmm2h                  1/1     Running   0          22h
+### 上面这些
+kube-system   etcd-k8s-master                           1/1     Running   0          22h
+kube-system   kube-apiserver-k8s-master                 1/1     Running   0          22h
+kube-system   kube-controller-manager-k8s-master        1/1     Running   0          22h
+kube-system   kube-proxy-4dvgq                          1/1     Running   0          22h
+kube-system   kube-proxy-5jhkj                          1/1     Running   0          22h
+kube-system   kube-proxy-5jtwf                          1/1     Running   0          22h
+kube-system   kube-scheduler-k8s-master                 1/1     Running   0          22h
+</code></pre><p>查看节点状态，处于 ready 状态</p>
+<pre tabindex="0"><code>[root@master01 ~]# kubectl get nodes
+NAME       STATUS   ROLES                  AGE   VERSION
+master   Ready    control-plane,master   21h   v1.23.4
+node1   Ready    &lt;none&gt;                 16h   v1.23.4
+node2   Ready    &lt;none&gt;                 16h   v1.23.4
+[root@master01 ~]# 
+可以看到所有节点的状态已经变为是Ready了。
+</code></pre><p>至此K8s已经部署完成，已可以简单使用，但是缺少NFS，不支持灵活的数据持久化</p>
+<h1 id="12其他维护事项">12.其他维护事项</h1>
+<p>重新申请 join token 24小时有效</p>
+<p><code>kubeadm token create --print-join-command</code></p>
+<p>master 节点同时设置为 node节点</p>
+<p><code>kubectl taint node master node-role.kubernetes.io/master-</code></p>
+<p>恢复 master only</p>
+<p><code>kubectl taint node master node-role.kubernetes.io/master=&quot;&quot;:NoSchedule</code></p>
+<p><a href="https://flowus.cn/share/cf359a50-272a-4fc2-b27b-42014bec123e">K8s搭建流程-使用kubeadm (flowus.cn)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/265968760">kubernetes(k8s)环境搭建 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/641521752">Kubernetes最新版2023.07v1.27.4安装和集群搭建保姆级教程 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://www.runoob.com/docker/windows-docker-install.html">Windows Docker 安装 | 菜鸟教程 (runoob.com)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%91%BD%E4%BB%A4/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%AE%89%E8%A3%85/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%AE%89%E8%A3%85/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%AE%89%E8%A3%85/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/kubernetes\/%E5%AE%89%E8%A3%85\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/kubernetes\/%E5%AE%89%E8%A3%85\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%91%BD%E4%BB%A4/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%AE%89%E8%A3%85/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%AE%89%E8%A3%85/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/kubernetes/%E5%AE%89%E8%A3%85/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Fkubernetes%2F%25E5%25AE%2589%25E8%25A3%2585%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Fkubernetes%2F%25E5%25AE%2589%25E8%25A3%2585%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Fkubernetes%2F%25E5%25AE%2589%25E8%25A3%2585%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

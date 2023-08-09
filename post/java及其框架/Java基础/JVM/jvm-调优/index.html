@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"前言 无论是YGC或是FullGC，都会导致stop-the-world，即整个程序停止一些事务的处理，只有GC进程允许以进行垃圾回收，因此如果垃圾回收时间较长，部分web或socket程序，当终端连接的时候会报connetTimeOut或readTimeOut异常，\n从JVM调优的角度来看，我们应该尽量避免发生YGC或FullGC，或者使得YGC和FullGC的时间足够的短。\n所谓调优,就是找到适合自己程序的配置(jvm配置,比如,老年代大小,新生代大小,线程数,垃圾回收器等等)\n原文链接：https:\/\/blog.csdn.net\/Javazhoumou\/article\/details\/99298624\nGC日志 GC日志分类 Minor GC\/Young GC，表示新生代GC，指发生在新生代的垃圾收集动作，所有的Minor GC都会触发全世界的暂停（stop-the-world），停止应用程序的线程，不过这个过程非常短。 Major GC\/ Full GC：老年代GC，指发生在老年代的 GC，也称之为 Full GC。 日志分析 Young GC回收日志:\n日志内容如下: [GC (Allocation Failure) [PSYoungGen: 637744K-\u0026gt;43513K(620544K)] 714874K-\u0026gt;144918K(730624K), 0.0652514 secs] [Times: user=0.20 sys=0.05, real=0.07 secs]\nGC (Allocation Failure) : 表示发送了GC类型, 以及GC的原因, 此处是 内存分配失败\nFull GC回收日志:\n日志内容如下: [Full GC (Ergonomics) [PSYoungGen: 43513K-\u0026gt;23126K(620544K)] [ParOldGen: 101404K-\u0026gt;109897K(221184K)] 144918K-\u0026gt;133024K(841728K), [Metaspace: 77276K-\u0026gt;76763K(1120256K)], 0.3217926 secs] [Times: user=1.55 sys=0.06, real=0.32 secs]\nGC原因类型 Allocation Failure\n内存分配失败导致的GC，常见于年轻代当中。\nGCLocker Initiated GC",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/jvm\/jvm-%E8%B0%83%E4%BC%98\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="前言 无论是YGC或是FullGC，都会导致stop-the-world，即整个程序停止一些事务的处理，只有GC进程允许以进行垃圾回收，因此如果垃圾回收时间较长，部分web或socket程序，当终端连接的时候会报connetTimeOut或readTimeOut异常，
+从JVM调优的角度来看，我们应该尽量避免发生YGC或FullGC，或者使得YGC和FullGC的时间足够的短。
+所谓调优,就是找到适合自己程序的配置(jvm配置,比如,老年代大小,新生代大小,线程数,垃圾回收器等等)
+原文链接：https://blog.csdn.net/Javazhoumou/article/details/99298624
+GC日志 GC日志分类 Minor GC/Young GC，表示新生代GC，指发生在新生代的垃圾收集动作，所有的Minor GC都会触发全世界的暂停（stop-the-world），停止应用程序的线程，不过这个过程非常短。 Major GC/ Full GC：老年代GC，指发生在老年代的 GC，也称之为 Full GC。 日志分析 Young GC回收日志:
+日志内容如下: [GC (Allocation Failure) [PSYoungGen: 637744K-&gt;43513K(620544K)] 714874K-&gt;144918K(730624K), 0.0652514 secs] [Times: user=0.20 sys=0.05, real=0.07 secs]
+GC (Allocation Failure) : 表示发送了GC类型, 以及GC的原因, 此处是 内存分配失败
+Full GC回收日志:
+日志内容如下: [Full GC (Ergonomics) [PSYoungGen: 43513K-&gt;23126K(620544K)] [ParOldGen: 101404K-&gt;109897K(221184K)] 144918K-&gt;133024K(841728K), [Metaspace: 77276K-&gt;76763K(1120256K)], 0.3217926 secs] [Times: user=1.55 sys=0.06, real=0.32 secs]
+GC原因类型 Allocation Failure
+内存分配失败导致的GC，常见于年轻代当中。
+GCLocker Initiated GC">
+
+
+<meta property="og:description" content="前言 无论是YGC或是FullGC，都会导致stop-the-world，即整个程序停止一些事务的处理，只有GC进程允许以进行垃圾回收，因此如果垃圾回收时间较长，部分web或socket程序，当终端连接的时候会报connetTimeOut或readTimeOut异常，
+从JVM调优的角度来看，我们应该尽量避免发生YGC或FullGC，或者使得YGC和FullGC的时间足够的短。
+所谓调优,就是找到适合自己程序的配置(jvm配置,比如,老年代大小,新生代大小,线程数,垃圾回收器等等)
+原文链接：https://blog.csdn.net/Javazhoumou/article/details/99298624
+GC日志 GC日志分类 Minor GC/Young GC，表示新生代GC，指发生在新生代的垃圾收集动作，所有的Minor GC都会触发全世界的暂停（stop-the-world），停止应用程序的线程，不过这个过程非常短。 Major GC/ Full GC：老年代GC，指发生在老年代的 GC，也称之为 Full GC。 日志分析 Young GC回收日志:
+日志内容如下: [GC (Allocation Failure) [PSYoungGen: 637744K-&gt;43513K(620544K)] 714874K-&gt;144918K(730624K), 0.0652514 secs] [Times: user=0.20 sys=0.05, real=0.07 secs]
+GC (Allocation Failure) : 表示发送了GC类型, 以及GC的原因, 此处是 内存分配失败
+Full GC回收日志:
+日志内容如下: [Full GC (Ergonomics) [PSYoungGen: 43513K-&gt;23126K(620544K)] [ParOldGen: 101404K-&gt;109897K(221184K)] 144918K-&gt;133024K(841728K), [Metaspace: 77276K-&gt;76763K(1120256K)], 0.3217926 secs] [Times: user=1.55 sys=0.06, real=0.32 secs]
+GC原因类型 Allocation Failure
+内存分配失败导致的GC，常见于年轻代当中。
+GCLocker Initiated GC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E8%B0%83%E4%BC%98/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E8%B0%83%E4%BC%98/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="前言 无论是YGC或是FullGC，都会导致stop-the-world，即整个程序停止一些事务的处理，只有GC进程允许以进行垃圾回收，因此如果垃圾回收时间较长，部分web或socket程序，当终端连接的时候会报connetTimeOut或readTimeOut异常，
+从JVM调优的角度来看，我们应该尽量避免发生YGC或FullGC，或者使得YGC和FullGC的时间足够的短。
+所谓调优,就是找到适合自己程序的配置(jvm配置,比如,老年代大小,新生代大小,线程数,垃圾回收器等等)
+原文链接：https://blog.csdn.net/Javazhoumou/article/details/99298624
+GC日志 GC日志分类 Minor GC/Young GC，表示新生代GC，指发生在新生代的垃圾收集动作，所有的Minor GC都会触发全世界的暂停（stop-the-world），停止应用程序的线程，不过这个过程非常短。 Major GC/ Full GC：老年代GC，指发生在老年代的 GC，也称之为 Full GC。 日志分析 Young GC回收日志:
+日志内容如下: [GC (Allocation Failure) [PSYoungGen: 637744K-&gt;43513K(620544K)] 714874K-&gt;144918K(730624K), 0.0652514 secs] [Times: user=0.20 sys=0.05, real=0.07 secs]
+GC (Allocation Failure) : 表示发送了GC类型, 以及GC的原因, 此处是 内存分配失败
+Full GC回收日志:
+日志内容如下: [Full GC (Ergonomics) [PSYoungGen: 43513K-&gt;23126K(620544K)] [ParOldGen: 101404K-&gt;109897K(221184K)] 144918K-&gt;133024K(841728K), [Metaspace: 77276K-&gt;76763K(1120256K)], 0.3217926 secs] [Times: user=1.55 sys=0.06, real=0.32 secs]
+GC原因类型 Allocation Failure
+内存分配失败导致的GC，常见于年轻代当中。
+GCLocker Initiated GC">
+<meta name="twitter:description" content="前言 无论是YGC或是FullGC，都会导致stop-the-world，即整个程序停止一些事务的处理，只有GC进程允许以进行垃圾回收，因此如果垃圾回收时间较长，部分web或socket程序，当终端连接的时候会报connetTimeOut或readTimeOut异常，
+从JVM调优的角度来看，我们应该尽量避免发生YGC或FullGC，或者使得YGC和FullGC的时间足够的短。
+所谓调优,就是找到适合自己程序的配置(jvm配置,比如,老年代大小,新生代大小,线程数,垃圾回收器等等)
+原文链接：https://blog.csdn.net/Javazhoumou/article/details/99298624
+GC日志 GC日志分类 Minor GC/Young GC，表示新生代GC，指发生在新生代的垃圾收集动作，所有的Minor GC都会触发全世界的暂停（stop-the-world），停止应用程序的线程，不过这个过程非常短。 Major GC/ Full GC：老年代GC，指发生在老年代的 GC，也称之为 Full GC。 日志分析 Young GC回收日志:
+日志内容如下: [GC (Allocation Failure) [PSYoungGen: 637744K-&gt;43513K(620544K)] 714874K-&gt;144918K(730624K), 0.0652514 secs] [Times: user=0.20 sys=0.05, real=0.07 secs]
+GC (Allocation Failure) : 表示发送了GC类型, 以及GC的原因, 此处是 内存分配失败
+Full GC回收日志:
+日志内容如下: [Full GC (Ergonomics) [PSYoungGen: 43513K-&gt;23126K(620544K)] [ParOldGen: 101404K-&gt;109897K(221184K)] 144918K-&gt;133024K(841728K), [Metaspace: 77276K-&gt;76763K(1120256K)], 0.3217926 secs] [Times: user=1.55 sys=0.06, real=0.32 secs]
+GC原因类型 Allocation Failure
+内存分配失败导致的GC，常见于年轻代当中。
+GCLocker Initiated GC">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E8%B0%83%E4%BC%98/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <h1 id="前言">前言</h1>
+<p>无论是YGC或是FullGC，都会导致stop-the-world，即整个程序停止一些事务的处理，只有GC进程允许以进行垃圾回收，因此如果垃圾回收时间较长，部分web或socket程序，当终端连接的时候会报connetTimeOut或readTimeOut异常，</p>
+<p>从JVM调优的角度来看，我们应该尽量避免发生YGC或FullGC，或者使得YGC和FullGC的时间足够的短。</p>
+<p>所谓调优,就是找到适合自己程序的配置(jvm配置,比如,老年代大小,新生代大小,线程数,垃圾回收器等等)</p>
+<blockquote>
+<p>原文链接：https://blog.csdn.net/Javazhoumou/article/details/99298624</p>
+</blockquote>
+<h1 id="gc日志">GC日志</h1>
+<h2 id="gc日志分类">GC日志分类</h2>
+<ul>
+<li><strong>Minor GC/Young GC</strong>，表示新生代GC，指发生在新生代的垃圾收集动作，所有的Minor GC都会触发全世界的暂停（stop-the-world），停止应用程序的线程，不过这个过程非常短。</li>
+<li><strong>Major GC/ Full GC</strong>：老年代GC，指发生在老年代的 GC，也称之为 Full GC。</li>
+</ul>
+<h2 id="日志分析">日志分析</h2>
+<p><strong>Young GC回收日志:</strong></p>
+<p>日志内容如下:  <code>[GC (Allocation Failure) [PSYoungGen: 637744K-&gt;43513K(620544K)] 714874K-&gt;144918K(730624K), 0.0652514 secs] [Times: user=0.20 sys=0.05, real=0.07 secs]</code></p>
+<p><img src="jvm%20%E8%B0%83%E4%BC%98.assets/v2-b4e427a29b5f74eaebd8ebd117c1d0cf_r.jpg" alt="img"></p>
+<blockquote>
+<p>GC (Allocation Failure)  : 表示发送了GC类型, 以及GC的原因, 此处是 内存分配失败</p>
+</blockquote>
+<p><strong>Full GC回收日志:</strong></p>
+<p>日志内容如下: <code>[Full GC (Ergonomics) [PSYoungGen: 43513K-&gt;23126K(620544K)] [ParOldGen: 101404K-&gt;109897K(221184K)] 144918K-&gt;133024K(841728K), [Metaspace: 77276K-&gt;76763K(1120256K)], 0.3217926 secs] [Times: user=1.55 sys=0.06, real=0.32 secs]</code></p>
+<p><img src="jvm%20%E8%B0%83%E4%BC%98.assets/v2-badb0e63d9a68f920dbaca85404ae85f_r.jpg" alt="img"></p>
+<h2 id="gc原因类型">GC原因类型</h2>
+<p><strong>Allocation Failure</strong></p>
+<p>内存分配失败导致的GC，常见于年轻代当中。</p>
+<p><strong>GCLocker Initiated GC</strong></p>
+<p>使用JNI临界区的方式操作数组或者字符串时，为了防止GC过程中jarray或者jstring发生位移，而导致数组指针失效，需要保持它们在JVM Heap中的地址在JNI Critical过程中保持不变。于是JVM实现了GC_locker，用于JNI Critical内阻止其他GC的发生。</p>
+<p>当GCLocker被激活且需要发生GC的时候（这里是否需要GC是各种GC发生时，调用GCLocker::check_active_before_gc()函数check并设置_needs_gc = true的），就会阻塞其他线程进入JNI临界区；并且在最后一个位于JNI临界区的线程退出临界区时，发起一次CGCause为_gc_locker的GC。这里解释了GCLocker Initiated GC发生的原委。</p>
+<p><strong>Ergonomics</strong></p>
+<p>在JVM中的垃圾收集器中的Ergonomics就是负责自动的调解gc暂停时间和吞吐量之间的平衡，使你的虚拟机性能更好的一种做法。</p>
+<p>简单说就是内存在进行分配的时候，会通过一些算法，预估是否会出现无法分配的问题。如果符合无法分配预估值，会提前进行一次gc。</p>
+<p><strong>Metadata GC Threshold</strong></p>
+<p>这个gc主要发生的条件是元空间，也就是Metadata的参数设置问题。如果不设置元空间的大小，会有一个默认值是21M。此时可以适当加大元空间内存, <code>-XX:MetaspaceSize=128M</code></p>
+<p><a href="https://www.jianshu.com/p/636d376f1d62">几种常见GC简介 - 简书 (jianshu.com)</a></p>
+<h1 id="工具篇">工具篇</h1>
+<p>使用工具:  (java 自带分析工具)</p>
+<ol>
+<li>
+<p><strong>jmap</strong>：生成虚拟机的内存转储快照（heapdump文件）,使用mat软件打开并分析</p>
+</li>
+<li>
+<p><strong>JConsole</strong>：JMX的可视化管理工具</p>
+</li>
+</ol>
+<p>这个工具相比较前面几个工具，使用率比较高，很重要。它是一个java GUI监视工具，可以以图表化的形式显示各种数据。并可通过远程连接监视远程的服务器VM。用java写的GUI程序，用来监控VM，并可监控远程的VM</p>
+<ol start="3">
+<li><strong>VisualVM</strong>：多合一故障管理工具</li>
+</ol>
+<p>这个工具也很牛bility。它同jconsole都是一个基于图形化界面的、可以查看本地及远程的JAVA GUI监控工具，Jvisualvm同jconsole的使用方式一样，直接在命令行打入jvisualvm即可启动，jvisualvm界面更美观一些</p>
+<blockquote>
+<p><a href="https://baijiahao.baidu.com/s?id=1639024706303844305&amp;wfr=spider&amp;for=pc">https://baijiahao.baidu.com/s?id=1639024706303844305&amp;wfr=spider&amp;for=pc</a></p>
+</blockquote>
+<p><!-- raw HTML omitted -->有时间就玩一下吧<!-- raw HTML omitted --></p>
+<p><img src="jvm%20%E8%B0%83%E4%BC%98.assets/image-20220920182305536-16636693868963-16636693889885.png" alt="image-20220920182305536"></p>
+<ol>
+<li>服务启动后, 这里会自动检测到,并显示出来</li>
+<li>此处各种监控, 其中较为重要的是监控tab页; 其次是抽样器和线程, 抽样器能看到对象内存大小的变化</li>
+<li>监控tab中,分为cpu/内存/类/线程 的变化</li>
+<li>导出堆进行分析, (当前软件就能分析, 可导出多次)</li>
+</ol>
+<p><img src="jvm%20%E8%B0%83%E4%BC%98.assets/image-20220920182325828.png" alt="image-20220920182325828"></p>
+<p><img src="jvm%20%E8%B0%83%E4%BC%98.assets/image-20220920182344918.png" alt="image-20220920182344918"></p>
+<p><a href="https://www.cnblogs.com/ITPower/p/15793047.html">20.GC日志详解及日志分析工具 - 盛开的太阳 - 博客园 (cnblogs.com)</a></p>
+<p><a href="https://gceasy.io/">在线GC日志分析</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/355765061">JVM系列（四）GC日志分析 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/118490800">阿里P8技术官：搞 Java开发的，看懂JVM的GC日志真的很重要 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/267388951">JVM实战：GC日志解析 - 知乎 (zhihu.com)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E5%8A%A0%E8%BD%BD-class-%E6%96%87%E4%BB%B6%E7%9A%84%E5%8E%9F%E7%90%86%E6%9C%BA%E5%88%B6/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E8%B0%83%E4%BC%98/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E8%B0%83%E4%BC%98/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E8%B0%83%E4%BC%98/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/jvm\/jvm-%E8%B0%83%E4%BC%98\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/jvm\/jvm-%E8%B0%83%E4%BC%98\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E5%8A%A0%E8%BD%BD-class-%E6%96%87%E4%BB%B6%E7%9A%84%E5%8E%9F%E7%90%86%E6%9C%BA%E5%88%B6/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E8%B0%83%E4%BC%98/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E8%B0%83%E4%BC%98/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/jvm-%E8%B0%83%E4%BC%98/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2Fjvm%2Fjvm-%25E8%25B0%2583%25E4%25BC%2598%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2Fjvm%2Fjvm-%25E8%25B0%2583%25E4%25BC%2598%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2Fjvm%2Fjvm-%25E8%25B0%2583%25E4%25BC%2598%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

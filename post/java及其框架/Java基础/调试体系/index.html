@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1. 前言 我们在使用idea启动debug时可以做好多事情,看变量的值; 随处打断点; 计算变量的值等等, 这些功能全都依赖了java的调试体系JPDA(Java Platform Debugger Architecture), 而java也提供了命令行级别的调试\n2. 调试使用 关键命令\njavac -g src\/HelloJDB.java -g 表示展示调试信息\n这样就启动了程序,然后打开调试程序\njdb HelloJDB.class 使用JDB调试Java程序 - 娄老师 - 博客园 (cnblogs.com)\n由此可见,idea那么丰富的调试功能基本来源jvm\n3. JPDA JPDA 由三个规范组成：JVMTI（JVM Tool Interface）、JDWP（Java Debug Wire Protocol）、JDI（Java Debug Interface）\n这三个规范的层次由低到高分别是 JVMTI、JDWP、JDI\n这三个规范把调试过程分解成几个概念：调试者（debugger）、被调试者（debuggee）、以及它们中间的通信器\nJPDA 被抽象为三层实现。其中 JVMTI 是 JVM 对外暴露的接口。JDI 是实现了 JDWP 通信协议的客户端，调试器通过它和 JVM 中被调试程序通信。\n模块 层次 编程语言 作用 JVMTI 底层 C 获取及控制当前虚拟机状态 JDWP 中介层 C 定义 JVMTI 和 JDI 交互的数据格式 JDI 高层 Java 提供 Java API 来远程控制被调试虚拟机 IDEA 的 debug 怎么实现？出于这个好奇心，我越挖越深！ - 知乎 (zhihu.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1. 前言 我们在使用idea启动debug时可以做好多事情,看变量的值; 随处打断点; 计算变量的值等等, 这些功能全都依赖了java的调试体系JPDA(Java Platform Debugger Architecture), 而java也提供了命令行级别的调试
+2. 调试使用 关键命令
+javac -g src/HelloJDB.java -g 表示展示调试信息
+这样就启动了程序,然后打开调试程序
+jdb HelloJDB.class 使用JDB调试Java程序 - 娄老师 - 博客园 (cnblogs.com)
+由此可见,idea那么丰富的调试功能基本来源jvm
+3. JPDA JPDA 由三个规范组成：JVMTI（JVM Tool Interface）、JDWP（Java Debug Wire Protocol）、JDI（Java Debug Interface）
+这三个规范的层次由低到高分别是 JVMTI、JDWP、JDI
+这三个规范把调试过程分解成几个概念：调试者（debugger）、被调试者（debuggee）、以及它们中间的通信器
+JPDA 被抽象为三层实现。其中 JVMTI 是 JVM 对外暴露的接口。JDI 是实现了 JDWP 通信协议的客户端，调试器通过它和 JVM 中被调试程序通信。
+模块 层次 编程语言 作用 JVMTI 底层 C 获取及控制当前虚拟机状态 JDWP 中介层 C 定义 JVMTI 和 JDI 交互的数据格式 JDI 高层 Java 提供 Java API 来远程控制被调试虚拟机 IDEA 的 debug 怎么实现？出于这个好奇心，我越挖越深！ - 知乎 (zhihu.">
+
+
+<meta property="og:description" content="[toc]
+1. 前言 我们在使用idea启动debug时可以做好多事情,看变量的值; 随处打断点; 计算变量的值等等, 这些功能全都依赖了java的调试体系JPDA(Java Platform Debugger Architecture), 而java也提供了命令行级别的调试
+2. 调试使用 关键命令
+javac -g src/HelloJDB.java -g 表示展示调试信息
+这样就启动了程序,然后打开调试程序
+jdb HelloJDB.class 使用JDB调试Java程序 - 娄老师 - 博客园 (cnblogs.com)
+由此可见,idea那么丰富的调试功能基本来源jvm
+3. JPDA JPDA 由三个规范组成：JVMTI（JVM Tool Interface）、JDWP（Java Debug Wire Protocol）、JDI（Java Debug Interface）
+这三个规范的层次由低到高分别是 JVMTI、JDWP、JDI
+这三个规范把调试过程分解成几个概念：调试者（debugger）、被调试者（debuggee）、以及它们中间的通信器
+JPDA 被抽象为三层实现。其中 JVMTI 是 JVM 对外暴露的接口。JDI 是实现了 JDWP 通信协议的客户端，调试器通过它和 JVM 中被调试程序通信。
+模块 层次 编程语言 作用 JVMTI 底层 C 获取及控制当前虚拟机状态 JDWP 中介层 C 定义 JVMTI 和 JDI 交互的数据格式 JDI 高层 Java 提供 Java API 来远程控制被调试虚拟机 IDEA 的 debug 怎么实现？出于这个好奇心，我越挖越深！ - 知乎 (zhihu.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1. 前言 我们在使用idea启动debug时可以做好多事情,看变量的值; 随处打断点; 计算变量的值等等, 这些功能全都依赖了java的调试体系JPDA(Java Platform Debugger Architecture), 而java也提供了命令行级别的调试
+2. 调试使用 关键命令
+javac -g src/HelloJDB.java -g 表示展示调试信息
+这样就启动了程序,然后打开调试程序
+jdb HelloJDB.class 使用JDB调试Java程序 - 娄老师 - 博客园 (cnblogs.com)
+由此可见,idea那么丰富的调试功能基本来源jvm
+3. JPDA JPDA 由三个规范组成：JVMTI（JVM Tool Interface）、JDWP（Java Debug Wire Protocol）、JDI（Java Debug Interface）
+这三个规范的层次由低到高分别是 JVMTI、JDWP、JDI
+这三个规范把调试过程分解成几个概念：调试者（debugger）、被调试者（debuggee）、以及它们中间的通信器
+JPDA 被抽象为三层实现。其中 JVMTI 是 JVM 对外暴露的接口。JDI 是实现了 JDWP 通信协议的客户端，调试器通过它和 JVM 中被调试程序通信。
+模块 层次 编程语言 作用 JVMTI 底层 C 获取及控制当前虚拟机状态 JDWP 中介层 C 定义 JVMTI 和 JDI 交互的数据格式 JDI 高层 Java 提供 Java API 来远程控制被调试虚拟机 IDEA 的 debug 怎么实现？出于这个好奇心，我越挖越深！ - 知乎 (zhihu.">
+<meta name="twitter:description" content="[toc]
+1. 前言 我们在使用idea启动debug时可以做好多事情,看变量的值; 随处打断点; 计算变量的值等等, 这些功能全都依赖了java的调试体系JPDA(Java Platform Debugger Architecture), 而java也提供了命令行级别的调试
+2. 调试使用 关键命令
+javac -g src/HelloJDB.java -g 表示展示调试信息
+这样就启动了程序,然后打开调试程序
+jdb HelloJDB.class 使用JDB调试Java程序 - 娄老师 - 博客园 (cnblogs.com)
+由此可见,idea那么丰富的调试功能基本来源jvm
+3. JPDA JPDA 由三个规范组成：JVMTI（JVM Tool Interface）、JDWP（Java Debug Wire Protocol）、JDI（Java Debug Interface）
+这三个规范的层次由低到高分别是 JVMTI、JDWP、JDI
+这三个规范把调试过程分解成几个概念：调试者（debugger）、被调试者（debuggee）、以及它们中间的通信器
+JPDA 被抽象为三层实现。其中 JVMTI 是 JVM 对外暴露的接口。JDI 是实现了 JDWP 通信协议的客户端，调试器通过它和 JVM 中被调试程序通信。
+模块 层次 编程语言 作用 JVMTI 底层 C 获取及控制当前虚拟机状态 JDWP 中介层 C 定义 JVMTI 和 JDI 交互的数据格式 JDI 高层 Java 提供 Java API 来远程控制被调试虚拟机 IDEA 的 debug 怎么实现？出于这个好奇心，我越挖越深！ - 知乎 (zhihu.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1-前言">1. 前言</h1>
+<p>我们在使用idea启动debug时可以做好多事情,看变量的值; 随处打断点; 计算变量的值等等, 这些功能全都依赖了java的调试体系JPDA(Java Platform Debugger Architecture), 而java也提供了命令行级别的调试</p>
+<h1 id="2-调试使用">2. 调试使用</h1>
+<p>关键命令</p>
+<ol>
+<li><code>javac -g src/HelloJDB.java</code></li>
+</ol>
+<blockquote>
+<p>-g 表示展示调试信息</p>
+</blockquote>
+<p>这样就启动了程序,然后打开调试程序</p>
+<ol start="2">
+<li><code>jdb HelloJDB.class</code></li>
+</ol>
+<p><img src="https://images2015.cnblogs.com/blog/741560/201703/741560-20170305160726563-1151320514.png" alt="img"></p>
+<p><a href="https://www.cnblogs.com/rocedu/p/6371262.html">使用JDB调试Java程序 - 娄老师 - 博客园 (cnblogs.com)</a></p>
+<blockquote>
+<p>由此可见,idea那么丰富的调试功能基本来源jvm</p>
+</blockquote>
+<h1 id="3-jpda">3. JPDA</h1>
+<p>JPDA 由三个规范组成：JVMTI（JVM Tool Interface）、JDWP（Java Debug Wire Protocol）、JDI（Java Debug Interface）</p>
+<p>这三个规范的层次由低到高分别是 JVMTI、JDWP、JDI</p>
+<p>这三个规范把调试过程分解成几个概念：调试者（debugger）、被调试者（debuggee）、以及它们中间的通信器</p>
+<p><img src="https://img2018.cnblogs.com/blog/1595409/201909/1595409-20190921212320818-499259713.png" alt="img"></p>
+<p>JPDA 被抽象为三层实现。其中 JVMTI 是 JVM 对外暴露的接口。JDI 是实现了 JDWP 通信协议的客户端，调试器通过它和 JVM 中被调试程序通信。</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>层次</th>
+<th>编程语言</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JVMTI</td>
+<td>底层</td>
+<td>C</td>
+<td>获取及控制当前虚拟机状态</td>
+</tr>
+<tr>
+<td>JDWP</td>
+<td>中介层</td>
+<td>C</td>
+<td>定义 JVMTI 和 JDI 交互的数据格式</td>
+</tr>
+<tr>
+<td>JDI</td>
+<td>高层</td>
+<td>Java</td>
+<td>提供 Java API 来远程控制被调试虚拟机</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://zhuanlan.zhihu.com/p/370282695">IDEA 的 debug 怎么实现？出于这个好奇心，我越挖越深！ - 知乎 (zhihu.com)</a></p>
+<p><a href="https://www.cnblogs.com/jhxxb/p/11564843.html">Java-JPDA 概述 - 江湖小小白 - 博客园 (cnblogs.com)</a></p>
+<h1 id="qa">Q&amp;A</h1>
+<ol>
+<li>
+<p><strong>为什么在debug中没有重排序了?</strong></p>
+<p>​	为了保证代码的顺序性,应该是做了禁止重排序的处理(包括指令/编译/内存重排序)</p>
+<p>​     应该是在JVMTI这一层处理的,因为它包含了 虚拟机中线程、内存、堆、栈、类、方法、变量，事件、定时器处理等等诸多功能</p>
+<blockquote>
+<p><a href="https://www.cnblogs.com/jhxxb/p/11564843.html">Java-JPDA 概述 - 江湖小小白 - 博客园 (cnblogs.com)</a></p>
+</blockquote>
+</li>
+<li>
+<p><strong>在debug中怎么实现动态代码的?(改了代码无需重启,甚至直接修改变量值)</strong></p>
+<p>使用了动态字节码技术ASM, 使得代码的修改能直接被jvm识别并执行</p>
+<blockquote>
+<p>动态字节码技术还有很多,比如CGlib/Aspectj/agent等等, 会单独出一篇动态字节码技术</p>
+<p><a href="https://zhuanlan.zhihu.com/p/370282695">IDEA 的 debug 怎么实现？出于这个好奇心，我越挖越深！ - 知乎 (zhihu.com)</a></p>
+</blockquote>
+<p>我们在启动被 Debug 的 JVM 时，必须添加参数 <code>-agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:3333</code>，而 -agentlib 选项就指定了我们要加载的 Java Agent，jdwp 是 agent 的名字，在 linux 系统中，我们可以在 jre 目录下找到 jdwp.so 库文件。</p>
+<p>Java 的调试体系 jdpa 组成，从高到低分别为 <code>jdi-&gt;jdwp-&gt;jvmti</code>，我们通过 JDI 接口发送调试指令，而 jdwp 就相当于一个通道，帮我们翻译 JDI 指令到 JVM TI，最底层的 JVM TI 最终实现对 JVM 的操作。</p>
+</li>
+</ol>
+<p><a href="https://www.cnblogs.com/zhenbianshu/p/10210597.html">Java 动态字节码技术 - 枕边书 - 博客园 (cnblogs.com)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/java%E5%9F%BA%E7%A1%80\/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E7%AE%80%E8%BF%B0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2F%25E8%25B0%2583%25E8%25AF%2595%25E4%25BD%2593%25E7%25B3%25BB%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2F%25E8%25B0%2583%25E8%25AF%2595%25E4%25BD%2593%25E7%25B3%25BB%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fjava%25E5%259F%25BA%25E7%25A1%2580%2F%25E8%25B0%2583%25E8%25AF%2595%25E4%25BD%2593%25E7%25B3%25BB%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

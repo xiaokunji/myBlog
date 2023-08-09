@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1. sql优化 对查询进行优化，应尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。\n应尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃使用索引而进行全表扫描，如：\nselect id from t where num is null 可以在num上设置默认值0，确保表中num列没有null值，然后这样查询：\nselect id from t where num=0 应尽量避免在 where 子句中使用!=或\u0026lt;\u0026gt;操作符，否则将引擎放弃使用索引而进行全表扫描。\n应尽量避免在 where 子句中使用 or 来连接条件，否则将导致引擎放弃使用索引而进行全表扫描(如果or的每个条件都有索引,则or会走索引)，如：\nselect id from t where num=10 or num=20 可以这样查询：\nselect id from t where num=10 union all select id from t where num=20 in 和 not in 也要慎用，否则会导致全表扫描，如：\nselect id from t where num in(1,2,3) 对于连续的数值，能用 between 就不要用 in 了：",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/%E9%9D%A2%E8%AF%95\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1. sql优化 对查询进行优化，应尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。
+应尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃使用索引而进行全表扫描，如：
+select id from t where num is null 可以在num上设置默认值0，确保表中num列没有null值，然后这样查询：
+select id from t where num=0 应尽量避免在 where 子句中使用!=或&lt;&gt;操作符，否则将引擎放弃使用索引而进行全表扫描。
+应尽量避免在 where 子句中使用 or 来连接条件，否则将导致引擎放弃使用索引而进行全表扫描(如果or的每个条件都有索引,则or会走索引)，如：
+select id from t where num=10 or num=20 可以这样查询：
+select id from t where num=10 union all select id from t where num=20 in 和 not in 也要慎用，否则会导致全表扫描，如：
+select id from t where num in(1,2,3) 对于连续的数值，能用 between 就不要用 in 了：">
+
+
+<meta property="og:description" content="[toc]
+1. sql优化 对查询进行优化，应尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。
+应尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃使用索引而进行全表扫描，如：
+select id from t where num is null 可以在num上设置默认值0，确保表中num列没有null值，然后这样查询：
+select id from t where num=0 应尽量避免在 where 子句中使用!=或&lt;&gt;操作符，否则将引擎放弃使用索引而进行全表扫描。
+应尽量避免在 where 子句中使用 or 来连接条件，否则将导致引擎放弃使用索引而进行全表扫描(如果or的每个条件都有索引,则or会走索引)，如：
+select id from t where num=10 or num=20 可以这样查询：
+select id from t where num=10 union all select id from t where num=20 in 和 not in 也要慎用，否则会导致全表扫描，如：
+select id from t where num in(1,2,3) 对于连续的数值，能用 between 就不要用 in 了：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1. sql优化 对查询进行优化，应尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。
+应尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃使用索引而进行全表扫描，如：
+select id from t where num is null 可以在num上设置默认值0，确保表中num列没有null值，然后这样查询：
+select id from t where num=0 应尽量避免在 where 子句中使用!=或&lt;&gt;操作符，否则将引擎放弃使用索引而进行全表扫描。
+应尽量避免在 where 子句中使用 or 来连接条件，否则将导致引擎放弃使用索引而进行全表扫描(如果or的每个条件都有索引,则or会走索引)，如：
+select id from t where num=10 or num=20 可以这样查询：
+select id from t where num=10 union all select id from t where num=20 in 和 not in 也要慎用，否则会导致全表扫描，如：
+select id from t where num in(1,2,3) 对于连续的数值，能用 between 就不要用 in 了：">
+<meta name="twitter:description" content="[toc]
+1. sql优化 对查询进行优化，应尽量避免全表扫描，首先应考虑在 where 及 order by 涉及的列上建立索引。
+应尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃使用索引而进行全表扫描，如：
+select id from t where num is null 可以在num上设置默认值0，确保表中num列没有null值，然后这样查询：
+select id from t where num=0 应尽量避免在 where 子句中使用!=或&lt;&gt;操作符，否则将引擎放弃使用索引而进行全表扫描。
+应尽量避免在 where 子句中使用 or 来连接条件，否则将导致引擎放弃使用索引而进行全表扫描(如果or的每个条件都有索引,则or会走索引)，如：
+select id from t where num=10 or num=20 可以这样查询：
+select id from t where num=10 union all select id from t where num=20 in 和 not in 也要慎用，否则会导致全表扫描，如：
+select id from t where num in(1,2,3) 对于连续的数值，能用 between 就不要用 in 了：">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1-sql优化">1. sql优化</h1>
+<ol>
+<li>
+<p>对查询进行优化，<strong>应尽量避免全表扫描</strong>，首先应考虑在 where 及 order by 涉及的列上建立索引。</p>
+</li>
+<li>
+<p>应尽量避免在 where 子句中对字段进行 null 值判断，否则将导致引擎放弃使用索引而进行全表扫描，如：</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> id <span style="color:#66d9ef">from</span> t <span style="color:#66d9ef">where</span> num <span style="color:#66d9ef">is</span> <span style="color:#66d9ef">null</span> 
+</span></span></code></pre></div><p>可以在num上设置默认值0，确保表中num列没有null值，然后这样查询：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> id <span style="color:#66d9ef">from</span> t <span style="color:#66d9ef">where</span> num<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>   
+</span></span></code></pre></div><ol start="3">
+<li>
+<p>应尽量避免在 where 子句中使用!=或&lt;&gt;操作符，否则将引擎放弃使用索引而进行全表扫描。</p>
+</li>
+<li>
+<p>应尽量避免在 where 子句中使用 or 来连接条件，否则将导致引擎放弃使用索引而进行全表扫描(如果or的每个条件都有索引,则or会走索引)，如：</p>
+</li>
+</ol>
+<p><code>select id from t where num=10 or num=20   </code></p>
+<p>可以这样查询：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> id <span style="color:#66d9ef">from</span> t <span style="color:#66d9ef">where</span> num<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>    
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">union</span> <span style="color:#66d9ef">all</span>    
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">select</span> id <span style="color:#66d9ef">from</span> t <span style="color:#66d9ef">where</span> num<span style="color:#f92672">=</span><span style="color:#ae81ff">20</span>    
+</span></span></code></pre></div><ol start="5">
+<li>
+<p>in 和 not in 也要慎用，否则会导致全表扫描，如：</p>
+<p><code>select id from t where num in(1,2,3)    </code></p>
+<p>对于连续的数值，能用 between 就不要用 in 了：</p>
+<p><code>select id from t where num between 1 and 3   </code></p>
+</li>
+<li>
+<p>全模糊查询也将导致全表扫描(不使用左模糊会走索引)：</p>
+<p><code>select id from t where name like '%abc%'    </code></p>
+</li>
+<li>
+<p>应尽量避免在 where 子句中对字段进行表达式操作，这将导致引擎放弃使用索引而进行全表扫描。如：</p>
+<p><code>select id from t where num/2=100  </code></p>
+<p>应改为:</p>
+<p><code>select id from t where num=100*2   </code></p>
+</li>
+<li>
+<p>应尽量避免在where子句中对字段进行函数操作，这将导致引擎放弃使用索引而进行全表扫描。如：</p>
+<p><code>select id from t where substring(name,1,3)='abc'--name以abc开头的id </code></p>
+<p>应改为:</p>
+<p><code>select id from t where name like 'abc%'    </code></p>
+</li>
+<li>
+<p>不要在 where 子句中的“=”左边进行函数、算术运算或其他表达式运算，否则系统将可能无法正确使用索引。</p>
+</li>
+<li>
+<p>在使用索引字段作为条件时，如果该索引是复合索引，那么必须使用到该索引中的第一个字段作为条件时才能保证系统使用该索引，否则该索引将不会被使用，并且应尽可能的让字段顺序与索引顺序相一致。</p>
+</li>
+<li>
+<p>不要写一些没有意义的查询，如需要生成一个空表结构：</p>
+<p><code>select col1,col2 into #t from t where 1=0    </code></p>
+<p>这类代码不会返回任何结果集，但是会消耗系统资源的，应改成这样：</p>
+<p><code>create table #t(...)    </code></p>
+</li>
+<li>
+<p>很多时候用 exists 代替 in 是一个好的选择：</p>
+<p><code>select num from a where num in(select num from b)    </code></p>
+<p>用下面的语句替换：</p>
+<p><code>select num from a where exists(select 1 from b where num=a.num) </code></p>
+</li>
+</ol>
+<blockquote>
+<p><a href="https://blog.csdn.net/qq_38789941/article/details/83744271">https://blog.csdn.net/qq_38789941/article/details/83744271</a></p>
+</blockquote>
+<h1 id="2-数据库优化">2. 数据库优化</h1>
+<ol>
+<li>
+<p>并不是所有索引对查询都有效，SQL是根据表中数据来进行查询优化的，<!-- raw HTML omitted -->当索引列有大量数据重复时<!-- raw HTML omitted -->，SQL查询可能不会去利用索引，如一表中有字段sex，male、female几乎各一半，那么即使在sex上建了索引也对查询效率起不了作用。</p>
+</li>
+<li>
+<p>索引并不是越多越好，索引固然可以提高相应的 select 的效率，<!-- raw HTML omitted -->但同时也降低了 insert 及 update 的效率<!-- raw HTML omitted -->，因为 insert 或 update 时有可能会重建索引，所以怎样建索引需要慎重考虑，视具体情况而定。</p>
+<p>一个表的索引数最好<strong>不要超过6个</strong>，若太多则应考虑一些不常使用到的列上建的索引是否有必要。</p>
+</li>
+<li>
+<p>尽量使用数字型字段，若只含数值信息的字段尽量不要设计为字符型，这会降低查询和连接的性能，并会增加存储开销。</p>
+<p>这是因为引擎在处理查询和连接时会逐个比较字符串中每一个字符，而对于数字型而言只需要比较一次就够了。</p>
+</li>
+<li>
+<p>尽可能的使用 varchar 代替 char ，因为首先变长字段存储空间小，可以节省存储空间，其次对于查询来说，在一个相对较小的字段内搜索效率显然要高些。</p>
+</li>
+<li>
+<p>任何地方都不要使用 <code>select * from t ，用具体的字段列表代替“*”，</code>不要返回用不到的任何字段。</p>
+</li>
+<li>
+<p>避免频繁创建和删除临时表，以减少系统表资源的消耗。</p>
+</li>
+<li>
+<p>临时表并不是不可使用，适当地使用它们可以使某些例程更有效，例如，当需要重复引用大型表或常用表中的某个数据集时。但是，对于一次性事件，最好使用导出表。</p>
+</li>
+<li>
+<p>在新建临时表时，如果一次性插入数据量很大，那么可以使用 select into 代替 create table，避免造成大量 log ，</p>
+</li>
+</ol>
+<p>以提高速度；如果数据量不大，为了缓和系统表的资源，应先create table，然后insert。</p>
+<ol start="9">
+<li>
+<p>如果使用到了临时表，在存储过程的最后务必将所有的临时表显式删除，先 truncate table ，然后 drop table ，这样可以避免系统表的较长时间锁定。</p>
+</li>
+<li>
+<p>尽量避免使用游标，因为游标的效率较差，如果游标操作的数据超过1万行，那么就应该考虑改写。</p>
+</li>
+<li>
+<p>使用基于游标的方法或临时表方法之前，应先寻找基于集的解决方案来解决问题，基于集的方法通常更有效。</p>
+</li>
+<li>
+<p>与临时表一样，游标并不是不可使用。对小型数据集使用 FAST_FORWARD 游标通常要优于其他逐行处理方法，尤其是在必须引用几个表才能获得所需的数据时。
+在结果集中包括“合计”的例程通常要比使用游标执行的速度快。如果开发时间允许，基于游标的方法和基于集的方法都可以尝试一下，看哪一种方法的效果更好。</p>
+</li>
+<li>
+<p>尽量避免大事务操作，提高系统并发能力。</p>
+</li>
+<li>
+<p>尽量避免向客户端返回大数据量，若数据量过大，应该考虑相应需求是否合理。</p>
+</li>
+</ol>
+<blockquote>
+<p><a href="https://blog.csdn.net/qq_38789941/article/details/83744271">https://blog.csdn.net/qq_38789941/article/details/83744271</a></p>
+</blockquote>
+<ol start="15">
+<li>连表的字段编码集应该一样 , 不一致会导致索引失效, 因为做了隐式转换</li>
+</ol>
+<blockquote>
+<p><code>mysql</code>的<code>utf8</code> 不是完整的<code>utf-8</code>, 是压缩版的, <code>utf8</code>只支持每个字符最多三个字节，而真正的 <code>UTF-8</code> 是每个字符最多四个字节。<code>utf8mb4</code>才是真正的<code>ytf-8</code>, 所以编码集应该统一用这个, 编码集还涉及到 排序规则 , 它表示各个图形字符之间的大小比较规则，比如：是否区分大小写，区分全角和半角等。</p>
+<p><a href="https://blog.csdn.net/wzngzaixiaomantou/article/details/119720356">https://blog.csdn.net/wzngzaixiaomantou/article/details/119720356</a></p>
+<p><a href="https://blog.csdn.net/CSDN_WYL2016/article/details/119881723">https://blog.csdn.net/CSDN_WYL2016/article/details/119881723</a></p>
+<p><a href="https://www.infoq.cn/article/in-mysql-never-use-utf8-use-utf8">https://www.infoq.cn/article/in-mysql-never-use-utf8-use-utf8</a></p>
+<p><a href="https://blog.csdn.net/u010476739/article/details/118653156">https://blog.csdn.net/u010476739/article/details/118653156</a></p>
+</blockquote>
+<h1 id="3-悲观锁和乐观锁">3. 悲观锁和乐观锁</h1>
+<ol>
+<li>
+<p>乐观锁：</p>
+<p>乐观锁不是数据库自带的，需要我们自己去实现。乐观锁是指操作数据库时（更新操作），想法很乐观，认为这次的操作不会导致冲突，在操作数据室，并不进行任何其他的特殊处理（也就是不加锁），而在进行更新后，再去判断是否有冲突了。</p>
+<p>通常是这样实现的：在表中的数据进行操作时（更新），会给数据表中加一个版本（version）字段，每操作一次将那条记录的版本号加1。也就是先查询出那条记录，获取出version字段，如果涛对那条记录进行操作（更新），则先判断此刻version的值是否与刚刚查出来的version的值相等，如果相等，则说明这段期间，没有其他程序对齐进行操作，则可以执行更新，将version字段的值加1；如果更新时发现此刻的version值与刚刚获取出来的verison的值不相等，则说明这段期间已经有其他程序对齐进行操作了，则不进行更新操作。</p>
+</li>
+</ol>
+<blockquote>
+<p>例子：</p>
+<p>1.查询出商品信息</p>
+<p><code>select * from goods where id=#{id}  </code></p>
+<p>2.根据商品信息生成订单</p>
+<p>3.修改商品status为2</p>
+<p>update goods set status = 2,version = version +1 where id=#{id}</p>
+</blockquote>
+<ol start="2">
+<li>
+<p>悲观锁：</p>
+<p>与乐观所相对应的就是悲观锁。悲观锁就是在操作数据时，认为此操作会出现数据冲突，所以在进行每次操作时都要通过获取锁才能进行对相同数据的操作，这单跟java中的synchronized很相似，所以悲观锁需要耗费较多的时间。另外与乐观锁相对应的，悲观锁是由数据库自己实现的，要用的时候，我们直接调用数据库的相关语句就可以 了。</p>
+</li>
+</ol>
+<p>由悲观锁涉及到的两个锁概念：共享锁与排他锁。</p>
+<h1 id="4-共享锁与排他锁">4. 共享锁与排他锁</h1>
+<ol>
+<li>
+<p>共享锁：</p>
+<p>共享锁指的就是对于多个不同的事务，对同一个资源共享同一个锁。相当于对于同一把门，它拥有多个钥匙一样。对于悲观锁，一般数据库已经实现了，共享锁也属于悲观锁的一种，共享锁，也叫读锁。就是我们对数据进行读取操作的时候，其实是不会改变数据的值的。</p>
+<p>所以我们可以给数据库增加读锁，获得读锁的事务就可以读取数据了。当数据库已经被别人增加了读锁的时候，其他新来的事务也可以读数据，但是不能写。</p>
+<p>也就是说，如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁。获准共享锁的事务只能读数据，不能修改数据。</p>
+</li>
+</ol>
+<p>用法:</p>
+<p>在查询语句后面增加LOCK IN SHARE MODE，Mysql会对查询结果中的每行都加共享锁。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">SELECT</span> ... <span style="color:#66d9ef">LOCK</span> <span style="color:#66d9ef">IN</span> <span style="color:#66d9ef">SHARE</span> <span style="color:#66d9ef">MODE</span>;
+</span></span></code></pre></div><p>当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请共享锁，否则会被阻塞。其他线程也可以读取使用了共享锁的表，而且这些线程读取的是同一个版本的数据。</p>
+<ol start="2">
+<li>
+<p>排它锁：</p>
+<p>排它锁与共享锁相对应，就是指对于多个不同的事务，对同一个资源只能有一把锁。 排他锁，也叫写锁。就是我们对数据进行写操作的时候，要先获得写锁，获得写锁的事务既可以写数据也可以读数据。但是，如果数据库已经被别人增加了排他写锁，那么后面的事务是无法在获得该数据库的任何锁的。</p>
+<p>也就是说，如果事务T对数据A加上排他锁后，则其他事务不能再对A加任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。</p>
+<p>用法
+在查询语句后面增加FOR UPDATE，Mysql会对查询结果中的每行都加排他锁</p>
+</li>
+</ol>
+<pre tabindex="0"><code>SELECT ... FOR UPDATE;
+</code></pre><p>当没有其他线程对查询结果集中的任何一行使用排他锁时，可以成功申请排他锁，否则会被阻塞。</p>
+<blockquote>
+<p>来自:  <a href="https://www.cnblogs.com/fanghl/p/11316540.html">https://www.cnblogs.com/fanghl/p/11316540.html</a></p>
+</blockquote>
+<h1 id="5-索引的目的是什么">5. 索引的目的是什么？</h1>
+<ol>
+<li>快速访问数据表中的特定信息，提高检索速度</li>
+<li>创建唯一性索引，保证数据库表中每一行数据的唯一性。</li>
+<li>加速表和表之间的连接</li>
+<li>使用分组和排序子句进行数据检索时，可以显著减少查询中分组和排序的时间</li>
+</ol>
+<h1 id="6-索引对数据库系统的负面影响是什么">6. 索引对数据库系统的负面影响是什么？</h1>
+<ol>
+<li>创建索引和维护索引需要耗费时间，这个时间随着数据量的增加而增加；</li>
+<li>索引需要占用物理空间，不光是表需要占用数据空间，每个索引也需要占用物理空间；</li>
+<li>当对表进行增、删、改、的时候索引也要动态维护，这样就降低了数据的维护速度。</li>
+</ol>
+<h1 id="7-为数据表建立索引的原则有哪些">7. 为数据表建立索引的原则有哪些？</h1>
+<ol>
+<li>在最频繁使用的、用以缩小查询范围的字段上建立索引。</li>
+<li>在频繁使用的、需要排序的字段上建立索引</li>
+<li>对于查询中很少涉及的列或者重复值比较多的列，不宜建立索引。</li>
+<li>对于一些特殊的数据类型，不宜建立索引，比如文本字段（text）等</li>
+</ol>
+<blockquote>
+<p>原文链接：https://blog.csdn.net/qq_34988624/article/details/85838850</p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E7%A7%AF%E7%B4%AF/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/docker/docker-swarm/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/%E9%9D%A2%E8%AF%95\/';
+        
+          this.page.identifier = '\/post\/%E6%95%B0%E6%8D%AE%E5%BA%93\/%E9%9D%A2%E8%AF%95\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E7%A7%AF%E7%B4%AF/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/docker/docker-swarm/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2F%25E9%259D%25A2%25E8%25AF%2595%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2F%25E9%259D%25A2%25E8%25AF%2595%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E6%2595%25B0%25E6%258D%25AE%25E5%25BA%2593%2F%25E9%259D%25A2%25E8%25AF%2595%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1. 介绍 SpringCache提供基本的Cache抽象，并没有具体的缓存能力，需要配合具体的缓存实现来完成，目前SpringCache支持redis、ehcache、simple（基于内存,使用ConcurrentHashMap）等方式来实现缓存。\n因为spring的缓存机制会引入一些问题, 一些大型项目可能不适合, 比如并发场景下出现异常等等, 但大部分的项目还是可以适用的(毕竟中国没有多少具备高并发的公司)\n2. 常用注解 2.1 @EnableCaching 开启缓存功能，一般使用在springboot的启动类或配置类上\n2.2 @Cacheable 使用缓存。在方法执行前Spring先查看缓存中是否有数据，如果有数据，则直接返回缓存数据；没有则调用方法并将方法返回值放进缓存。\n**注解参数解释: **\n@Cacheable属性名 用途 备注 cacheNames\/value 指定缓存空间的名称，不同缓存空间的数据是彼此隔离的 key 同一个cacheNames中通过key区别不同的缓存。如果指定要按照 SpEL 表达式编写，如果不指定，则缺省按照方法的所有参数进行组合，如：@CachePut(value = “demo”, key = “‘user’\u002b#user.id”)，字符串中spring表达式意外的字符串部分需要用单引号 SpringCache提供了与缓存相关的专用元数据，如target、methodMame、result、方法参数等，如：@CachePut(value = “demo”, key = “#result==null”)当方法的参数和值一样时, 会导致重复; 如果是基本参数: 参数名\u002b值 如果是对象参数: 参数的类名\u002b对象的成员变量\u002b值 (类似于toString的结果) keyGenrator key的生成策略，SpringCache默认使用SimpleKeyGenerator，默认情况下将参数值作为键，但是可能会导致key重复出现，因此一般需要自定义key的生成策略 和key参数二选一 cacheManager 指定缓存管理器(例如ConcurrentHashMap、Redis等)。 cacheResolver 和cacheManager作用一样，使用时二选一。 condition (指定缓存的条件（对参数判断，满足什么条件时才缓存）)condition是在调用方法之前判断条件，满足条件才缓存, 支持spel语法 @Cacheable(cacheNames=“book”, condition=\u0026quot;#name.length() \u0026lt; 32\u0026quot;) unless (否定缓存的条件（对结果判断，满足什么条件时不缓存）)unless是在调用方法之后判断条件，如果SpEL条件成立，则不缓存【条件满足不缓存】,支持spel语法 @Cacheable(cacheNames = “hello”,unless=\u0026quot;#result.id.contains(‘1’)\u0026quot; ) sync 缓存过期之后，如果多个线程同时请求对某个数据的访问，会同时去到数据库，导致数据库瞬间负荷增高。Spring4.3为@Cacheable注解提供了一个新的参数“sync”（默认为false）。当设置它为true时，只有一个线程的请求会去到数据库，其他线程都会等待直到缓存可用。这个设置可以减少对数据库的瞬间并发访问。 2.3 @CachePut 更新缓存，将方法的返回值放到缓存中\n2.4 @CacheEvict 清空缓存",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/springcache\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1. 介绍 SpringCache提供基本的Cache抽象，并没有具体的缓存能力，需要配合具体的缓存实现来完成，目前SpringCache支持redis、ehcache、simple（基于内存,使用ConcurrentHashMap）等方式来实现缓存。
+因为spring的缓存机制会引入一些问题, 一些大型项目可能不适合, 比如并发场景下出现异常等等, 但大部分的项目还是可以适用的(毕竟中国没有多少具备高并发的公司)
+2. 常用注解 2.1 @EnableCaching 开启缓存功能，一般使用在springboot的启动类或配置类上
+2.2 @Cacheable 使用缓存。在方法执行前Spring先查看缓存中是否有数据，如果有数据，则直接返回缓存数据；没有则调用方法并将方法返回值放进缓存。
+**注解参数解释: **
+@Cacheable属性名 用途 备注 cacheNames/value 指定缓存空间的名称，不同缓存空间的数据是彼此隔离的 key 同一个cacheNames中通过key区别不同的缓存。如果指定要按照 SpEL 表达式编写，如果不指定，则缺省按照方法的所有参数进行组合，如：@CachePut(value = “demo”, key = “‘user’&#43;#user.id”)，字符串中spring表达式意外的字符串部分需要用单引号 SpringCache提供了与缓存相关的专用元数据，如target、methodMame、result、方法参数等，如：@CachePut(value = “demo”, key = “#result==null”)当方法的参数和值一样时, 会导致重复; 如果是基本参数: 参数名&#43;值 如果是对象参数: 参数的类名&#43;对象的成员变量&#43;值 (类似于toString的结果) keyGenrator key的生成策略，SpringCache默认使用SimpleKeyGenerator，默认情况下将参数值作为键，但是可能会导致key重复出现，因此一般需要自定义key的生成策略 和key参数二选一 cacheManager 指定缓存管理器(例如ConcurrentHashMap、Redis等)。 cacheResolver 和cacheManager作用一样，使用时二选一。 condition (指定缓存的条件（对参数判断，满足什么条件时才缓存）)condition是在调用方法之前判断条件，满足条件才缓存, 支持spel语法 @Cacheable(cacheNames=“book”, condition=&quot;#name.length() &lt; 32&quot;) unless (否定缓存的条件（对结果判断，满足什么条件时不缓存）)unless是在调用方法之后判断条件，如果SpEL条件成立，则不缓存【条件满足不缓存】,支持spel语法 @Cacheable(cacheNames = “hello”,unless=&quot;#result.id.contains(‘1’)&quot; ) sync 缓存过期之后，如果多个线程同时请求对某个数据的访问，会同时去到数据库，导致数据库瞬间负荷增高。Spring4.3为@Cacheable注解提供了一个新的参数“sync”（默认为false）。当设置它为true时，只有一个线程的请求会去到数据库，其他线程都会等待直到缓存可用。这个设置可以减少对数据库的瞬间并发访问。 2.3 @CachePut 更新缓存，将方法的返回值放到缓存中
+2.4 @CacheEvict 清空缓存">
+
+
+<meta property="og:description" content="[toc]
+1. 介绍 SpringCache提供基本的Cache抽象，并没有具体的缓存能力，需要配合具体的缓存实现来完成，目前SpringCache支持redis、ehcache、simple（基于内存,使用ConcurrentHashMap）等方式来实现缓存。
+因为spring的缓存机制会引入一些问题, 一些大型项目可能不适合, 比如并发场景下出现异常等等, 但大部分的项目还是可以适用的(毕竟中国没有多少具备高并发的公司)
+2. 常用注解 2.1 @EnableCaching 开启缓存功能，一般使用在springboot的启动类或配置类上
+2.2 @Cacheable 使用缓存。在方法执行前Spring先查看缓存中是否有数据，如果有数据，则直接返回缓存数据；没有则调用方法并将方法返回值放进缓存。
+**注解参数解释: **
+@Cacheable属性名 用途 备注 cacheNames/value 指定缓存空间的名称，不同缓存空间的数据是彼此隔离的 key 同一个cacheNames中通过key区别不同的缓存。如果指定要按照 SpEL 表达式编写，如果不指定，则缺省按照方法的所有参数进行组合，如：@CachePut(value = “demo”, key = “‘user’&#43;#user.id”)，字符串中spring表达式意外的字符串部分需要用单引号 SpringCache提供了与缓存相关的专用元数据，如target、methodMame、result、方法参数等，如：@CachePut(value = “demo”, key = “#result==null”)当方法的参数和值一样时, 会导致重复; 如果是基本参数: 参数名&#43;值 如果是对象参数: 参数的类名&#43;对象的成员变量&#43;值 (类似于toString的结果) keyGenrator key的生成策略，SpringCache默认使用SimpleKeyGenerator，默认情况下将参数值作为键，但是可能会导致key重复出现，因此一般需要自定义key的生成策略 和key参数二选一 cacheManager 指定缓存管理器(例如ConcurrentHashMap、Redis等)。 cacheResolver 和cacheManager作用一样，使用时二选一。 condition (指定缓存的条件（对参数判断，满足什么条件时才缓存）)condition是在调用方法之前判断条件，满足条件才缓存, 支持spel语法 @Cacheable(cacheNames=“book”, condition=&quot;#name.length() &lt; 32&quot;) unless (否定缓存的条件（对结果判断，满足什么条件时不缓存）)unless是在调用方法之后判断条件，如果SpEL条件成立，则不缓存【条件满足不缓存】,支持spel语法 @Cacheable(cacheNames = “hello”,unless=&quot;#result.id.contains(‘1’)&quot; ) sync 缓存过期之后，如果多个线程同时请求对某个数据的访问，会同时去到数据库，导致数据库瞬间负荷增高。Spring4.3为@Cacheable注解提供了一个新的参数“sync”（默认为false）。当设置它为true时，只有一个线程的请求会去到数据库，其他线程都会等待直到缓存可用。这个设置可以减少对数据库的瞬间并发访问。 2.3 @CachePut 更新缓存，将方法的返回值放到缓存中
+2.4 @CacheEvict 清空缓存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/springcache/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/springcache/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1. 介绍 SpringCache提供基本的Cache抽象，并没有具体的缓存能力，需要配合具体的缓存实现来完成，目前SpringCache支持redis、ehcache、simple（基于内存,使用ConcurrentHashMap）等方式来实现缓存。
+因为spring的缓存机制会引入一些问题, 一些大型项目可能不适合, 比如并发场景下出现异常等等, 但大部分的项目还是可以适用的(毕竟中国没有多少具备高并发的公司)
+2. 常用注解 2.1 @EnableCaching 开启缓存功能，一般使用在springboot的启动类或配置类上
+2.2 @Cacheable 使用缓存。在方法执行前Spring先查看缓存中是否有数据，如果有数据，则直接返回缓存数据；没有则调用方法并将方法返回值放进缓存。
+**注解参数解释: **
+@Cacheable属性名 用途 备注 cacheNames/value 指定缓存空间的名称，不同缓存空间的数据是彼此隔离的 key 同一个cacheNames中通过key区别不同的缓存。如果指定要按照 SpEL 表达式编写，如果不指定，则缺省按照方法的所有参数进行组合，如：@CachePut(value = “demo”, key = “‘user’&#43;#user.id”)，字符串中spring表达式意外的字符串部分需要用单引号 SpringCache提供了与缓存相关的专用元数据，如target、methodMame、result、方法参数等，如：@CachePut(value = “demo”, key = “#result==null”)当方法的参数和值一样时, 会导致重复; 如果是基本参数: 参数名&#43;值 如果是对象参数: 参数的类名&#43;对象的成员变量&#43;值 (类似于toString的结果) keyGenrator key的生成策略，SpringCache默认使用SimpleKeyGenerator，默认情况下将参数值作为键，但是可能会导致key重复出现，因此一般需要自定义key的生成策略 和key参数二选一 cacheManager 指定缓存管理器(例如ConcurrentHashMap、Redis等)。 cacheResolver 和cacheManager作用一样，使用时二选一。 condition (指定缓存的条件（对参数判断，满足什么条件时才缓存）)condition是在调用方法之前判断条件，满足条件才缓存, 支持spel语法 @Cacheable(cacheNames=“book”, condition=&quot;#name.length() &lt; 32&quot;) unless (否定缓存的条件（对结果判断，满足什么条件时不缓存）)unless是在调用方法之后判断条件，如果SpEL条件成立，则不缓存【条件满足不缓存】,支持spel语法 @Cacheable(cacheNames = “hello”,unless=&quot;#result.id.contains(‘1’)&quot; ) sync 缓存过期之后，如果多个线程同时请求对某个数据的访问，会同时去到数据库，导致数据库瞬间负荷增高。Spring4.3为@Cacheable注解提供了一个新的参数“sync”（默认为false）。当设置它为true时，只有一个线程的请求会去到数据库，其他线程都会等待直到缓存可用。这个设置可以减少对数据库的瞬间并发访问。 2.3 @CachePut 更新缓存，将方法的返回值放到缓存中
+2.4 @CacheEvict 清空缓存">
+<meta name="twitter:description" content="[toc]
+1. 介绍 SpringCache提供基本的Cache抽象，并没有具体的缓存能力，需要配合具体的缓存实现来完成，目前SpringCache支持redis、ehcache、simple（基于内存,使用ConcurrentHashMap）等方式来实现缓存。
+因为spring的缓存机制会引入一些问题, 一些大型项目可能不适合, 比如并发场景下出现异常等等, 但大部分的项目还是可以适用的(毕竟中国没有多少具备高并发的公司)
+2. 常用注解 2.1 @EnableCaching 开启缓存功能，一般使用在springboot的启动类或配置类上
+2.2 @Cacheable 使用缓存。在方法执行前Spring先查看缓存中是否有数据，如果有数据，则直接返回缓存数据；没有则调用方法并将方法返回值放进缓存。
+**注解参数解释: **
+@Cacheable属性名 用途 备注 cacheNames/value 指定缓存空间的名称，不同缓存空间的数据是彼此隔离的 key 同一个cacheNames中通过key区别不同的缓存。如果指定要按照 SpEL 表达式编写，如果不指定，则缺省按照方法的所有参数进行组合，如：@CachePut(value = “demo”, key = “‘user’&#43;#user.id”)，字符串中spring表达式意外的字符串部分需要用单引号 SpringCache提供了与缓存相关的专用元数据，如target、methodMame、result、方法参数等，如：@CachePut(value = “demo”, key = “#result==null”)当方法的参数和值一样时, 会导致重复; 如果是基本参数: 参数名&#43;值 如果是对象参数: 参数的类名&#43;对象的成员变量&#43;值 (类似于toString的结果) keyGenrator key的生成策略，SpringCache默认使用SimpleKeyGenerator，默认情况下将参数值作为键，但是可能会导致key重复出现，因此一般需要自定义key的生成策略 和key参数二选一 cacheManager 指定缓存管理器(例如ConcurrentHashMap、Redis等)。 cacheResolver 和cacheManager作用一样，使用时二选一。 condition (指定缓存的条件（对参数判断，满足什么条件时才缓存）)condition是在调用方法之前判断条件，满足条件才缓存, 支持spel语法 @Cacheable(cacheNames=“book”, condition=&quot;#name.length() &lt; 32&quot;) unless (否定缓存的条件（对结果判断，满足什么条件时不缓存）)unless是在调用方法之后判断条件，如果SpEL条件成立，则不缓存【条件满足不缓存】,支持spel语法 @Cacheable(cacheNames = “hello”,unless=&quot;#result.id.contains(‘1’)&quot; ) sync 缓存过期之后，如果多个线程同时请求对某个数据的访问，会同时去到数据库，导致数据库瞬间负荷增高。Spring4.3为@Cacheable注解提供了一个新的参数“sync”（默认为false）。当设置它为true时，只有一个线程的请求会去到数据库，其他线程都会等待直到缓存可用。这个设置可以减少对数据库的瞬间并发访问。 2.3 @CachePut 更新缓存，将方法的返回值放到缓存中
+2.4 @CacheEvict 清空缓存">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/springcache/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1-介绍">1. 介绍</h1>
+<p>SpringCache提供基本的Cache抽象，并没有具体的缓存能力，需要配合具体的缓存实现来完成，目前SpringCache支持redis、ehcache、simple（基于内存,使用<code>ConcurrentHashMap</code>）等方式来实现缓存。</p>
+<blockquote>
+<p>因为spring的缓存机制会引入一些问题, 一些大型项目可能不适合, 比如并发场景下出现异常等等, 但大部分的项目还是可以适用的(毕竟中国没有多少具备高并发的公司)</p>
+</blockquote>
+<h1 id="2-常用注解">2. 常用注解</h1>
+<h2 id="21-enablecaching">2.1 @EnableCaching</h2>
+<p>开启缓存功能，一般使用在springboot的启动类或配置类上</p>
+<h2 id="22-cacheable">2.2 @Cacheable</h2>
+<p>使用缓存。在方法执行前Spring先查看缓存中是否有数据，如果有数据，则直接返回缓存数据；没有则调用方法并将方法返回值放进缓存。</p>
+<p>**注解参数解释: **</p>
+<table>
+<thead>
+<tr>
+<th>@Cacheable属性名</th>
+<th>用途</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cacheNames/value</td>
+<td>指定缓存空间的名称，不同缓存空间的数据是彼此隔离的</td>
+<td></td>
+</tr>
+<tr>
+<td>key</td>
+<td>同一个cacheNames中通过key区别不同的缓存。如果指定要按照 SpEL 表达式编写，如果不指定，则缺省按照方法的所有参数进行组合，如：@CachePut(value = “demo”, key = “‘user’+#user.id”)，字符串中spring表达式意外的字符串部分需要用单引号</td>
+<td>SpringCache提供了与缓存相关的专用元数据，如target、methodMame、result、方法参数等，如：@CachePut(value = “demo”, key = “#result==null”)<!-- raw HTML omitted -->当方法的参数和值一样时, 会导致重复; <!-- raw HTML omitted -->如果是基本参数: 参数名+值 <!-- raw HTML omitted -->如果是对象参数: 参数的类名+对象的成员变量+值 (类似于toString的结果)</td>
+</tr>
+<tr>
+<td>keyGenrator</td>
+<td>key的生成策略，SpringCache默认使用SimpleKeyGenerator，默认情况下将参数值作为键，但是可能会导致key重复出现，因此一般需要自定义key的生成策略</td>
+<td>和key参数二选一</td>
+</tr>
+<tr>
+<td>cacheManager</td>
+<td>指定缓存管理器(例如ConcurrentHashMap、Redis等)。</td>
+<td></td>
+</tr>
+<tr>
+<td>cacheResolver</td>
+<td>和cacheManager作用一样，使用时二选一。</td>
+<td></td>
+</tr>
+<tr>
+<td>condition</td>
+<td>(指定缓存的条件（对参数判断，满足什么条件时才缓存）)<!-- raw HTML omitted -->condition是在调用方法之前判断条件，满足条件才缓存, 支持spel语法</td>
+<td>@Cacheable(cacheNames=“book”, condition=&quot;#name.length() &lt; 32&quot;)</td>
+</tr>
+<tr>
+<td>unless</td>
+<td>(否定缓存的条件（对结果判断，满足什么条件时不缓存）)<!-- raw HTML omitted -->unless是在调用方法之后判断条件，如果SpEL条件成立，则不缓存【条件满足不缓存】,支持spel语法</td>
+<td>@Cacheable(cacheNames = “hello”,unless=&quot;#result.id.contains(‘1’)&quot; )</td>
+</tr>
+<tr>
+<td>sync</td>
+<td>缓存过期之后，如果多个线程同时请求对某个数据的访问，会同时去到数据库，导致数据库瞬间负荷增高。Spring4.3为@Cacheable注解提供了一个新的参数“sync”（默认为false）。当设置它为true时，只有一个线程的请求会去到数据库，其他线程都会等待直到缓存可用。这个设置可以减少对数据库的瞬间并发访问。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="23-cacheput">2.3 @CachePut</h2>
+<p>更新缓存，将方法的返回值放到缓存中</p>
+<h2 id="24-cacheevict">2.4 @CacheEvict</h2>
+<p>清空缓存</p>
+<h2 id="25-caching">2.5 @Caching</h2>
+<p><code>@Caching</code>是一个组注解，可以为一个方法定义提供基于<code>@Cacheable</code>、<code>@CacheEvict</code>或者<code>@CachePut</code>注解的数组。</p>
+<p>例如下面这个例子, 在方法上加 <code>@caching</code>并标注需要的逻辑, 这样调用这个方法时就能同时触发多个操作</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Caching</span><span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>        put <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">@CachePut</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;myCache&#34;</span><span style="color:#f92672">,</span> key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#result.id&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">},</span>
+</span></span><span style="display:flex;"><span>        evict <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">@CacheEvict</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;otherCache&#34;</span><span style="color:#f92672">,</span> key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#id&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">},</span>
+</span></span><span style="display:flex;"><span>        cacheable <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">@Cacheable</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;myFifthCache&#34;</span><span style="color:#f92672">,</span> key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#result.id&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> MyEntity <span style="color:#a6e22e">saveData</span><span style="color:#f92672">(</span>Long id<span style="color:#f92672">,</span> String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        MyEntity entity <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MyEntity<span style="color:#f92672">(</span>id<span style="color:#f92672">,</span> name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> entity<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="26-cacheconfig">2.6 @CacheConfig：</h2>
+<p>一个类中可能会有多个缓存操作，而这些缓存操作可能是重复的。这个时候可以使用 <code>@CacheConfig</code>是一个类级别的注解.</p>
+<p>它可以存放该类中所有缓存的公有属性，比如设置缓存空间的名字cacheNames、key生成策略keyGenerator、缓存管理器cacheManager</p>
+<h1 id="3-缓存具体实现">3. 缓存具体实现</h1>
+<p>支持多种缓存提供程序，包括 <code>Caffeine</code>、<code>Hazelcast</code> 、 <code>Redis</code>和<code>ConcurrentHashMap</code>(默认值)。</p>
+<p>也就是说支持本地缓存和第三方缓存框架, 如果是第三方的缓存就需要额外的pom坐标支持</p>
+<blockquote>
+<p>推荐<code>caffeine</code>这个本地缓存框架, 性能好,功能全, 只是需要额外引入<code>caffeine</code>这个框架,就有点小成本了</p>
+<p>其次推荐使用<code>redis</code>, 功能全,性能好(没有caffeine这种本地缓存快), 项目中反正都要引入redis的, 刚好顺便能用</p>
+</blockquote>
+<p>这里以redis为例</p>
+<h1 id="4-使用">4. 使用</h1>
+<h2 id="41-引入依赖">4.1 引入依赖</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span> <span style="color:#f92672">&lt;dependencies&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!--引入缓存--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-starter-cache<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;version&gt;</span>2.3.0.RELEASE<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span>     	<span style="color:#75715e">&lt;!--引入redis--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-starter-data-redis<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;version&gt;</span>2.3.0.RELEASE<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/dependencies&gt;</span>
+</span></span></code></pre></div><h2 id="42-配置类">4.2 配置类</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RedisConfiguration</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ${cache} 获取配置文件的配置信息   #{}是spring表达式，获取Bean对象的属性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Value</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;#{${cache}}&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Long<span style="color:#f92672">&gt;</span> ttlParams<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param redisConnectionFactory
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @功能描述 redis作为缓存时配置缓存管理器CacheManager，主要配置序列化方式、自定义
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * &lt;p&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 注意：配置缓存管理器CacheManager有两种方式：
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 方式1：通过RedisCacheConfiguration.defaultCacheConfig()获取到默认的RedisCacheConfiguration对象，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 修改RedisCacheConfiguration对象的序列化方式等参数【这里就采用的这种方式】
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 方式2：通过继承CachingConfigurerSupport类自定义缓存管理器，覆写各方法，参考：
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * https://blog.csdn.net/echizao1839/article/details/102660649
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * &lt;p&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 切记：在缓存配置类中配置以后，yaml配置文件中关于缓存的redis配置就不会生效，如果需要相关配置需要通过@value去读取
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> CacheManager <span style="color:#a6e22e">cacheManager</span><span style="color:#f92672">(</span>RedisConnectionFactory redisConnectionFactory<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        RedisCacheConfiguration redisCacheConfiguration <span style="color:#f92672">=</span> RedisCacheConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">defaultCacheConfig</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 设置key采用String的序列化方式
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>              <span style="color:#f92672">.</span><span style="color:#a6e22e">serializeKeysWith</span><span style="color:#f92672">(</span>RedisSerializationContext<span style="color:#f92672">.</span><span style="color:#a6e22e">SerializationPair</span><span style="color:#f92672">.</span><span style="color:#a6e22e">fromSerializer</span><span style="color:#f92672">(</span>StringRedisSerializer<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//设置value序列化方式采用jackson方式序列化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">serializeValuesWith</span><span style="color:#f92672">(</span>RedisSerializationContext<span style="color:#f92672">.</span><span style="color:#a6e22e">SerializationPair</span><span style="color:#f92672">.</span><span style="color:#a6e22e">fromSerializer</span><span style="color:#f92672">(</span>serializer<span style="color:#f92672">()))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//当value为null时不进行缓存
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">disableCachingNullValues</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 配置缓存空间名称的前缀 (这里会覆盖 @cacheable注解的vaule字段)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">prefixCacheNameWith</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;demo:&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//全局配置缓存过期时间【可以不配置】
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">entryTtl</span><span style="color:#f92672">(</span>Duration<span style="color:#f92672">.</span><span style="color:#a6e22e">ofMinutes</span><span style="color:#f92672">(</span>30L<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//专门指定某些缓存空间的配置，如果过期时间【主要这里的key为缓存空间名称】
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> RedisCacheConfiguration<span style="color:#f92672">&gt;</span> map <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>        Set<span style="color:#f92672">&lt;</span>Map<span style="color:#f92672">.</span><span style="color:#a6e22e">Entry</span><span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Long<span style="color:#f92672">&gt;&gt;</span> entries <span style="color:#f92672">=</span> ttlParams<span style="color:#f92672">.</span><span style="color:#a6e22e">entrySet</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Map<span style="color:#f92672">.</span><span style="color:#a6e22e">Entry</span><span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Long<span style="color:#f92672">&gt;</span> entry <span style="color:#f92672">:</span> entries<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//指定特定缓存空间对应的过期时间
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            map<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;user&#34;</span><span style="color:#f92672">,</span> redisCacheConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">entryTtl</span><span style="color:#f92672">(</span>Duration<span style="color:#f92672">.</span><span style="color:#a6e22e">ofSeconds</span><span style="color:#f92672">(</span>40<span style="color:#f92672">)));</span>
+</span></span><span style="display:flex;"><span>            map<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>entry<span style="color:#f92672">.</span><span style="color:#a6e22e">getKey</span><span style="color:#f92672">(),</span> redisCacheConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">entryTtl</span><span style="color:#f92672">(</span>Duration<span style="color:#f92672">.</span><span style="color:#a6e22e">ofSeconds</span><span style="color:#f92672">(</span>entry<span style="color:#f92672">.</span><span style="color:#a6e22e">getValue</span><span style="color:#f92672">())));</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> RedisCacheManager
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">builder</span><span style="color:#f92672">(</span>redisConnectionFactory<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">cacheDefaults</span><span style="color:#f92672">(</span>redisCacheConfiguration<span style="color:#f92672">)</span>  <span style="color:#75715e">//默认配置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">withInitialCacheConfigurations</span><span style="color:#f92672">(</span>map<span style="color:#f92672">)</span>  <span style="color:#75715e">//某些缓存空间的特定配置
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 自定义缓存的redis的KeyGenerator【key生成策略】
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 注意: 该方法只是声明了key的生成策略,需在@Cacheable注解中通过keyGenerator属性指定具体的key生成策略
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 可以根据业务情况，配置多个生成策略
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 如: @Cacheable(value = &#34;key&#34;, keyGenerator = &#34;cacheKeyGenerator&#34;)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> KeyGenerator <span style="color:#a6e22e">keyGenerator</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * target: 类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * method: 方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * params: 方法参数
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         */</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>target<span style="color:#f92672">,</span> method<span style="color:#f92672">,</span> params<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//获取代理对象的最终目标对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            StringBuilder sb <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> StringBuilder<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>target<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getSimpleName</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;:&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>method<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;:&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//调用SimpleKey的key生成器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            Object key <span style="color:#f92672">=</span> SimpleKeyGenerator<span style="color:#f92672">.</span><span style="color:#a6e22e">generateKey</span><span style="color:#f92672">(</span>params<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> sb<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">};</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @param redisConnectionFactory：配置不同的客户端，这里注入的redis连接工厂不同： JedisConnectionFactory、LettuceConnectionFactory
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @功能描述 ：配置Redis序列化，原因如下：
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * （1） StringRedisTemplate的序列化方式为字符串序列化，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * RedisTemplate的序列化方式默为jdk序列化（实现Serializable接口）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * （2） RedisTemplate的jdk序列化方式在Redis的客户端中为乱码，不方便查看，
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 因此一般修改RedisTemplate的序列化为方式为JSON方式【建议使用GenericJackson2JsonRedisSerializer】
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> RedisTemplate<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Object<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">redisTemplate</span><span style="color:#f92672">(</span>RedisConnectionFactory redisConnectionFactory<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer <span style="color:#f92672">=</span> serializer<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        RedisTemplate<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Object<span style="color:#f92672">&gt;</span> redisTemplate <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisTemplate<span style="color:#f92672">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// key采用String的序列化方式
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">setKeySerializer</span><span style="color:#f92672">(</span>StringRedisSerializer<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// value序列化方式采用jackson
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">setValueSerializer</span><span style="color:#f92672">(</span>genericJackson2JsonRedisSerializer<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// hash的key也采用String的序列化方式
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">setHashKeySerializer</span><span style="color:#f92672">(</span>StringRedisSerializer<span style="color:#f92672">.</span><span style="color:#a6e22e">UTF_8</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//hash的value序列化方式采用jackson
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">setHashValueSerializer</span><span style="color:#f92672">(</span>genericJackson2JsonRedisSerializer<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">setConnectionFactory</span><span style="color:#f92672">(</span>redisConnectionFactory<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> redisTemplate<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 此方法不能用@Ben注解，避免替换Spring容器中的同类型对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> GenericJackson2JsonRedisSerializer <span style="color:#a6e22e">serializer</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> GenericJackson2JsonRedisSerializer<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="43-开启并使用">4.3 开启并使用</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@EnableCaching</span>   <span style="color:#75715e">//开启缓存的主键
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">@SpringBootApplication</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RedisDemoApplication</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        SpringApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">run</span><span style="color:#f92672">(</span>RedisDemoApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> args<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@CacheConfig</span><span style="color:#f92672">(</span>cacheNames <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;user&#34;</span><span style="color:#f92672">,</span>keyGenerator <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;keyGenerator&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RedisServiceImpl</span> <span style="color:#66d9ef">implements</span> RedisService <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Cacheable</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;user&#34;</span><span style="color:#f92672">,</span> key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#39;list&#39;&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">list</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;=========list&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        List<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> users <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> users<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@CacheEvict</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;user&#34;</span><span style="color:#f92672">,</span> key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#39;list&#39;&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">del</span><span style="color:#f92672">(</span>Integer id<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;************************************+id&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@CachePut</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;demo&#34;</span><span style="color:#f92672">,</span> key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#result==null&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">select</span><span style="color:#f92672">(</span>Integer id<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;===============dddd================&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="44-配置文件">4.4 配置文件</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">cache</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">type</span>: <span style="color:#ae81ff">redis  </span> <span style="color:#75715e"># 指定使用的缓存类型,不传会自动识别</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">redis</span>:    <span style="color:#ae81ff">当自定义ChacheManager时，就这里的配置不需要配置，配置了也不起作用</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">use-key-prefix</span>: <span style="color:#66d9ef">true</span>  
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">key-prefix</span>: <span style="color:#e6db74">&#34;demo:&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">time-to-live</span>: <span style="color:#ae81ff">60000</span>  <span style="color:#75715e">#缓存超时时间 单位：ms</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">cache-null-values</span>: <span style="color:#66d9ef">false</span> <span style="color:#75715e">#是否缓存空值</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">cache-names</span>: <span style="color:#ae81ff">user</span> <span style="color:#75715e"># 初始化一些缓存名</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">ttl</span>: <span style="color:#e6db74">&#39;{&#34;user&#34;:60,&#34;dept&#34;:30}&#39;</span>  <span style="color:#75715e">#自定义某些缓存空间的过期时间</span>
+</span></span></code></pre></div><p>网上有些文章会使用配置文件的方式, 其实这是 <code>spring-boot-autoconfigure</code> 自动配置的能力, 它会根据你引入的包(redis/caffeine), 自动注入对应的缓存机制 , 比如redis的 <code>org.springframework.boot.autoconfigure.cache.RedisCacheConfiguration</code></p>
+<p>如果需要自定义一些配置, 就需要按<code>4.1</code>~<code>4.3</code>节那种配置</p>
+<h1 id="5-注意事项">5. 注意事项</h1>
+<ol>
+<li>
+<p><code>@Cache</code>注解的方法必须为 <code>public</code></p>
+</li>
+<li>
+<p>默认情况下，<code>@CacheEvict</code>标注的方法执行期间抛出异常，则不会清空缓存。</p>
+</li>
+<li>
+<p>基于 <code>proxy</code> 的 <code>spring aop</code> 带来的内部调用问题(aop的通用问题)</p>
+</li>
+<li>
+<p>使用内存时一定要设置过期时间和允许使用内存大小 等等, 不然在极端情况下会把内存吃满</p>
+<blockquote>
+<p>默认的 ConcurrentHashMap不支持设置过期时间和允许使用的内存大小</p>
+<p>redis不支持允许使用的内存大小</p>
+<p>caffeine都能支持(这也是推荐使用它的原因之一)</p>
+</blockquote>
+</li>
+</ol>
+<p><a href="https://juejin.cn/post/7157609002606526494#heading-5">Spring Cache 整合 Redis 做缓存使用~ 快速上手~ - 掘金 (juejin.cn)</a></p>
+<p><a href="https://blog.csdn.net/user2025/article/details/106595257">SpringBoot实现Redis缓存（SpringCache+Redis的整合）_springboot redis cache_user2025的博客-CSDN博客</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/266804094">Spring Cache，key重复问题</a></p>
+<p><a href="https://juejin.cn/post/7220292698854752313#heading-2">SpringBoot项目中使用缓存Cache的正确姿势！！! - 掘金 (juejin.cn)</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/ioc%E6%8E%A7%E5%88%B6%E7%BF%BB%E8%BD%AC%E5%92%8Cdi%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E4%BA%8B%E5%8A%A1/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/springcache/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/springcache/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/springcache/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/springcache\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/springcache\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/ioc%E6%8E%A7%E5%88%B6%E7%BF%BB%E8%BD%AC%E5%92%8Cdi%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E4%BA%8B%E5%8A%A1/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/springcache/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/springcache/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/springcache/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2Fspringcache%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2Fspringcache%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2Fspringcache%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

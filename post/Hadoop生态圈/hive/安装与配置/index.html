@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n一.Hive安装包下载 下载地址http:\/\/mirrors.hust.edu.cn\/apache\/\n选择合适的Hive版本进行下载，进到stable-2文件夹可以看到稳定的2.x的版本是2.3.3\n二.Hive安装 使用MySQL做为Hive的元数据库，所以先安装MySQL。参考 https:\/\/www.runoob.com\/mysql\/mysql-install.html\n1. 解压\ntar -zxvf apache-hive-2.3.3-bin.tar.gz -C \/usr\/software\n2.修改 hive-env.sh\ncp -p hive-env.sh.template hive-env.sh \u0026amp;\u0026amp; vim hive-env.sh\n并添加如下内容:\nHADOOP_HOME=\/usr\/software\/hadoop-2.7.3 export HIVE_CONF_DIR=\/usr\/software\/apache-hive-2.1.1-bin\/conf 3. 修改hive-site.xml\ncp -p hive-default.xml.template hive-site.xml \u0026amp;\u0026amp; vim hive-site.xml\n修改如下内容:\n\u0026lt;property\u0026gt; \u0026lt;name\u0026gt;hive.cli.print.header\u0026lt;\/name\u0026gt; \u0026lt;value\u0026gt;true\u0026lt;\/value\u0026gt; \u0026lt;!-- false 改为true --\u0026gt; \u0026lt;description\u0026gt;Whether to print the names of the columns in query output.\u0026lt;\/description\u0026gt; \u0026lt;\/property\u0026gt; \u0026lt;property\u0026gt; \u0026lt;name\u0026gt;hive.cli.print.current.db\u0026lt;\/name\u0026gt; \u0026lt;value\u0026gt;true\u0026lt;\/value\u0026gt; \u0026lt;!-- false 改为true --\u0026gt; \u0026lt;description\u0026gt;Whether to include the current database in the Hive prompt.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/hive\/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+一.Hive安装包下载 下载地址http://mirrors.hust.edu.cn/apache/
+选择合适的Hive版本进行下载，进到stable-2文件夹可以看到稳定的2.x的版本是2.3.3
+二.Hive安装 使用MySQL做为Hive的元数据库，所以先安装MySQL。参考 https://www.runoob.com/mysql/mysql-install.html
+1. 解压
+tar -zxvf apache-hive-2.3.3-bin.tar.gz -C /usr/software
+2.修改 hive-env.sh
+cp -p hive-env.sh.template hive-env.sh &amp;&amp; vim hive-env.sh
+并添加如下内容:
+HADOOP_HOME=/usr/software/hadoop-2.7.3 export HIVE_CONF_DIR=/usr/software/apache-hive-2.1.1-bin/conf 3. 修改hive-site.xml
+cp -p hive-default.xml.template hive-site.xml &amp;&amp; vim hive-site.xml
+修改如下内容:
+&lt;property&gt; &lt;name&gt;hive.cli.print.header&lt;/name&gt; &lt;value&gt;true&lt;/value&gt; &lt;!-- false 改为true --&gt; &lt;description&gt;Whether to print the names of the columns in query output.&lt;/description&gt; &lt;/property&gt; &lt;property&gt; &lt;name&gt;hive.cli.print.current.db&lt;/name&gt; &lt;value&gt;true&lt;/value&gt; &lt;!-- false 改为true --&gt; &lt;description&gt;Whether to include the current database in the Hive prompt.">
+
+
+<meta property="og:description" content="[toc]
+一.Hive安装包下载 下载地址http://mirrors.hust.edu.cn/apache/
+选择合适的Hive版本进行下载，进到stable-2文件夹可以看到稳定的2.x的版本是2.3.3
+二.Hive安装 使用MySQL做为Hive的元数据库，所以先安装MySQL。参考 https://www.runoob.com/mysql/mysql-install.html
+1. 解压
+tar -zxvf apache-hive-2.3.3-bin.tar.gz -C /usr/software
+2.修改 hive-env.sh
+cp -p hive-env.sh.template hive-env.sh &amp;&amp; vim hive-env.sh
+并添加如下内容:
+HADOOP_HOME=/usr/software/hadoop-2.7.3 export HIVE_CONF_DIR=/usr/software/apache-hive-2.1.1-bin/conf 3. 修改hive-site.xml
+cp -p hive-default.xml.template hive-site.xml &amp;&amp; vim hive-site.xml
+修改如下内容:
+&lt;property&gt; &lt;name&gt;hive.cli.print.header&lt;/name&gt; &lt;value&gt;true&lt;/value&gt; &lt;!-- false 改为true --&gt; &lt;description&gt;Whether to print the names of the columns in query output.&lt;/description&gt; &lt;/property&gt; &lt;property&gt; &lt;name&gt;hive.cli.print.current.db&lt;/name&gt; &lt;value&gt;true&lt;/value&gt; &lt;!-- false 改为true --&gt; &lt;description&gt;Whether to include the current database in the Hive prompt.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+一.Hive安装包下载 下载地址http://mirrors.hust.edu.cn/apache/
+选择合适的Hive版本进行下载，进到stable-2文件夹可以看到稳定的2.x的版本是2.3.3
+二.Hive安装 使用MySQL做为Hive的元数据库，所以先安装MySQL。参考 https://www.runoob.com/mysql/mysql-install.html
+1. 解压
+tar -zxvf apache-hive-2.3.3-bin.tar.gz -C /usr/software
+2.修改 hive-env.sh
+cp -p hive-env.sh.template hive-env.sh &amp;&amp; vim hive-env.sh
+并添加如下内容:
+HADOOP_HOME=/usr/software/hadoop-2.7.3 export HIVE_CONF_DIR=/usr/software/apache-hive-2.1.1-bin/conf 3. 修改hive-site.xml
+cp -p hive-default.xml.template hive-site.xml &amp;&amp; vim hive-site.xml
+修改如下内容:
+&lt;property&gt; &lt;name&gt;hive.cli.print.header&lt;/name&gt; &lt;value&gt;true&lt;/value&gt; &lt;!-- false 改为true --&gt; &lt;description&gt;Whether to print the names of the columns in query output.&lt;/description&gt; &lt;/property&gt; &lt;property&gt; &lt;name&gt;hive.cli.print.current.db&lt;/name&gt; &lt;value&gt;true&lt;/value&gt; &lt;!-- false 改为true --&gt; &lt;description&gt;Whether to include the current database in the Hive prompt.">
+<meta name="twitter:description" content="[toc]
+一.Hive安装包下载 下载地址http://mirrors.hust.edu.cn/apache/
+选择合适的Hive版本进行下载，进到stable-2文件夹可以看到稳定的2.x的版本是2.3.3
+二.Hive安装 使用MySQL做为Hive的元数据库，所以先安装MySQL。参考 https://www.runoob.com/mysql/mysql-install.html
+1. 解压
+tar -zxvf apache-hive-2.3.3-bin.tar.gz -C /usr/software
+2.修改 hive-env.sh
+cp -p hive-env.sh.template hive-env.sh &amp;&amp; vim hive-env.sh
+并添加如下内容:
+HADOOP_HOME=/usr/software/hadoop-2.7.3 export HIVE_CONF_DIR=/usr/software/apache-hive-2.1.1-bin/conf 3. 修改hive-site.xml
+cp -p hive-default.xml.template hive-site.xml &amp;&amp; vim hive-site.xml
+修改如下内容:
+&lt;property&gt; &lt;name&gt;hive.cli.print.header&lt;/name&gt; &lt;value&gt;true&lt;/value&gt; &lt;!-- false 改为true --&gt; &lt;description&gt;Whether to print the names of the columns in query output.&lt;/description&gt; &lt;/property&gt; &lt;property&gt; &lt;name&gt;hive.cli.print.current.db&lt;/name&gt; &lt;value&gt;true&lt;/value&gt; &lt;!-- false 改为true --&gt; &lt;description&gt;Whether to include the current database in the Hive prompt.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="一hive安装包下载"><strong>一.Hive安装包下载</strong></h1>
+<p>下载地址http://mirrors.hust.edu.cn/apache/</p>
+<p>选择合适的Hive版本进行下载，进到stable-2文件夹可以看到稳定的2.x的版本是2.3.3</p>
+<h1 id="二hive安装"><strong>二.Hive安装</strong></h1>
+<p><strong>使用MySQL做为Hive的元数据库，所以先安装MySQL。参考</strong> <a href="https://www.runoob.com/mysql/mysql-install.html"><strong>https://www.runoob.com/mysql/mysql-install.html</strong></a></p>
+<p><strong>1. 解压</strong></p>
+<p><code>tar -zxvf apache-hive-2.3.3-bin.tar.gz -C  /usr/software</code></p>
+<p><strong>2.修改 hive-env.sh</strong></p>
+<p><code>cp -p hive-env.sh.template hive-env.sh &amp;&amp; vim hive-env.sh</code></p>
+<p>并添加如下内容:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>HADOOP_HOME<span style="color:#f92672">=</span>/usr/software/hadoop-2.7.3
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>export HIVE_CONF_DIR<span style="color:#f92672">=</span>/usr/software/apache-hive-2.1.1-bin/conf
+</span></span></code></pre></div><p><strong>3. 修改hive-site.xml</strong></p>
+<p><code>cp -p hive-default.xml.template hive-site.xml &amp;&amp; vim hive-site.xml</code></p>
+<p>修改如下内容:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;property&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;name&gt;</span>hive.cli.print.header<span style="color:#f92672">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;value&gt;</span>true<span style="color:#f92672">&lt;/value&gt;</span>  <span style="color:#75715e">&lt;!-- false 改为true --&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;description&gt;</span>Whether to print the names of the columns in query output.<span style="color:#f92672">&lt;/description&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/property&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;property&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;name&gt;</span>hive.cli.print.current.db<span style="color:#f92672">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;value&gt;</span>true<span style="color:#f92672">&lt;/value&gt;</span> <span style="color:#75715e">&lt;!-- false 改为true --&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;description&gt;</span>Whether to include the current database in the Hive prompt.<span style="color:#f92672">&lt;/description&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/property&gt;</span>
+</span></span></code></pre></div><p>添加元数据 存放的数据库(mysql)配置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;property&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;name&gt;</span>javax.jdo.option.ConnectionURL<span style="color:#f92672">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;value&gt;</span>jdbc:mysql://namenode01.hadoop.com:3306/hivedb?createDatabaseIfNotExist=true<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/property&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;property&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;name&gt;</span>javax.jdo.option.ConnectionDriverName<span style="color:#f92672">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;value&gt;</span>com.mysql.jdbc.Driver<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/property&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;property&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;name&gt;</span>javax.jdo.option.ConnectionUserName<span style="color:#f92672">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;value&gt;</span>root<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/property&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;property&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;name&gt;</span>javax.jdo.option.ConnectionPassword<span style="color:#f92672">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;value&gt;</span>123456<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/property&gt;</span>
+</span></span></code></pre></div><p><strong>4. 修改log日志路径</strong></p>
+<p><code>cp -p hive-log4j.properties.template hive-log4j.properties &amp;&amp; vim hive-log4j.properties</code></p>
+<p>修改如下内容:</p>
+<p><code>property.hive.log.dir = /usr/software/apache-hive-2.1.1-bin/logs</code></p>
+<p><strong>5.添加mysql连接包</strong></p>
+<p>将 mysql-connector-java-5.1.39.jar 包放到 hive的lib目录下</p>
+<p><strong>6. 添加环境变量</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>vim .bash_profile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 添加内容</span>
+</span></span><span style="display:flex;"><span>export HIVE_HOME<span style="color:#f92672">=</span>/home/hadoop/apps/apache-hive-2.3.3-bin
+</span></span><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span>$PATH:$HIVE_HOME/bin
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>source .bash_profile
+</span></span></code></pre></div><h1 id="三验证"><strong>三.验证</strong></h1>
+<p><code>hive --help</code></p>
+<p>出现hive相关信息</p>
+<p><strong>初始化元数据库</strong></p>
+<p><code>schematool -dbType mysql -initSchema</code></p>
+<p>注意：当使用的 hive 是 2.x 之前的版本，不做初始化也是 OK 的，当 hive 第一次启动的 时候会自动进行初始化，只不过会不会生成足够多的元数据库中的表。在使用过程中会 慢慢生成。但最后进行初始化。如果使用的 2.x 版本的 Hive，那么就必须手动初始化元 数据库。使用命令：</p>
+<p>使用 hive 命令进入hive</p>
+<blockquote>
+<p><a href="https://www.cnblogs.com/qingyunzong/p/8708057.html#_label0">https://www.cnblogs.com/qingyunzong/p/8708057.html#_label0</a></p>
+<p><a href="https://blog.51cto.com/flyfish225/2096888">https://blog.51cto.com/flyfish225/2096888</a></p>
+<p><a href="https://www.cnblogs.com/zhoading/p/11911127.html">https://www.cnblogs.com/zhoading/p/11911127.html</a></p>
+</blockquote>
+<h1 id="四-连接"><strong>四: 连接</strong></h1>
+<h2 id="41-cli方式连接"><strong>4.1 cli方式连接</strong></h2>
+<p>使用hive命令进入,,用于linux平台命令行查询，查询语句基本跟mysql查询语句类似</p>
+<p>通过 <strong>hive &ndash;service serviceName &ndash;help</strong> 可以查看某个具体命令的使用方式</p>
+<h2 id="42--hiveserver2beeline"><strong>4.2  HiveServer2/beeline</strong></h2>
+<p>用java等程序实现通过jdbc等驱动的访问hive就用这种起动方式了，这个是程序员最需要的方式了</p>
+<p><strong>1. 修改hadoop中  hdfs-site.xml 配置文件</strong></p>
+<p>加入一条配置信息，表示启用 webhdfs</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;property&gt;</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">&lt;name&gt;</span>dfs.webhdfs.enabled<span style="color:#f92672">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">&lt;value&gt;</span>true<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/property&gt;</span>
+</span></span></code></pre></div><p><strong>2.修改hadoop中  core-site.xml 配置文件</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;property&gt;</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">&lt;name&gt;</span>hadoop.proxyuser.hadoop.hosts<span style="color:#f92672">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">&lt;value&gt;</span>*<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/property&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;property&gt;</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">&lt;name&gt;</span>hadoop.proxyuser.hadoop.groups<span style="color:#f92672">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">&lt;value&gt;</span>*<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/property&gt;</span>
+</span></span></code></pre></div><p>以上操作做好了之后（最好重启一下HDFS集群）</p>
+<blockquote>
+<p>hadoop.proxyuser.hadoop.hosts 配置成*的意义，表示任意节点使用 hadoop 集群的代理用户 hadoop 都能访问 hdfs 集群，</p>
+<p>hadoop.proxyuser.hadoop.groups 表示代理用户的组所属</p>
+</blockquote>
+<p><strong>3. 启动hiveserver2服务</strong></p>
+<p><code>nohup hiveserver2 &gt;/dev/null 2&gt;&amp;1 &amp;</code></p>
+<p>会启动一个进程:  <strong>runJar</strong></p>
+<p><strong>4. 启动 beeline 客户端去连接：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>beeline -u jdbc:hive2//hadoop3:10000 -n hadoop  <span style="color:#f92672">(</span>这种好像要单独设置密码才能使用<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>或者
+</span></span><span style="display:flex;"><span>beeline
+</span></span><span style="display:flex;"><span>!connect jdbc:hive2://localhost:10000/hivedb
+</span></span><span style="display:flex;"><span>再输数据库用户和密码
+</span></span></code></pre></div><blockquote>
+<p>-u : 指定元数据库的链接信息</p>
+<p>-n : 指定mysql数据库用户名</p>
+<p>-p:  密码</p>
+</blockquote>
+<blockquote>
+<p><a href="https://www.iteye.com/blog/491569462-qq-com-1948436">https://www.iteye.com/blog/491569462-qq-com-1948436</a></p>
+<p><a href="https://www.cnblogs.com/qingyunzong/p/8715925.html#_label1_1">https://www.cnblogs.com/qingyunzong/p/8715925.html#_label1_1</a></p>
+<p><a href="https://www.cnblogs.com/lenmom/p/11218807.html">https://www.cnblogs.com/lenmom/p/11218807.html</a></p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%91%BD%E4%BB%A4/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%B0%8F%E6%96%87%E4%BB%B6/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/hive\/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE\/';
+        
+          this.page.identifier = '\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/hive\/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%91%BD%E4%BB%A4/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%B0%8F%E6%96%87%E4%BB%B6/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fhive%2F%25E5%25AE%2589%25E8%25A3%2585%25E4%25B8%258E%25E9%2585%258D%25E7%25BD%25AE%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fhive%2F%25E5%25AE%2589%25E8%25A3%2585%25E4%25B8%258E%25E9%2585%258D%25E7%25BD%25AE%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fhive%2F%25E5%25AE%2589%25E8%25A3%2585%25E4%25B8%258E%25E9%2585%258D%25E7%25BD%25AE%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

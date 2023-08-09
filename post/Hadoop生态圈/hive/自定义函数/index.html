@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1. 介绍 Hive自定义函数包括三种UDF、UDAF、UDTF\nUDF(User-Defined-Function) 一进一出 UDAF(User- Defined Aggregation Funcation) 聚集函数，多进一出。Count\/max\/min UDTF(User-Defined Table-Generating Functions) 一进多出，如lateral view explore) 2. 函数类型 2.1. UDF(一进一出) 继承UDF类\n重写evaluate方法\n将该java文件编译成jar\n2.2. UDAF(多进一出) 实现方法:\n用户的UDAF必须继承了org.apache.hadoop.hive.ql.exec.UDAF；\n用户的UDAF必须包含至少一个实现了org.apache.hadoop.hive.ql.exec的静态类，诸如实现了 UDAFEvaluator\n一个计算函数必须实现的5个方法的具体含义如下：\ninit()：主要是负责初始化计算函数并且重设其内部状态，一般就是重设其内部字段。一般在静态类中定义一个内部字段来存放最终的结果。\niterate()：每一次对一个新值进行聚集计算时候都会调用该方法，计算函数会根据聚集计算结果更新内部状态。当输 入值合法或者正确计算了，则 就返回true。\nterminatePartial()：Hive需要部分聚集结果的时候会调用该方法，必须要返回一个封装了聚集计算当前状态的对象。\nmerge()：Hive进行合并一个部分聚集和另一个部分聚集的时候会调用该方法。\nterminate()：Hive最终聚集结果的时候就会调用该方法。计算函数需要把状态作为一个值返回给用户。\n部分聚集结果的数据类型和最终结果的数据类型可以不同。\n2.3. UDTF(一进多出) 继承org.apache.hadoop.hive.ql.udf.generic.GenericUDTF\ninitialize()：UDTF首先会调用initialize方法，此方法返回UDTF的返回行的信息（返回个数，类型）\nprocess：初始化完成后，会调用process方法,真正的处理过程在process函数中，在process中，每一次forward() 调用产生一行；如果产生多列 可以将多个列的值放在一个数组中，然后将该数组传入到forward()函数\n最后close()方法调用，对需要清理的方法进行清理\n来自: https:\/\/blog.csdn.net\/weixin_42181917\/article\/details\/82865140\nhttps:\/\/www.cnblogs.com\/lrxvx\/p\/10974341.html\n3. 加载函数的方式 3.1 使用add jar [classPath]语句(临时加载) #加载jar add jar [classPath] #创建函数 create temporary function [functionName] as [calssPath] 这种方式不建议在生产环境中使用，通过该方式添加的jar文件只存在于当前会话中，当会话关闭后不能够继续使用该jar文件，最常见的问题是创建了永久函数到metastore中，再次使用该函数时却提示ClassNotFoundException。所以使用该方式每次都要使用add jar [classPath]语句添加相关的jar文件到classPath中。倒是可以用在临时使用函数的情况",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/hive\/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1. 介绍 Hive自定义函数包括三种UDF、UDAF、UDTF
+UDF(User-Defined-Function) 一进一出 UDAF(User- Defined Aggregation Funcation) 聚集函数，多进一出。Count/max/min UDTF(User-Defined Table-Generating Functions) 一进多出，如lateral view explore) 2. 函数类型 2.1. UDF(一进一出) 继承UDF类
+重写evaluate方法
+将该java文件编译成jar
+2.2. UDAF(多进一出) 实现方法:
+用户的UDAF必须继承了org.apache.hadoop.hive.ql.exec.UDAF；
+用户的UDAF必须包含至少一个实现了org.apache.hadoop.hive.ql.exec的静态类，诸如实现了 UDAFEvaluator
+一个计算函数必须实现的5个方法的具体含义如下：
+init()：主要是负责初始化计算函数并且重设其内部状态，一般就是重设其内部字段。一般在静态类中定义一个内部字段来存放最终的结果。
+iterate()：每一次对一个新值进行聚集计算时候都会调用该方法，计算函数会根据聚集计算结果更新内部状态。当输 入值合法或者正确计算了，则 就返回true。
+terminatePartial()：Hive需要部分聚集结果的时候会调用该方法，必须要返回一个封装了聚集计算当前状态的对象。
+merge()：Hive进行合并一个部分聚集和另一个部分聚集的时候会调用该方法。
+terminate()：Hive最终聚集结果的时候就会调用该方法。计算函数需要把状态作为一个值返回给用户。
+部分聚集结果的数据类型和最终结果的数据类型可以不同。
+2.3. UDTF(一进多出) 继承org.apache.hadoop.hive.ql.udf.generic.GenericUDTF
+initialize()：UDTF首先会调用initialize方法，此方法返回UDTF的返回行的信息（返回个数，类型）
+process：初始化完成后，会调用process方法,真正的处理过程在process函数中，在process中，每一次forward() 调用产生一行；如果产生多列 可以将多个列的值放在一个数组中，然后将该数组传入到forward()函数
+最后close()方法调用，对需要清理的方法进行清理
+来自: https://blog.csdn.net/weixin_42181917/article/details/82865140
+https://www.cnblogs.com/lrxvx/p/10974341.html
+3. 加载函数的方式 3.1 使用add jar [classPath]语句(临时加载) #加载jar add jar [classPath] #创建函数 create temporary function [functionName] as [calssPath] 这种方式不建议在生产环境中使用，通过该方式添加的jar文件只存在于当前会话中，当会话关闭后不能够继续使用该jar文件，最常见的问题是创建了永久函数到metastore中，再次使用该函数时却提示ClassNotFoundException。所以使用该方式每次都要使用add jar [classPath]语句添加相关的jar文件到classPath中。倒是可以用在临时使用函数的情况">
+
+
+<meta property="og:description" content="[toc]
+1. 介绍 Hive自定义函数包括三种UDF、UDAF、UDTF
+UDF(User-Defined-Function) 一进一出 UDAF(User- Defined Aggregation Funcation) 聚集函数，多进一出。Count/max/min UDTF(User-Defined Table-Generating Functions) 一进多出，如lateral view explore) 2. 函数类型 2.1. UDF(一进一出) 继承UDF类
+重写evaluate方法
+将该java文件编译成jar
+2.2. UDAF(多进一出) 实现方法:
+用户的UDAF必须继承了org.apache.hadoop.hive.ql.exec.UDAF；
+用户的UDAF必须包含至少一个实现了org.apache.hadoop.hive.ql.exec的静态类，诸如实现了 UDAFEvaluator
+一个计算函数必须实现的5个方法的具体含义如下：
+init()：主要是负责初始化计算函数并且重设其内部状态，一般就是重设其内部字段。一般在静态类中定义一个内部字段来存放最终的结果。
+iterate()：每一次对一个新值进行聚集计算时候都会调用该方法，计算函数会根据聚集计算结果更新内部状态。当输 入值合法或者正确计算了，则 就返回true。
+terminatePartial()：Hive需要部分聚集结果的时候会调用该方法，必须要返回一个封装了聚集计算当前状态的对象。
+merge()：Hive进行合并一个部分聚集和另一个部分聚集的时候会调用该方法。
+terminate()：Hive最终聚集结果的时候就会调用该方法。计算函数需要把状态作为一个值返回给用户。
+部分聚集结果的数据类型和最终结果的数据类型可以不同。
+2.3. UDTF(一进多出) 继承org.apache.hadoop.hive.ql.udf.generic.GenericUDTF
+initialize()：UDTF首先会调用initialize方法，此方法返回UDTF的返回行的信息（返回个数，类型）
+process：初始化完成后，会调用process方法,真正的处理过程在process函数中，在process中，每一次forward() 调用产生一行；如果产生多列 可以将多个列的值放在一个数组中，然后将该数组传入到forward()函数
+最后close()方法调用，对需要清理的方法进行清理
+来自: https://blog.csdn.net/weixin_42181917/article/details/82865140
+https://www.cnblogs.com/lrxvx/p/10974341.html
+3. 加载函数的方式 3.1 使用add jar [classPath]语句(临时加载) #加载jar add jar [classPath] #创建函数 create temporary function [functionName] as [calssPath] 这种方式不建议在生产环境中使用，通过该方式添加的jar文件只存在于当前会话中，当会话关闭后不能够继续使用该jar文件，最常见的问题是创建了永久函数到metastore中，再次使用该函数时却提示ClassNotFoundException。所以使用该方式每次都要使用add jar [classPath]语句添加相关的jar文件到classPath中。倒是可以用在临时使用函数的情况">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1. 介绍 Hive自定义函数包括三种UDF、UDAF、UDTF
+UDF(User-Defined-Function) 一进一出 UDAF(User- Defined Aggregation Funcation) 聚集函数，多进一出。Count/max/min UDTF(User-Defined Table-Generating Functions) 一进多出，如lateral view explore) 2. 函数类型 2.1. UDF(一进一出) 继承UDF类
+重写evaluate方法
+将该java文件编译成jar
+2.2. UDAF(多进一出) 实现方法:
+用户的UDAF必须继承了org.apache.hadoop.hive.ql.exec.UDAF；
+用户的UDAF必须包含至少一个实现了org.apache.hadoop.hive.ql.exec的静态类，诸如实现了 UDAFEvaluator
+一个计算函数必须实现的5个方法的具体含义如下：
+init()：主要是负责初始化计算函数并且重设其内部状态，一般就是重设其内部字段。一般在静态类中定义一个内部字段来存放最终的结果。
+iterate()：每一次对一个新值进行聚集计算时候都会调用该方法，计算函数会根据聚集计算结果更新内部状态。当输 入值合法或者正确计算了，则 就返回true。
+terminatePartial()：Hive需要部分聚集结果的时候会调用该方法，必须要返回一个封装了聚集计算当前状态的对象。
+merge()：Hive进行合并一个部分聚集和另一个部分聚集的时候会调用该方法。
+terminate()：Hive最终聚集结果的时候就会调用该方法。计算函数需要把状态作为一个值返回给用户。
+部分聚集结果的数据类型和最终结果的数据类型可以不同。
+2.3. UDTF(一进多出) 继承org.apache.hadoop.hive.ql.udf.generic.GenericUDTF
+initialize()：UDTF首先会调用initialize方法，此方法返回UDTF的返回行的信息（返回个数，类型）
+process：初始化完成后，会调用process方法,真正的处理过程在process函数中，在process中，每一次forward() 调用产生一行；如果产生多列 可以将多个列的值放在一个数组中，然后将该数组传入到forward()函数
+最后close()方法调用，对需要清理的方法进行清理
+来自: https://blog.csdn.net/weixin_42181917/article/details/82865140
+https://www.cnblogs.com/lrxvx/p/10974341.html
+3. 加载函数的方式 3.1 使用add jar [classPath]语句(临时加载) #加载jar add jar [classPath] #创建函数 create temporary function [functionName] as [calssPath] 这种方式不建议在生产环境中使用，通过该方式添加的jar文件只存在于当前会话中，当会话关闭后不能够继续使用该jar文件，最常见的问题是创建了永久函数到metastore中，再次使用该函数时却提示ClassNotFoundException。所以使用该方式每次都要使用add jar [classPath]语句添加相关的jar文件到classPath中。倒是可以用在临时使用函数的情况">
+<meta name="twitter:description" content="[toc]
+1. 介绍 Hive自定义函数包括三种UDF、UDAF、UDTF
+UDF(User-Defined-Function) 一进一出 UDAF(User- Defined Aggregation Funcation) 聚集函数，多进一出。Count/max/min UDTF(User-Defined Table-Generating Functions) 一进多出，如lateral view explore) 2. 函数类型 2.1. UDF(一进一出) 继承UDF类
+重写evaluate方法
+将该java文件编译成jar
+2.2. UDAF(多进一出) 实现方法:
+用户的UDAF必须继承了org.apache.hadoop.hive.ql.exec.UDAF；
+用户的UDAF必须包含至少一个实现了org.apache.hadoop.hive.ql.exec的静态类，诸如实现了 UDAFEvaluator
+一个计算函数必须实现的5个方法的具体含义如下：
+init()：主要是负责初始化计算函数并且重设其内部状态，一般就是重设其内部字段。一般在静态类中定义一个内部字段来存放最终的结果。
+iterate()：每一次对一个新值进行聚集计算时候都会调用该方法，计算函数会根据聚集计算结果更新内部状态。当输 入值合法或者正确计算了，则 就返回true。
+terminatePartial()：Hive需要部分聚集结果的时候会调用该方法，必须要返回一个封装了聚集计算当前状态的对象。
+merge()：Hive进行合并一个部分聚集和另一个部分聚集的时候会调用该方法。
+terminate()：Hive最终聚集结果的时候就会调用该方法。计算函数需要把状态作为一个值返回给用户。
+部分聚集结果的数据类型和最终结果的数据类型可以不同。
+2.3. UDTF(一进多出) 继承org.apache.hadoop.hive.ql.udf.generic.GenericUDTF
+initialize()：UDTF首先会调用initialize方法，此方法返回UDTF的返回行的信息（返回个数，类型）
+process：初始化完成后，会调用process方法,真正的处理过程在process函数中，在process中，每一次forward() 调用产生一行；如果产生多列 可以将多个列的值放在一个数组中，然后将该数组传入到forward()函数
+最后close()方法调用，对需要清理的方法进行清理
+来自: https://blog.csdn.net/weixin_42181917/article/details/82865140
+https://www.cnblogs.com/lrxvx/p/10974341.html
+3. 加载函数的方式 3.1 使用add jar [classPath]语句(临时加载) #加载jar add jar [classPath] #创建函数 create temporary function [functionName] as [calssPath] 这种方式不建议在生产环境中使用，通过该方式添加的jar文件只存在于当前会话中，当会话关闭后不能够继续使用该jar文件，最常见的问题是创建了永久函数到metastore中，再次使用该函数时却提示ClassNotFoundException。所以使用该方式每次都要使用add jar [classPath]语句添加相关的jar文件到classPath中。倒是可以用在临时使用函数的情况">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1-介绍"><strong>1. 介绍</strong></h1>
+<p>Hive自定义函数包括三种<strong>UDF、UDAF、UDTF</strong></p>
+<ol>
+<li>UDF(User-Defined-Function) 一进一出</li>
+<li>UDAF(User- Defined Aggregation Funcation) 聚集函数，多进一出。Count/max/min</li>
+<li>UDTF(User-Defined Table-Generating Functions) 一进多出，如lateral view explore)</li>
+</ol>
+<h1 id="2-函数类型"><strong>2. 函数类型</strong></h1>
+<h2 id="21-udf一进一出"><strong>2.1.</strong> <strong>UDF(一进一出)</strong></h2>
+<ol>
+<li>
+<p>继承UDF类</p>
+</li>
+<li>
+<p>重写evaluate方法</p>
+</li>
+<li>
+<p>将该java文件编译成jar</p>
+</li>
+</ol>
+<h2 id="22-udaf多进一出"><strong>2.2.</strong> <strong>UDAF(多进一出)</strong></h2>
+<p>实现方法:</p>
+<ol>
+<li>
+<p>用户的UDAF必须继承了org.apache.hadoop.hive.ql.exec.UDAF；</p>
+</li>
+<li>
+<p>用户的UDAF必须包含至少一个实现了org.apache.hadoop.hive.ql.exec的静态类，诸如实现了 UDAFEvaluator</p>
+</li>
+<li>
+<p>一个计算函数必须实现的5个方法的具体含义如下：</p>
+<p><strong>init()</strong>：主要是负责初始化计算函数并且重设其内部状态，一般就是重设其内部字段。一般在静态类中定义一个内部字段来存放最终的结果。</p>
+<p><strong>iterate()</strong>：每一次对一个新值进行聚集计算时候都会调用该方法，计算函数会根据聚集计算结果更新内部状态。当输 入值合法或者正确计算了，则    就返回true。</p>
+<p><strong>terminatePartial()</strong>：Hive需要部分聚集结果的时候会调用该方法，必须要返回一个封装了聚集计算当前状态的对象。</p>
+<p><strong>merge()</strong>：Hive进行合并一个部分聚集和另一个部分聚集的时候会调用该方法。</p>
+<p><strong>terminate()</strong>：Hive最终聚集结果的时候就会调用该方法。计算函数需要把状态作为一个值返回给用户。</p>
+</li>
+<li>
+<p>部分聚集结果的数据类型和最终结果的数据类型可以不同。</p>
+</li>
+</ol>
+<h2 id="23-udtf一进多出"><strong>2.3.</strong> <strong>UDTF(一进多出)</strong></h2>
+<ol>
+<li>
+<p>继承org.apache.hadoop.hive.ql.udf.generic.GenericUDTF</p>
+</li>
+<li>
+<p>initialize()：UDTF首先会调用initialize方法，此方法返回UDTF的返回行的信息（返回个数，类型）</p>
+</li>
+<li>
+<p>process：初始化完成后，会调用process方法,真正的处理过程在process函数中，在process中，每一次forward() 调用产生一行；如果产生多列    可以将多个列的值放在一个数组中，然后将该数组传入到forward()函数</p>
+</li>
+<li>
+<p>最后close()方法调用，对需要清理的方法进行清理</p>
+</li>
+</ol>
+<blockquote>
+<p>来自: <a href="https://blog.csdn.net/weixin_42181917/article/details/82865140">https://blog.csdn.net/weixin_42181917/article/details/82865140</a></p>
+<p><a href="https://www.cnblogs.com/lrxvx/p/10974341.html">https://www.cnblogs.com/lrxvx/p/10974341.html</a></p>
+</blockquote>
+<h1 id="3-加载函数的方式"><strong>3. 加载函数的方式</strong></h1>
+<h2 id="31-使用add-jar-classpath语句临时加载"><strong>3.1</strong> <strong>使用add jar [classPath]语句(临时加载)</strong></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e">#加载jar</span>
+</span></span><span style="display:flex;"><span>add jar <span style="color:#f92672">[</span>classPath<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#创建函数</span>
+</span></span><span style="display:flex;"><span>create temporary <span style="color:#66d9ef">function</span> <span style="color:#f92672">[</span>functionName<span style="color:#f92672">]</span> as <span style="color:#f92672">[</span>calssPath<span style="color:#f92672">]</span>
+</span></span></code></pre></div><p>这种方式不建议在生产环境中使用，通过该方式添加的jar文件只存在于当前会话中，当会话关闭后不能够继续使用该jar文件，最常见的问题是创建了永久函数到metastore中，再次使用该函数时却提示ClassNotFoundException。所以使用该方式每次都要使用add jar [classPath]语句添加相关的jar文件到classPath中。倒是可以用在临时使用函数的情况</p>
+<h2 id="32-修改hive-sitexml文件"><strong>3.2 修改hive-site.xml文件</strong></h2>
+<p>修改参数hive.aux.jars.path的值指向UDF文件所在的路径。该参数需要手动添加到hive-site.xml文件中。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;property&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;name&gt;</span>hive.aux.jars.path<span style="color:#f92672">&lt;/name&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;value&gt;</span>file:///[path],file:///[path]<span style="color:#f92672">&lt;/value&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/property&gt;</span>
+</span></span></code></pre></div><h2 id="33-将jar包放入hive的jar目录永久加载"><strong>3.3 将jar包放入hive的jar目录(永久加载)</strong></h2>
+<p>是在${HIVE_HOME}下创建auxlib目录，将UDF文件放到该目录中，这样hive在启动时会将其中的jar文件加载到classpath中。</p>
+<blockquote>
+<p>或者 <strong>指定jar所在目录(这种反而更管理一点),实现:</strong></p>
+<p>可以拷贝${HIVE_HOME}/conf中的hive-env.sh.template 为 hive-env.sh 文件，并修改最后一行：</p>
+</blockquote>
+<p><code>export HIVE_AUX_JARS_PATH=[classPath]</code></p>
+<blockquote>
+<p>或者在系统中直接添加HIVE_AUX_JARS_PATH环境变量。</p>
+</blockquote>
+<blockquote>
+<p>来自: <a href="https://blog.csdn.net/snail_bing/article/details/82869435">https://blog.csdn.net/snail_bing/article/details/82869435</a></p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hue/hue%E4%B8%8Ezeppelin/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/hive\/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0\/';
+        
+          this.page.identifier = '\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/hive\/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hue/hue%E4%B8%8Ezeppelin/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hive/%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fhive%2F%25E8%2587%25AA%25E5%25AE%259A%25E4%25B9%2589%25E5%2587%25BD%25E6%2595%25B0%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fhive%2F%25E8%2587%25AA%25E5%25AE%259A%25E4%25B9%2589%25E5%2587%25BD%25E6%2595%25B0%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fhive%2F%25E8%2587%25AA%25E5%25AE%259A%25E4%25B9%2589%25E5%2587%25BD%25E6%2595%25B0%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

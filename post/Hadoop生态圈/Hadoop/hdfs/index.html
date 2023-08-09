@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n1.介绍 一句话(官方):分布式存储系统HDFS( Hadoop Distributed File System)。 其实就是一个文件系统，类似于linux的文件系统。有目录，目录下可以存 储文件。但它又是一个分布式的文件系统。\n基本原理\n将文件切分成等大的数据块，分别存储到多台机器上。 每个数据块存在多个备份。 将数据切分、容错、负载均衡等功能透明化。 可将HDFS看成是一个巨大、具有容错性的磁盘。 缺点\n不适合存储大量小文件。 不适合低延迟数据访问 。 不支持多用户写入及任意修改文件 。 2.HDFS实现原理 数据块\n每个磁盘都有默认的数据块大小，这是磁盘进行数据读\/写的最小单位。构建于单个磁盘之 上的文件系统通过磁盘块来管理该文件系统中的块，该文件系统块的大小可以是磁盘块的整数倍。 HDFS 同样也有块 (block) 的概念，但是大得多，默认为 128 MB 。与单一磁盘上的文件系统相似， HDFS 上的文件也被划分为块大小的多个分块 (chunk) ，作为独立的存储单元。但与其他 文件系统不同的是， HDFS 中小于一个块大小的文件不会占据整个块的空间。(好像老版本的会占用整个空间) 2.1 NameNode\nNameNode是HDFS架构中的主节点。 当NameNode启动时会从fsimage中读取数据,缩短启动时间,并会写入editlog,Namenode只有 在启动时候合并fsimage和edits log.\n功能\n管理各个从节点的状态(DataNode)。 记录存储在HDFS上的所有数据的元数据信息。例如:block存储的位置，文件大小，文件权限，文件层级等等。这些信息以两个文件形式永久保存在本地磁盘上。 命名空间镜像文件(FsImage): fsimage是HDFS文件系统存于硬盘中的元数据检查点，里面记录 了自最后一次检查点之前HDFS文件系统中所有目录和文件的序列化信息 编辑日志(edit-logs)文件:保存了自最后一次检查点之后所有针对HDFS文件系统的操作，比如: 增加文件、重命名文件、删除目录等等。 记录了存储在HDFS上文件的所有变化，例如文件被删除，namenode会记录到editlog中。\n接受DataNode的心跳和各个datanode上的block报告信息，确保DataNode是否存活。\n负责处理所有块的复制因子。\n如果DataNode节点宕机，NameNode会选择另外一个DataNode均衡复制因子，并做负载均衡。\n2.2 Sencondary NameNode S NameNode是NameNode的助手，不要将其理解成是NameNode的备份。Secondary NameNode 的整个目的在HDFS中提供一个Checkpoint Node，所以也被叫做checkpoint node。\n功能\n定时的从NameNode获取EditLogs,并更新到FsImage上。 一旦它有新的fsimage文件，它将其拷贝回NameNode上，NameNode在下次重启时会使用这个新的fsimage文件，从而减少重启的时间。 关于NameNode是什么时候将改动 写到edit logs中的?",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/hadoop\/hdfs\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+1.介绍 一句话(官方):分布式存储系统HDFS( Hadoop Distributed File System)。 其实就是一个文件系统，类似于linux的文件系统。有目录，目录下可以存 储文件。但它又是一个分布式的文件系统。
+基本原理
+将文件切分成等大的数据块，分别存储到多台机器上。 每个数据块存在多个备份。 将数据切分、容错、负载均衡等功能透明化。 可将HDFS看成是一个巨大、具有容错性的磁盘。 缺点
+不适合存储大量小文件。 不适合低延迟数据访问 。 不支持多用户写入及任意修改文件 。 2.HDFS实现原理 数据块
+每个磁盘都有默认的数据块大小，这是磁盘进行数据读/写的最小单位。构建于单个磁盘之 上的文件系统通过磁盘块来管理该文件系统中的块，该文件系统块的大小可以是磁盘块的整数倍。 HDFS 同样也有块 (block) 的概念，但是大得多，默认为 128 MB 。与单一磁盘上的文件系统相似， HDFS 上的文件也被划分为块大小的多个分块 (chunk) ，作为独立的存储单元。但与其他 文件系统不同的是， HDFS 中小于一个块大小的文件不会占据整个块的空间。(好像老版本的会占用整个空间) 2.1 NameNode
+NameNode是HDFS架构中的主节点。 当NameNode启动时会从fsimage中读取数据,缩短启动时间,并会写入editlog,Namenode只有 在启动时候合并fsimage和edits log.
+功能
+管理各个从节点的状态(DataNode)。 记录存储在HDFS上的所有数据的元数据信息。例如:block存储的位置，文件大小，文件权限，文件层级等等。这些信息以两个文件形式永久保存在本地磁盘上。 命名空间镜像文件(FsImage): fsimage是HDFS文件系统存于硬盘中的元数据检查点，里面记录 了自最后一次检查点之前HDFS文件系统中所有目录和文件的序列化信息 编辑日志(edit-logs)文件:保存了自最后一次检查点之后所有针对HDFS文件系统的操作，比如: 增加文件、重命名文件、删除目录等等。 记录了存储在HDFS上文件的所有变化，例如文件被删除，namenode会记录到editlog中。
+接受DataNode的心跳和各个datanode上的block报告信息，确保DataNode是否存活。
+负责处理所有块的复制因子。
+如果DataNode节点宕机，NameNode会选择另外一个DataNode均衡复制因子，并做负载均衡。
+2.2 Sencondary NameNode S NameNode是NameNode的助手，不要将其理解成是NameNode的备份。Secondary NameNode 的整个目的在HDFS中提供一个Checkpoint Node，所以也被叫做checkpoint node。
+功能
+定时的从NameNode获取EditLogs,并更新到FsImage上。 一旦它有新的fsimage文件，它将其拷贝回NameNode上，NameNode在下次重启时会使用这个新的fsimage文件，从而减少重启的时间。 关于NameNode是什么时候将改动 写到edit logs中的?">
+
+
+<meta property="og:description" content="[toc]
+1.介绍 一句话(官方):分布式存储系统HDFS( Hadoop Distributed File System)。 其实就是一个文件系统，类似于linux的文件系统。有目录，目录下可以存 储文件。但它又是一个分布式的文件系统。
+基本原理
+将文件切分成等大的数据块，分别存储到多台机器上。 每个数据块存在多个备份。 将数据切分、容错、负载均衡等功能透明化。 可将HDFS看成是一个巨大、具有容错性的磁盘。 缺点
+不适合存储大量小文件。 不适合低延迟数据访问 。 不支持多用户写入及任意修改文件 。 2.HDFS实现原理 数据块
+每个磁盘都有默认的数据块大小，这是磁盘进行数据读/写的最小单位。构建于单个磁盘之 上的文件系统通过磁盘块来管理该文件系统中的块，该文件系统块的大小可以是磁盘块的整数倍。 HDFS 同样也有块 (block) 的概念，但是大得多，默认为 128 MB 。与单一磁盘上的文件系统相似， HDFS 上的文件也被划分为块大小的多个分块 (chunk) ，作为独立的存储单元。但与其他 文件系统不同的是， HDFS 中小于一个块大小的文件不会占据整个块的空间。(好像老版本的会占用整个空间) 2.1 NameNode
+NameNode是HDFS架构中的主节点。 当NameNode启动时会从fsimage中读取数据,缩短启动时间,并会写入editlog,Namenode只有 在启动时候合并fsimage和edits log.
+功能
+管理各个从节点的状态(DataNode)。 记录存储在HDFS上的所有数据的元数据信息。例如:block存储的位置，文件大小，文件权限，文件层级等等。这些信息以两个文件形式永久保存在本地磁盘上。 命名空间镜像文件(FsImage): fsimage是HDFS文件系统存于硬盘中的元数据检查点，里面记录 了自最后一次检查点之前HDFS文件系统中所有目录和文件的序列化信息 编辑日志(edit-logs)文件:保存了自最后一次检查点之后所有针对HDFS文件系统的操作，比如: 增加文件、重命名文件、删除目录等等。 记录了存储在HDFS上文件的所有变化，例如文件被删除，namenode会记录到editlog中。
+接受DataNode的心跳和各个datanode上的block报告信息，确保DataNode是否存活。
+负责处理所有块的复制因子。
+如果DataNode节点宕机，NameNode会选择另外一个DataNode均衡复制因子，并做负载均衡。
+2.2 Sencondary NameNode S NameNode是NameNode的助手，不要将其理解成是NameNode的备份。Secondary NameNode 的整个目的在HDFS中提供一个Checkpoint Node，所以也被叫做checkpoint node。
+功能
+定时的从NameNode获取EditLogs,并更新到FsImage上。 一旦它有新的fsimage文件，它将其拷贝回NameNode上，NameNode在下次重启时会使用这个新的fsimage文件，从而减少重启的时间。 关于NameNode是什么时候将改动 写到edit logs中的?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/hdfs/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/hdfs/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+1.介绍 一句话(官方):分布式存储系统HDFS( Hadoop Distributed File System)。 其实就是一个文件系统，类似于linux的文件系统。有目录，目录下可以存 储文件。但它又是一个分布式的文件系统。
+基本原理
+将文件切分成等大的数据块，分别存储到多台机器上。 每个数据块存在多个备份。 将数据切分、容错、负载均衡等功能透明化。 可将HDFS看成是一个巨大、具有容错性的磁盘。 缺点
+不适合存储大量小文件。 不适合低延迟数据访问 。 不支持多用户写入及任意修改文件 。 2.HDFS实现原理 数据块
+每个磁盘都有默认的数据块大小，这是磁盘进行数据读/写的最小单位。构建于单个磁盘之 上的文件系统通过磁盘块来管理该文件系统中的块，该文件系统块的大小可以是磁盘块的整数倍。 HDFS 同样也有块 (block) 的概念，但是大得多，默认为 128 MB 。与单一磁盘上的文件系统相似， HDFS 上的文件也被划分为块大小的多个分块 (chunk) ，作为独立的存储单元。但与其他 文件系统不同的是， HDFS 中小于一个块大小的文件不会占据整个块的空间。(好像老版本的会占用整个空间) 2.1 NameNode
+NameNode是HDFS架构中的主节点。 当NameNode启动时会从fsimage中读取数据,缩短启动时间,并会写入editlog,Namenode只有 在启动时候合并fsimage和edits log.
+功能
+管理各个从节点的状态(DataNode)。 记录存储在HDFS上的所有数据的元数据信息。例如:block存储的位置，文件大小，文件权限，文件层级等等。这些信息以两个文件形式永久保存在本地磁盘上。 命名空间镜像文件(FsImage): fsimage是HDFS文件系统存于硬盘中的元数据检查点，里面记录 了自最后一次检查点之前HDFS文件系统中所有目录和文件的序列化信息 编辑日志(edit-logs)文件:保存了自最后一次检查点之后所有针对HDFS文件系统的操作，比如: 增加文件、重命名文件、删除目录等等。 记录了存储在HDFS上文件的所有变化，例如文件被删除，namenode会记录到editlog中。
+接受DataNode的心跳和各个datanode上的block报告信息，确保DataNode是否存活。
+负责处理所有块的复制因子。
+如果DataNode节点宕机，NameNode会选择另外一个DataNode均衡复制因子，并做负载均衡。
+2.2 Sencondary NameNode S NameNode是NameNode的助手，不要将其理解成是NameNode的备份。Secondary NameNode 的整个目的在HDFS中提供一个Checkpoint Node，所以也被叫做checkpoint node。
+功能
+定时的从NameNode获取EditLogs,并更新到FsImage上。 一旦它有新的fsimage文件，它将其拷贝回NameNode上，NameNode在下次重启时会使用这个新的fsimage文件，从而减少重启的时间。 关于NameNode是什么时候将改动 写到edit logs中的?">
+<meta name="twitter:description" content="[toc]
+1.介绍 一句话(官方):分布式存储系统HDFS( Hadoop Distributed File System)。 其实就是一个文件系统，类似于linux的文件系统。有目录，目录下可以存 储文件。但它又是一个分布式的文件系统。
+基本原理
+将文件切分成等大的数据块，分别存储到多台机器上。 每个数据块存在多个备份。 将数据切分、容错、负载均衡等功能透明化。 可将HDFS看成是一个巨大、具有容错性的磁盘。 缺点
+不适合存储大量小文件。 不适合低延迟数据访问 。 不支持多用户写入及任意修改文件 。 2.HDFS实现原理 数据块
+每个磁盘都有默认的数据块大小，这是磁盘进行数据读/写的最小单位。构建于单个磁盘之 上的文件系统通过磁盘块来管理该文件系统中的块，该文件系统块的大小可以是磁盘块的整数倍。 HDFS 同样也有块 (block) 的概念，但是大得多，默认为 128 MB 。与单一磁盘上的文件系统相似， HDFS 上的文件也被划分为块大小的多个分块 (chunk) ，作为独立的存储单元。但与其他 文件系统不同的是， HDFS 中小于一个块大小的文件不会占据整个块的空间。(好像老版本的会占用整个空间) 2.1 NameNode
+NameNode是HDFS架构中的主节点。 当NameNode启动时会从fsimage中读取数据,缩短启动时间,并会写入editlog,Namenode只有 在启动时候合并fsimage和edits log.
+功能
+管理各个从节点的状态(DataNode)。 记录存储在HDFS上的所有数据的元数据信息。例如:block存储的位置，文件大小，文件权限，文件层级等等。这些信息以两个文件形式永久保存在本地磁盘上。 命名空间镜像文件(FsImage): fsimage是HDFS文件系统存于硬盘中的元数据检查点，里面记录 了自最后一次检查点之前HDFS文件系统中所有目录和文件的序列化信息 编辑日志(edit-logs)文件:保存了自最后一次检查点之后所有针对HDFS文件系统的操作，比如: 增加文件、重命名文件、删除目录等等。 记录了存储在HDFS上文件的所有变化，例如文件被删除，namenode会记录到editlog中。
+接受DataNode的心跳和各个datanode上的block报告信息，确保DataNode是否存活。
+负责处理所有块的复制因子。
+如果DataNode节点宕机，NameNode会选择另外一个DataNode均衡复制因子，并做负载均衡。
+2.2 Sencondary NameNode S NameNode是NameNode的助手，不要将其理解成是NameNode的备份。Secondary NameNode 的整个目的在HDFS中提供一个Checkpoint Node，所以也被叫做checkpoint node。
+功能
+定时的从NameNode获取EditLogs,并更新到FsImage上。 一旦它有新的fsimage文件，它将其拷贝回NameNode上，NameNode在下次重启时会使用这个新的fsimage文件，从而减少重启的时间。 关于NameNode是什么时候将改动 写到edit logs中的?">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/hdfs/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<h1 id="1介绍"><strong>1.介绍</strong></h1>
+<p>一句话(官方):分布式存储系统HDFS( Hadoop Distributed File System)。 其实就是一个文件系统，类似于linux的文件系统。有目录，目录下可以存 储文件。但它又是一个分布式的文件系统。</p>
+<p><strong>基本原理</strong></p>
+<ol>
+<li>将文件切分成等大的数据块，分别存储到多台机器上。</li>
+<li>每个数据块存在多个备份。 将数据切分、容错、负载均衡等功能透明化。</li>
+<li>可将HDFS看成是一个巨大、具有容错性的磁盘。</li>
+</ol>
+<p><strong>缺点</strong></p>
+<ol>
+<li>不适合存储大量小文件。</li>
+<li>不适合低延迟数据访问 。</li>
+<li>不支持多用户写入及任意修改文件 。</li>
+</ol>
+<h1 id="2hdfs实现原理"><strong>2.HDFS实现原理</strong></h1>
+<p><strong>数据块</strong></p>
+<ol>
+<li>每个磁盘都有默认的数据块大小，这是磁盘进行数据读/写的最小单位。构建于单个磁盘之 上的文件系统通过磁盘块来管理该文件系统中的块，该文件系统块的大小可以是磁盘块的整数倍。</li>
+<li>HDFS 同样也有块 (block) 的概念，但是大得多，默认为 128 MB 。与单一磁盘上的文件系统相似， HDFS 上的文件也被划分为块大小的多个分块 (chunk) ，作为独立的存储单元。但与其他 文件系统不同的是， HDFS 中小于一个块大小的文件不会占据整个块的空间。(好像老版本的会占用整个空间)</li>
+</ol>
+<p><strong>2.1</strong> <strong>NameNode</strong></p>
+<p>NameNode是HDFS架构中的主节点。 当NameNode启动时会从fsimage中读取数据,缩短启动时间,并会写入editlog,Namenode只有 在启动时候合并fsimage和edits log.</p>
+<p><strong>功能</strong></p>
+<ol>
+<li>管理各个从节点的状态(DataNode)。</li>
+<li>记录存储在HDFS上的所有数据的元数据信息。例如:block存储的位置，文件大小，文件权限，文件层级等等。这些信息以两个文件形式永久保存在本地磁盘上。</li>
+</ol>
+<ul>
+<li>
+<ul>
+<li>命名空间镜像文件(FsImage): fsimage是HDFS文件系统存于硬盘中的元数据检查点，里面记录 了自最后一次检查点之前HDFS文件系统中所有目录和文件的序列化信息</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>编辑日志(edit-logs)文件:保存了自最后一次检查点之后所有针对HDFS文件系统的操作，比如: 增加文件、重命名文件、删除目录等等。</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li>
+<p>记录了存储在HDFS上文件的所有变化，例如文件被删除，namenode会记录到editlog中。</p>
+</li>
+<li>
+<p>接受DataNode的心跳和各个datanode上的block报告信息，确保DataNode是否存活。</p>
+</li>
+<li>
+<p>负责处理所有块的复制因子。</p>
+</li>
+<li>
+<p>如果DataNode节点宕机，NameNode会选择另外一个DataNode均衡复制因子，并做负载均衡。</p>
+</li>
+</ol>
+<h2 id="22-sencondary-namenode"><strong>2.2 Sencondary NameNode</strong></h2>
+<p>S NameNode是NameNode的助手，不要将其理解成是NameNode的备份。Secondary NameNode 的整个目的在HDFS中提供一个Checkpoint Node，所以也被叫做checkpoint node。</p>
+<p><strong>功能</strong></p>
+<ol>
+<li>定时的从NameNode获取EditLogs,并更新到FsImage上。</li>
+<li>一旦它有新的fsimage文件，它将其拷贝回NameNode上，NameNode在下次重启时会使用这个新的fsimage文件，从而减少重启的时间。</li>
+<li>关于NameNode是什么时候将改动 写到edit logs中的?</li>
+</ol>
+<p>这个操作实际上是由 DataNode的写操作触发的，当我们往 DataNode写文件时，DataNode会跟 NameNode通信，告诉NameNode什么文 件的第几个block放在它那里，NameNode 这个时候会将这些元数据信息写到edit logs文件中。</p>
+<h2 id="23-datanode"><strong>2.3 DataNode</strong></h2>
+<p>DataNode是HDFS架构的从节点，管理各自节点的Block信息。</p>
+<p><strong>功能</strong></p>
+<ol>
+<li>多个数据实际是存储到DataNode上面。</li>
+<li>DataNode分别运行在独立的节点上。</li>
+<li>DataNode执行客户端级别的读写请求。</li>
+<li>向NameNode发送心跳(默认是3s)，报告各自节点的健康状况。</li>
+</ol>
+<h1 id="3-hdfs读写流程"><strong>3. HDFS读写流程</strong></h1>
+<h2 id="31-写数据"><strong>3.1 写数据</strong></h2>
+<ol>
+<li>client将数据分片</li>
+<li>client请求namenode，要将多个块写入到HDFS。例如这里的Block A和Block B。</li>
+<li>NameNode会给client赋予写权限，并为client提供可以写入数据的DataNode的IP地址。Namenode在选择可写入数据的dataNode的规则是结合了DN的健康状态、复制因子、机架感知等因素随机选择的DN。假如复制因子是3(默认值)，那么会为每个block返回三个IP地址。例如NN为client提供了以下的IP地址列表。</li>
+<li>在写入数据之前，client首先 要确认namenode提供的ip列表 是否准备好了接收数据。Client通过连接各个块的ip列表来为 每个块创建流水线。（传递的方式）</li>
+<li>流水线建立好以后，client将 会向流水线中写入数据（block 是并行写入的）。Client只会将block A向 DN1复制。其他节点复制是在DN 之间完成的。</li>
+<li>当数据复制到所有的DN完成之 后，按照ip地址列表相反的方向，依次反馈写入成功的信息。</li>
+<li>DN1将确认信息反馈给client，client再将确认信息反馈给NN， NN更新元数据信息，client关 闭pipline。</li>
+</ol>
+<h2 id="32-文件读取"><strong>3.2 文件读取</strong></h2>
+<ol>
+<li>Client请求namenode要读取exaple. txt文件。</li>
+<li>NN根据自己的元数据信息，反馈给 client一个DataNode的列表(存储B lock A和B)。</li>
+<li>Client连接DN，读取BlockA,Block B的数据。</li>
+<li>Client合并block A和Block B的数 据。</li>
+</ol>
+<h1 id="4-hdfs-balancer"><strong>4. HDFS balancer</strong></h1>
+<p>集群磁盘数据不均衡导致的原因有很多情况。</p>
+<ol>
+<li>添加新的DataNode节点。</li>
+<li>人为干预，修改block副本数。</li>
+<li>各个机器磁盘大小不一致。</li>
+<li>长时间运行大量的delete操作等。</li>
+</ol>
+<h1 id="5-hdfs快照"><strong>5. HDFS快照</strong></h1>
+<p>Hdfs的快照（snapshot）是在某一时间点对指定文件系统拷贝，快照采用只读模式，可以对重要数据进行恢复、防止用户错误性的操作。</p>
+<p>快照分两种：</p>
+<p>一种是：建立文件系统的索引，每次更新文件不会真正的改变文件，而是新开辟一个空间用来保存更改的文件，(hdfs属于该种)</p>
+<p>一种是：拷贝所有的文件系统</p>
+<p>和VM做快照差不多,相当于做了个备份,可以做回滚</p>
+<ol>
+<li>快照创建是瞬间的:成本是0(1)排除查找信息节点的时间 。</li>
+<li>额外的内存使用仅仅当对快照进行修改时产生：内存使用时0(M),M是修改文件/目录的数量。</li>
+<li>是一个只读的基于时间点文件系统拷贝。快照可以是整个文件系统的也可以是一部分。常用来作为数据备 份，防止用户错误和容灾。</li>
+<li>在datanode 上面的blocks 不会复制，做Snapshot 的文件是纪录了block的列表和文件的大小，但是没有数据的复制 Snapshot 并不会影响HDFS 的正常操作:</li>
+<li>修改会按照时间的反序记录，这样可以直接读取到最新的数据。</li>
+<li>快照数据是 当前数据减去修改的部分计算出来的。</li>
+<li>快照会存储在snapshottable的目录下。snapshottable下存储的snapshots 最多为65535个。没有限制snapshottable目录 的数量。管理员可以设置任何的目录成为snapshottable。如果snapshottable里面存着快照，那么文件夹不能删除或者 改名。</li>
+</ol>
+<h1 id="6-hadoop-配额设置"><strong>6. Hadoop 配额设置</strong></h1>
+<h2 id="61-什么是配额"><strong>6.1 什么是配额</strong></h2>
+<p>​		Hadoop 分布式文件系统(HDFS)允许管理员为每个目录设置配额,限制该目录下占用空间大小,和目录/文件数量.新建立的目录没有配额。最 大的配额是 Long.Max_Value。配额为 1 可以强制目录保持为空。</p>
+<p>​		目录配额是对目录树上该目录下的名字数量做硬性限制。如果创建文件或目录时超过了配额， 该操作会失败。重命名不会改变该目录的配额;如果重命名操作会导致违反配额限制，该操作 将会失败。如果尝试设置一个配额而现有文件数量已经超出了这个新配额，则设置失败。</p>
+<p><strong>所有超出配额的操作都会失败</strong></p>
+<p>配额和 fsimage 保持一致。当启动时，如果 fsimage 违反了某个配额限制(也许 fsimage 被偷 偷改变了)，则启动失败并生成错误报告。设置或删除一个配额会创建相应的日志记录。</p>
+<h2 id="62-配额种类"><strong>6.2 配额种类</strong></h2>
+<ol>
+<li>Name Quotas:设置某一个目录下文件总数</li>
+</ol>
+<blockquote>
+<p>从文件数目上限制</p>
+</blockquote>
+<ol start="2">
+<li>Space Quotas:设置某一个目录下可使用空间大小</li>
+</ol>
+<blockquote>
+<p>从空间上限制</p>
+</blockquote>
+<p><strong>注意</strong>：这里需要特别注意的是“Space Quota”的设置所看的不是 Hdfs 的文件大小，而是写入 Hdfs 所有 block 块的大小。包含备份的部分，而且不足一个块也要按照一个块计算</p>
+<blockquote>
+<p>​		hdfs 的配额管理是跟着目录走，如果目录被重命名，配额依然有效。 麻烦的是，在设置完配额以后，如果超过限制，虽然文件不会写入到 hdfs，但是文件名依然会存在，只是文件 size 为 0。当加大配额设置后，还需要将之前的空文件删除才能进一步写入。如果新设置的 quota 值，小于该目录现有的 Name Quotas 及 Space Quotas，系统并不会给 出错误提示，但是该目录的配置会变成最新设置的 quota。</p>
+</blockquote>
+<p><strong>设置</strong></p>
+<pre tabindex="0"><code>启用设定:hadoop dfsadmin -setQuota 10000 /user/seamon
+清除設定: hadoop dfsadmin -clrQuota /user/seamon
+可以使用m,g,t 代表 MB,GB,TB
+启用设定: hadoop dfsadmin -setSpaceQuota 1g /user/seamon/ 
+清除設定: hadoop dfsadmin -clrSpaceQuota /user/seamon
+</code></pre><h1 id="7-复制因子"><strong>7. 复制因子</strong></h1>
+<p>HDFS为我们提供了可靠的存储，就是因为这个复制因子。默认复制因子是3。</p>
+<p>复制因子是每个block备份的数目，nameNode保证每个block在集群中有复制因子数目的备份，不多也不少。每个block的备份分在不同的dataNode中。</p>
+<p>通常情况下，当复制因数是3时，HDFS的放置策略是一个数据块放置到本地机架的一个节点，另一份数据块放置到本地机架的另一个节点，最后一份数据块放置到不同机架的一个节点。这个策略减少了机架之间的通信而极大提高了写性能。机架发生故障的可能性远小于节点，这个策略并不影响数据的可靠性和可用性，但是，在读数据时，它确实降低了整体带宽，因为数据块仅放置在两个而不是三个机架上，这种策略下，一个文件的复制块没有在机架之间均匀分布，三分之一的复制块在一个节点上；三分之二的复制块在一个机架上，另三分之一的复制块均匀分布在另外的机架上。这个策略提高了写性能，没有降低数据可靠性或读性能。</p>
+<p>为减少全局的带宽和读延迟，HDFS尝试从离要求读的客户端最近的地方读取复制块，如果读者节点与复制块节点在同一机架上，则这个复制块优先用来满足读请求，如果HDFS集群有多个数据中心，则优先使用本地数据中心中的复制块，而不是远方的数据块。</p>
+<p>就近原则</p>
+<blockquote>
+<p><a href="https://www.aboutyun.com/forum.php?mod=viewthread&amp;tid=17306">https://www.aboutyun.com/forum.php?mod=viewthread&amp;tid=17306</a></p>
+</blockquote>
+<h1 id="8-安全模式"><strong>8. 安全模式</strong></h1>
+<p>安全模式是hadoop的一种保护机制，用于保证集群中的数据块的安全性。如果HDFS处于安全模式，则表示HDFS是只读状态。</p>
+<p><strong>当集群启动的时候，会首先进入安全模式</strong>。当系统处于安全模式时会检查数据块的完整性。假设我们设置的副本数（即参数dfs.replication）是5，那么在datanode上就应该有5个副本存在，假设只存在3个副本，那么比例就是3/5=0.6。在配置文件hdfs-default.xml中定义了一个最小的副本的副本率0.999</p>
+<p><code>dfs.namenode.safemode.threshold-pct</code></p>
+<p>我们的副本率0.6明显小于0.99，因此系统会自动的复制副本到其他的dataNode,使得副本率不小于0.999.如果系统中有8个副本，超过我们设定的5个副本，那么系统也会删除多余的3个副本(估计是心跳时由NameNode抉择,指定DataNode去删除)。当副本率达标后,过30秒之后,NameNode自动退出安全模式</p>
+<ul>
+<li>查看安全模式状态：hdfs dfsadmin -safemode get</li>
+<li>进入安全模式状态：hdfs dfsadmin -safemode enter</li>
+<li>离开安全模式状态：hdfs dfsadmin -safemode leave</li>
+</ul>
+<blockquote>
+<p><a href="https://www.cnblogs.com/TiePiHeTao/p/5105682165be5a124a01c2cd06a89c64.html">https://www.cnblogs.com/TiePiHeTao/p/5105682165be5a124a01c2cd06a89c64.html</a></p>
+</blockquote>
+<h1 id="9空间回收"><strong>9.空间回收</strong></h1>
+<p>​		如果一个文件被用户或应用程序删除了，它并不立刻从HDFS中删除，相反，HDFS首先改变它的名字，将其放到/trash目录中，只要它保留在/trash中，这个文件可以迅速恢复。当/trash中的文件到达其生命期后，NameNode从HDFS命名空间中删除这个文件。删除这个文件将释放与之关联的数据块的空间。需要注意的是，用户删除一个文件的时刻与HDFS增加剩余空间的时刻之间相比，有一个适当的滞后。</p>
+<p>只要这个文件还在/trash目录，用户可以恢复一个删除的文件。如果用户想恢复，则他/她可以转到/trash目录，恢复这个文件。/trash目录仅包含最新的被删除文件，/trash目录与其他目录相似，除了一点特征之外：HDFS施加特别的自动删除策略给这个目录下的文件。目前，这个缺省的策略是删除超过6个小时的文件</p>
+<blockquote>
+<p><a href="https://www.aboutyun.com/forum.php?mod=viewthread&amp;tid=17306">https://www.aboutyun.com/forum.php?mod=viewthread&amp;tid=17306</a></p>
+<p><a href="https://blog.csdn.net/weixin_42297075/article/details/104365795">https://blog.csdn.net/weixin_42297075/article/details/104365795</a></p>
+<p><a href="https://www.aboutyun.com/thread-18075-1-3.html">https://www.aboutyun.com/thread-18075-1-3.html</a></p>
+<p><a href="https://www.cnblogs.com/nucdy/p/5684196.html">https://www.cnblogs.com/nucdy/p/5684196.html</a></p>
+<p><a href="https://www.aboutyun.com/thread-17301-1-3.html">https://www.aboutyun.com/thread-17301-1-3.html</a></p>
+<p><a href="https://www.aboutyun.com/forum.php?mod=viewthread&amp;tid=17304">https://www.aboutyun.com/forum.php?mod=viewthread&amp;tid=17304</a></p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/flume/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/yarn/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/hdfs/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/hdfs/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/hdfs/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/hadoop\/hdfs\/';
+        
+          this.page.identifier = '\/post\/hadoop%E7%94%9F%E6%80%81%E5%9C%88\/hadoop\/hdfs\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/flume/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/yarn/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/hdfs/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/hdfs/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/hadoop%E7%94%9F%E6%80%81%E5%9C%88/hadoop/hdfs/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fhadoop%2Fhdfs%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fhadoop%2Fhdfs%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fhadoop%25E7%2594%259F%25E6%2580%2581%25E5%259C%2588%2Fhadoop%2Fhdfs%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

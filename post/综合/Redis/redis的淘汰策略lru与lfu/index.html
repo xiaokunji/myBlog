@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[toc]\n释放内存其实在每次处理命令时都会执行, 只是满足判断条件才执行 , 例如内存满了, 需要淘汰key等等条件, 若发现已用内存超出maxmemory，会计算需释放的内存量。这个 释放内存大小=已使用内存量-maxmemory。\nredis中的LRU实现 redis没有使用标准的LRU算法, 只是近似的LRU算法, 因为嫌LinkedList占用的空间太大了(因为起码要记录头尾指针)\n简述: redis通过计算每个key的闲置时间来决定是否要选它淘汰(全局时钟 减去 当前key的访问时钟), redis会随机选几个key, 它们的闲置时间都要大于一个阈值(其实会存入一个pool, 这个阈值就是pool中最小的闲置时间), 当内存不够时, 就从这几个key中淘汰闲置时间最大的值\n首先看一下全局时钟定义\n#define LRU_BITS 24 struct redisServer { pid_t pid; \/* Main process pid. *\/ char *configfile; \/* Absolute config file path, or NULL *\/ ….. unsigned lruclock:LRU_BITS; \/* Clock for LRU eviction *\/ ... }; redisServer 中包含了redis服务器启动之后的基本信息(PID,配置文件路径,serverCron运行频率hz等),外部可调用模块信息，网络信息，RDB\/AOF信息，日志信息，复制信息等等。\n上述结构体中lruclock:LRU_BITS,其中存储了服务器自启动之后的lru时钟，该时钟是全局的lru时钟。该时钟100ms更新一次。\n可以通过hz来调整,默认情况hz=10,因此每1000ms\/10=100ms执行一次定时任务\n因此lrulock最大能到(2**24-1)\/3600\/24 = 194天,如果超过了这个时间，lrulock重新开始。对于redis server来说，server.lrulock表示的是一个全局的lrulock，\n如果全局时钟 小于 对象时钟, 则会再加上时钟最大值 REDIS_LRU_CLOCK_MAX , 也就是 194天 的秒数, 相当于是第二轮了",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/redis\/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[toc]
+释放内存其实在每次处理命令时都会执行, 只是满足判断条件才执行 , 例如内存满了, 需要淘汰key等等条件, 若发现已用内存超出maxmemory，会计算需释放的内存量。这个 释放内存大小=已使用内存量-maxmemory。
+redis中的LRU实现 redis没有使用标准的LRU算法, 只是近似的LRU算法, 因为嫌LinkedList占用的空间太大了(因为起码要记录头尾指针)
+简述: redis通过计算每个key的闲置时间来决定是否要选它淘汰(全局时钟 减去 当前key的访问时钟), redis会随机选几个key, 它们的闲置时间都要大于一个阈值(其实会存入一个pool, 这个阈值就是pool中最小的闲置时间), 当内存不够时, 就从这几个key中淘汰闲置时间最大的值
+首先看一下全局时钟定义
+#define LRU_BITS 24 struct redisServer { pid_t pid; /* Main process pid. */ char *configfile; /* Absolute config file path, or NULL */ ….. unsigned lruclock:LRU_BITS; /* Clock for LRU eviction */ ... }; redisServer 中包含了redis服务器启动之后的基本信息(PID,配置文件路径,serverCron运行频率hz等),外部可调用模块信息，网络信息，RDB/AOF信息，日志信息，复制信息等等。
+上述结构体中lruclock:LRU_BITS,其中存储了服务器自启动之后的lru时钟，该时钟是全局的lru时钟。该时钟100ms更新一次。
+可以通过hz来调整,默认情况hz=10,因此每1000ms/10=100ms执行一次定时任务
+因此lrulock最大能到(2**24-1)/3600/24 = 194天,如果超过了这个时间，lrulock重新开始。对于redis server来说，server.lrulock表示的是一个全局的lrulock，
+如果全局时钟 小于 对象时钟, 则会再加上时钟最大值 REDIS_LRU_CLOCK_MAX , 也就是 194天 的秒数, 相当于是第二轮了">
+
+
+<meta property="og:description" content="[toc]
+释放内存其实在每次处理命令时都会执行, 只是满足判断条件才执行 , 例如内存满了, 需要淘汰key等等条件, 若发现已用内存超出maxmemory，会计算需释放的内存量。这个 释放内存大小=已使用内存量-maxmemory。
+redis中的LRU实现 redis没有使用标准的LRU算法, 只是近似的LRU算法, 因为嫌LinkedList占用的空间太大了(因为起码要记录头尾指针)
+简述: redis通过计算每个key的闲置时间来决定是否要选它淘汰(全局时钟 减去 当前key的访问时钟), redis会随机选几个key, 它们的闲置时间都要大于一个阈值(其实会存入一个pool, 这个阈值就是pool中最小的闲置时间), 当内存不够时, 就从这几个key中淘汰闲置时间最大的值
+首先看一下全局时钟定义
+#define LRU_BITS 24 struct redisServer { pid_t pid; /* Main process pid. */ char *configfile; /* Absolute config file path, or NULL */ ….. unsigned lruclock:LRU_BITS; /* Clock for LRU eviction */ ... }; redisServer 中包含了redis服务器启动之后的基本信息(PID,配置文件路径,serverCron运行频率hz等),外部可调用模块信息，网络信息，RDB/AOF信息，日志信息，复制信息等等。
+上述结构体中lruclock:LRU_BITS,其中存储了服务器自启动之后的lru时钟，该时钟是全局的lru时钟。该时钟100ms更新一次。
+可以通过hz来调整,默认情况hz=10,因此每1000ms/10=100ms执行一次定时任务
+因此lrulock最大能到(2**24-1)/3600/24 = 194天,如果超过了这个时间，lrulock重新开始。对于redis server来说，server.lrulock表示的是一个全局的lrulock，
+如果全局时钟 小于 对象时钟, 则会再加上时钟最大值 REDIS_LRU_CLOCK_MAX , 也就是 194天 的秒数, 相当于是第二轮了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[toc]
+释放内存其实在每次处理命令时都会执行, 只是满足判断条件才执行 , 例如内存满了, 需要淘汰key等等条件, 若发现已用内存超出maxmemory，会计算需释放的内存量。这个 释放内存大小=已使用内存量-maxmemory。
+redis中的LRU实现 redis没有使用标准的LRU算法, 只是近似的LRU算法, 因为嫌LinkedList占用的空间太大了(因为起码要记录头尾指针)
+简述: redis通过计算每个key的闲置时间来决定是否要选它淘汰(全局时钟 减去 当前key的访问时钟), redis会随机选几个key, 它们的闲置时间都要大于一个阈值(其实会存入一个pool, 这个阈值就是pool中最小的闲置时间), 当内存不够时, 就从这几个key中淘汰闲置时间最大的值
+首先看一下全局时钟定义
+#define LRU_BITS 24 struct redisServer { pid_t pid; /* Main process pid. */ char *configfile; /* Absolute config file path, or NULL */ ….. unsigned lruclock:LRU_BITS; /* Clock for LRU eviction */ ... }; redisServer 中包含了redis服务器启动之后的基本信息(PID,配置文件路径,serverCron运行频率hz等),外部可调用模块信息，网络信息，RDB/AOF信息，日志信息，复制信息等等。
+上述结构体中lruclock:LRU_BITS,其中存储了服务器自启动之后的lru时钟，该时钟是全局的lru时钟。该时钟100ms更新一次。
+可以通过hz来调整,默认情况hz=10,因此每1000ms/10=100ms执行一次定时任务
+因此lrulock最大能到(2**24-1)/3600/24 = 194天,如果超过了这个时间，lrulock重新开始。对于redis server来说，server.lrulock表示的是一个全局的lrulock，
+如果全局时钟 小于 对象时钟, 则会再加上时钟最大值 REDIS_LRU_CLOCK_MAX , 也就是 194天 的秒数, 相当于是第二轮了">
+<meta name="twitter:description" content="[toc]
+释放内存其实在每次处理命令时都会执行, 只是满足判断条件才执行 , 例如内存满了, 需要淘汰key等等条件, 若发现已用内存超出maxmemory，会计算需释放的内存量。这个 释放内存大小=已使用内存量-maxmemory。
+redis中的LRU实现 redis没有使用标准的LRU算法, 只是近似的LRU算法, 因为嫌LinkedList占用的空间太大了(因为起码要记录头尾指针)
+简述: redis通过计算每个key的闲置时间来决定是否要选它淘汰(全局时钟 减去 当前key的访问时钟), redis会随机选几个key, 它们的闲置时间都要大于一个阈值(其实会存入一个pool, 这个阈值就是pool中最小的闲置时间), 当内存不够时, 就从这几个key中淘汰闲置时间最大的值
+首先看一下全局时钟定义
+#define LRU_BITS 24 struct redisServer { pid_t pid; /* Main process pid. */ char *configfile; /* Absolute config file path, or NULL */ ….. unsigned lruclock:LRU_BITS; /* Clock for LRU eviction */ ... }; redisServer 中包含了redis服务器启动之后的基本信息(PID,配置文件路径,serverCron运行频率hz等),外部可调用模块信息，网络信息，RDB/AOF信息，日志信息，复制信息等等。
+上述结构体中lruclock:LRU_BITS,其中存储了服务器自启动之后的lru时钟，该时钟是全局的lru时钟。该时钟100ms更新一次。
+可以通过hz来调整,默认情况hz=10,因此每1000ms/10=100ms执行一次定时任务
+因此lrulock最大能到(2**24-1)/3600/24 = 194天,如果超过了这个时间，lrulock重新开始。对于redis server来说，server.lrulock表示的是一个全局的lrulock，
+如果全局时钟 小于 对象时钟, 则会再加上时钟最大值 REDIS_LRU_CLOCK_MAX , 也就是 194天 的秒数, 相当于是第二轮了">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[toc]</p>
+<blockquote>
+<p>释放内存其实在每次处理命令时都会执行, 只是满足判断条件才执行 , 例如内存满了, 需要淘汰key等等条件, 若发现已用内存超出<code>maxmemory</code>，会计算需释放的内存量。这个 <code>释放内存大小=已使用内存量-maxmemory</code>。</p>
+</blockquote>
+<h1 id="redis中的lru实现">redis中的LRU实现</h1>
+<p>redis没有使用标准的LRU算法, 只是近似的LRU算法, 因为嫌LinkedList占用的空间太大了(因为起码要记录头尾指针)</p>
+<blockquote>
+<p>简述:  redis通过计算每个key的闲置时间来决定是否要选它淘汰(全局时钟 减去 当前key的访问时钟), redis会随机选几个key, 它们的闲置时间都要大于一个阈值(其实会存入一个pool, 这个阈值就是pool中最小的闲置时间), 当内存不够时, 就<strong>从这几个key中淘汰闲置时间最大的值</strong></p>
+</blockquote>
+<p>首先看一下全局时钟定义</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">#define LRU_BITS 24
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">redisServer</span> {
+</span></span><span style="display:flex;"><span>       pid_t pid; <span style="color:#75715e">/* Main process pid. */</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>configfile; <span style="color:#75715e">/* Absolute config file path, or NULL */</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#960050;background-color:#1e0010">…</span>..
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">unsigned</span> lruclock:LRU_BITS; <span style="color:#75715e">/* Clock for LRU eviction */</span>
+</span></span><span style="display:flex;"><span>       ...
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>redisServer 中包含了redis服务器启动之后的基本信息(PID,配置文件路径,serverCron运行频率hz等),外部可调用模块信息，网络信息，RDB/AOF信息，日志信息，复制信息等等。</p>
+<p>上述结构体中<code>lruclock:LRU_BITS</code>,其中存储了服务器自启动之后的lru时钟，该时钟是全局的lru时钟。<strong>该时钟100ms更新一次</strong>。</p>
+<blockquote>
+<p>可以通过hz来调整,默认情况hz=10,因此每1000ms/10=100ms执行一次定时任务</p>
+</blockquote>
+<p>因此lrulock最大能到(2**24-1)/3600/24 = 194天,如果超过了这个时间，lrulock重新开始。对于redis server来说，server.lrulock表示的是一个全局的lrulock，</p>
+<blockquote>
+<p>如果全局时钟 小于 对象时钟, 则会再加上时钟最大值 <code>REDIS_LRU_CLOCK_MAX</code> , 也就是 194天 的秒数, 相当于是第二轮了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">/* Given an object returns the min number of seconds the object was never
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * requested, using an approximated LRU algorithm. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#define REDIS_LRU_CLOCK_MAX ((1&lt;&lt;REDIS_LRU_BITS)-1) </span><span style="color:#75715e">/* Max value of obj-&gt;lru */</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#define REDIS_LRU_CLOCK_RESOLUTION 1 </span><span style="color:#75715e">/* LRU clock resolution in seconds */</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">estimateObjectIdleTime</span>(robj <span style="color:#f92672">*</span>o) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (server.lruclock <span style="color:#f92672">&gt;=</span> o<span style="color:#f92672">-&gt;</span>lru) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> (server.lruclock <span style="color:#f92672">-</span> o<span style="color:#f92672">-&gt;</span>lru) <span style="color:#f92672">*</span> REDIS_LRU_CLOCK_RESOLUTION;
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ((REDIS_LRU_CLOCK_MAX <span style="color:#f92672">-</span> o<span style="color:#f92672">-&gt;</span>lru) <span style="color:#f92672">+</span> server.lruclock) <span style="color:#f92672">*</span> REDIS_LRU_CLOCK_RESOLUTION;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></blockquote>
+<p>那么对于每个redisObject都有一个自己的lrulock。这样每redisObject就可以根据自己的lrulock和全局的server.lrulock比较，来确定是否能够被淘汰掉。</p>
+<p>再看一下 redisObject的实现</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#define REDIS_LRU_BITS 24
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">typedef</span> <span style="color:#66d9ef">struct</span> redisObject {
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">unsigned</span> type:<span style="color:#ae81ff">4</span>;
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">unsigned</span> encoding:<span style="color:#ae81ff">4</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 从这里看出, 这个字段在不同淘汰策略下, 存的内容是不一样的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>     <span style="color:#66d9ef">unsigned</span> lru:LRU_BITS; <span style="color:#75715e">/* LRU time (relative to server.lruclock) or
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                             * LFU data (least significant 8 bits frequency
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                             * and most significant 16 bits decreas time). */</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">int</span> refcount;
+</span></span><span style="display:flex;"><span>     <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>ptr;
+</span></span><span style="display:flex;"><span>} robj
+</span></span></code></pre></div><p>在Redis的dict中每次按key获取一个值的时候，都会调用lookupKey函数,如果配置使用了LRU模式,该函数会更新value中的lru字段为当前秒级别的时间戳</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>robj <span style="color:#f92672">*</span><span style="color:#a6e22e">lookupKey</span>(redisDb <span style="color:#f92672">*</span>db, robj <span style="color:#f92672">*</span>key, <span style="color:#66d9ef">int</span> flags) {
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (server.maxmemory_policy <span style="color:#f92672">&amp;</span> MAXMEMORY_FLAG_LFU) { <span style="color:#75715e">//如果配置的是lfu方式，则更新lfu
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#a6e22e">updateLFU</span>(val);
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                val<span style="color:#f92672">-&gt;</span>lru <span style="color:#f92672">=</span> <span style="color:#a6e22e">LRU_CLOCK</span>();<span style="color:#75715e">//否则按lru方式更新
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            }
+</span></span><span style="display:flex;"><span>    ...
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>第一次随机选取的key都会放入一个pool中(pool的大小为16),pool中的key是按lru大小顺序排列的。接下来每次随机选取的key lru值必须大于pool中最小的lru才会继续放入，直到将pool放满。放满之后，每次如果有新的key需要放入，需要将pool中lru最大的一个key取出。淘汰的时候，直接<strong>从pool中选取一个lru最大的值然后将其淘汰</strong>。这样一来，每次移除的Key并不仅仅是随机选择的N个Key里面最大的，而且还是pool里面idle time最大的</p>
+<p>随机选的key的数量默认为5, 由 <code>server.maxmemory_samples</code> 控制, <code>maxmemory_samples</code> 就是样本大小, 值越大, 约接近LRU, 淘汰的正确率越高, 性能消耗也越大</p>
+<blockquote>
+<p>采用&quot;pool&quot;，把一个全局排序问题 转化成为了 局部的比较问题。(尽管排序本质上也是比较，囧)。要想知道idle time 最大的key，精确的LRU需要对全局的key的idle time排序，然后就能找出idle time最大的key了。但是可以采用一种近似的思想，即随机采样(samping)若干个key，这若干个key就代表着全局的key，把samping得到的key放到pool里面，每次采样之后更新pool，使得pool里面总是保存着随机选择过的key的idle time最大的那些key。需要evict key时，直接从pool里面取出idle time最大的key，将之evict掉。这种思想是很值得借鉴的。</p>
+</blockquote>
+<h1 id="redis中的lfu实现">redis中的LFU实现</h1>
+<blockquote>
+<p>简述:  它和LRU规则一样, 利用在key中时间钟字段, 不过把内部时钟的24位分成两部分，前16位还代表时钟，<strong>后8位代表一个计数器</strong>。8位只能代表255，但是redis并没有采用线性上升的方式，而是结合增长因子来计数, 而且还有衰退因子来减少计数。也会和LRU一样, 存在一个淘汰池, <strong>从淘汰池中redis会对内部时钟最小的key进行淘汰</strong>（最小表示最不频繁使用），注意这个过程也是根据策略随机选择键</p>
+</blockquote>
+<p>在LFU模式下，Redis对象头的24bit lru字段被分成两段来存储，高16bit存储ldt(Last Decrement Time)，低8bit存储logc(Logistic Counter)。</p>
+<p><img src="Redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5LRU%E4%B8%8ELFU.assets/5dd759c2c31876ed554585f5cd0e9193.png" alt="lru_24 bit.png"></p>
+<h2 id="ldtlast-decrement-time">ldt(Last Decrement Time)</h2>
+<p>高16bit用来记录最近一次计数器降低的时间，由于只有8bit，存储的是Unix分钟时间戳取模2^16，16bit能表示的最大值为65535（65535/24/60≈45.5），大概45.5天会折返（折返指的是取模后的值重新从0开始）。</p>
+<p>源码如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">/* Return the current time in minutes, just taking the least significant
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 16 bits. The returned time is suitable to be stored as LDT (last decrement
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * time) for the LFU implementation. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// server.unixtime是Redis缓存的Unix时间戳
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 可以看出使用的Unix的分钟时间戳，取模2^16
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">LFUGetTimeInMinutes</span>(<span style="color:#66d9ef">void</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> (server.unixtime<span style="color:#f92672">/</span><span style="color:#ae81ff">60</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">65535</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/* Given an object last access time, compute the minimum number of minutes
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * that elapsed since the last access. Handle overflow (ldt greater than
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * the current 16 bits minutes time) considering the time as wrapping
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * exactly once. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">LFUTimeElapsed</span>(<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> ldt) {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 获取系统当前的LFU time
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> now <span style="color:#f92672">=</span> <span style="color:#a6e22e">LFUGetTimeInMinutes</span>();
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 如果now &gt;= ldt 直接取差值  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> (now <span style="color:#f92672">&gt;=</span> ldt) <span style="color:#66d9ef">return</span> now<span style="color:#f92672">-</span>ldt;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 如果now &lt; ldt 增加上65535
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// 注意Redis 认为折返就只有一次折返，多次折返也是一次，我思考了很久感觉这个应该是可以接受的，本身Redis的淘汰算法就带有随机性  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">65535</span><span style="color:#f92672">-</span>ldt<span style="color:#f92672">+</span>now;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="logclogistic-counter">logc(Logistic Counter)</h2>
+<p>低8位用来记录访问频次，8bit能表示的最大值为255，logc肯定无法记录真实的Rediskey的访问次数，其实从名字可以看出存储的是访问次数的对数值，每个<strong>新加入的key的logc初始值为5（LFU_INITI_VAL）</strong>，这样可以保证新加入的值不会被首先选中淘汰；logc每次key被访问时都会更新；此外，logc会随着时间衰减。</p>
+<h2 id="logc-算法调整">logc 算法调整</h2>
+<p>redis.conf 提供了两个配置项，用于调整LFU的算法从而控制Logistic Counter的增长和衰减。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-properties" data-lang="properties"><span style="display:flex;"><span><span style="color:#a6e22e">--</span> <span style="color:#e6db74">用于调整Logistic Counter的增长速度，lfu-log-factor值越大，Logistic Counter增长越慢。</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">lfu-log-factor</span> <span style="color:#e6db74">10</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">--</span> <span style="color:#e6db74">用于调整Logistic Counter的衰减速度，它是一个以分钟为单位的数值，默认值为1,；lfu-decay-time值越大，衰减越慢。</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">lfu-decay-time</span> <span style="color:#e6db74">1</span>
+</span></span></code></pre></div><p>增长的源码:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">/* Logarithmically increment a counter. The greater is the current counter value
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * the less likely is that it gets really implemented. Saturate it at 255. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">uint8_t</span> <span style="color:#a6e22e">LFULogIncr</span>(<span style="color:#66d9ef">uint8_t</span> counter) {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// Logistic Counter最大值为255  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> (counter <span style="color:#f92672">==</span> <span style="color:#ae81ff">255</span>) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">255</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 取一个0~1的随机数r  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">double</span> r <span style="color:#f92672">=</span> (<span style="color:#66d9ef">double</span>)<span style="color:#a6e22e">rand</span>()<span style="color:#f92672">/</span>RAND_MAX;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// counter减去LFU_INIT_VAL （LFU_INIT_VAL为每个key的Logistic Counter初始值，默认为5）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">double</span> baseval <span style="color:#f92672">=</span> counter <span style="color:#f92672">-</span> LFU_INIT_VAL;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 如果衰减之后已经小于5了，那么baseval &lt; 0取0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> (baseval <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) baseval <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// lfu-log-factor在这里被使用
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// 可以看出如果lfu_log_factor的值越大，p越小
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#75715e">// r &lt; p的概率就越小，Logistic Counter增加的概率就越小（因此lfu_log_factor越大增长越缓慢）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">double</span> p <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span><span style="color:#f92672">/</span>(baseval<span style="color:#f92672">*</span>server.lfu_log_factor<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> (r <span style="color:#f92672">&lt;</span> p) counter<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> counter;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>衰减的源代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">/* If the object decrement time is reached decrement the LFU counter but
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * do not update LFU fields of the object, we update the access time
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * and counter in an explicit way when the object is really accessed.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * And we will times halve the counter according to the times of
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * elapsed time than server.lfu_decay_time.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Return the object frequency counter.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * This function is used in order to scan the dataset for the best object
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * to fit: as we check for the candidate, we incrementally decrement the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * counter of the scanned objects if needed. */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">LFUDecrAndReturn</span>(robj <span style="color:#f92672">*</span>o) {
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 获取lru的高16位，也就是ldt
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> ldt <span style="color:#f92672">=</span> o<span style="color:#f92672">-&gt;</span>lru <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">8</span>;  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 获取lru的低8位，也就是logc  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> counter <span style="color:#f92672">=</span> o<span style="color:#f92672">-&gt;</span>lru <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">255</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">// 根据配置的lfu-decay-time计算Logistic Counter需要衰减的值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>  <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> num_periods <span style="color:#f92672">=</span> server.lfu_decay_time <span style="color:#f92672">?</span> <span style="color:#a6e22e">LFUTimeElapsed</span>(ldt) <span style="color:#f92672">/</span> server.lfu_decay_time : <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> (num_periods)
+</span></span><span style="display:flex;"><span>    counter <span style="color:#f92672">=</span> (num_periods <span style="color:#f92672">&gt;</span> counter) <span style="color:#f92672">?</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">:</span> counter <span style="color:#f92672">-</span> num_periods;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> counter;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>LFU 与 LRU 有一个共同点，当内存达到max_memory时，选择key是随机抓取的，因此Redis为了使这种随机性更加准确，设计了一个淘汰池，这个淘汰池对于LFU和LRU算的都适应，只是淘汰池的排序算法有区别而已。</p>
+<h1 id="扩展">扩展</h1>
+<h2 id="淘汰池的更新策略">淘汰池的更新策略</h2>
+<p>这个淘汰池就是使用LRU和LFU时, 需要淘汰key时, 是从淘汰池按时间钟来淘汰, 源码如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">evictionPoolPopulate</span>(<span style="color:#66d9ef">int</span> dbid, dict <span style="color:#f92672">*</span>sampledict, dict <span style="color:#f92672">*</span>keydict, <span style="color:#66d9ef">struct</span> evictionPoolEntry <span style="color:#f92672">*</span>pool) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> j, k, count;
+</span></span><span style="display:flex;"><span>    dictEntry <span style="color:#f92672">*</span>samples[server.maxmemory_samples];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    count <span style="color:#f92672">=</span> <span style="color:#a6e22e">dictGetSomeKeys</span>(sampledict,samples,server.maxmemory_samples);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (j <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; j <span style="color:#f92672">&lt;</span> count; j<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> idle;
+</span></span><span style="display:flex;"><span>        sds key;
+</span></span><span style="display:flex;"><span>        robj <span style="color:#f92672">*</span>o;
+</span></span><span style="display:flex;"><span>        dictEntry <span style="color:#f92672">*</span>de;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        de <span style="color:#f92672">=</span> samples[j];
+</span></span><span style="display:flex;"><span>        key <span style="color:#f92672">=</span> <span style="color:#a6e22e">dictGetKey</span>(de);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/* If the dictionary we are sampling from is not the main
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * dictionary (but the expires one) we need to lookup the key
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * again in the key dictionary to obtain the value object. */</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (server.maxmemory_policy <span style="color:#f92672">!=</span> MAXMEMORY_VOLATILE_TTL) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (sampledict <span style="color:#f92672">!=</span> keydict) de <span style="color:#f92672">=</span> <span style="color:#a6e22e">dictFind</span>(keydict, key);
+</span></span><span style="display:flex;"><span>            o <span style="color:#f92672">=</span> <span style="color:#a6e22e">dictGetVal</span>(de);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/* Calculate the idle time according to the policy. This is called
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * idle just because the code initially handled LRU, but is in fact
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * just a score where an higher score means better candidate. */</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 空闲时间的计算方式 LRU 、 LFU 、最快过期的可以 三种过期策略下 都是不同的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (server.maxmemory_policy <span style="color:#f92672">&amp;</span> MAXMEMORY_FLAG_LRU) {
+</span></span><span style="display:flex;"><span>            idle <span style="color:#f92672">=</span> <span style="color:#a6e22e">estimateObjectIdleTime</span>(o);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (server.maxmemory_policy <span style="color:#f92672">&amp;</span> MAXMEMORY_FLAG_LFU) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/* When we use an LRU policy, we sort the keys by idle time
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             * so that we expire keys starting from greater idle time.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             * However when the policy is an LFU one, we have a frequency
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             * estimation, and we want to evict keys with lower frequency
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             * first. So inside the pool we put objects using the inverted
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             * frequency subtracting the actual frequency to the maximum
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             * frequency of 255. */</span>
+</span></span><span style="display:flex;"><span>            idle <span style="color:#f92672">=</span> <span style="color:#ae81ff">255</span><span style="color:#f92672">-</span><span style="color:#a6e22e">LFUDecrAndReturn</span>(o);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (server.maxmemory_policy <span style="color:#f92672">==</span> MAXMEMORY_VOLATILE_TTL) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/* In this case the sooner the expire the better. */</span>
+</span></span><span style="display:flex;"><span>            idle <span style="color:#f92672">=</span> ULLONG_MAX <span style="color:#f92672">-</span> (<span style="color:#66d9ef">long</span>)<span style="color:#a6e22e">dictGetVal</span>(de);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">serverPanic</span>(<span style="color:#e6db74">&#34;Unknown eviction policy in evictionPoolPopulate()&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/* Insert the element inside the pool.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * First, find the first empty bucket or the first populated
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * bucket that has an idle time smaller than our idle time. */</span>
+</span></span><span style="display:flex;"><span>        k <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 在这里判断 池中某一个key的空闲时间是否小于 当前key的空闲时间
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span> (k <span style="color:#f92672">&lt;</span> EVPOOL_SIZE <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>               pool[k].key <span style="color:#f92672">&amp;&amp;</span>
+</span></span><span style="display:flex;"><span>               pool[k].idle <span style="color:#f92672">&lt;</span> idle) k<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (k <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> pool[EVPOOL_SIZE<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>].key <span style="color:#f92672">!=</span> NULL) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/* Can&#39;t insert if the element is &lt; the worst element we have
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             * and there are no empty buckets. */</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (k <span style="color:#f92672">&lt;</span> EVPOOL_SIZE <span style="color:#f92672">&amp;&amp;</span> pool[k].key <span style="color:#f92672">==</span> NULL) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/* Inserting into empty position. No setup needed before insert. */</span>
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">/* Inserting in the middle. Now k points to the first element
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">             * greater than the element to insert.  */</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (pool[EVPOOL_SIZE<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>].key <span style="color:#f92672">==</span> NULL) {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">/* Free space on the right? Insert at k shifting
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                 * all the elements from k to end to the right. */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">/* Save SDS before overwriting. */</span>
+</span></span><span style="display:flex;"><span>                sds cached <span style="color:#f92672">=</span> pool[EVPOOL_SIZE<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>].cached;
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">memmove</span>(pool<span style="color:#f92672">+</span>k<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>,pool<span style="color:#f92672">+</span>k,
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">sizeof</span>(pool[<span style="color:#ae81ff">0</span>])<span style="color:#f92672">*</span>(EVPOOL_SIZE<span style="color:#f92672">-</span>k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>));
+</span></span><span style="display:flex;"><span>                pool[k].cached <span style="color:#f92672">=</span> cached;
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">/* No free space on right? Insert at k-1 */</span>
+</span></span><span style="display:flex;"><span>                k<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">/* Shift all elements on the left of k (included) to the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                 * left, so we discard the element with smaller idle time. */</span>
+</span></span><span style="display:flex;"><span>                sds cached <span style="color:#f92672">=</span> pool[<span style="color:#ae81ff">0</span>].cached; <span style="color:#75715e">/* Save SDS before overwriting. */</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (pool[<span style="color:#ae81ff">0</span>].key <span style="color:#f92672">!=</span> pool[<span style="color:#ae81ff">0</span>].cached) <span style="color:#a6e22e">sdsfree</span>(pool[<span style="color:#ae81ff">0</span>].key);
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">memmove</span>(pool,pool<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>,<span style="color:#66d9ef">sizeof</span>(pool[<span style="color:#ae81ff">0</span>])<span style="color:#f92672">*</span>k);
+</span></span><span style="display:flex;"><span>                pool[k].cached <span style="color:#f92672">=</span> cached;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">/* Try to reuse the cached SDS string allocated in the pool entry,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * because allocating and deallocating this object is costly
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * (according to the profiler, not my fantasy. Remember:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">         * premature optimizbla bla bla bla. */</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> klen <span style="color:#f92672">=</span> <span style="color:#a6e22e">sdslen</span>(key);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (klen <span style="color:#f92672">&gt;</span> EVPOOL_CACHED_SDS_SIZE) {
+</span></span><span style="display:flex;"><span>            pool[k].key <span style="color:#f92672">=</span> <span style="color:#a6e22e">sdsdup</span>(key);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">memcpy</span>(pool[k].cached,key,klen<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">sdssetlen</span>(pool[k].cached,klen);
+</span></span><span style="display:flex;"><span>            pool[k].key <span style="color:#f92672">=</span> pool[k].cached;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        pool[k].idle <span style="color:#f92672">=</span> idle;
+</span></span><span style="display:flex;"><span>        pool[k].dbid <span style="color:#f92672">=</span> dbid;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><a href="https://cloud.tencent.com/developer/article/1925123">Redis的LRU缓存淘汰算法实现 - 腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+<p><a href="https://www.cnblogs.com/linxiyue/p/10955533.html">Redis中的LFU算法 - 再见紫罗兰 - 博客园 (cnblogs.com)</a></p>
+<p><a href="https://blog.csdn.net/qq_41125219/article/details/120445829">Redis精通系列——LFU算法详述(Least Frequently Used - 最不经常使用)_李子捌的博客-CSDN博客_lfu算法</a></p>
+<p><a href="https://www.jianshu.com/p/c8aeb3eee6bc">Redis的缓存淘汰策略LRU与LFU - 简书 (jianshu.com)</a></p>
+<p><a href="https://www.cnblogs.com/hapjin/p/10933405.html">Redis的LRU算法 - 演变历程详解  (cnblogs.com)</a></p>
+<p><a href="https://blog.csdn.net/belongtocode/article/details/102989685">全面讲解LRU算法_Apple_Web的博客-CSDN博客_lru 算法</a></p>
+<p><a href="http://www.redis.cn/articles/20161114002.html">由浅入深介绍 Redis LRU 策略的具体实现 &ndash; Redis中国用户组（CRUG）</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E4%B8%89%E7%A7%8D%E9%9B%86%E7%BE%A4%E6%96%B9%E5%BC%8F/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/%E7%BB%BC%E5%90%88\/redis\/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu\/';
+        
+          this.page.identifier = '\/post\/%E7%BB%BC%E5%90%88\/redis\/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/%E4%B8%89%E7%A7%8D%E9%9B%86%E7%BE%A4%E6%96%B9%E5%BC%8F/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Fredis%2Fredis%25E7%259A%2584%25E6%25B7%2598%25E6%25B1%25B0%25E7%25AD%2596%25E7%2595%25A5lru%25E4%25B8%258Elfu%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Fredis%2Fredis%25E7%259A%2584%25E6%25B7%2598%25E6%25B1%25B0%25E7%25AD%2596%25E7%2595%25A5lru%25E4%25B8%258Elfu%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2F%25E7%25BB%25BC%25E5%2590%2588%2Fredis%2Fredis%25E7%259A%2584%25E6%25B7%2598%25E6%25B1%25B0%25E7%25AD%2596%25E7%2595%25A5lru%25E4%25B8%258Elfu%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

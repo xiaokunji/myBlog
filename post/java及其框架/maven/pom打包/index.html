@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"目录结构\n\u0026lt;build\u0026gt; \u0026lt;plugins\u0026gt; \u0026lt;!--springboot自带的--\u0026gt; \u0026lt;plugin\u0026gt; \u0026lt;groupId\u0026gt;org.springframework.boot\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;spring-boot-maven-plugin\u0026lt;\/artifactId\u0026gt; \u0026lt;\/plugin\u0026gt; \u0026lt;!-- 打包 --\u0026gt; \u0026lt;!-- 使用这个插件打包 --\u0026gt; \u0026lt;plugin\u0026gt; \u0026lt;groupId\u0026gt;org.apache.maven.plugins\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;maven-jar-plugin\u0026lt;\/artifactId\u0026gt; \u0026lt;configuration\u0026gt; \u0026lt;!-- 在1.8的环境下--\u0026gt; \u0026lt;source\u0026gt;1.8\u0026lt;\/source\u0026gt; \u0026lt;target\u0026gt;1.8\u0026lt;\/target\u0026gt; \u0026lt;encoding\u0026gt;UTF-8\u0026lt;\/encoding\u0026gt; \u0026lt;!--排除这些文件--\u0026gt; \u0026lt;excludes\u0026gt; \u0026lt;exclude\u0026gt;*.properties\u0026lt;\/exclude\u0026gt; \u0026lt;exclude\u0026gt;*.xml\u0026lt;\/exclude\u0026gt; \u0026lt;\/excludes\u0026gt; \u0026lt;\/configuration\u0026gt; \u0026lt;\/plugin\u0026gt; \u0026lt;!-- 再使用这个插件打包 --\u0026gt; \u0026lt;!-- 允许打多个包 --\u0026gt; \u0026lt;plugin\u0026gt; \u0026lt;artifactId\u0026gt;maven-assembly-plugin\u0026lt;\/artifactId\u0026gt; \u0026lt;executions\u0026gt; \u0026lt;execution\u0026gt; \u0026lt;id\u0026gt;make-zip\u0026lt;\/id\u0026gt; \u0026lt;phase\u0026gt;package\u0026lt;\/phase\u0026gt; \u0026lt;goals\u0026gt; \u0026lt;goal\u0026gt;single\u0026lt;\/goal\u0026gt; \u0026lt;\/goals\u0026gt; \u0026lt;!-- 确定包名,输出路径,用assembly.xml文件 --\u0026gt; \u0026lt;configuration\u0026gt; \u0026lt;finalName\u0026gt;${project.artifactId}\u0026lt;\/finalName\u0026gt; \u0026lt;outputDirectory\u0026gt;target\u0026lt;\/outputDirectory\u0026gt; \u0026lt;descriptors\u0026gt; \u0026lt;descriptor\u0026gt;src\/assembly\/assembly.xml\u0026lt;\/descriptor\u0026gt; \u0026lt;\/descriptors\u0026gt; \u0026lt;\/configuration\u0026gt; \u0026lt;\/execution\u0026gt; \u0026lt;\/executions\u0026gt; \u0026lt;\/plugin\u0026gt; \u0026lt;!-- 再使用这个插件打包 --\u0026gt; \u0026lt;plugin\u0026gt; \u0026lt;artifactId\u0026gt;maven-resources-plugin\u0026lt;\/artifactId\u0026gt; \u0026lt;executions\u0026gt; \u0026lt;execution\u0026gt; \u0026lt;id\u0026gt;copy-xmls\u0026lt;\/id\u0026gt; \u0026lt;phase\u0026gt;process-sources\u0026lt;\/phase\u0026gt; \u0026lt;goals\u0026gt; \u0026lt;goal\u0026gt;copy-resources\u0026lt;\/goal\u0026gt; \u0026lt;\/goals\u0026gt; \u0026lt;configuration\u0026gt; \u0026lt;outputDirectory\u0026gt;${basedir}\/target\/classes\u0026lt;\/outputDirectory\u0026gt; \u0026lt;resources\u0026gt; \u0026lt;resource\u0026gt; \u0026lt;directory\u0026gt;${basedir}\/src\/main\/java\u0026lt;\/directory\u0026gt; \u0026lt;includes\u0026gt; \u0026lt;include\u0026gt;**\/*.",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/maven\/pom%E6%89%93%E5%8C%85\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="目录结构
+&lt;build&gt; &lt;plugins&gt; &lt;!--springboot自带的--&gt; &lt;plugin&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt; &lt;/plugin&gt; &lt;!-- 打包 --&gt; &lt;!-- 使用这个插件打包 --&gt; &lt;plugin&gt; &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt; &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt; &lt;configuration&gt; &lt;!-- 在1.8的环境下--&gt; &lt;source&gt;1.8&lt;/source&gt; &lt;target&gt;1.8&lt;/target&gt; &lt;encoding&gt;UTF-8&lt;/encoding&gt; &lt;!--排除这些文件--&gt; &lt;excludes&gt; &lt;exclude&gt;*.properties&lt;/exclude&gt; &lt;exclude&gt;*.xml&lt;/exclude&gt; &lt;/excludes&gt; &lt;/configuration&gt; &lt;/plugin&gt; &lt;!-- 再使用这个插件打包 --&gt; &lt;!-- 允许打多个包 --&gt; &lt;plugin&gt; &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt; &lt;executions&gt; &lt;execution&gt; &lt;id&gt;make-zip&lt;/id&gt; &lt;phase&gt;package&lt;/phase&gt; &lt;goals&gt; &lt;goal&gt;single&lt;/goal&gt; &lt;/goals&gt; &lt;!-- 确定包名,输出路径,用assembly.xml文件 --&gt; &lt;configuration&gt; &lt;finalName&gt;${project.artifactId}&lt;/finalName&gt; &lt;outputDirectory&gt;target&lt;/outputDirectory&gt; &lt;descriptors&gt; &lt;descriptor&gt;src/assembly/assembly.xml&lt;/descriptor&gt; &lt;/descriptors&gt; &lt;/configuration&gt; &lt;/execution&gt; &lt;/executions&gt; &lt;/plugin&gt; &lt;!-- 再使用这个插件打包 --&gt; &lt;plugin&gt; &lt;artifactId&gt;maven-resources-plugin&lt;/artifactId&gt; &lt;executions&gt; &lt;execution&gt; &lt;id&gt;copy-xmls&lt;/id&gt; &lt;phase&gt;process-sources&lt;/phase&gt; &lt;goals&gt; &lt;goal&gt;copy-resources&lt;/goal&gt; &lt;/goals&gt; &lt;configuration&gt; &lt;outputDirectory&gt;${basedir}/target/classes&lt;/outputDirectory&gt; &lt;resources&gt; &lt;resource&gt; &lt;directory&gt;${basedir}/src/main/java&lt;/directory&gt; &lt;includes&gt; &lt;include&gt;**/*.">
+
+
+<meta property="og:description" content="目录结构
+&lt;build&gt; &lt;plugins&gt; &lt;!--springboot自带的--&gt; &lt;plugin&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt; &lt;/plugin&gt; &lt;!-- 打包 --&gt; &lt;!-- 使用这个插件打包 --&gt; &lt;plugin&gt; &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt; &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt; &lt;configuration&gt; &lt;!-- 在1.8的环境下--&gt; &lt;source&gt;1.8&lt;/source&gt; &lt;target&gt;1.8&lt;/target&gt; &lt;encoding&gt;UTF-8&lt;/encoding&gt; &lt;!--排除这些文件--&gt; &lt;excludes&gt; &lt;exclude&gt;*.properties&lt;/exclude&gt; &lt;exclude&gt;*.xml&lt;/exclude&gt; &lt;/excludes&gt; &lt;/configuration&gt; &lt;/plugin&gt; &lt;!-- 再使用这个插件打包 --&gt; &lt;!-- 允许打多个包 --&gt; &lt;plugin&gt; &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt; &lt;executions&gt; &lt;execution&gt; &lt;id&gt;make-zip&lt;/id&gt; &lt;phase&gt;package&lt;/phase&gt; &lt;goals&gt; &lt;goal&gt;single&lt;/goal&gt; &lt;/goals&gt; &lt;!-- 确定包名,输出路径,用assembly.xml文件 --&gt; &lt;configuration&gt; &lt;finalName&gt;${project.artifactId}&lt;/finalName&gt; &lt;outputDirectory&gt;target&lt;/outputDirectory&gt; &lt;descriptors&gt; &lt;descriptor&gt;src/assembly/assembly.xml&lt;/descriptor&gt; &lt;/descriptors&gt; &lt;/configuration&gt; &lt;/execution&gt; &lt;/executions&gt; &lt;/plugin&gt; &lt;!-- 再使用这个插件打包 --&gt; &lt;plugin&gt; &lt;artifactId&gt;maven-resources-plugin&lt;/artifactId&gt; &lt;executions&gt; &lt;execution&gt; &lt;id&gt;copy-xmls&lt;/id&gt; &lt;phase&gt;process-sources&lt;/phase&gt; &lt;goals&gt; &lt;goal&gt;copy-resources&lt;/goal&gt; &lt;/goals&gt; &lt;configuration&gt; &lt;outputDirectory&gt;${basedir}/target/classes&lt;/outputDirectory&gt; &lt;resources&gt; &lt;resource&gt; &lt;directory&gt;${basedir}/src/main/java&lt;/directory&gt; &lt;includes&gt; &lt;include&gt;**/*.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="目录结构
+&lt;build&gt; &lt;plugins&gt; &lt;!--springboot自带的--&gt; &lt;plugin&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt; &lt;/plugin&gt; &lt;!-- 打包 --&gt; &lt;!-- 使用这个插件打包 --&gt; &lt;plugin&gt; &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt; &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt; &lt;configuration&gt; &lt;!-- 在1.8的环境下--&gt; &lt;source&gt;1.8&lt;/source&gt; &lt;target&gt;1.8&lt;/target&gt; &lt;encoding&gt;UTF-8&lt;/encoding&gt; &lt;!--排除这些文件--&gt; &lt;excludes&gt; &lt;exclude&gt;*.properties&lt;/exclude&gt; &lt;exclude&gt;*.xml&lt;/exclude&gt; &lt;/excludes&gt; &lt;/configuration&gt; &lt;/plugin&gt; &lt;!-- 再使用这个插件打包 --&gt; &lt;!-- 允许打多个包 --&gt; &lt;plugin&gt; &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt; &lt;executions&gt; &lt;execution&gt; &lt;id&gt;make-zip&lt;/id&gt; &lt;phase&gt;package&lt;/phase&gt; &lt;goals&gt; &lt;goal&gt;single&lt;/goal&gt; &lt;/goals&gt; &lt;!-- 确定包名,输出路径,用assembly.xml文件 --&gt; &lt;configuration&gt; &lt;finalName&gt;${project.artifactId}&lt;/finalName&gt; &lt;outputDirectory&gt;target&lt;/outputDirectory&gt; &lt;descriptors&gt; &lt;descriptor&gt;src/assembly/assembly.xml&lt;/descriptor&gt; &lt;/descriptors&gt; &lt;/configuration&gt; &lt;/execution&gt; &lt;/executions&gt; &lt;/plugin&gt; &lt;!-- 再使用这个插件打包 --&gt; &lt;plugin&gt; &lt;artifactId&gt;maven-resources-plugin&lt;/artifactId&gt; &lt;executions&gt; &lt;execution&gt; &lt;id&gt;copy-xmls&lt;/id&gt; &lt;phase&gt;process-sources&lt;/phase&gt; &lt;goals&gt; &lt;goal&gt;copy-resources&lt;/goal&gt; &lt;/goals&gt; &lt;configuration&gt; &lt;outputDirectory&gt;${basedir}/target/classes&lt;/outputDirectory&gt; &lt;resources&gt; &lt;resource&gt; &lt;directory&gt;${basedir}/src/main/java&lt;/directory&gt; &lt;includes&gt; &lt;include&gt;**/*.">
+<meta name="twitter:description" content="目录结构
+&lt;build&gt; &lt;plugins&gt; &lt;!--springboot自带的--&gt; &lt;plugin&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt; &lt;/plugin&gt; &lt;!-- 打包 --&gt; &lt;!-- 使用这个插件打包 --&gt; &lt;plugin&gt; &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt; &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt; &lt;configuration&gt; &lt;!-- 在1.8的环境下--&gt; &lt;source&gt;1.8&lt;/source&gt; &lt;target&gt;1.8&lt;/target&gt; &lt;encoding&gt;UTF-8&lt;/encoding&gt; &lt;!--排除这些文件--&gt; &lt;excludes&gt; &lt;exclude&gt;*.properties&lt;/exclude&gt; &lt;exclude&gt;*.xml&lt;/exclude&gt; &lt;/excludes&gt; &lt;/configuration&gt; &lt;/plugin&gt; &lt;!-- 再使用这个插件打包 --&gt; &lt;!-- 允许打多个包 --&gt; &lt;plugin&gt; &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt; &lt;executions&gt; &lt;execution&gt; &lt;id&gt;make-zip&lt;/id&gt; &lt;phase&gt;package&lt;/phase&gt; &lt;goals&gt; &lt;goal&gt;single&lt;/goal&gt; &lt;/goals&gt; &lt;!-- 确定包名,输出路径,用assembly.xml文件 --&gt; &lt;configuration&gt; &lt;finalName&gt;${project.artifactId}&lt;/finalName&gt; &lt;outputDirectory&gt;target&lt;/outputDirectory&gt; &lt;descriptors&gt; &lt;descriptor&gt;src/assembly/assembly.xml&lt;/descriptor&gt; &lt;/descriptors&gt; &lt;/configuration&gt; &lt;/execution&gt; &lt;/executions&gt; &lt;/plugin&gt; &lt;!-- 再使用这个插件打包 --&gt; &lt;plugin&gt; &lt;artifactId&gt;maven-resources-plugin&lt;/artifactId&gt; &lt;executions&gt; &lt;execution&gt; &lt;id&gt;copy-xmls&lt;/id&gt; &lt;phase&gt;process-sources&lt;/phase&gt; &lt;goals&gt; &lt;goal&gt;copy-resources&lt;/goal&gt; &lt;/goals&gt; &lt;configuration&gt; &lt;outputDirectory&gt;${basedir}/target/classes&lt;/outputDirectory&gt; &lt;resources&gt; &lt;resource&gt; &lt;directory&gt;${basedir}/src/main/java&lt;/directory&gt; &lt;includes&gt; &lt;include&gt;**/*.">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>目录结构</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;build&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;plugins&gt;</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#75715e">&lt;!--springboot自带的--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;plugin&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/plugin&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!-- 打包 --&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!-- 使用这个插件打包 --&gt;</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#f92672">&lt;plugin&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;groupId&gt;</span>org.apache.maven.plugins<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;artifactId&gt;</span>maven-jar-plugin<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;configuration&gt;</span>
+</span></span><span style="display:flex;"><span>             <span style="color:#75715e">&lt;!-- 在1.8的环境下--&gt;</span>
+</span></span><span style="display:flex;"><span>            	<span style="color:#f92672">&lt;source&gt;</span>1.8<span style="color:#f92672">&lt;/source&gt;</span>
+</span></span><span style="display:flex;"><span>            	<span style="color:#f92672">&lt;target&gt;</span>1.8<span style="color:#f92672">&lt;/target&gt;</span>
+</span></span><span style="display:flex;"><span>            	<span style="color:#f92672">&lt;encoding&gt;</span>UTF-8<span style="color:#f92672">&lt;/encoding&gt;</span>
+</span></span><span style="display:flex;"><span>            	<span style="color:#75715e">&lt;!--排除这些文件--&gt;</span>
+</span></span><span style="display:flex;"><span>            	<span style="color:#f92672">&lt;excludes&gt;</span>
+</span></span><span style="display:flex;"><span>            	    <span style="color:#f92672">&lt;exclude&gt;</span>*.properties<span style="color:#f92672">&lt;/exclude&gt;</span>
+</span></span><span style="display:flex;"><span>            		<span style="color:#f92672">&lt;exclude&gt;</span>*.xml<span style="color:#f92672">&lt;/exclude&gt;</span>
+</span></span><span style="display:flex;"><span>            	<span style="color:#f92672">&lt;/excludes&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;/configuration&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/plugin&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!-- 再使用这个插件打包 --&gt;</span>      <span style="color:#75715e">&lt;!-- 允许打多个包 --&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;plugin&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;artifactId&gt;</span>maven-assembly-plugin<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;executions&gt;</span>
+</span></span><span style="display:flex;"><span>            	<span style="color:#f92672">&lt;execution&gt;</span>
+</span></span><span style="display:flex;"><span>            		<span style="color:#f92672">&lt;id&gt;</span>make-zip<span style="color:#f92672">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>            		<span style="color:#f92672">&lt;phase&gt;</span>package<span style="color:#f92672">&lt;/phase&gt;</span>
+</span></span><span style="display:flex;"><span>            		<span style="color:#f92672">&lt;goals&gt;</span>
+</span></span><span style="display:flex;"><span>            			<span style="color:#f92672">&lt;goal&gt;</span>single<span style="color:#f92672">&lt;/goal&gt;</span>
+</span></span><span style="display:flex;"><span>            		<span style="color:#f92672">&lt;/goals&gt;</span>
+</span></span><span style="display:flex;"><span>            		<span style="color:#75715e">&lt;!-- 确定包名,输出路径,用assembly.xml文件 --&gt;</span>
+</span></span><span style="display:flex;"><span>            		<span style="color:#f92672">&lt;configuration&gt;</span>
+</span></span><span style="display:flex;"><span>            			<span style="color:#f92672">&lt;finalName&gt;</span>${project.artifactId}<span style="color:#f92672">&lt;/finalName&gt;</span>
+</span></span><span style="display:flex;"><span>            			<span style="color:#f92672">&lt;outputDirectory&gt;</span>target<span style="color:#f92672">&lt;/outputDirectory&gt;</span>
+</span></span><span style="display:flex;"><span>            			<span style="color:#f92672">&lt;descriptors&gt;</span>
+</span></span><span style="display:flex;"><span>            				<span style="color:#f92672">&lt;descriptor&gt;</span>src/assembly/assembly.xml<span style="color:#f92672">&lt;/descriptor&gt;</span>
+</span></span><span style="display:flex;"><span>            			<span style="color:#f92672">&lt;/descriptors&gt;</span>
+</span></span><span style="display:flex;"><span>            		<span style="color:#f92672">&lt;/configuration&gt;</span>
+</span></span><span style="display:flex;"><span>            	<span style="color:#f92672">&lt;/execution&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;/executions&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/plugin&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!-- 再使用这个插件打包 --&gt;</span>  
+</span></span><span style="display:flex;"><span>         <span style="color:#f92672">&lt;plugin&gt;</span>
+</span></span><span style="display:flex;"><span>                 <span style="color:#f92672">&lt;artifactId&gt;</span>maven-resources-plugin<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">&lt;executions&gt;</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#f92672">&lt;execution&gt;</span>
+</span></span><span style="display:flex;"><span>                          <span style="color:#f92672">&lt;id&gt;</span>copy-xmls<span style="color:#f92672">&lt;/id&gt;</span>
+</span></span><span style="display:flex;"><span>                          <span style="color:#f92672">&lt;phase&gt;</span>process-sources<span style="color:#f92672">&lt;/phase&gt;</span>
+</span></span><span style="display:flex;"><span>                          <span style="color:#f92672">&lt;goals&gt;</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#f92672">&lt;goal&gt;</span>copy-resources<span style="color:#f92672">&lt;/goal&gt;</span>
+</span></span><span style="display:flex;"><span>                          <span style="color:#f92672">&lt;/goals&gt;</span>
+</span></span><span style="display:flex;"><span>                          <span style="color:#f92672">&lt;configuration&gt;</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#f92672">&lt;outputDirectory&gt;</span>${basedir}/target/classes<span style="color:#f92672">&lt;/outputDirectory&gt;</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#f92672">&lt;resources&gt;</span>
+</span></span><span style="display:flex;"><span>                                  <span style="color:#f92672">&lt;resource&gt;</span>
+</span></span><span style="display:flex;"><span>                                      <span style="color:#f92672">&lt;directory&gt;</span>${basedir}/src/main/java<span style="color:#f92672">&lt;/directory&gt;</span>
+</span></span><span style="display:flex;"><span>                                      <span style="color:#f92672">&lt;includes&gt;</span>
+</span></span><span style="display:flex;"><span>                                          <span style="color:#f92672">&lt;include&gt;</span>**/*.xml<span style="color:#f92672">&lt;/include&gt;</span>
+</span></span><span style="display:flex;"><span>                                      <span style="color:#f92672">&lt;/includes&gt;</span>
+</span></span><span style="display:flex;"><span>                                  <span style="color:#f92672">&lt;/resource&gt;</span>
+</span></span><span style="display:flex;"><span>                              <span style="color:#f92672">&lt;/resources&gt;</span>
+</span></span><span style="display:flex;"><span>                          <span style="color:#f92672">&lt;/configuration&gt;</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#f92672">&lt;/execution&gt;</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#f92672">&lt;/executions&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;/plugin&gt;</span>   
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/plugins&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/build&gt;</span>
+</span></span></code></pre></div><p><strong>运行:</strong>  直接install,就行了,</p>
+<p><strong>结果:</strong></p>
+<p><img src="https://gitee.com/xiaokunji/my-images/raw/master/myMD/20210712003145.png" alt="img"></p>
+<p>文件:   <a href="https://gitee.com/xiaokunji/my-images/raw/master/myMD/assembly.xml">assembly.xml</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span># 这是打普通包的插件, 常用于common包,skenton包等公共包,,没有启动类,且结构与服务包不一样,可以被其他服务包引用
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;plugins&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;plugin&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;groupId&gt;</span>org.apache.maven.plugins<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;artifactId&gt;</span>maven-source-plugin<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/plugin&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/plugins&gt;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;plugins&gt;</span>
+</span></span><span style="display:flex;"><span>  # 这是 springboot的打包插件,就是常说的服务包,它带了各种依赖和启动类,用这个插件打出来的包不能为其他服务包pom引用
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;plugin&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;configuration&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;executable&gt;</span>true<span style="color:#f92672">&lt;/executable&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/configuration&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/plugin&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/plugins&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span># 如果要使用,就再打一个普通包,用于引用,改写成如下:
+</span></span><span style="display:flex;"><span>    关键是<span style="color:#f92672">&lt;classifier&gt;</span>标签,这是新jar的后缀,新包是可执行的,原包名是可引用的普通jar
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;plugins&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;plugin&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;configuration&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">&lt;!--  额外打包普通jar用于 activity-consumer服务--&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;mainClass&gt;</span>com.gree.ecommerce.ActivityServiceApplication<span style="color:#f92672">&lt;/mainClass&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;classifier&gt;</span>OfConsumer<span style="color:#f92672">&lt;/classifier&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;executable&gt;</span>true<span style="color:#f92672">&lt;/executable&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/configuration&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/plugin&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/plugins&gt;</span>
+</span></span></code></pre></div><p>参见 : <a href="https://www.cnblogs.com/kingsonfu/p/11805455.html">https://www.cnblogs.com/kingsonfu/p/11805455.html</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/maven%E6%89%93%E5%8C%85%E6%8F%92%E4%BB%B6/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%A0%87%E7%AD%BE/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/maven\/pom%E6%89%93%E5%8C%85\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/maven\/pom%E6%89%93%E5%8C%85\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/maven%E6%89%93%E5%8C%85%E6%8F%92%E4%BB%B6/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%A0%87%E7%AD%BE/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fmaven%2Fpom%25E6%2589%2593%25E5%258C%2585%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fmaven%2Fpom%25E6%2589%2593%25E5%258C%2585%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fmaven%2Fpom%25E6%2589%2593%25E5%258C%2585%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

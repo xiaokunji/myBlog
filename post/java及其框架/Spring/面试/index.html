@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[TOC]\nBeanFactory和ApplicationContext有什么区别？ Bean工厂(BeanFactory)是Spring框架最核心的接口，提供了高级Ioc的配置机制．\n应用上下文(ApplicationContext)建立在BeanFacotry基础之上，提供了更多面向应用的功能，如果国际化，属性编辑器，事件等等．\nbeanFactory是spring框架的基础设施，是面向spring本身，ApplicationContext是面向使用Spring框架的开发者，几乎所有场合都会用到ApplicationContext.\nhttps:\/\/www.jianshu.com\/p\/b82ceb084adf\nbean加载过程 根据bean名称 查询缓存中是否已存在(因为是单例)\ncontext.getBean(\u0026quot;person\u0026quot;, Person.class);\n确认该bean在工厂中是否已定义,解决循环依赖问题,有定义则完善该bean并返回\n如果没有就会创建个新的,并放到bean池中\n根据配置文件(xml.yaml)给bean设置属性(处理循环依赖问题(仅仅是单例的情况下)) 初始化bean,如果有自定义的bean初始化方法,则会在这里执行 https:\/\/segmentfault.com\/a\/1190000012887776#item-4-3 .\nhttps:\/\/www.jianshu.com\/p\/b82ceb084adf\nSpring 框架中都用到了哪些设计模式 代理模式—在AOP和remoting中被用的比较多。\n单例模式—在spring配置文件中定义的bean默认为单例模式。\n模板方法—用来解决代码重复的问题 比如. RestTemplate, JmsTemplate, JpaTemplate。 前端控制器—Srping提供了DispatcherServlet来对请求进行分发。 视图帮助(View Helper )—Spring提供了一系列的JSP标签，高效宏来辅助将分散的代码整合在视图里。 依赖注入—贯穿于BeanFactory \/ ApplicationContext接口的核心理念。\n工厂模式—BeanFactory用来创建对象的实例。\nBuilder模式- 自定义配置文件的解析bean是时采用builder模式，一步一步地构建一个beanDefinition\n策略模式：Spring 中策略模式使用有多个地方，如 Bean 定义对象的创建以及代理对象的创建等。这里主要看一下代理对象创建的策略模式的实现。 前面已经了解 Spring 的代理方式有两个 Jdk 动态代理和 CGLIB 代理。这两个代理方式的使用正是使用了策略模式。\nSpring框架中单例beans是线程安全的吗？ 不是，Spring框架中的单例beans不是线程安全的。\nspring bean的生命周期 Spring启动，查找并加载需要被Spring管理的bean，进行Bean的实例化 Bean实例化后对将Bean的引入和值注入到Bean的属性中 如果Bean实现了BeanNameAware接口的话，Spring将Bean的Id传递给setBeanName()方法 如果Bean实现了BeanFactoryAware接口的话，Spring将调用setBeanFactory()方法，将BeanFactory容器实例传入 如果Bean实现了ApplicationContextAware接口的话，Spring将调用Bean的setApplicationContext()方法，将bean所在应用上下文引用传入进来 如果Bean实现了BeanPostProcessor接口，Spring就将调用他们的postProcessBeforeInitialization()方法。Spring 的 AOP 就是利用它实现的。 如果Bean 实现了InitializingBean接口，Spring将调用他们的afterPropertiesSet()方法。类似的，如果bean使用init-method声明了初始化方法，该方法也会被调用 如果Bean 实现了BeanPostProcessor接口，Spring就将调用他们的postProcessAfterInitialization()方法。 此时，Bean已经准备就绪，可以被应用程序使用了。他们将一直驻留在应用上下文中，直到应用上下文被销毁。 如果bean实现了DisposableBean接口，Spring将调用它的destory()接口方法，同样，如果bean使用了destory-method 声明销毁方法，该方法也会被调用。 简版:\nBean 的实例化 Bean 属性赋值 Bean 的初始化 Bean 的使用 Bean 的销毁 java对象创建实例化和初始化的区别",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/%E9%9D%A2%E8%AF%95\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[TOC]
+BeanFactory和ApplicationContext有什么区别？ Bean工厂(BeanFactory)是Spring框架最核心的接口，提供了高级Ioc的配置机制．
+应用上下文(ApplicationContext)建立在BeanFacotry基础之上，提供了更多面向应用的功能，如果国际化，属性编辑器，事件等等．
+beanFactory是spring框架的基础设施，是面向spring本身，ApplicationContext是面向使用Spring框架的开发者，几乎所有场合都会用到ApplicationContext.
+https://www.jianshu.com/p/b82ceb084adf
+bean加载过程 根据bean名称 查询缓存中是否已存在(因为是单例)
+context.getBean(&quot;person&quot;, Person.class);
+确认该bean在工厂中是否已定义,解决循环依赖问题,有定义则完善该bean并返回
+如果没有就会创建个新的,并放到bean池中
+根据配置文件(xml.yaml)给bean设置属性(处理循环依赖问题(仅仅是单例的情况下)) 初始化bean,如果有自定义的bean初始化方法,则会在这里执行 https://segmentfault.com/a/1190000012887776#item-4-3 .
+https://www.jianshu.com/p/b82ceb084adf
+Spring 框架中都用到了哪些设计模式 代理模式—在AOP和remoting中被用的比较多。
+单例模式—在spring配置文件中定义的bean默认为单例模式。
+模板方法—用来解决代码重复的问题 比如. RestTemplate, JmsTemplate, JpaTemplate。 前端控制器—Srping提供了DispatcherServlet来对请求进行分发。 视图帮助(View Helper )—Spring提供了一系列的JSP标签，高效宏来辅助将分散的代码整合在视图里。 依赖注入—贯穿于BeanFactory / ApplicationContext接口的核心理念。
+工厂模式—BeanFactory用来创建对象的实例。
+Builder模式- 自定义配置文件的解析bean是时采用builder模式，一步一步地构建一个beanDefinition
+策略模式：Spring 中策略模式使用有多个地方，如 Bean 定义对象的创建以及代理对象的创建等。这里主要看一下代理对象创建的策略模式的实现。 前面已经了解 Spring 的代理方式有两个 Jdk 动态代理和 CGLIB 代理。这两个代理方式的使用正是使用了策略模式。
+Spring框架中单例beans是线程安全的吗？ 不是，Spring框架中的单例beans不是线程安全的。
+spring bean的生命周期 Spring启动，查找并加载需要被Spring管理的bean，进行Bean的实例化 Bean实例化后对将Bean的引入和值注入到Bean的属性中 如果Bean实现了BeanNameAware接口的话，Spring将Bean的Id传递给setBeanName()方法 如果Bean实现了BeanFactoryAware接口的话，Spring将调用setBeanFactory()方法，将BeanFactory容器实例传入 如果Bean实现了ApplicationContextAware接口的话，Spring将调用Bean的setApplicationContext()方法，将bean所在应用上下文引用传入进来 如果Bean实现了BeanPostProcessor接口，Spring就将调用他们的postProcessBeforeInitialization()方法。Spring 的 AOP 就是利用它实现的。 如果Bean 实现了InitializingBean接口，Spring将调用他们的afterPropertiesSet()方法。类似的，如果bean使用init-method声明了初始化方法，该方法也会被调用 如果Bean 实现了BeanPostProcessor接口，Spring就将调用他们的postProcessAfterInitialization()方法。 此时，Bean已经准备就绪，可以被应用程序使用了。他们将一直驻留在应用上下文中，直到应用上下文被销毁。 如果bean实现了DisposableBean接口，Spring将调用它的destory()接口方法，同样，如果bean使用了destory-method 声明销毁方法，该方法也会被调用。 简版:
+Bean 的实例化 Bean 属性赋值 Bean 的初始化 Bean 的使用 Bean 的销毁 java对象创建实例化和初始化的区别">
+
+
+<meta property="og:description" content="[TOC]
+BeanFactory和ApplicationContext有什么区别？ Bean工厂(BeanFactory)是Spring框架最核心的接口，提供了高级Ioc的配置机制．
+应用上下文(ApplicationContext)建立在BeanFacotry基础之上，提供了更多面向应用的功能，如果国际化，属性编辑器，事件等等．
+beanFactory是spring框架的基础设施，是面向spring本身，ApplicationContext是面向使用Spring框架的开发者，几乎所有场合都会用到ApplicationContext.
+https://www.jianshu.com/p/b82ceb084adf
+bean加载过程 根据bean名称 查询缓存中是否已存在(因为是单例)
+context.getBean(&quot;person&quot;, Person.class);
+确认该bean在工厂中是否已定义,解决循环依赖问题,有定义则完善该bean并返回
+如果没有就会创建个新的,并放到bean池中
+根据配置文件(xml.yaml)给bean设置属性(处理循环依赖问题(仅仅是单例的情况下)) 初始化bean,如果有自定义的bean初始化方法,则会在这里执行 https://segmentfault.com/a/1190000012887776#item-4-3 .
+https://www.jianshu.com/p/b82ceb084adf
+Spring 框架中都用到了哪些设计模式 代理模式—在AOP和remoting中被用的比较多。
+单例模式—在spring配置文件中定义的bean默认为单例模式。
+模板方法—用来解决代码重复的问题 比如. RestTemplate, JmsTemplate, JpaTemplate。 前端控制器—Srping提供了DispatcherServlet来对请求进行分发。 视图帮助(View Helper )—Spring提供了一系列的JSP标签，高效宏来辅助将分散的代码整合在视图里。 依赖注入—贯穿于BeanFactory / ApplicationContext接口的核心理念。
+工厂模式—BeanFactory用来创建对象的实例。
+Builder模式- 自定义配置文件的解析bean是时采用builder模式，一步一步地构建一个beanDefinition
+策略模式：Spring 中策略模式使用有多个地方，如 Bean 定义对象的创建以及代理对象的创建等。这里主要看一下代理对象创建的策略模式的实现。 前面已经了解 Spring 的代理方式有两个 Jdk 动态代理和 CGLIB 代理。这两个代理方式的使用正是使用了策略模式。
+Spring框架中单例beans是线程安全的吗？ 不是，Spring框架中的单例beans不是线程安全的。
+spring bean的生命周期 Spring启动，查找并加载需要被Spring管理的bean，进行Bean的实例化 Bean实例化后对将Bean的引入和值注入到Bean的属性中 如果Bean实现了BeanNameAware接口的话，Spring将Bean的Id传递给setBeanName()方法 如果Bean实现了BeanFactoryAware接口的话，Spring将调用setBeanFactory()方法，将BeanFactory容器实例传入 如果Bean实现了ApplicationContextAware接口的话，Spring将调用Bean的setApplicationContext()方法，将bean所在应用上下文引用传入进来 如果Bean实现了BeanPostProcessor接口，Spring就将调用他们的postProcessBeforeInitialization()方法。Spring 的 AOP 就是利用它实现的。 如果Bean 实现了InitializingBean接口，Spring将调用他们的afterPropertiesSet()方法。类似的，如果bean使用init-method声明了初始化方法，该方法也会被调用 如果Bean 实现了BeanPostProcessor接口，Spring就将调用他们的postProcessAfterInitialization()方法。 此时，Bean已经准备就绪，可以被应用程序使用了。他们将一直驻留在应用上下文中，直到应用上下文被销毁。 如果bean实现了DisposableBean接口，Spring将调用它的destory()接口方法，同样，如果bean使用了destory-method 声明销毁方法，该方法也会被调用。 简版:
+Bean 的实例化 Bean 属性赋值 Bean 的初始化 Bean 的使用 Bean 的销毁 java对象创建实例化和初始化的区别">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[TOC]
+BeanFactory和ApplicationContext有什么区别？ Bean工厂(BeanFactory)是Spring框架最核心的接口，提供了高级Ioc的配置机制．
+应用上下文(ApplicationContext)建立在BeanFacotry基础之上，提供了更多面向应用的功能，如果国际化，属性编辑器，事件等等．
+beanFactory是spring框架的基础设施，是面向spring本身，ApplicationContext是面向使用Spring框架的开发者，几乎所有场合都会用到ApplicationContext.
+https://www.jianshu.com/p/b82ceb084adf
+bean加载过程 根据bean名称 查询缓存中是否已存在(因为是单例)
+context.getBean(&quot;person&quot;, Person.class);
+确认该bean在工厂中是否已定义,解决循环依赖问题,有定义则完善该bean并返回
+如果没有就会创建个新的,并放到bean池中
+根据配置文件(xml.yaml)给bean设置属性(处理循环依赖问题(仅仅是单例的情况下)) 初始化bean,如果有自定义的bean初始化方法,则会在这里执行 https://segmentfault.com/a/1190000012887776#item-4-3 .
+https://www.jianshu.com/p/b82ceb084adf
+Spring 框架中都用到了哪些设计模式 代理模式—在AOP和remoting中被用的比较多。
+单例模式—在spring配置文件中定义的bean默认为单例模式。
+模板方法—用来解决代码重复的问题 比如. RestTemplate, JmsTemplate, JpaTemplate。 前端控制器—Srping提供了DispatcherServlet来对请求进行分发。 视图帮助(View Helper )—Spring提供了一系列的JSP标签，高效宏来辅助将分散的代码整合在视图里。 依赖注入—贯穿于BeanFactory / ApplicationContext接口的核心理念。
+工厂模式—BeanFactory用来创建对象的实例。
+Builder模式- 自定义配置文件的解析bean是时采用builder模式，一步一步地构建一个beanDefinition
+策略模式：Spring 中策略模式使用有多个地方，如 Bean 定义对象的创建以及代理对象的创建等。这里主要看一下代理对象创建的策略模式的实现。 前面已经了解 Spring 的代理方式有两个 Jdk 动态代理和 CGLIB 代理。这两个代理方式的使用正是使用了策略模式。
+Spring框架中单例beans是线程安全的吗？ 不是，Spring框架中的单例beans不是线程安全的。
+spring bean的生命周期 Spring启动，查找并加载需要被Spring管理的bean，进行Bean的实例化 Bean实例化后对将Bean的引入和值注入到Bean的属性中 如果Bean实现了BeanNameAware接口的话，Spring将Bean的Id传递给setBeanName()方法 如果Bean实现了BeanFactoryAware接口的话，Spring将调用setBeanFactory()方法，将BeanFactory容器实例传入 如果Bean实现了ApplicationContextAware接口的话，Spring将调用Bean的setApplicationContext()方法，将bean所在应用上下文引用传入进来 如果Bean实现了BeanPostProcessor接口，Spring就将调用他们的postProcessBeforeInitialization()方法。Spring 的 AOP 就是利用它实现的。 如果Bean 实现了InitializingBean接口，Spring将调用他们的afterPropertiesSet()方法。类似的，如果bean使用init-method声明了初始化方法，该方法也会被调用 如果Bean 实现了BeanPostProcessor接口，Spring就将调用他们的postProcessAfterInitialization()方法。 此时，Bean已经准备就绪，可以被应用程序使用了。他们将一直驻留在应用上下文中，直到应用上下文被销毁。 如果bean实现了DisposableBean接口，Spring将调用它的destory()接口方法，同样，如果bean使用了destory-method 声明销毁方法，该方法也会被调用。 简版:
+Bean 的实例化 Bean 属性赋值 Bean 的初始化 Bean 的使用 Bean 的销毁 java对象创建实例化和初始化的区别">
+<meta name="twitter:description" content="[TOC]
+BeanFactory和ApplicationContext有什么区别？ Bean工厂(BeanFactory)是Spring框架最核心的接口，提供了高级Ioc的配置机制．
+应用上下文(ApplicationContext)建立在BeanFacotry基础之上，提供了更多面向应用的功能，如果国际化，属性编辑器，事件等等．
+beanFactory是spring框架的基础设施，是面向spring本身，ApplicationContext是面向使用Spring框架的开发者，几乎所有场合都会用到ApplicationContext.
+https://www.jianshu.com/p/b82ceb084adf
+bean加载过程 根据bean名称 查询缓存中是否已存在(因为是单例)
+context.getBean(&quot;person&quot;, Person.class);
+确认该bean在工厂中是否已定义,解决循环依赖问题,有定义则完善该bean并返回
+如果没有就会创建个新的,并放到bean池中
+根据配置文件(xml.yaml)给bean设置属性(处理循环依赖问题(仅仅是单例的情况下)) 初始化bean,如果有自定义的bean初始化方法,则会在这里执行 https://segmentfault.com/a/1190000012887776#item-4-3 .
+https://www.jianshu.com/p/b82ceb084adf
+Spring 框架中都用到了哪些设计模式 代理模式—在AOP和remoting中被用的比较多。
+单例模式—在spring配置文件中定义的bean默认为单例模式。
+模板方法—用来解决代码重复的问题 比如. RestTemplate, JmsTemplate, JpaTemplate。 前端控制器—Srping提供了DispatcherServlet来对请求进行分发。 视图帮助(View Helper )—Spring提供了一系列的JSP标签，高效宏来辅助将分散的代码整合在视图里。 依赖注入—贯穿于BeanFactory / ApplicationContext接口的核心理念。
+工厂模式—BeanFactory用来创建对象的实例。
+Builder模式- 自定义配置文件的解析bean是时采用builder模式，一步一步地构建一个beanDefinition
+策略模式：Spring 中策略模式使用有多个地方，如 Bean 定义对象的创建以及代理对象的创建等。这里主要看一下代理对象创建的策略模式的实现。 前面已经了解 Spring 的代理方式有两个 Jdk 动态代理和 CGLIB 代理。这两个代理方式的使用正是使用了策略模式。
+Spring框架中单例beans是线程安全的吗？ 不是，Spring框架中的单例beans不是线程安全的。
+spring bean的生命周期 Spring启动，查找并加载需要被Spring管理的bean，进行Bean的实例化 Bean实例化后对将Bean的引入和值注入到Bean的属性中 如果Bean实现了BeanNameAware接口的话，Spring将Bean的Id传递给setBeanName()方法 如果Bean实现了BeanFactoryAware接口的话，Spring将调用setBeanFactory()方法，将BeanFactory容器实例传入 如果Bean实现了ApplicationContextAware接口的话，Spring将调用Bean的setApplicationContext()方法，将bean所在应用上下文引用传入进来 如果Bean实现了BeanPostProcessor接口，Spring就将调用他们的postProcessBeforeInitialization()方法。Spring 的 AOP 就是利用它实现的。 如果Bean 实现了InitializingBean接口，Spring将调用他们的afterPropertiesSet()方法。类似的，如果bean使用init-method声明了初始化方法，该方法也会被调用 如果Bean 实现了BeanPostProcessor接口，Spring就将调用他们的postProcessAfterInitialization()方法。 此时，Bean已经准备就绪，可以被应用程序使用了。他们将一直驻留在应用上下文中，直到应用上下文被销毁。 如果bean实现了DisposableBean接口，Spring将调用它的destory()接口方法，同样，如果bean使用了destory-method 声明销毁方法，该方法也会被调用。 简版:
+Bean 的实例化 Bean 属性赋值 Bean 的初始化 Bean 的使用 Bean 的销毁 java对象创建实例化和初始化的区别">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[TOC]</p>
+<h1 id="beanfactory和applicationcontext有什么区别">BeanFactory和ApplicationContext有什么区别？</h1>
+<p>Bean工厂(BeanFactory)是Spring框架最核心的接口，提供了高级Ioc的配置机制．</p>
+<p>应用上下文(ApplicationContext)建立在BeanFacotry基础之上，提供了更多面向应用的功能，如果国际化，属性编辑器，事件等等．</p>
+<p>beanFactory是spring框架的基础设施，是面向spring本身，ApplicationContext是面向使用Spring框架的开发者，几乎所有场合都会用到ApplicationContext.</p>
+<blockquote>
+<p><a href="https://www.jianshu.com/p/b82ceb084adf">https://www.jianshu.com/p/b82ceb084adf</a></p>
+</blockquote>
+<h1 id="bean加载过程">bean加载过程</h1>
+<ol>
+<li>
+<p>根据bean名称 查询缓存中是否已存在(因为是单例)</p>
+<blockquote>
+<p><code>context.getBean(&quot;person&quot;, Person.class);</code></p>
+</blockquote>
+</li>
+<li>
+<p>确认该bean在工厂中是否已定义,解决循环依赖问题,有定义则完善该bean并返回</p>
+</li>
+<li>
+<p>如果没有就会创建个新的,并放到bean池中</p>
+<ol>
+<li>根据配置文件(xml.yaml)给bean设置属性(处理循环依赖问题(仅仅是单例的情况下))</li>
+<li>初始化bean,如果有自定义的bean初始化方法,则会在这里执行</li>
+</ol>
+</li>
+</ol>
+<blockquote>
+<p><a href="https://segmentfault.com/a/1190000012887776#item-4-3">https://segmentfault.com/a/1190000012887776#item-4-3</a>  .</p>
+<p><a href="https://www.jianshu.com/p/b82ceb084adf">https://www.jianshu.com/p/b82ceb084adf</a></p>
+</blockquote>
+<h1 id="spring-框架中都用到了哪些设计模式">Spring 框架中都用到了哪些设计模式</h1>
+<p><strong>代理模式</strong>—在AOP和remoting中被用的比较多。</p>
+<p><strong>单例模式</strong>—在spring配置文件中定义的bean默认为单例模式。</p>
+<p><strong>模板方法</strong>—用来解决代码重复的问题 比如. RestTemplate, JmsTemplate, JpaTemplate。 前端控制器—Srping提供了DispatcherServlet来对请求进行分发。 视图帮助(View Helper )—Spring提供了一系列的JSP标签，高效宏来辅助将分散的代码整合在视图里。 依赖注入—贯穿于BeanFactory / ApplicationContext接口的核心理念。</p>
+<p><strong>工厂模式</strong>—BeanFactory用来创建对象的实例。</p>
+<p><strong>Builder模式</strong>- 自定义配置文件的解析bean是时采用builder模式，一步一步地构建一个beanDefinition</p>
+<p><strong>策略模式</strong>：Spring 中策略模式使用有多个地方，如 Bean 定义对象的创建以及代理对象的创建等。这里主要看一下代理对象创建的策略模式的实现。 前面已经了解 Spring 的代理方式有两个 Jdk 动态代理和 CGLIB 代理。这两个代理方式的使用正是使用了策略模式。</p>
+<h1 id="spring框架中单例beans是线程安全的吗">Spring框架中单例beans是线程安全的吗？</h1>
+<p>不是，Spring框架中的单例beans不是线程安全的。</p>
+<h1 id="spring-bean的生命周期">spring bean的生命周期</h1>
+<p><img src="https://pic1.zhimg.com/v2-8787f1b3800b71f6234e996d432e0a0c_r.jpg" alt="img"></p>
+<ol>
+<li>Spring启动，查找并加载需要被Spring管理的bean，进行Bean的实例化</li>
+<li>Bean实例化后对将Bean的引入和值注入到Bean的属性中</li>
+<li>如果Bean实现了BeanNameAware接口的话，Spring将Bean的Id传递给setBeanName()方法</li>
+<li>如果Bean实现了BeanFactoryAware接口的话，Spring将调用setBeanFactory()方法，将BeanFactory容器实例传入</li>
+<li>如果Bean实现了ApplicationContextAware接口的话，Spring将调用Bean的setApplicationContext()方法，将bean所在应用上下文引用传入进来</li>
+<li>如果Bean实现了BeanPostProcessor接口，Spring就将调用他们的postProcessBeforeInitialization()方法。<strong>Spring 的 AOP 就是利用它实现的。</strong></li>
+<li>如果Bean 实现了InitializingBean接口，Spring将调用他们的afterPropertiesSet()方法。类似的，如果bean使用init-method声明了初始化方法，该方法也会被调用</li>
+<li>如果Bean 实现了BeanPostProcessor接口，Spring就将调用他们的postProcessAfterInitialization()方法。</li>
+<li>此时，Bean已经准备就绪，可以被应用程序使用了。他们将一直驻留在应用上下文中，直到应用上下文被销毁。</li>
+<li>如果bean实现了DisposableBean接口，Spring将调用它的destory()接口方法，同样，如果bean使用了destory-method 声明销毁方法，该方法也会被调用。</li>
+</ol>
+<blockquote>
+<p>简版:</p>
+<ol>
+<li>Bean 的实例化</li>
+<li>Bean 属性赋值</li>
+<li>Bean 的初始化</li>
+<li>Bean 的使用</li>
+<li>Bean 的销毁</li>
+</ol>
+<p><strong>java对象创建实例化和初始化的区别</strong></p>
+<p>实例化：在堆中申请内存空间，属性都是默认值</p>
+<p>初始化：给对象的属性进行赋值操作或者初始化方法的调用</p>
+</blockquote>
+<p><a href="http://c.biancheng.net/spring/life-cycle.html">Spring Bean生命周期 (biancheng.net)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/344140024">面试官：请你说一下 Bean 的生命周期 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://www.cnblogs.com/pu20065226/p/12206463.html">java类的初始化和实例化区别 - pu20065226 - 博客园 (cnblogs.com)</a></p>
+<h1 id="spring-中3种依赖注入的方式">Spring 中3种依赖注入的方式：</h1>
+<ol>
+<li>
+<p>基于 field 注入（属性注入）</p>
+</li>
+<li>
+<p>基于 setter 注入</p>
+</li>
+<li>
+<p>基于 constructor 注入（构造器注入）</p>
+<blockquote>
+<p>spring 新版本推荐使用构造器注入, 如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> Svc svc<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">HelpService</span><span style="color:#f92672">(</span> Svc svc<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">svc</span> <span style="color:#f92672">=</span> svc<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>可以使用 lombok的 <code>@RequiredArgsConstructor</code> 或者 <code>@AllArgsConstructor</code> 来自动生成构造方法, 虽然这样做也容易 违反单一责任原则</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@RequiredArgsConstructor</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// @AllArgsConstructor
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MdmProjectController</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> MdmProjectService mdmProjectService<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div></blockquote>
+</li>
+</ol>
+<p>field 注入，就是在bean的变量上使用注解进行依赖注入。本质上是通过<strong>反射的方式直接注入到field</strong>。这是我平常开发中看的最多也是最熟悉的一种方式，同时，也正是 Spring 团队所不推荐的方式。</p>
+<p>源码位置: <code>org/springframework/beans/factory/annotation/AutowiredAnnotationBeanPostProcessor.java:621</code> <code>5.1.7.RELEASE</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">inject</span><span style="color:#f92672">(</span>Object bean<span style="color:#f92672">,</span> <span style="color:#a6e22e">@Nullable</span> String beanName<span style="color:#f92672">,</span> <span style="color:#a6e22e">@Nullable</span> PropertyValues pvs<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Throwable <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">//获取要注入的字段
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		Field field <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>Field<span style="color:#f92672">)</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">member</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>		Object value<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">//如果字段的值有缓存
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cached</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">//从缓存中获取字段值value
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>			value <span style="color:#f92672">=</span> resolvedCachedArgument<span style="color:#f92672">(</span>beanName<span style="color:#f92672">,</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cachedFieldValue</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">//没有缓存
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">//创建一个字段依赖描述符
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>			DependencyDescriptor desc <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DependencyDescriptor<span style="color:#f92672">(</span>field<span style="color:#f92672">,</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">required</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>			desc<span style="color:#f92672">.</span><span style="color:#a6e22e">setContainingClass</span><span style="color:#f92672">(</span>bean<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>			Set<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> autowiredBeanNames <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> LinkedHashSet<span style="color:#f92672">&lt;&gt;(</span>1<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>			Assert<span style="color:#f92672">.</span><span style="color:#a6e22e">state</span><span style="color:#f92672">(</span>beanFactory <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;No BeanFactory available&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">//获取容器中的类型转换器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>			TypeConverter typeConverter <span style="color:#f92672">=</span> beanFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">getTypeConverter</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#75715e">//核心！获取注入的值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				value <span style="color:#f92672">=</span> beanFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">resolveDependency</span><span style="color:#f92672">(</span>desc<span style="color:#f92672">,</span> beanName<span style="color:#f92672">,</span> autowiredBeanNames<span style="color:#f92672">,</span> typeConverter<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>BeansException ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> UnsatisfiedDependencyException<span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">,</span> beanName<span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> InjectionPoint<span style="color:#f92672">(</span>field<span style="color:#f92672">),</span> ex<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">// .... 省略代码
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">//显式使用JDK的反射机制，设置自动的访问控制权限为允许访问
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>			ReflectionUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">makeAccessible</span><span style="color:#f92672">(</span>field<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">//为字段赋值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>			field<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>bean<span style="color:#f92672">,</span> value<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><strong>为什么不推荐使用Field注入?</strong></p>
+<ol>
+<li>
+<p>违反单一责任原则
+添加新的依赖项非常容易。添加6个、10个甚至12个依赖项没有问题。当使用构造函数注入时，在某一点之后，构造函数参数的数量会变得过高，并且很明显会出现问题。依赖太多通常意味着类有太多的责任。这可能违反了单一职责原则和关注点分离，这表明类需要进一步的检查和重构。当直接注入字段时，没有这样的警告，因为这种方法可以无限扩展。</p>
+</li>
+<li>
+<p>依赖隐藏
+使用依赖注入容器意味着类不再负责管理自己的依赖项。获取依赖项的职责是从类中提取的。由其他人现在负责提供依赖项——依赖注入容器或在测试中手动分配它们。当类不再负责获取其依赖项时，它应该使用公共接口(方法或构造函数)清楚地与它们通信。</p>
+</li>
+</ol>
+<blockquote>
+<p>就是说 类的成员变量(依赖项)被&quot;隐藏&quot;了, 按照 控制翻转 的思想, 成员变量的赋值应该在初始化类时(显示)处理 , 但是由于 field注入是反射做的, 就不是类的主动操作了,</p>
+</blockquote>
+<ol start="3">
+<li>
+<p>依赖注入容器耦合
+DI框架的核心思想之一是托管类不应该依赖于所使用的DI容器。换句话说，它应该只是一个普通的POJO，可以独立地实例化它，前提是将所有必需的依赖项传递给它。通过这种方式，您可以在单元测试中实例化它，而不需要启动DI容器，并单独测试它(使用的容器更像是集成测试)。如果没有容器耦合，则可以将该类作为托管或非托管类使用，甚至可以切换到新的DI框架。</p>
+<blockquote>
+<p>就是说, 要用bean应该从容器中取, 不能自己额外去取, 反射操作就是自己去取了</p>
+</blockquote>
+</li>
+<li>
+<p>不变性
+与构造函数不同，Field注入不能用于将依赖项分配给最终字段。</p>
+</li>
+<li>
+<p>会造成循环依赖</p>
+</li>
+</ol>
+<blockquote>
+<p>2, 3, 4,5  几点都是由于 field方式是反射做的, 才造成了这种情况, 使用Field 注入不会有功能上的问题, 只是违背了spring的设计思想</p>
+</blockquote>
+<p><a href="https://cloud.tencent.com/developer/article/1519929">Spring注解@Autowired源码分析 - 腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/377745017">关于Spring注入方式的几道面试题，你能答上么？ - 知乎 (zhihu.com)</a></p>
+<p><a href="https://blog.csdn.net/Li_Ya_Fei/article/details/104448398">IDEA 提示 Field injection is not recommended_Ongoing蜗牛的博客-CSDN博客</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/99870991">科普文: 大白话讲解Spring的@bean注解 - 知乎 (zhihu.com)</a></p>
+<blockquote>
+<p>一类注解是用于注册Bean:  <code>@Component , @Repository , @ Controller , @Service , @Configration, @bean</code> 等等</p>
+<p>一类注解是用于使用Bean <code>@Autowired , @Resource</code> 等等</p>
+<p>本题中的注入方式, 指的是 bean注入的某个类中, 而 <code>@service</code> 等注解是注入的容器中</p>
+</blockquote>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/%E5%A4%A7%E5%9E%8B%E7%BD%91%E7%AB%99/%E5%A4%A7%E5%9E%8B%E7%BD%91%E7%AB%99%E6%9E%B6%E6%9E%84%E5%9B%BE/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/%E9%9D%A2%E8%AF%95\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring\/%E9%9D%A2%E8%AF%95\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/%E5%A4%A7%E5%9E%8B%E7%BD%91%E7%AB%99/%E5%A4%A7%E5%9E%8B%E7%BD%91%E7%AB%99%E6%9E%B6%E6%9E%84%E5%9B%BE/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E9%9D%A2%E8%AF%95/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2F%25E9%259D%25A2%25E8%25AF%2595%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2F%25E9%259D%25A2%25E8%25AF%2595%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring%2F%25E9%259D%25A2%25E8%25AF%2595%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

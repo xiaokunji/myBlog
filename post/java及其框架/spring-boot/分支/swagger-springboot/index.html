@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/xiaokunji.github.io\/myBlog\/",
+  "author": {
+    "@type": "Person",
+    "name": "Firstname Lastname",
+    
+    "image": "https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c"
+    
+  },
+  "name":"Hugo tranquilpeak theme",
+  "description":"[TOC]\n介绍 Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务。总体目标是使客户端和文件系统作为服务器以同样的速度来更新。文件的方法，参数和模型紧密集成到服务器端的代码，允许API来始终保持同步。Swagger 让部署管理和使用功能强大的API从未如此简单。\n使用 pom.xml \u0026lt;!-- swagger2 --\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;io.springfox\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;springfox-swagger2\u0026lt;\/artifactId\u0026gt; \u0026lt;version\u0026gt;2.9.2\u0026lt;\/version\u0026gt; \u0026lt;\/dependency\u0026gt; \u0026lt;!-- swagger 原生ui --\u0026gt; \u0026lt;!-- \u0026lt;dependency\u0026gt; --\u0026gt; \u0026lt;!-- \u0026lt;groupId\u0026gt;io.springfox\u0026lt;\/groupId\u0026gt; --\u0026gt; \u0026lt;!-- \u0026lt;artifactId\u0026gt;springfox-swagger-ui\u0026lt;\/artifactId\u0026gt; --\u0026gt; \u0026lt;!-- \u0026lt;version\u0026gt;2.9.2\u0026lt;\/version\u0026gt; --\u0026gt; \u0026lt;!-- \u0026lt;\/dependency\u0026gt; --\u0026gt; \u0026lt;!-- bootstrap 写的ui--\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;com.github.xiaoymin\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;swagger-bootstrap-ui\u0026lt;\/artifactId\u0026gt; \u0026lt;version\u0026gt;1.9.3\u0026lt;\/version\u0026gt; \u0026lt;\/dependency\u0026gt; \u0026lt;!-- spring4All自己封装的,用的swagger自带的ui,这个一个包就足够了, 1.7版本用的是swagger2.9.0,但很多库没有这个包...所以跨过这个版本 --\u0026gt; \u0026lt;!-- \u0026lt;dependency\u0026gt; --\u0026gt; \u0026lt;!-- \u0026lt;groupId\u0026gt;com.spring4all\u0026lt;\/groupId\u0026gt; --\u0026gt; \u0026lt;!-- \u0026lt;artifactId\u0026gt;swagger-spring-boot-starter\u0026lt;\/artifactId\u0026gt; --\u0026gt; \u0026lt;!-- \u0026lt;version\u0026gt;1.9.0.RELEASE\u0026lt;\/version\u0026gt; --\u0026gt; \u0026lt;!-- \u0026lt;\/dependency\u0026gt; --\u0026gt; \u0026lt;!--高本版好像没有guava包,报错就加上--\u0026gt; \u0026lt;dependency\u0026gt; \u0026lt;groupId\u0026gt;com.google.guava\u0026lt;\/groupId\u0026gt; \u0026lt;artifactId\u0026gt;guava\u0026lt;\/artifactId\u0026gt; \u0026lt;version\u0026gt;27.0.1-jre\u0026lt;\/version\u0026gt; \u0026lt;\/dependency\u0026gt; 重点是springfox-swagger2 包, UI可以随便,bootstrp的界面更友好",
+  "url":"https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring-boot\/%E5%88%86%E6%94%AF\/swagger-springboot\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.116.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Firstname Lastname">
+<meta name="keywords" content="">
+<meta name="description" content="[TOC]
+介绍 Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务。总体目标是使客户端和文件系统作为服务器以同样的速度来更新。文件的方法，参数和模型紧密集成到服务器端的代码，允许API来始终保持同步。Swagger 让部署管理和使用功能强大的API从未如此简单。
+使用 pom.xml &lt;!-- swagger2 --&gt; &lt;dependency&gt; &lt;groupId&gt;io.springfox&lt;/groupId&gt; &lt;artifactId&gt;springfox-swagger2&lt;/artifactId&gt; &lt;version&gt;2.9.2&lt;/version&gt; &lt;/dependency&gt; &lt;!-- swagger 原生ui --&gt; &lt;!-- &lt;dependency&gt; --&gt; &lt;!-- &lt;groupId&gt;io.springfox&lt;/groupId&gt; --&gt; &lt;!-- &lt;artifactId&gt;springfox-swagger-ui&lt;/artifactId&gt; --&gt; &lt;!-- &lt;version&gt;2.9.2&lt;/version&gt; --&gt; &lt;!-- &lt;/dependency&gt; --&gt; &lt;!-- bootstrap 写的ui--&gt; &lt;dependency&gt; &lt;groupId&gt;com.github.xiaoymin&lt;/groupId&gt; &lt;artifactId&gt;swagger-bootstrap-ui&lt;/artifactId&gt; &lt;version&gt;1.9.3&lt;/version&gt; &lt;/dependency&gt; &lt;!-- spring4All自己封装的,用的swagger自带的ui,这个一个包就足够了, 1.7版本用的是swagger2.9.0,但很多库没有这个包...所以跨过这个版本 --&gt; &lt;!-- &lt;dependency&gt; --&gt; &lt;!-- &lt;groupId&gt;com.spring4all&lt;/groupId&gt; --&gt; &lt;!-- &lt;artifactId&gt;swagger-spring-boot-starter&lt;/artifactId&gt; --&gt; &lt;!-- &lt;version&gt;1.9.0.RELEASE&lt;/version&gt; --&gt; &lt;!-- &lt;/dependency&gt; --&gt; &lt;!--高本版好像没有guava包,报错就加上--&gt; &lt;dependency&gt; &lt;groupId&gt;com.google.guava&lt;/groupId&gt; &lt;artifactId&gt;guava&lt;/artifactId&gt; &lt;version&gt;27.0.1-jre&lt;/version&gt; &lt;/dependency&gt; 重点是springfox-swagger2 包, UI可以随便,bootstrp的界面更友好">
+
+
+<meta property="og:description" content="[TOC]
+介绍 Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务。总体目标是使客户端和文件系统作为服务器以同样的速度来更新。文件的方法，参数和模型紧密集成到服务器端的代码，允许API来始终保持同步。Swagger 让部署管理和使用功能强大的API从未如此简单。
+使用 pom.xml &lt;!-- swagger2 --&gt; &lt;dependency&gt; &lt;groupId&gt;io.springfox&lt;/groupId&gt; &lt;artifactId&gt;springfox-swagger2&lt;/artifactId&gt; &lt;version&gt;2.9.2&lt;/version&gt; &lt;/dependency&gt; &lt;!-- swagger 原生ui --&gt; &lt;!-- &lt;dependency&gt; --&gt; &lt;!-- &lt;groupId&gt;io.springfox&lt;/groupId&gt; --&gt; &lt;!-- &lt;artifactId&gt;springfox-swagger-ui&lt;/artifactId&gt; --&gt; &lt;!-- &lt;version&gt;2.9.2&lt;/version&gt; --&gt; &lt;!-- &lt;/dependency&gt; --&gt; &lt;!-- bootstrap 写的ui--&gt; &lt;dependency&gt; &lt;groupId&gt;com.github.xiaoymin&lt;/groupId&gt; &lt;artifactId&gt;swagger-bootstrap-ui&lt;/artifactId&gt; &lt;version&gt;1.9.3&lt;/version&gt; &lt;/dependency&gt; &lt;!-- spring4All自己封装的,用的swagger自带的ui,这个一个包就足够了, 1.7版本用的是swagger2.9.0,但很多库没有这个包...所以跨过这个版本 --&gt; &lt;!-- &lt;dependency&gt; --&gt; &lt;!-- &lt;groupId&gt;com.spring4all&lt;/groupId&gt; --&gt; &lt;!-- &lt;artifactId&gt;swagger-spring-boot-starter&lt;/artifactId&gt; --&gt; &lt;!-- &lt;version&gt;1.9.0.RELEASE&lt;/version&gt; --&gt; &lt;!-- &lt;/dependency&gt; --&gt; &lt;!--高本版好像没有guava包,报错就加上--&gt; &lt;dependency&gt; &lt;groupId&gt;com.google.guava&lt;/groupId&gt; &lt;artifactId&gt;guava&lt;/artifactId&gt; &lt;version&gt;27.0.1-jre&lt;/version&gt; &lt;/dependency&gt; 重点是springfox-swagger2 包, UI可以随便,bootstrp的界面更友好">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hugo tranquilpeak theme">
+<meta name="twitter:title" content="Hugo tranquilpeak theme">
+<meta property="og:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/swagger-springboot/">
+<meta property="twitter:url" content="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/swagger-springboot/">
+<meta property="og:site_name" content="Hugo tranquilpeak theme">
+<meta property="og:description" content="[TOC]
+介绍 Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务。总体目标是使客户端和文件系统作为服务器以同样的速度来更新。文件的方法，参数和模型紧密集成到服务器端的代码，允许API来始终保持同步。Swagger 让部署管理和使用功能强大的API从未如此简单。
+使用 pom.xml &lt;!-- swagger2 --&gt; &lt;dependency&gt; &lt;groupId&gt;io.springfox&lt;/groupId&gt; &lt;artifactId&gt;springfox-swagger2&lt;/artifactId&gt; &lt;version&gt;2.9.2&lt;/version&gt; &lt;/dependency&gt; &lt;!-- swagger 原生ui --&gt; &lt;!-- &lt;dependency&gt; --&gt; &lt;!-- &lt;groupId&gt;io.springfox&lt;/groupId&gt; --&gt; &lt;!-- &lt;artifactId&gt;springfox-swagger-ui&lt;/artifactId&gt; --&gt; &lt;!-- &lt;version&gt;2.9.2&lt;/version&gt; --&gt; &lt;!-- &lt;/dependency&gt; --&gt; &lt;!-- bootstrap 写的ui--&gt; &lt;dependency&gt; &lt;groupId&gt;com.github.xiaoymin&lt;/groupId&gt; &lt;artifactId&gt;swagger-bootstrap-ui&lt;/artifactId&gt; &lt;version&gt;1.9.3&lt;/version&gt; &lt;/dependency&gt; &lt;!-- spring4All自己封装的,用的swagger自带的ui,这个一个包就足够了, 1.7版本用的是swagger2.9.0,但很多库没有这个包...所以跨过这个版本 --&gt; &lt;!-- &lt;dependency&gt; --&gt; &lt;!-- &lt;groupId&gt;com.spring4all&lt;/groupId&gt; --&gt; &lt;!-- &lt;artifactId&gt;swagger-spring-boot-starter&lt;/artifactId&gt; --&gt; &lt;!-- &lt;version&gt;1.9.0.RELEASE&lt;/version&gt; --&gt; &lt;!-- &lt;/dependency&gt; --&gt; &lt;!--高本版好像没有guava包,报错就加上--&gt; &lt;dependency&gt; &lt;groupId&gt;com.google.guava&lt;/groupId&gt; &lt;artifactId&gt;guava&lt;/artifactId&gt; &lt;version&gt;27.0.1-jre&lt;/version&gt; &lt;/dependency&gt; 重点是springfox-swagger2 包, UI可以随便,bootstrp的界面更友好">
+<meta name="twitter:description" content="[TOC]
+介绍 Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务。总体目标是使客户端和文件系统作为服务器以同样的速度来更新。文件的方法，参数和模型紧密集成到服务器端的代码，允许API来始终保持同步。Swagger 让部署管理和使用功能强大的API从未如此简单。
+使用 pom.xml &lt;!-- swagger2 --&gt; &lt;dependency&gt; &lt;groupId&gt;io.springfox&lt;/groupId&gt; &lt;artifactId&gt;springfox-swagger2&lt;/artifactId&gt; &lt;version&gt;2.9.2&lt;/version&gt; &lt;/dependency&gt; &lt;!-- swagger 原生ui --&gt; &lt;!-- &lt;dependency&gt; --&gt; &lt;!-- &lt;groupId&gt;io.springfox&lt;/groupId&gt; --&gt; &lt;!-- &lt;artifactId&gt;springfox-swagger-ui&lt;/artifactId&gt; --&gt; &lt;!-- &lt;version&gt;2.9.2&lt;/version&gt; --&gt; &lt;!-- &lt;/dependency&gt; --&gt; &lt;!-- bootstrap 写的ui--&gt; &lt;dependency&gt; &lt;groupId&gt;com.github.xiaoymin&lt;/groupId&gt; &lt;artifactId&gt;swagger-bootstrap-ui&lt;/artifactId&gt; &lt;version&gt;1.9.3&lt;/version&gt; &lt;/dependency&gt; &lt;!-- spring4All自己封装的,用的swagger自带的ui,这个一个包就足够了, 1.7版本用的是swagger2.9.0,但很多库没有这个包...所以跨过这个版本 --&gt; &lt;!-- &lt;dependency&gt; --&gt; &lt;!-- &lt;groupId&gt;com.spring4all&lt;/groupId&gt; --&gt; &lt;!-- &lt;artifactId&gt;swagger-spring-boot-starter&lt;/artifactId&gt; --&gt; &lt;!-- &lt;version&gt;1.9.0.RELEASE&lt;/version&gt; --&gt; &lt;!-- &lt;/dependency&gt; --&gt; &lt;!--高本版好像没有guava包,报错就加上--&gt; &lt;dependency&gt; &lt;groupId&gt;com.google.guava&lt;/groupId&gt; &lt;artifactId&gt;guava&lt;/artifactId&gt; &lt;version&gt;27.0.1-jre&lt;/version&gt; &lt;/dependency&gt; 重点是springfox-swagger2 包, UI可以随便,bootstrp的界面更友好">
+<meta property="og:locale" content="en-us">
+
+  
+  
+  
+  
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+  <meta property="og:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+  <meta property="twitter:image" content="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=640">
+
+
+
+
+
+
+    <title>Hugo tranquilpeak theme</title>
+
+    <link rel="icon" href="https://xiaokunji.github.io/myBlog/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/swagger-springboot/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://xiaokunji.github.io/myBlog/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="4">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="https://xiaokunji.github.io/myBlog/" aria-label="Go to homepage">Hugo tranquilpeak theme</a>
+  </div>
+  
+    
+      <a class="header-right-picture "
+         href="https://xiaokunji.github.io/myBlog/#about" aria-label="Open the link: /#about">
+    
+    
+    
+      
+        <img class="header-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=90" alt="Author&#39;s picture" />
+      
+    
+    </a>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="4">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="https://xiaokunji.github.io/myBlog/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Firstname Lastname</h4>
+        
+          <h5 class="sidebar-profile-bio">Super bio with markdown support <strong>COOL</strong></h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/content" title="我的">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">我的</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kakawait" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://stackoverflow.com/users/636472/kakawait" target="_blank" rel="noopener" title="Stack Overflow">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-stack-overflow" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Stack Overflow</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://xiaokunji.github.io/myBlog/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="4"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="0001-01-01T00:00:00Z">
+        
+  January 1, 1
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>[TOC]</p>
+<h1 id="介绍">介绍</h1>
+<p>Swagger 是一个规范和完整的框架，用于生成、描述、调用和可视化 RESTful 风格的 Web 服务。总体目标是使客户端和文件系统作为服务器以同样的速度来更新。文件的方法，参数和模型紧密集成到服务器端的代码，允许API来始终保持同步。Swagger 让部署管理和使用功能强大的API从未如此简单。</p>
+<h1 id="使用">使用</h1>
+<h2 id="pomxml">pom.xml</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- swagger2 --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>io.springfox<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>springfox-swagger2<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;version&gt;</span>2.9.2<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!--         swagger 原生ui --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!--         &lt;dependency&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!--             &lt;groupId&gt;io.springfox&lt;/groupId&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!--             &lt;artifactId&gt;springfox-swagger-ui&lt;/artifactId&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!--             &lt;version&gt;2.9.2&lt;/version&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!--         &lt;/dependency&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- bootstrap 写的ui--&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>com.github.xiaoymin<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>swagger-bootstrap-ui<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;version&gt;</span>1.9.3<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- spring4All自己封装的,用的swagger自带的ui,这个一个包就足够了, 1.7版本用的是swagger2.9.0,但很多库没有这个包...所以跨过这个版本 --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- 		&lt;dependency&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- 		    &lt;groupId&gt;com.spring4all&lt;/groupId&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- 		    &lt;artifactId&gt;swagger-spring-boot-starter&lt;/artifactId&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- 		    &lt;version&gt;1.9.0.RELEASE&lt;/version&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- 		&lt;/dependency&gt; --&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!--高本版好像没有guava包,报错就加上--&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;groupId&gt;</span>com.google.guava<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>guava<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;version&gt;</span>27.0.1-jre<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><blockquote>
+<p>重点是springfox-swagger2 包, UI可以随便,bootstrp的界面更友好</p>
+</blockquote>
+<ul>
+<li>bootstrp地址:<code>http://localhost:8998/doc.html</code></li>
+<li>swagger-ui地址: <code>http://localhost:8998/swagger-ui.html</code></li>
+</ul>
+<h2 id="java">java</h2>
+<h3 id="配置类">配置类</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span> <span style="color:#75715e">// 表明这个类是个配置类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">@EnableSwagger2</span> <span style="color:#75715e">// 启用swagger
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Swagger2</span>   <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Value</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;${sop.swagger.enable:false}&#34;</span><span style="color:#f92672">)</span> <span style="color:#75715e">//默认值为false
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> isEnable<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> Docket <span style="color:#a6e22e">createRestApi</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;环境取值:  isEnable:&#34;</span><span style="color:#f92672">+</span>isEnable<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Docket<span style="color:#f92672">(</span>DocumentationType<span style="color:#f92672">.</span><span style="color:#a6e22e">SWAGGER_2</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">.</span><span style="color:#a6e22e">enable</span><span style="color:#f92672">(</span>isEnable<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">apiInfo</span><span style="color:#f92672">(</span>apiInfo<span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">select</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#75715e">// 扫描的包路径
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">apis</span><span style="color:#f92672">(</span>RequestHandlerSelectors<span style="color:#f92672">.</span><span style="color:#a6e22e">basePackage</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.example.demo&#34;</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#75715e">// 监听所有方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">paths</span><span style="color:#f92672">(</span>PathSelectors<span style="color:#f92672">.</span><span style="color:#a6e22e">any</span><span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// 构建 api文档的详细信息函数,注意这里的注解引用的是哪个
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">private</span> ApiInfo <span style="color:#a6e22e">apiInfo</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ApiInfoBuilder<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#75715e">// 页面标题
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">title</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;swagger的界面&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#75715e">// 创建人
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">contact</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> Contact<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;xkj&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#75715e">// 版本号
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;1.0&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#75715e">// 描述
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>				<span style="color:#f92672">.</span><span style="color:#a6e22e">description</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;这是我的swagger&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">build</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span></code></pre></div><h3 id="使用-1">使用</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Api</span><span style="color:#f92672">(</span>value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;测试控制类-val&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@RestController</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@RequestMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/test&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Slf4j</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestControll</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@GetMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ApiOperation</span><span style="color:#f92672">(</span>value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;嗨&#34;</span><span style="color:#f92672">,</span>notes<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;简单接口&#34;</span> <span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> BaseResponse <span style="color:#a6e22e">hello</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>	    BaseResponse response <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BaseResponse<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>		setResponse<span style="color:#f92672">(</span>response<span style="color:#f92672">,</span> ResponseEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">JS002</span><span style="color:#f92672">)</span> <span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> response<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@PutMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;addHelp&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@ApiParam</span><span style="color:#f92672">(</span>required<span style="color:#f92672">=</span><span style="color:#66d9ef">true</span><span style="color:#f92672">,</span>name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;help&#34;</span><span style="color:#f92672">,</span>value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;帮助类2&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> BaseResponse <span style="color:#a6e22e">addHelp</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@RequestBody</span> HelpInfo help<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>	    log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;入参:{}&#34;</span><span style="color:#f92672">,</span>help<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		BaseResponse response<span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BaseResponse<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>		setSuccessResponse<span style="color:#f92672">(</span>response<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>		log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;返参:{}&#34;</span><span style="color:#f92672">,</span>LocalDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">now</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> response<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>	
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h1 id="注解">注解</h1>
+<ol>
+<li>
+<p><code>@Api()</code></p>
+<p>用于类； 表示标识这个类是swagger的资源</p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li>tags–表示说明</li>
+<li>value–也是说明，可以使用tags替代,1.5以后这个将废弃</li>
+</ul>
+</blockquote>
+<ol start="2">
+<li>
+<p><code>@ApiOperation()</code></p>
+<p>用于方法； 表示一个http请求的操作</p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li>value用于方法描述</li>
+<li>notes用于提示内容</li>
+<li>tags可以重新分组（视情况而用）</li>
+</ul>
+</blockquote>
+<ol start="3">
+<li>
+<p><code>@ApiParam()</code></p>
+<p>用于方法，参数，字段说明； 表示对参数的添加元数据（说明或 必填等）</p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li>name–参数名</li>
+<li>value–参数说明</li>
+<li>required–是否必填</li>
+</ul>
+</blockquote>
+<ol start="3">
+<li><code>@ApiModel()</code></li>
+</ol>
+<p>用于类 表示对类进行说明，用于参数用实体类接收</p>
+<blockquote>
+<ul>
+<li>value–表示对象名</li>
+<li>description–描述</li>
+</ul>
+</blockquote>
+<ol start="4">
+<li>
+<p><code>@ApiModelProperty()</code></p>
+<p>用于方法，字段,表示对model属性的说明或者数据操作更改</p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li>value–字段说明</li>
+<li>name–重写属性名字</li>
+<li>dataType–重写属性类型</li>
+<li>required–是否必填</li>
+<li>example–举例说明</li>
+<li>hidden–隐藏</li>
+</ul>
+</blockquote>
+<ol start="5">
+<li>
+<p><code>@ApiIgnore()</code></p>
+<p>用于类或者方法上，可以不被swagger显示在页面上</p>
+</li>
+<li>
+<p><code>@ApiImplicitParam()</code></p>
+<p>用于方法 表示单独的请求参数</p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li>name–参数ming</li>
+<li>value–参数说明</li>
+<li>dataType–数据类型</li>
+<li>paramType–参数类型,包括 query,header,path,body,form</li>
+<li>example–举例说明</li>
+<li>defaultValue：参数的默认值</li>
+</ul>
+</blockquote>
+<ol start="7">
+<li><code>@ApiImplicitParams()</code></li>
+</ol>
+<p>用于方法，包含多个 @ApiImplicitParam</p>
+<ol start="8">
+<li>
+<p><code>@ApiResponses</code>：用于包含接口的一组响应。</p>
+</li>
+<li>
+<p><code>@ApiResponse</code>：用在注解@ApiResponses中，表达一个错误的响应信息。</p>
+</li>
+</ol>
+<p>来源: <a href="https://blog.csdn.net/wyb880501/article/details/79576784">https://blog.csdn.net/wyb880501/article/details/79576784</a></p>
+<h1 id="异常">异常</h1>
+<h2 id="访问页面弹框提示baseurl不对">访问页面弹框提示baseUrl不对</h2>
+<p>如图:</p>
+<p><img src="https://gitee.com/xiaokunji/my-images/raw/master/myMD/swagger%E8%AE%BF%E9%97%AE%E5%BC%82%E5%B8%B8.png" alt="下载"></p>
+<p>原因有二:</p>
+<ol>
+<li>没有加载到swagger配置类</li>
+<li>swagger的资源被拦截器拦截了(暂未遇到)</li>
+</ol>
+<p>解决:</p>
+<ul>
+<li>检查swagger配置类是否能被项目扫描到;</li>
+<li>检查配置类上的<code>@Configuration</code> 和<code>@EnableSwagger2</code>;</li>
+<li>在过滤器中排除swagger的资源</li>
+</ul>
+<h1 id="扩展">扩展</h1>
+<p>使用swagger是不是有以下问题:</p>
+<ol>
+<li>每个项目都要集成swagger-mg-ui包，可不可以 <strong>文档和项目分开</strong> ？</li>
+<li>document.html是个静态页面，怎么能做一些 <strong>权限控制</strong> 呢？登录后才能查看</li>
+<li><strong>其他编程语言</strong> 产生的swagger文档怎么可以使用这个文档工具查看呢？</li>
+<li>可不可以关闭线上的文档，用 <strong>本地的文档页面调试线上的接口</strong> 呢？</li>
+<li>项目非常的多，需要记许多的文档地址，能不能 <strong>统一管理</strong> 呢？</li>
+</ol>
+<p><code>zyplayer-doc-swagger</code> 可以解决这些烦恼. 这玩意把文档管理做成了一个系统,而不仅仅是个文档,</p>
+<p><a href="https://gitee.com/zyplayer/zyplayer-doc">https://gitee.com/zyplayer/zyplayer-doc</a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/mybatis-springboot/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/swagger-springboot/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/swagger-springboot/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/swagger-springboot/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+    <script type="text/javascript">
+      var disqus_config = function() {
+        this.page.url = 'https:\/\/xiaokunji.github.io\/myBlog\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring-boot\/%E5%88%86%E6%94%AF\/swagger-springboot\/';
+        
+          this.page.identifier = '\/post\/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6\/spring-boot\/%E5%88%86%E6%94%AF\/swagger-springboot\/'
+        
+      };
+      (function() {
+        
+        
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+          return;
+        }
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        var disqus_shortname = 'hugo-tranquilpeak-theme';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 Firstname Lastname. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/mybatis-springboot/" data-tooltip="" aria-label="NEXT: ">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" data-tooltip="" aria-label="PREVIOUS: ">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/swagger-springboot/" title="Share on Facebook" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/swagger-springboot/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https://xiaokunji.github.io/myBlog/post/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring-boot/%E5%88%86%E6%94%AF/swagger-springboot/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#disqus_thread" aria-label="Leave a comment">
+        <i class="far fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="4">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring-boot%2F%25E5%2588%2586%25E6%2594%25AF%2Fswagger-springboot%2F" aria-label="Share on Facebook">
+          <i class="fab fa-facebook-square" aria-hidden="true"></i><span>Share on Facebook</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring-boot%2F%25E5%2588%2586%25E6%2594%25AF%2Fswagger-springboot%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fxiaokunji.github.io%2FmyBlog%2Fpost%2Fjava%25E5%258F%258A%25E5%2585%25B6%25E6%25A1%2586%25E6%259E%25B6%2Fspring-boot%2F%25E5%2588%2586%25E6%2594%25AF%2Fswagger-springboot%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://www.gravatar.com/avatar/d09dc2d7aa5c467519e8af89f7b3d94c?s=110" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Firstname Lastname</h4>
+    
+      <div id="about-card-bio">Super bio with markdown support <strong>COOL</strong></div>
+    
+    
+      <div id="about-card-job">
+        <i class="fa fa-briefcase"></i>
+        <br/>
+        Your job title
+      </div>
+    
+    
+      <div id="about-card-location">
+        <i class="fa fa-map-marker-alt"></i>
+        <br/>
+        France
+      </div>
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://xiaokunji.github.io/myBlog/images/cover.jpg');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://xiaokunji.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-gE8KAQyFIzV1C9+GZ8TKJHZS2s+n7EjNtC+IMRn1l5+WYJTHOODUM6JSjZhFhqXmc7bG8Av6XXpckA4tYhflnw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/apache.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-EWROca+bote+7Oaaar1F6y74iZj1r1F9rm/ly7o+/FwJopbBaWtsFDmaKoZDd3QiGU2pGacBirHJNivmGLYrow==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/go.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-GDVzAn0wpx1yVtQsRWmFc6PhJiLBPdUic+h4GWgljBh904O3JU10fk9EKNpVyIoPqkFn54rgL2QBG4BmUTMpiQ==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/http.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-UgZlma8NzkrDb/NWgmLIcTrH7i/CSnLLDRFqCSNF5NGPpjKmzyM25qcoXGOup8+cDakKyaiTDd7N4dyH4YT+IA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/less.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-lot9koe73sfXIrUvIPM/UEhuMciN56RPyBdOyZgfO53P2lkWyyXN7J+njcxIIBRV+nVDQeiWtiXg+bLAJZDTfg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/nginx.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-Zd3e7XxHP00TD0Imr0PIfeM0fl0v95kMWuhyAS3Wn1UTSXTkz0OhtRgBAr4JlmADRgiXr4x7lpeUdqaGN8xIog==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/puppet.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-qtqDO052iXMSP+5d/aE/jMtL9vIIGvONgTJziC2K/ZIB1yEGa55WVxGE9/08rSQ62EoDifS9SWVGZ7ihSLhzMA==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/scss.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-1NmkjnEDnwwwcu28KoQF8vs3oaPFokQHbmbtwGhFfeDsQZtVFI8zW2aE9O8yMYdpdyKV/5blE4pSWw4Z/Sv97w==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/stylus.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-B2wSfruPjr8EJL6IIzQr1eAuDwrsfIfccNf/LCEdxELCgC/S/ZMt/Uvk80aD79m7IqOqW+Sw8nbkvha20yZpzg==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/swift.min.js"></script>
+  
+
+  
+    <script async crossorigin="anonymous" defer integrity="sha512-28oDiQZGKUVN6wQ7PSLPNipOcmkCALXKwOi7bnkyFf8QiMZQxG9EQoy/iiNx6Zxj2cG2SbVa4dXKigQhu7GiFw==" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/yaml.min.js"></script>
+  
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+
