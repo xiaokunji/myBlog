@@ -2,107 +2,107 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Java基础 on 米二</title>
-    <link>https://xiaokunji.github.io/zh/tags/java%E5%9F%BA%E7%A1%80/</link>
+    <link>https://xiaokunji.github.io/myBlog/zh/tags/java%E5%9F%BA%E7%A1%80/</link>
     <description>Recent content in Java基础 on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/tags/java%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/myBlog/zh/tags/java%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>IO流</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/io%E6%B5%81/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/io%E6%B5%81/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/io%E6%B5%81/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/io%E6%B5%81/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>java8</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/java8/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/java8/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/java8/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/java8/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>lombok</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>SPI</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/spi/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/spi/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/spi/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/spi/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>调试体系</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>动态字节码技术</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%8A%A8%E6%80%81%E5%AD%97%E8%8A%82%E7%A0%81%E6%8A%80%E6%9C%AF/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%8A%A8%E6%80%81%E5%AD%97%E8%8A%82%E7%A0%81%E6%8A%80%E6%9C%AF/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%8A%A8%E6%80%81%E5%AD%97%E8%8A%82%E7%A0%81%E6%8A%80%E6%9C%AF/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%8A%A8%E6%80%81%E5%AD%97%E8%8A%82%E7%A0%81%E6%8A%80%E6%9C%AF/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>泛型</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%B3%9B%E5%9E%8B/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%B3%9B%E5%9E%8B/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%B3%9B%E5%9E%8B/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%B3%9B%E5%9E%8B/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>枚举</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%9E%9A%E4%B8%BE/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%9E%9A%E4%B8%BE/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%9E%9A%E4%B8%BE/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%9E%9A%E4%B8%BE/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>面试</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>时间</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%97%B6%E9%97%B4/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%97%B6%E9%97%B4/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%97%B6%E9%97%B4/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%97%B6%E9%97%B4/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>异常</title>
-      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%BC%82%E5%B8%B8/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%BC%82%E5%B8%B8/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%BC%82%E5%B8%B8/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%BC%82%E5%B8%B8/</guid>
       <description>     </description>
     </item>
     

@@ -2,89 +2,89 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Spark on 米二</title>
-    <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/</link>
+    <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/</link>
     <description>Recent content in Spark on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>spark_shuffle</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark_shuffle/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark_shuffle/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark_shuffle/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/spark_shuffle/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>SparkSQL</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/sparksql/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/sparksql/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/sparksql/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/sparksql/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>SparkStreaming</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/sparkstreaming/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/sparkstreaming/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/sparkstreaming/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/sparkstreaming/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>Storm与SparkStreaming</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/storm%E4%B8%8Esparkstreaming/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/storm%E4%B8%8Esparkstreaming/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/storm%E4%B8%8Esparkstreaming/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/storm%E4%B8%8Esparkstreaming/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>StructuredStreaming</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/structuredstreaming/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/structuredstreaming/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/structuredstreaming/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/structuredstreaming/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>安装与配置</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>简介及原理</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%8E%9F%E7%90%86/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%8E%9F%E7%90%86/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%8E%9F%E7%90%86/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%8E%9F%E7%90%86/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>命令</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E5%91%BD%E4%BB%A4/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E5%91%BD%E4%BB%A4/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E5%91%BD%E4%BB%A4/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E5%91%BD%E4%BB%A4/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>数据倾斜</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/spark/%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C/</guid>
       <description>     </description>
     </item>
     

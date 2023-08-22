@@ -2,9 +2,9 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Gateway.assets on 米二</title>
-    <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_cloud/gateway.assets/</link>
+    <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_cloud/gateway.assets/</link>
     <description>Recent content in Gateway.assets on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh</language><atom:link href="https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_cloud/gateway.assets/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh</language><atom:link href="https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_cloud/gateway.assets/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

@@ -2,71 +2,71 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Kafka on 米二</title>
-    <link>https://xiaokunji.github.io/zh/tags/kafka/</link>
+    <link>https://xiaokunji.github.io/myBlog/zh/tags/kafka/</link>
     <description>Recent content in Kafka on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/tags/kafka/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/myBlog/zh/tags/kafka/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>KafkaStream快速入门</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafkastream%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafkastream%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafkastream%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafkastream%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>kafka的选举机制</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E7%9A%84%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E7%9A%84%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E7%9A%84%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E7%9A%84%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>kafka介绍及原理</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%8E%9F%E7%90%86/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%8E%9F%E7%90%86/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%8E%9F%E7%90%86/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%8E%9F%E7%90%86/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>kafka命令</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E5%91%BD%E4%BB%A4/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E5%91%BD%E4%BB%A4/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E5%91%BD%E4%BB%A4/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/kafka%E5%91%BD%E4%BB%A4/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>高水位与LeaderEpoch</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E9%AB%98%E6%B0%B4%E4%BD%8D%E4%B8%8Eleaderepoch/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E9%AB%98%E6%B0%B4%E4%BD%8D%E4%B8%8Eleaderepoch/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E9%AB%98%E6%B0%B4%E4%BD%8D%E4%B8%8Eleaderepoch/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E9%AB%98%E6%B0%B4%E4%BD%8D%E4%B8%8Eleaderepoch/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>简述分区分配策略</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E7%AE%80%E8%BF%B0%E5%88%86%E5%8C%BA%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E7%AE%80%E8%BF%B0%E5%88%86%E5%8C%BA%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E7%AE%80%E8%BF%B0%E5%88%86%E5%8C%BA%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E7%AE%80%E8%BF%B0%E5%88%86%E5%8C%BA%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>简述幂等性</title>
-      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E7%AE%80%E8%BF%B0%E5%B9%82%E7%AD%89%E6%80%A7/</link>
+      <link>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E7%AE%80%E8%BF%B0%E5%B9%82%E7%AD%89%E6%80%A7/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E7%AE%80%E8%BF%B0%E5%B9%82%E7%AD%89%E6%80%A7/</guid>
+      <guid>https://xiaokunji.github.io/myBlog/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/kafka/%E7%AE%80%E8%BF%B0%E5%B9%82%E7%AD%89%E6%80%A7/</guid>
       <description>     </description>
     </item>
     
