@@ -1,0 +1,838 @@
+<!doctype html><html lang=zh dir=auto><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>获取用户信息工具类 | 米二</title><meta name=keywords content=" UserUtils.java, HttpRequestUtil.java"><meta name=description content="     "><meta name=author content="xkj"><link rel=canonical href=https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/><link crossorigin=anonymous href=/assets/css/stylesheet.a2492b1919558dad2b0783841b531329520921f957f354ded4c3fc4d21dcc77f.css integrity="sha256-okkrGRlVja0rB4OEG1MTKVIJIflX81Te1MP8TSHcx38=" rel="preload stylesheet" as=style><script defer crossorigin=anonymous src=/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG+9vmJ0cTS+ovo0FeA=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=https://xiaokunji.github.io/img/Q.gif><link rel=icon type=image/png sizes=16x16 href=https://xiaokunji.github.io/img/Q.gif><link rel=icon type=image/png sizes=32x32 href=https://xiaokunji.github.io/img/Q.gif><link rel=apple-touch-icon href=https://xiaokunji.github.io/Q.gif><link rel=mask-icon href=https://xiaokunji.github.io/Q.gif><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh href=https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:title" content="获取用户信息工具类"><meta property="og:description" content="     "><meta property="og:type" content="article"><meta property="og:url" content="https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/"><meta property="article:section" content="java及其框架"><meta property="article:published_time" content="2023-08-22T00:00:00+00:00"><meta property="article:modified_time" content="2023-08-22T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="获取用户信息工具类"><meta name=twitter:description content="     "><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":3,"name":"获取用户信息工具类","item":"https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"获取用户信息工具类","name":"获取用户信息工具类","description":"     ","keywords":[" UserUtils.java"," HttpRequestUtil.java"],"articleBody":"UserUtils.java 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219 220 221 222 223 224 225 226 227 228 229 230 231 232 233 234 235 236 237 238 239 240 241 242 243 244 245 246 247 248 249 250 251 252 253 254 255 256 257 258 259 260 261 262 263 264 265 266 267 268 269 270 271 272 273 274 275 276 277 278 279 280 281 282 283 284 285 286 287 288 289 290 291 292 293 294 295 296 297 298 299 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353 354 355 356 357 package com.gree.ecommerce.utils; import com.alibaba.fastjson.JSON; import com.alibaba.fastjson.JSONObject; import com.gree.ecommerce.config.InheritableThreadPoolTaskExecutor; import com.gree.ecommerce.constant.Constant; import com.gree.ecommerce.constant.ServerResultCode; import com.gree.ecommerce.exception.BusinessException; import com.gree.ecommerce.module.user.BaseUserRedisVO; import com.gree.ecommerce.module.user.EocLoginUserRedisVO; import com.gree.ecommerce.module.user.LoginUserRedisVO; import lombok.extern.slf4j.Slf4j; import org.apache.commons.collections4.CollectionUtils; import java.util.Collection; import java.util.List; import java.util.Optional; import java.util.concurrent.TimeUnit; import java.util.function.Supplier; import java.util.stream.Collectors; import java.util.stream.Stream; /** * 用户数据相关工具类 * * @createDate 2021/12/15 */ @Slf4j public class UserUtils { static RedisUtil redisUtil = new RedisUtil(); public UserUtils(RedisUtil ru) { redisUtil = ru; } static Supplier\u003cBusinessException\u003e resultUserNotLoginEx = () -\u003e new BusinessException(ServerResultCode.USER_NOT_LOGGED_IN); /** * 从请求头中获得token =\u003e 再通过redis获取用户信息 * * @return 用户基础信息 * @throws BusinessException token不存在则会抛出 , 返回码为 {@link ServerResultCode#USER_NOT_LOGGED_IN } * @createDate 2021/12/20 */ public static BaseUserRedisVO getBaseUserRedisInfo() { return HttpRequestUtil.getHttpHeader(Constant.AUTHORIZATION) .map(authStr -\u003e redisUtil.get(authStr)) .map(str -\u003e JSON.parseObject(str, BaseUserRedisVO.class)) .orElseGet(() -\u003e Optional.ofNullable( JSON.parseObject(InheritableThreadPoolTaskExecutor.THREAD_USER_INFO_CACHE.get(), BaseUserRedisVO.class)) .orElseThrow(resultUserNotLoginEx) ); } /** * 从请求头中获得token =\u003e 再通过redis获取用户信息 * * @return 商城用户信息 * @throws BusinessException token不存在则会抛出 , 返回码为 {@link ServerResultCode#USER_NOT_LOGGED_IN } * @createDate 2021/12/20 */ public static LoginUserRedisVO getMallUserInfo() { return HttpRequestUtil.getHttpHeader(Constant.AUTHORIZATION) .map(authStr -\u003e redisUtil.get(authStr)) .map(str -\u003e JSON.parseObject(str, LoginUserRedisVO.class)) .orElseGet(()-\u003e Optional.ofNullable(JSON.parseObject(InheritableThreadPoolTaskExecutor.THREAD_USER_INFO_CACHE.get(), LoginUserRedisVO.class)) .orElseThrow(resultUserNotLoginEx)); } /** * 更新商城用户登录的redis信息 * * @param modify 需要修改的属性 * @author zhouMJ **/ public static void modifyMallUserRedisInfo(LoginUserRedisVO modify) { Stream.of(getPlatAllXflagTokenGroup(Constant.PLATFORM_FLAG_SELLER, modify.getUserId()), getPlatAllXflagTokenGroup(Constant.PLATFORM_FLAG_MALL, modify.getUserId()), getPlatAllXflagTokenGroup(Constant.PLATFORM_FLAG_ALL_SALES, modify.getUserId())) .filter(CollectionUtils::isNotEmpty) .flatMap(Collection::stream) .filter(StringUtils::isNotBlank) //查出商城用户的token .forEach(key -\u003e { String redisStr = redisUtil.get(key); if (StringUtils.isNotEmpty(redisStr)) { LoginUserRedisVO redisVO = generateMallModifyVO(redisStr, modify); //修改属性值 redisUtil.setEx(key, JSONObject.toJSONString(redisVO), Constant.REDIS_MALL_USER_LOGIN_TOKEN_TTL, TimeUnit.MINUTES); } }); } /** * 生成商城用户的redis信息修改后的属性对象 * * @param redisStr redis的json串 * @param modify 需要修改的属性 * @return LoginUserRedisVO 商城用户的redis信息修改后的属性对象 **/ private static LoginUserRedisVO generateMallModifyVO(String redisStr, LoginUserRedisVO modify) { LoginUserRedisVO vo = JSONObject.parseObject(redisStr, LoginUserRedisVO.class); if (StringUtils.isNotEmpty(modify.getUserAcc())) { vo.setUserAcc(modify.getUserAcc()); } if (StringUtils.isNotEmpty(modify.getNickName())) { vo.setNickName(modify.getNickName()); } if (StringUtils.isNotEmpty(modify.getMobile())) { vo.setMobile(modify.getMobile()); } if (StringUtils.isNotEmpty(modify.getType())) { vo.setType(modify.getType()); } return vo; } /** * eoc退出登录 */ public static void eocLoginOut() { //删除token信息 redisUtil.delete(getToken()); //删除token群组中的token值 String tokenGroupKey = String.format(Constant.REDIS_USER_TOKEN_LIST_KEY, getBaseUserRedisInfo().getUserId(), getPlatformFlag(), getXFlag()); redisUtil.lRemove(tokenGroupKey, Constant.ONE, getToken()); //删除用户的权限变化标识 delSignUserPower(); } /** * 商城退出登录 */ public static void mallLoginOut() { //删除token信息 redisUtil.delete(getToken()); //删除token群组中的token值 String tokenGroupKey = String.format(Constant.REDIS_USER_TOKEN_LIST_KEY, getBaseUserRedisInfo().getUserId(), getPlatformFlag(), getXFlag()); redisUtil.lRemove(tokenGroupKey, Constant.ONE, getToken()); //如果是卖家中心的,删除用户的权限变化标识 if (getPlatformFlag().equals(Constant.PLATFORM_FLAG_SELLER)) { delSignUserPower(); } } /** * 从请求头中获得token * * @return 请求头token，不存在会返回空字符串 */ public static String getToken() { return HttpRequestUtil.getHttpHeader(Constant.AUTHORIZATION).orElse(\"\"); } /** * 从请求头中获得权限菜单路由 * * @return 请求头权限菜单路由，不存在会返回空字符串 */ public static String getPowerMenuPath() { return HttpRequestUtil.getHttpHeader(Constant.POWER_MENU_PATH).orElse(\"\"); } /** * 从请求头中获得端标识 * * @return 请求头端标识 不存在会返回空字符串 */ public static String getXFlag() { return HttpRequestUtil.getHttpHeader(Constant.X_FLAG).orElse(\"\"); } /** * 从请求头中获得端标识 * * @return 请求头端标识，不存在会返回空字符串 */ public static String getPlatformFlag() { return HttpRequestUtil.getHttpHeader(Constant.PLATFORM_FLAG).orElse(\"\"); } /** * 从请求头中获得token =\u003e 再通过redis获取用户信息 * * @return eoc用户信息 * @throws BusinessException token不存在则会抛出 , 返回码为 {@link ServerResultCode#USER_NOT_LOGGED_IN } * @createDate 2021/12/20 */ public static EocLoginUserRedisVO getEocUserInfo() { return HttpRequestUtil.getHttpHeader(Constant.AUTHORIZATION) .map(authStr -\u003e redisUtil.get(authStr)) .map(str -\u003e JSON.parseObject(str, EocLoginUserRedisVO.class)) .orElseGet(()-\u003e Optional.ofNullable(JSON.parseObject(InheritableThreadPoolTaskExecutor.THREAD_USER_INFO_CACHE.get(), EocLoginUserRedisVO.class)) .orElseThrow(resultUserNotLoginEx)); } /** * 更新eoc用户登录的redis信息 * * @param modify 需要修改的属性 * @author zhouMJ **/ public static void modifyEocUserRedisInfo(EocLoginUserRedisVO modify) { //查询eoc的token的key集合 List\u003cString\u003e tokenKeys = getPlatAllXflagTokenGroup(getPlatformFlag(), modify.getUserId()); tokenKeys.forEach(key -\u003e { String redisStr = redisUtil.get(key); if (StringUtils.isNotEmpty(redisStr)) { EocLoginUserRedisVO redisVO = generateEocModifyVO(redisStr, modify); //修改属性值 redisUtil.setEx(key, JSONObject.toJSONString(redisVO), Constant.REDIS_SYS_USER_LOGIN_TOKEN_TTL, TimeUnit.MINUTES); } }); } /** * 生成eoc用户的redis信息修改后的属性对象 * * @param redisStr redis的json串 * @param modify 需要修改的属性 * @return LoginUserRedisVO 用户的redis信息修改后的属性对象 **/ private static EocLoginUserRedisVO generateEocModifyVO(String redisStr, EocLoginUserRedisVO modify) { EocLoginUserRedisVO vo = JSONObject.parseObject(redisStr, EocLoginUserRedisVO.class); if (StringUtils.isNotEmpty(modify.getUserAcc())) { vo.setUserAcc(modify.getUserAcc()); } if (StringUtils.isNotEmpty(modify.getEmpName())) { vo.setEmpName(modify.getEmpName()); } if (StringUtils.isNotEmpty(modify.getMobile())) { vo.setMobile(modify.getMobile()); } return vo; } /** * eoc强制清空用户token * * @param userId 用户id **/ public static void eocClearUserToken(Long userId) { redisUtil.delete(getPlatAllXflagTokenGroup(Constant.PLATFORM_FLAG_EOC, userId)); } /** * eoc标识用户权限变化 * * @param userIds 用户ids **/ public static void eocSignUserPowerUpdate(List\u003cLong\u003e userIds) { List\u003cString\u003e signUserKeys = userIds.stream() //拿到用户下的token组 .map(userId -\u003e getPlatAndXflagTokenGroup(Constant.PLATFORM_FLAG_EOC, Constant.X_REQ_PC, userId)) .flatMap(Collection::stream) //按照token的维度标识权限变化 .map(UserUtils::getSignUserPowerKey) .collect(Collectors.toList()); log.info(\"eoc标识用户权限变化eocSignUserPowerUpdate，keys：{}\", signUserKeys); for (String key: signUserKeys) { redisUtil.setEx(key, Constant.TRUE_STR, 7, TimeUnit.HOURS); } } /** * 卖家中心标识用户权限变化 * * @param userIds 用户ids **/ public static void sellerSignUserPowerUpdate(List\u003cLong\u003e userIds) { List\u003cString\u003e signUserKeys = userIds.stream() //拿到用户下的token组 .map(userId -\u003e getPlatAndXflagTokenGroup(Constant.PLATFORM_FLAG_SELLER, Constant.X_REQ_PC, userId)) .flatMap(Collection::stream) //按照token的维度标识权限变化 .map(UserUtils::getSignUserPowerKey) .collect(Collectors.toList()); log.info(\"卖家中心标识用户权限变化sellerSignUserPowerUpdate，keys：{}\", signUserKeys); for (String key: signUserKeys) { redisUtil.setEx(key, Constant.TRUE_STR, 7, TimeUnit.HOURS); } } public static String getSignUserPowerKey(String token) { return String.format(Constant.REDIS_USER_TOKEN_POWER_UPDATE_SIGN_KEY, getPlatformFlag(), getXFlag(), token); } /** * 删除用户权限变化标识 **/ public static void delSignUserPower() { redisUtil.delete(getSignUserPowerKey(getToken())); } /** * 卖家中心强制清空用户token * * @param userId 用户id **/ public static void sellerClearUserToken(Long userId) { redisUtil.delete(getPlatAllXflagTokenGroup(Constant.PLATFORM_FLAG_SELLER, userId)); } /** * 得到平台所有端的token群组 * * @param platform 平台标识 * @param userId 用户id * @return java.util.List 平台所有端的token集合 * @author gree **/ public static List\u003cString\u003e getPlatAllXflagTokenGroup(String platform, Long userId) { return Stream.of(getPlatAndXflagTokenGroup(platform, Constant.X_REQ_H5, userId), getPlatAndXflagTokenGroup(platform, Constant.X_REQ_MINI, userId), getPlatAndXflagTokenGroup(platform, Constant.X_REQ_ANDROID, userId), getPlatAndXflagTokenGroup(platform, Constant.X_REQ_IOS, userId), getPlatAndXflagTokenGroup(platform, Constant.X_REQ_PC, userId)) .filter(CollectionUtils::isNotEmpty) .flatMap(Collection::stream) .filter(StringUtils::isNotBlank) .collect(Collectors.toList()); } /** * 得到平台对应端的token群组 * * @param platform 平台标识 * @param xflag 端标识 * @param userId 用户id * @return java.util.List 平台对应端的token群组 * @author gree **/ public static List\u003cString\u003e getPlatAndXflagTokenGroup(String platform, String xflag, Long userId) { String key = String.format(Constant.REDIS_USER_TOKEN_LIST_KEY, userId, platform, xflag); return redisUtil.lRange(key, Constant.ZERO, Constant.NEGATIVE_NUMBER_ONE); } /** * 董店注销用户 退出董店、pc商城、全员销售、卖家中心的系统 **/ public static void mallDelUser(Long userId) { List\u003cString\u003e mallUserAllToken = Stream.of(getPlatAllXflagTokenGroup(Constant.PLATFORM_FLAG_SELLER, userId), getPlatAllXflagTokenGroup(Constant.PLATFORM_FLAG_MALL, userId), getPlatAllXflagTokenGroup(Constant.PLATFORM_FLAG_ALL_SALES, userId)) .flatMap(Collection::stream) .collect(Collectors.toList()); if (CollectionUtils.isNotEmpty(mallUserAllToken)) { redisUtil.delete(mallUserAllToken); } } } HttpRequestUtil.java 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 package com.gree.ecommerce.utils; import org.springframework.web.context.request.RequestContextHolder; import org.springframework.web.context.request.ServletRequestAttributes; import javax.servlet.http.HttpServletRequest; import java.util.Optional; /** * @author A80080 * @createDate 2022/1/4 */ public class HttpRequestUtil { /** * 获取当前请求session * * @return 返回request */ public static Optional\u003cHttpServletRequest\u003e getHttpServletRequest() { return getServletRequestAttributes().map(ServletRequestAttributes::getRequest); } /** * 获取当前请求Attributes * * @return 返回Attributes */ public static Optional\u003cServletRequestAttributes\u003e getServletRequestAttributes() { return Optional.ofNullable(RequestContextHolder.getRequestAttributes()) .map(s -\u003e (ServletRequestAttributes) s); } /** * 设置请求Attributes inheritable参数为true * * @return 返回Attributes */ public static Optional\u003cServletRequestAttributes\u003e setInheritableServletRequestAttributes() { Optional\u003cServletRequestAttributes\u003e attributesOpt = getServletRequestAttributes(); attributesOpt.ifPresent(servletRequestAttributes -\u003e RequestContextHolder.setRequestAttributes(servletRequestAttributes, true)); return attributesOpt; } /** * 获取当前请求中指定的header * * @param name headerName * @return 指定headerName对应的值 */ public static Optional\u003cString\u003e getHttpHeader(String name) { return getHttpServletRequest().map(request -\u003e request.getHeader(name)); } } ","wordCount":"2312","inLanguage":"zh","datePublished":"2023-08-22T00:00:00Z","dateModified":"2023-08-22T00:00:00Z","author":{"@type":"Person","name":"xkj"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E5%B7%A5%E5%85%B7%E7%B1%BB/"},"publisher":{"@type":"Organization","name":"米二","logo":{"@type":"ImageObject","url":"https://xiaokunji.github.io/img/Q.gif"}}}</script></head><body class=dark id=top><script>localStorage.getItem("pref-theme")==="light"&&document.body.classList.remove("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://xiaokunji.github.io/zh/ accesskey=h title="米二 (Alt + H)"><img src=https://xiaokunji.github.io/img/Q.gif alt aria-label=logo height=35>米二</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button><ul class=lang-switch><li>|</li><li><a href=https://xiaokunji.github.io/en/ title=English aria-label=English>English</a></li></ul></div></div><ul id=menu><li><a href=https://xiaokunji.github.io/zh/ title=🏠主页><span>🏠主页</span></a></li><li><a href=https://xiaokunji.github.io/zh/search title="🔍搜索 (Alt + /)" accesskey=/><span>🔍搜索</span></a></li><li><a href=https://xiaokunji.github.io/zh/post title=📚文章><span>📚文章</span></a></li><li><a href=https://xiaokunji.github.io/zh/archives/ title=⏱时间轴><span>⏱时间轴</span></a></li><li><a href=https://xiaokunji.github.io/zh/tags title=🔖标签><span>🔖标签</span></a></li><li><a href=https://xiaokunji.github.io/zh/categories title=📖分类><span>📖分类</span></a></li><li><a href=https://xiaokunji.github.io/zh/links title=🤝友链><span>🤝友链</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><nav aria-label=breadcrumb><ul><a href=https://xiaokunji.github.io/zh/>content</a> <span>></span>
+<a href=https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/>java及其框架</a> <span>></span>
+<a href=https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/>Spring</a> <span>></span></ul></nav><h1 class=post-title>获取用户信息工具类</h1><div class=post-description></div><div class=post-meta><span title='2023-08-22 00:00:00 +0000 UTC'>2023-08-22</span>&nbsp;·&nbsp;5 分钟&nbsp;·&nbsp;xkj
+&nbsp;|&nbsp;分类: &nbsp;<ul class=post-categories-meta><a href=https://xiaokunji.github.io/zh/categories/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/>java及其框架</a></ul><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<span id=busuanzi_container_page_pv>&nbsp;| 访问: <span id=busuanzi_value_page_pv></span></span>
+<script src=https://cdn.staticfile.org/twikoo//twikoo.all.min.js></script><script>let url=document.documentURI,dnsUrl="https://xiaokunji.github.io/",urlSplit=url.split(dnsUrl),finalUrl=urlSplit[1];finalUrl[0]!=="/"&&(finalUrl="/"+finalUrl),twikoo.getCommentsCount({envId:null,region:null,urls:[finalUrl],includeReply:!1}).then(function(e){let t=e[0].count;const n=document.getElementById("comment_count");n.innerText=t}).catch(function(e){console.error(e)})</script>&nbsp;| 评论: &nbsp; <span id=comment_count></span></div></header><aside id=toc-container class="toc-container wide"><div class=toc><details open><summary accesskey=c title="(Alt + C)"><span class=details>目录</span></summary><div class=inner><ul><li><a href=#userutilsjava aria-label=UserUtils.java>UserUtils.java</a></li><li><a href=#httprequestutiljava aria-label=HttpRequestUtil.java>HttpRequestUtil.java</a></li></ul></div></details></div></aside><script>let activeElement,elements;window.addEventListener("DOMContentLoaded",function(){checkTocPosition(),elements=document.querySelectorAll("h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]"),activeElement=elements[0];const t=encodeURI(activeElement.getAttribute("id")).toLowerCase();document.querySelector(`.inner ul li a[href="#${t}"]`).classList.add("active")},!1),window.addEventListener("resize",function(){checkTocPosition()},!1),window.addEventListener("scroll",()=>{activeElement=Array.from(elements).find(e=>{if(getOffsetTop(e)-window.pageYOffset>0&&getOffsetTop(e)-window.pageYOffset<window.innerHeight/2)return e})||activeElement,elements.forEach(e=>{const t=encodeURI(e.getAttribute("id")).toLowerCase();e===activeElement?document.querySelector(`.inner ul li a[href="#${t}"]`).classList.add("active"):document.querySelector(`.inner ul li a[href="#${t}"]`).classList.remove("active")})},!1);const main=parseInt(getComputedStyle(document.body).getPropertyValue("--article-width"),10),toc=parseInt(getComputedStyle(document.body).getPropertyValue("--toc-width"),10),gap=parseInt(getComputedStyle(document.body).getPropertyValue("--gap"),10);function checkTocPosition(){const e=document.body.scrollWidth;e-main-toc*2-gap*4>0?document.getElementById("toc-container").classList.add("wide"):document.getElementById("toc-container").classList.remove("wide")}function getOffsetTop(e){if(!e.getClientRects().length)return 0;let t=e.getBoundingClientRect(),n=e.ownerDocument.defaultView;return t.top+n.pageYOffset}</script><div class=post-content><h1 id=userutilsjava>UserUtils.java<a hidden class=anchor aria-hidden=true href=#userutilsjava>#</a></h1><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 39
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 40
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 41
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 42
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 43
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 44
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 45
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 46
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 47
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 48
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 49
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 50
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 51
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 52
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 53
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 54
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 55
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 56
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 57
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 58
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 59
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 60
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 61
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 62
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 63
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 64
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 65
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 66
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 67
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 68
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 69
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 70
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 71
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 72
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 73
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 74
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 75
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 76
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 77
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 78
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 79
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 80
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 81
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 82
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 83
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 84
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 85
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 86
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 87
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 88
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 89
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 90
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 91
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 92
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 93
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 94
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 95
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 96
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 97
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 98
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 99
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">100
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">101
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">102
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">103
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">104
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">105
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">106
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">107
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">108
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">109
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">110
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">111
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">112
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">113
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">114
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">115
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">116
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">117
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">118
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">119
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">120
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">121
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">122
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">123
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">124
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">125
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">126
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">127
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">128
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">129
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">130
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">131
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">132
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">133
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">134
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">135
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">136
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">137
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">138
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">139
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">140
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">141
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">142
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">143
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">144
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">145
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">146
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">147
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">148
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">149
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">150
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">151
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">152
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">153
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">154
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">155
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">156
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">157
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">158
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">159
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">160
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">161
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">162
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">163
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">164
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">165
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">166
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">167
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">168
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">169
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">170
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">171
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">172
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">173
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">174
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">175
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">176
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">177
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">178
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">179
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">180
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">181
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">182
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">183
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">184
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">185
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">186
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">187
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">188
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">189
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">190
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">191
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">192
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">193
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">194
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">195
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">196
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">197
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">198
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">199
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">200
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">201
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">202
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">203
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">204
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">205
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">206
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">207
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">208
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">209
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">210
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">211
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">212
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">213
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">214
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">215
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">216
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">217
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">218
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">219
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">220
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">221
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">222
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">223
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">224
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">225
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">226
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">227
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">228
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">229
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">230
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">231
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">232
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">233
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">234
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">235
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">236
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">237
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">238
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">239
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">240
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">241
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">242
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">243
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">244
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">245
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">246
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">247
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">248
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">249
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">250
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">251
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">252
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">253
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">254
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">255
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">256
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">257
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">258
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">259
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">260
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">261
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">262
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">263
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">264
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">265
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">266
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">267
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">268
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">269
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">270
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">271
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">272
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">273
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">274
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">275
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">276
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">277
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">278
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">279
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">280
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">281
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">282
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">283
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">284
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">285
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">286
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">287
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">288
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">289
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">290
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">291
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">292
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">293
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">294
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">295
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">296
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">297
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">298
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">299
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">300
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">301
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">302
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">303
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">304
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">305
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">306
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">307
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">308
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">309
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">310
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">311
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">312
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">313
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">314
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">315
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">316
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">317
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">318
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">319
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">320
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">321
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">322
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">323
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">324
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">325
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">326
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">327
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">328
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">329
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">330
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">331
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">332
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">333
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">334
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">335
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">336
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">337
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">338
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">339
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">340
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">341
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">342
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">343
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">344
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">345
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">346
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">347
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">348
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">349
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">350
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">351
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">352
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">353
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">354
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">355
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">356
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">357
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#f92672>package</span> com.gree.ecommerce.utils<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> com.alibaba.fastjson.JSON<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> com.alibaba.fastjson.JSONObject<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> com.gree.ecommerce.config.InheritableThreadPoolTaskExecutor<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> com.gree.ecommerce.constant.Constant<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> com.gree.ecommerce.constant.ServerResultCode<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> com.gree.ecommerce.exception.BusinessException<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> com.gree.ecommerce.module.user.BaseUserRedisVO<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> com.gree.ecommerce.module.user.EocLoginUserRedisVO<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> com.gree.ecommerce.module.user.LoginUserRedisVO<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> lombok.extern.slf4j.Slf4j<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> org.apache.commons.collections4.CollectionUtils<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.util.Collection<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.util.List<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.util.Optional<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.util.concurrent.TimeUnit<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.util.function.Supplier<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.util.stream.Collectors<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.util.stream.Stream<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * 用户数据相关工具类
+</span></span></span><span style=display:flex><span><span style=color:#75715e> *
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @createDate 2021/12/15
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@Slf4j</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>UserUtils</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>static</span> RedisUtil redisUtil <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> RedisUtil<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#a6e22e>UserUtils</span><span style=color:#f92672>(</span>RedisUtil ru<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        redisUtil <span style=color:#f92672>=</span> ru<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>static</span> Supplier<span style=color:#f92672>&lt;</span>BusinessException<span style=color:#f92672>&gt;</span> resultUserNotLoginEx <span style=color:#f92672>=</span> <span style=color:#f92672>()</span> <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>new</span> BusinessException<span style=color:#f92672>(</span>ServerResultCode<span style=color:#f92672>.</span><span style=color:#a6e22e>USER_NOT_LOGGED_IN</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 从请求头中获得token =&gt; 再通过redis获取用户信息
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return 用户基础信息
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @throws BusinessException token不存在则会抛出 , 返回码为 {@link ServerResultCode#USER_NOT_LOGGED_IN }
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @createDate 2021/12/20
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> BaseUserRedisVO <span style=color:#a6e22e>getBaseUserRedisInfo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> HttpRequestUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>getHttpHeader</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>AUTHORIZATION</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>authStr <span style=color:#f92672>-&gt;</span> redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>authStr<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>str <span style=color:#f92672>-&gt;</span> JSON<span style=color:#f92672>.</span><span style=color:#a6e22e>parseObject</span><span style=color:#f92672>(</span>str<span style=color:#f92672>,</span> BaseUserRedisVO<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>orElseGet</span><span style=color:#f92672>(()</span> <span style=color:#f92672>-&gt;</span> Optional<span style=color:#f92672>.</span><span style=color:#a6e22e>ofNullable</span><span style=color:#f92672>(</span>
+</span></span><span style=display:flex><span>                        JSON<span style=color:#f92672>.</span><span style=color:#a6e22e>parseObject</span><span style=color:#f92672>(</span>InheritableThreadPoolTaskExecutor<span style=color:#f92672>.</span><span style=color:#a6e22e>THREAD_USER_INFO_CACHE</span><span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(),</span> BaseUserRedisVO<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                        <span style=color:#f92672>.</span><span style=color:#a6e22e>orElseThrow</span><span style=color:#f92672>(</span>resultUserNotLoginEx<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 从请求头中获得token =&gt; 再通过redis获取用户信息
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return 商城用户信息
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @throws BusinessException token不存在则会抛出 , 返回码为 {@link ServerResultCode#USER_NOT_LOGGED_IN }
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @createDate 2021/12/20
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> LoginUserRedisVO <span style=color:#a6e22e>getMallUserInfo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> HttpRequestUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>getHttpHeader</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>AUTHORIZATION</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>authStr <span style=color:#f92672>-&gt;</span> redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>authStr<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>str <span style=color:#f92672>-&gt;</span> JSON<span style=color:#f92672>.</span><span style=color:#a6e22e>parseObject</span><span style=color:#f92672>(</span>str<span style=color:#f92672>,</span> LoginUserRedisVO<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>orElseGet</span><span style=color:#f92672>(()-&gt;</span>
+</span></span><span style=display:flex><span>                        Optional<span style=color:#f92672>.</span><span style=color:#a6e22e>ofNullable</span><span style=color:#f92672>(</span>JSON<span style=color:#f92672>.</span><span style=color:#a6e22e>parseObject</span><span style=color:#f92672>(</span>InheritableThreadPoolTaskExecutor<span style=color:#f92672>.</span><span style=color:#a6e22e>THREAD_USER_INFO_CACHE</span><span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(),</span> LoginUserRedisVO<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                                <span style=color:#f92672>.</span><span style=color:#a6e22e>orElseThrow</span><span style=color:#f92672>(</span>resultUserNotLoginEx<span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 更新商城用户登录的redis信息
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param modify 需要修改的属性
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @author zhouMJ
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>modifyMallUserRedisInfo</span><span style=color:#f92672>(</span>LoginUserRedisVO modify<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        Stream<span style=color:#f92672>.</span><span style=color:#a6e22e>of</span><span style=color:#f92672>(</span>getPlatAllXflagTokenGroup<span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_SELLER</span><span style=color:#f92672>,</span> modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getUserId</span><span style=color:#f92672>()),</span>
+</span></span><span style=display:flex><span>                        getPlatAllXflagTokenGroup<span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_MALL</span><span style=color:#f92672>,</span> modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getUserId</span><span style=color:#f92672>()),</span>
+</span></span><span style=display:flex><span>                        getPlatAllXflagTokenGroup<span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_ALL_SALES</span><span style=color:#f92672>,</span> modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getUserId</span><span style=color:#f92672>()))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>filter</span><span style=color:#f92672>(</span>CollectionUtils<span style=color:#f92672>::</span>isNotEmpty<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>flatMap</span><span style=color:#f92672>(</span>Collection<span style=color:#f92672>::</span>stream<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>filter</span><span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>::</span>isNotBlank<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#75715e>//查出商城用户的token
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>forEach</span><span style=color:#f92672>(</span>key <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                    String redisStr <span style=color:#f92672>=</span> redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>key<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>                    <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>isNotEmpty</span><span style=color:#f92672>(</span>redisStr<span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                        LoginUserRedisVO redisVO <span style=color:#f92672>=</span> generateMallModifyVO<span style=color:#f92672>(</span>redisStr<span style=color:#f92672>,</span> modify<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>                        <span style=color:#75715e>//修改属性值
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                        redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>setEx</span><span style=color:#f92672>(</span>key<span style=color:#f92672>,</span> JSONObject<span style=color:#f92672>.</span><span style=color:#a6e22e>toJSONString</span><span style=color:#f92672>(</span>redisVO<span style=color:#f92672>),</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>REDIS_MALL_USER_LOGIN_TOKEN_TTL</span><span style=color:#f92672>,</span> TimeUnit<span style=color:#f92672>.</span><span style=color:#a6e22e>MINUTES</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>                    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>});</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 生成商城用户的redis信息修改后的属性对象
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param redisStr redis的json串
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param modify   需要修改的属性
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return LoginUserRedisVO 商城用户的redis信息修改后的属性对象
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> LoginUserRedisVO <span style=color:#a6e22e>generateMallModifyVO</span><span style=color:#f92672>(</span>String redisStr<span style=color:#f92672>,</span> LoginUserRedisVO modify<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        LoginUserRedisVO vo <span style=color:#f92672>=</span> JSONObject<span style=color:#f92672>.</span><span style=color:#a6e22e>parseObject</span><span style=color:#f92672>(</span>redisStr<span style=color:#f92672>,</span> LoginUserRedisVO<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>isNotEmpty</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getUserAcc</span><span style=color:#f92672>()))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            vo<span style=color:#f92672>.</span><span style=color:#a6e22e>setUserAcc</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getUserAcc</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>isNotEmpty</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getNickName</span><span style=color:#f92672>()))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            vo<span style=color:#f92672>.</span><span style=color:#a6e22e>setNickName</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getNickName</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>isNotEmpty</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getMobile</span><span style=color:#f92672>()))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            vo<span style=color:#f92672>.</span><span style=color:#a6e22e>setMobile</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getMobile</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>isNotEmpty</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getType</span><span style=color:#f92672>()))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            vo<span style=color:#f92672>.</span><span style=color:#a6e22e>setType</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getType</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> vo<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * eoc退出登录
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>eocLoginOut</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>//删除token信息
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>delete</span><span style=color:#f92672>(</span>getToken<span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>//删除token群组中的token值
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        String tokenGroupKey <span style=color:#f92672>=</span> String<span style=color:#f92672>.</span><span style=color:#a6e22e>format</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>REDIS_USER_TOKEN_LIST_KEY</span><span style=color:#f92672>,</span> getBaseUserRedisInfo<span style=color:#f92672>().</span><span style=color:#a6e22e>getUserId</span><span style=color:#f92672>(),</span> getPlatformFlag<span style=color:#f92672>(),</span> getXFlag<span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>lRemove</span><span style=color:#f92672>(</span>tokenGroupKey<span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>ONE</span><span style=color:#f92672>,</span> getToken<span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>//删除用户的权限变化标识
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        delSignUserPower<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 商城退出登录
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>mallLoginOut</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>//删除token信息
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>delete</span><span style=color:#f92672>(</span>getToken<span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>//删除token群组中的token值
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        String tokenGroupKey <span style=color:#f92672>=</span> String<span style=color:#f92672>.</span><span style=color:#a6e22e>format</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>REDIS_USER_TOKEN_LIST_KEY</span><span style=color:#f92672>,</span> getBaseUserRedisInfo<span style=color:#f92672>().</span><span style=color:#a6e22e>getUserId</span><span style=color:#f92672>(),</span> getPlatformFlag<span style=color:#f92672>(),</span> getXFlag<span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>lRemove</span><span style=color:#f92672>(</span>tokenGroupKey<span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>ONE</span><span style=color:#f92672>,</span> getToken<span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>//如果是卖家中心的,删除用户的权限变化标识
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>getPlatformFlag<span style=color:#f92672>().</span><span style=color:#a6e22e>equals</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_SELLER</span><span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            delSignUserPower<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 从请求头中获得token
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return 请求头token，不存在会返回空字符串
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> String <span style=color:#a6e22e>getToken</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> HttpRequestUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>getHttpHeader</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>AUTHORIZATION</span><span style=color:#f92672>).</span><span style=color:#a6e22e>orElse</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 从请求头中获得权限菜单路由
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return 请求头权限菜单路由，不存在会返回空字符串
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> String <span style=color:#a6e22e>getPowerMenuPath</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> HttpRequestUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>getHttpHeader</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>POWER_MENU_PATH</span><span style=color:#f92672>).</span><span style=color:#a6e22e>orElse</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 从请求头中获得端标识
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return 请求头端标识 不存在会返回空字符串
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> String <span style=color:#a6e22e>getXFlag</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> HttpRequestUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>getHttpHeader</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>X_FLAG</span><span style=color:#f92672>).</span><span style=color:#a6e22e>orElse</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 从请求头中获得端标识
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return 请求头端标识，不存在会返回空字符串
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> String <span style=color:#a6e22e>getPlatformFlag</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> HttpRequestUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>getHttpHeader</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG</span><span style=color:#f92672>).</span><span style=color:#a6e22e>orElse</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;&#34;</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 从请求头中获得token =&gt; 再通过redis获取用户信息
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return eoc用户信息
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @throws BusinessException token不存在则会抛出 , 返回码为 {@link ServerResultCode#USER_NOT_LOGGED_IN }
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @createDate 2021/12/20
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> EocLoginUserRedisVO <span style=color:#a6e22e>getEocUserInfo</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> HttpRequestUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>getHttpHeader</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>AUTHORIZATION</span><span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>authStr <span style=color:#f92672>-&gt;</span> redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>authStr<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>str <span style=color:#f92672>-&gt;</span> JSON<span style=color:#f92672>.</span><span style=color:#a6e22e>parseObject</span><span style=color:#f92672>(</span>str<span style=color:#f92672>,</span> EocLoginUserRedisVO<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>orElseGet</span><span style=color:#f92672>(()-&gt;</span>
+</span></span><span style=display:flex><span>                        Optional<span style=color:#f92672>.</span><span style=color:#a6e22e>ofNullable</span><span style=color:#f92672>(</span>JSON<span style=color:#f92672>.</span><span style=color:#a6e22e>parseObject</span><span style=color:#f92672>(</span>InheritableThreadPoolTaskExecutor<span style=color:#f92672>.</span><span style=color:#a6e22e>THREAD_USER_INFO_CACHE</span><span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(),</span> EocLoginUserRedisVO<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                                <span style=color:#f92672>.</span><span style=color:#a6e22e>orElseThrow</span><span style=color:#f92672>(</span>resultUserNotLoginEx<span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 更新eoc用户登录的redis信息
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param modify 需要修改的属性
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @author zhouMJ
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>modifyEocUserRedisInfo</span><span style=color:#f92672>(</span>EocLoginUserRedisVO modify<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>//查询eoc的token的key集合
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> tokenKeys <span style=color:#f92672>=</span> getPlatAllXflagTokenGroup<span style=color:#f92672>(</span>getPlatformFlag<span style=color:#f92672>(),</span> modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getUserId</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        tokenKeys<span style=color:#f92672>.</span><span style=color:#a6e22e>forEach</span><span style=color:#f92672>(</span>key <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            String redisStr <span style=color:#f92672>=</span> redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>key<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>isNotEmpty</span><span style=color:#f92672>(</span>redisStr<span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>                EocLoginUserRedisVO redisVO <span style=color:#f92672>=</span> generateEocModifyVO<span style=color:#f92672>(</span>redisStr<span style=color:#f92672>,</span> modify<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>                <span style=color:#75715e>//修改属性值
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>setEx</span><span style=color:#f92672>(</span>key<span style=color:#f92672>,</span> JSONObject<span style=color:#f92672>.</span><span style=color:#a6e22e>toJSONString</span><span style=color:#f92672>(</span>redisVO<span style=color:#f92672>),</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>REDIS_SYS_USER_LOGIN_TOKEN_TTL</span><span style=color:#f92672>,</span> TimeUnit<span style=color:#f92672>.</span><span style=color:#a6e22e>MINUTES</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>});</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 生成eoc用户的redis信息修改后的属性对象
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param redisStr redis的json串
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param modify   需要修改的属性
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return LoginUserRedisVO 用户的redis信息修改后的属性对象
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> EocLoginUserRedisVO <span style=color:#a6e22e>generateEocModifyVO</span><span style=color:#f92672>(</span>String redisStr<span style=color:#f92672>,</span> EocLoginUserRedisVO modify<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        EocLoginUserRedisVO vo <span style=color:#f92672>=</span> JSONObject<span style=color:#f92672>.</span><span style=color:#a6e22e>parseObject</span><span style=color:#f92672>(</span>redisStr<span style=color:#f92672>,</span> EocLoginUserRedisVO<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>isNotEmpty</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getUserAcc</span><span style=color:#f92672>()))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            vo<span style=color:#f92672>.</span><span style=color:#a6e22e>setUserAcc</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getUserAcc</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>isNotEmpty</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getEmpName</span><span style=color:#f92672>()))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            vo<span style=color:#f92672>.</span><span style=color:#a6e22e>setEmpName</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getEmpName</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>isNotEmpty</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getMobile</span><span style=color:#f92672>()))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            vo<span style=color:#f92672>.</span><span style=color:#a6e22e>setMobile</span><span style=color:#f92672>(</span>modify<span style=color:#f92672>.</span><span style=color:#a6e22e>getMobile</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> vo<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * eoc强制清空用户token
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param userId 用户id
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>eocClearUserToken</span><span style=color:#f92672>(</span>Long userId<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>delete</span><span style=color:#f92672>(</span>getPlatAllXflagTokenGroup<span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_EOC</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * eoc标识用户权限变化
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param userIds 用户ids
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>eocSignUserPowerUpdate</span><span style=color:#f92672>(</span>List<span style=color:#f92672>&lt;</span>Long<span style=color:#f92672>&gt;</span> userIds<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> signUserKeys <span style=color:#f92672>=</span> userIds<span style=color:#f92672>.</span><span style=color:#a6e22e>stream</span><span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>                <span style=color:#75715e>//拿到用户下的token组
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>userId <span style=color:#f92672>-&gt;</span> getPlatAndXflagTokenGroup<span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_EOC</span><span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>X_REQ_PC</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>flatMap</span><span style=color:#f92672>(</span>Collection<span style=color:#f92672>::</span>stream<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#75715e>//按照token的维度标识权限变化
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>UserUtils<span style=color:#f92672>::</span>getSignUserPowerKey<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>collect</span><span style=color:#f92672>(</span>Collectors<span style=color:#f92672>.</span><span style=color:#a6e22e>toList</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        log<span style=color:#f92672>.</span><span style=color:#a6e22e>info</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;eoc标识用户权限变化eocSignUserPowerUpdate，keys：{}&#34;</span><span style=color:#f92672>,</span> signUserKeys<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>String key<span style=color:#f92672>:</span> signUserKeys<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>setEx</span><span style=color:#f92672>(</span>key<span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>TRUE_STR</span><span style=color:#f92672>,</span> 7<span style=color:#f92672>,</span> TimeUnit<span style=color:#f92672>.</span><span style=color:#a6e22e>HOURS</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 卖家中心标识用户权限变化
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param userIds 用户ids
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>sellerSignUserPowerUpdate</span><span style=color:#f92672>(</span>List<span style=color:#f92672>&lt;</span>Long<span style=color:#f92672>&gt;</span> userIds<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> signUserKeys <span style=color:#f92672>=</span> userIds<span style=color:#f92672>.</span><span style=color:#a6e22e>stream</span><span style=color:#f92672>()</span>
+</span></span><span style=display:flex><span>                <span style=color:#75715e>//拿到用户下的token组
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>userId <span style=color:#f92672>-&gt;</span> getPlatAndXflagTokenGroup<span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_SELLER</span><span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>X_REQ_PC</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>flatMap</span><span style=color:#f92672>(</span>Collection<span style=color:#f92672>::</span>stream<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#75715e>//按照token的维度标识权限变化
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>UserUtils<span style=color:#f92672>::</span>getSignUserPowerKey<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>collect</span><span style=color:#f92672>(</span>Collectors<span style=color:#f92672>.</span><span style=color:#a6e22e>toList</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        log<span style=color:#f92672>.</span><span style=color:#a6e22e>info</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;卖家中心标识用户权限变化sellerSignUserPowerUpdate，keys：{}&#34;</span><span style=color:#f92672>,</span> signUserKeys<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span>String key<span style=color:#f92672>:</span> signUserKeys<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>setEx</span><span style=color:#f92672>(</span>key<span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>TRUE_STR</span><span style=color:#f92672>,</span> 7<span style=color:#f92672>,</span> TimeUnit<span style=color:#f92672>.</span><span style=color:#a6e22e>HOURS</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> String <span style=color:#a6e22e>getSignUserPowerKey</span><span style=color:#f92672>(</span>String token<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> String<span style=color:#f92672>.</span><span style=color:#a6e22e>format</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>REDIS_USER_TOKEN_POWER_UPDATE_SIGN_KEY</span><span style=color:#f92672>,</span>
+</span></span><span style=display:flex><span>                getPlatformFlag<span style=color:#f92672>(),</span>
+</span></span><span style=display:flex><span>                getXFlag<span style=color:#f92672>(),</span>
+</span></span><span style=display:flex><span>                token<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *  删除用户权限变化标识
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>delSignUserPower</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>delete</span><span style=color:#f92672>(</span>getSignUserPowerKey<span style=color:#f92672>(</span>getToken<span style=color:#f92672>()));</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 卖家中心强制清空用户token
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param userId 用户id
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>sellerClearUserToken</span><span style=color:#f92672>(</span>Long userId<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>delete</span><span style=color:#f92672>(</span>getPlatAllXflagTokenGroup<span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_SELLER</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 得到平台所有端的token群组
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param platform 平台标识
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param userId   用户id
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return java.util.List&lt;java.lang.String&gt; 平台所有端的token集合
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @author gree
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getPlatAllXflagTokenGroup</span><span style=color:#f92672>(</span>String platform<span style=color:#f92672>,</span> Long userId<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> Stream<span style=color:#f92672>.</span><span style=color:#a6e22e>of</span><span style=color:#f92672>(</span>getPlatAndXflagTokenGroup<span style=color:#f92672>(</span>platform<span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>X_REQ_H5</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>),</span>
+</span></span><span style=display:flex><span>                        getPlatAndXflagTokenGroup<span style=color:#f92672>(</span>platform<span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>X_REQ_MINI</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>),</span>
+</span></span><span style=display:flex><span>                        getPlatAndXflagTokenGroup<span style=color:#f92672>(</span>platform<span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>X_REQ_ANDROID</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>),</span>
+</span></span><span style=display:flex><span>                        getPlatAndXflagTokenGroup<span style=color:#f92672>(</span>platform<span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>X_REQ_IOS</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>),</span>
+</span></span><span style=display:flex><span>                        getPlatAndXflagTokenGroup<span style=color:#f92672>(</span>platform<span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>X_REQ_PC</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>filter</span><span style=color:#f92672>(</span>CollectionUtils<span style=color:#f92672>::</span>isNotEmpty<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>flatMap</span><span style=color:#f92672>(</span>Collection<span style=color:#f92672>::</span>stream<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>filter</span><span style=color:#f92672>(</span>StringUtils<span style=color:#f92672>::</span>isNotBlank<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>collect</span><span style=color:#f92672>(</span>Collectors<span style=color:#f92672>.</span><span style=color:#a6e22e>toList</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 得到平台对应端的token群组
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param platform 平台标识
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param xflag    端标识
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param userId   用户id
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return java.util.List&lt;java.lang.String&gt; 平台对应端的token群组
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @author gree
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getPlatAndXflagTokenGroup</span><span style=color:#f92672>(</span>String platform<span style=color:#f92672>,</span> String xflag<span style=color:#f92672>,</span> Long userId<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        String key <span style=color:#f92672>=</span> String<span style=color:#f92672>.</span><span style=color:#a6e22e>format</span><span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>REDIS_USER_TOKEN_LIST_KEY</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>,</span> platform<span style=color:#f92672>,</span> xflag<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>lRange</span><span style=color:#f92672>(</span>key<span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>ZERO</span><span style=color:#f92672>,</span> Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>NEGATIVE_NUMBER_ONE</span><span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *  董店注销用户 退出董店、pc商城、全员销售、卖家中心的系统
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     **/</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>mallDelUser</span><span style=color:#f92672>(</span>Long userId<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> mallUserAllToken <span style=color:#f92672>=</span> Stream<span style=color:#f92672>.</span><span style=color:#a6e22e>of</span><span style=color:#f92672>(</span>getPlatAllXflagTokenGroup<span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_SELLER</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>),</span>
+</span></span><span style=display:flex><span>                        getPlatAllXflagTokenGroup<span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_MALL</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>),</span>
+</span></span><span style=display:flex><span>                        getPlatAllXflagTokenGroup<span style=color:#f92672>(</span>Constant<span style=color:#f92672>.</span><span style=color:#a6e22e>PLATFORM_FLAG_ALL_SALES</span><span style=color:#f92672>,</span> userId<span style=color:#f92672>))</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>flatMap</span><span style=color:#f92672>(</span>Collection<span style=color:#f92672>::</span>stream<span style=color:#f92672>)</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>collect</span><span style=color:#f92672>(</span>Collectors<span style=color:#f92672>.</span><span style=color:#a6e22e>toList</span><span style=color:#f92672>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>CollectionUtils<span style=color:#f92672>.</span><span style=color:#a6e22e>isNotEmpty</span><span style=color:#f92672>(</span>mallUserAllToken<span style=color:#f92672>))</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>            redisUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>delete</span><span style=color:#f92672>(</span>mallUserAllToken<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></td></tr></table></div></div><h1 id=httprequestutiljava>HttpRequestUtil.java<a hidden class=anchor aria-hidden=true href=#httprequestutiljava>#</a></h1><div class=highlight><div style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">55
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#f92672>package</span> com.gree.ecommerce.utils<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.web.context.request.RequestContextHolder<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.web.context.request.ServletRequestAttributes<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> javax.servlet.http.HttpServletRequest<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.util.Optional<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @author A80080
+</span></span></span><span style=display:flex><span><span style=color:#75715e> * @createDate 2022/1/4
+</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>HttpRequestUtil</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 获取当前请求session
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return 返回request
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> Optional<span style=color:#f92672>&lt;</span>HttpServletRequest<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getHttpServletRequest</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> getServletRequestAttributes<span style=color:#f92672>().</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>ServletRequestAttributes<span style=color:#f92672>::</span>getRequest<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 获取当前请求Attributes
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return 返回Attributes
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> Optional<span style=color:#f92672>&lt;</span>ServletRequestAttributes<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getServletRequestAttributes</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> Optional<span style=color:#f92672>.</span><span style=color:#a6e22e>ofNullable</span><span style=color:#f92672>(</span>RequestContextHolder<span style=color:#f92672>.</span><span style=color:#a6e22e>getRequestAttributes</span><span style=color:#f92672>())</span>
+</span></span><span style=display:flex><span>                <span style=color:#f92672>.</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>s <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>(</span>ServletRequestAttributes<span style=color:#f92672>)</span> s<span style=color:#f92672>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 设置请求Attributes inheritable参数为true
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return 返回Attributes
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> Optional<span style=color:#f92672>&lt;</span>ServletRequestAttributes<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>setInheritableServletRequestAttributes</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        Optional<span style=color:#f92672>&lt;</span>ServletRequestAttributes<span style=color:#f92672>&gt;</span> attributesOpt <span style=color:#f92672>=</span> getServletRequestAttributes<span style=color:#f92672>();</span>
+</span></span><span style=display:flex><span>        attributesOpt<span style=color:#f92672>.</span><span style=color:#a6e22e>ifPresent</span><span style=color:#f92672>(</span>servletRequestAttributes <span style=color:#f92672>-&gt;</span> RequestContextHolder<span style=color:#f92672>.</span><span style=color:#a6e22e>setRequestAttributes</span><span style=color:#f92672>(</span>servletRequestAttributes<span style=color:#f92672>,</span> <span style=color:#66d9ef>true</span><span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> attributesOpt<span style=color:#f92672>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * 获取当前请求中指定的header
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     *
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @param name headerName
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     * @return 指定headerName对应的值
+</span></span></span><span style=display:flex><span><span style=color:#75715e>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> Optional<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getHttpHeader</span><span style=color:#f92672>(</span>String name<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> getHttpServletRequest<span style=color:#f92672>().</span><span style=color:#a6e22e>map</span><span style=color:#f92672>(</span>request <span style=color:#f92672>-&gt;</span> request<span style=color:#f92672>.</span><span style=color:#a6e22e>getHeader</span><span style=color:#f92672>(</span>name<span style=color:#f92672>));</span>
+</span></span><span style=display:flex><span>    <span style=color:#f92672>}</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><footer class=post-footer><ul class=post-tags><li><a href=https://xiaokunji.github.io/zh/tags/spring/>Spring</a></li><li><a href=https://xiaokunji.github.io/zh/tags/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/>java及其框架</a></li></ul><nav class=paginav><a class=prev href=https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/%E5%9B%9E%E6%94%B6%E5%89%8D%E6%8F%90/><span class=title>« 上一页</span><br><span>回收前提</span></a>
+<a class=next href=https://xiaokunji.github.io/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E7%A7%AF%E7%B4%AF/><span class=title>下一页 »</span><br><span>积累</span></a></nav></footer></article></main><footer class=footer><span>Copyright
+&copy;
+-2023
+<a href=https://xiaokunji.github.io/zh/ style=color:#939393>米二</a>
+All Rights Reserved</span>
+<span id=busuanzi_container><span class="fa fa-user">用户数:</span><span id=busuanzi_value_site_uv></span>
+<span class="fa fa-eye">访问数:</span><span id=busuanzi_value_site_pv></span></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg></a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="复制";function s(){t.innerHTML="已复制！",setTimeout(()=>{t.innerHTML="复制"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>

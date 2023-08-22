@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://xiaokunji.github.io/sitemap.xml

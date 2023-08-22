@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Python2 on 米二</title>
+    <link>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/python2/</link>
+    <description>Recent content in Python2 on 米二</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/python2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Logging</title>
+      <link>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/python2/logging/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/python2/logging/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>Pdb</title>
+      <link>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/python2/pdb/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/python2/pdb/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>问题</title>
+      <link>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/python2/%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/python2/%E9%97%AE%E9%A2%98/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>作用域</title>
+      <link>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/python2/%E4%BD%9C%E7%94%A8%E5%9F%9F/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/python2/%E4%BD%9C%E7%94%A8%E5%9F%9F/</guid>
+      <description>     </description>
+    </item>
+    
+  </channel>
+</rss>

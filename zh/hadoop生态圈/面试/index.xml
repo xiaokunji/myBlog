@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>面试 on 米二</title>
+    <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/</link>
+    <description>Recent content in 面试 on 米二</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>HBase</title>
+      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/hbase/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/hbase/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>hive</title>
+      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/hive/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/hive/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>kafka</title>
+      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/kafka/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/kafka/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>spark</title>
+      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/spark/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/spark/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>通用</title>
+      <link>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/%E9%80%9A%E7%94%A8/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/%E9%80%9A%E7%94%A8/</guid>
+      <description>     </description>
+    </item>
+    
+  </channel>
+</rss>

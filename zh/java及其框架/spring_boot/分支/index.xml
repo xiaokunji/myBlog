@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>分支 on 米二</title>
+    <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/</link>
+    <description>Recent content in 分支 on 米二</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ES-springboot</title>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/es-springboot/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/es-springboot/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>Kafka-springBoot</title>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/kafka-springboot/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/kafka-springboot/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>MongoDB-SpringBoot</title>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/mongodb-springboot/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/mongodb-springboot/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>MyBatis-SpringBoot</title>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/mybatis-springboot/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/mybatis-springboot/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>Swagger-SpringBoot</title>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/swagger-springboot/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%88%86%E6%94%AF/swagger-springboot/</guid>
+      <description>     </description>
+    </item>
+    
+  </channel>
+</rss>

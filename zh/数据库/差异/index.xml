@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>差异 on 米二</title>
+    <link>https://xiaokunji.github.io/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/</link>
+    <description>Recent content in 差异 on 米二</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL与Oracle</title>
+      <link>https://xiaokunji.github.io/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle/</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>PostgreSQL与MySQL</title>
+      <link>https://xiaokunji.github.io/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/postgresql%E4%B8%8Emysql/</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.github.io/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/postgresql%E4%B8%8Emysql/</guid>
+      <description>     </description>
+    </item>
+    
+  </channel>
+</rss>
