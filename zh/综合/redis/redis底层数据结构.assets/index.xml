@@ -2,9 +2,9 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>redis底层数据结构.assets on 米二</title>
-    <link>https://xiaokunji.github.io/myBlog/zh/%E7%BB%BC%E5%90%88/redis/redis%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.assets/</link>
+    <link>https://xiaokunji.github.io/zh/%E7%BB%BC%E5%90%88/redis/redis%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.assets/</link>
     <description>Recent content in redis底层数据结构.assets on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh</language><atom:link href="https://xiaokunji.github.io/myBlog/zh/%E7%BB%BC%E5%90%88/redis/redis%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.assets/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh</language><atom:link href="https://xiaokunji.github.io/zh/%E7%BB%BC%E5%90%88/redis/redis%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.assets/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

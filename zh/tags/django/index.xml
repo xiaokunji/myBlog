@@ -2,35 +2,35 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Django on 米二</title>
-    <link>https://xiaokunji.github.io/myBlog/zh/tags/django/</link>
+    <link>https://xiaokunji.github.io/zh/tags/django/</link>
     <description>Recent content in Django on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/myBlog/zh/tags/django/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/tags/django/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>错误</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E9%94%99%E8%AF%AF/</link>
+      <link>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E9%94%99%E8%AF%AF/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E9%94%99%E8%AF%AF/</guid>
+      <guid>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E9%94%99%E8%AF%AF/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>命令</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E5%91%BD%E4%BB%A4/</link>
+      <link>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E5%91%BD%E4%BB%A4/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E5%91%BD%E4%BB%A4/</guid>
+      <guid>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E5%91%BD%E4%BB%A4/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>重写resource</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E9%87%8D%E5%86%99resource/</link>
+      <link>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E9%87%8D%E5%86%99resource/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E9%87%8D%E5%86%99resource/</guid>
+      <guid>https://xiaokunji.github.io/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E9%87%8D%E5%86%99resource/</guid>
       <description>     </description>
     </item>
     

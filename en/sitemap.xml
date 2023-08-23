@@ -2,52 +2,52 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://xiaokunji.github.io/myBlog/en/categories/</loc>
+    <loc>https://xiaokunji.github.io/en/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://xiaokunji.github.io/myBlog/zh/categories/"
+                href="https://xiaokunji.github.io/zh/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://xiaokunji.github.io/myBlog/en/categories/"
+                href="https://xiaokunji.github.io/en/categories/"
                 />
   </url><url>
-    <loc>https://xiaokunji.github.io/myBlog/en/series/</loc>
+    <loc>https://xiaokunji.github.io/en/series/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://xiaokunji.github.io/myBlog/zh/series/"
+                href="https://xiaokunji.github.io/zh/series/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://xiaokunji.github.io/myBlog/en/series/"
+                href="https://xiaokunji.github.io/en/series/"
                 />
   </url><url>
-    <loc>https://xiaokunji.github.io/myBlog/en/tags/</loc>
+    <loc>https://xiaokunji.github.io/en/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://xiaokunji.github.io/myBlog/zh/tags/"
+                href="https://xiaokunji.github.io/zh/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://xiaokunji.github.io/myBlog/en/tags/"
+                href="https://xiaokunji.github.io/en/tags/"
                 />
   </url><url>
-    <loc>https://xiaokunji.github.io/myBlog/en/</loc>
+    <loc>https://xiaokunji.github.io/en/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://xiaokunji.github.io/myBlog/zh/"
+                href="https://xiaokunji.github.io/zh/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://xiaokunji.github.io/myBlog/en/"
+                href="https://xiaokunji.github.io/en/"
                 />
   </url>
 </urlset>

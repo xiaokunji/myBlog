@@ -2,44 +2,44 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>maven on 米二</title>
-    <link>https://xiaokunji.github.io/myBlog/zh/tags/maven/</link>
+    <link>https://xiaokunji.github.io/zh/tags/maven/</link>
     <description>Recent content in maven on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/myBlog/zh/tags/maven/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/tags/maven/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>maven打包插件</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/maven%E6%89%93%E5%8C%85%E6%8F%92%E4%BB%B6/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/maven%E6%89%93%E5%8C%85%E6%8F%92%E4%BB%B6/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/maven%E6%89%93%E5%8C%85%E6%8F%92%E4%BB%B6/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/maven%E6%89%93%E5%8C%85%E6%8F%92%E4%BB%B6/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>pom标签</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%A0%87%E7%AD%BE/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%A0%87%E7%AD%BE/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%A0%87%E7%AD%BE/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%A0%87%E7%AD%BE/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>pom打包</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/pom%E6%89%93%E5%8C%85/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>settings文件</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/settings%E6%96%87%E4%BB%B6/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/settings%E6%96%87%E4%BB%B6/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/settings%E6%96%87%E4%BB%B6/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/maven/settings%E6%96%87%E4%BB%B6/</guid>
       <description>     </description>
     </item>
     

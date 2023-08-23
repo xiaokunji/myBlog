@@ -2,107 +2,107 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Spring_Boot on 米二</title>
-    <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/</link>
+    <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/</link>
     <description>Recent content in Spring_Boot on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Actuator</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/actuator/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/actuator/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/actuator/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/actuator/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>filter</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/filter/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/filter/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/filter/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/filter/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>jpa</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/jpa/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/jpa/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/jpa/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/jpa/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>Shiro_权限管理</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/shiro_%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/shiro_%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/shiro_%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/shiro_%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>错误</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E9%94%99%E8%AF%AF/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E9%94%99%E8%AF%AF/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E9%94%99%E8%AF%AF/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E9%94%99%E8%AF%AF/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>单元测试</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>国际化</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%9B%BD%E9%99%85%E5%8C%96/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%9B%BD%E9%99%85%E5%8C%96/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%9B%BD%E9%99%85%E5%8C%96/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%9B%BD%E9%99%85%E5%8C%96/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>介绍</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E4%BB%8B%E7%BB%8D/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E4%BB%8B%E7%BB%8D/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E4%BB%8B%E7%BB%8D/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E4%BB%8B%E7%BB%8D/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>面试</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E9%9D%A2%E8%AF%95/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E9%9D%A2%E8%AF%95/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E9%9D%A2%E8%AF%95/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E9%9D%A2%E8%AF%95/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>日志</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E6%97%A5%E5%BF%97/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E6%97%A5%E5%BF%97/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E6%97%A5%E5%BF%97/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E6%97%A5%E5%BF%97/</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>小知识</title>
-      <link>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%B0%8F%E7%9F%A5%E8%AF%86/</link>
+      <link>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%B0%8F%E7%9F%A5%E8%AF%86/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/myBlog/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%B0%8F%E7%9F%A5%E8%AF%86/</guid>
+      <guid>https://xiaokunji.github.io/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring_boot/%E5%B0%8F%E7%9F%A5%E8%AF%86/</guid>
       <description>     </description>
     </item>
     
