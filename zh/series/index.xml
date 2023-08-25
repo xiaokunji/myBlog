@@ -2,71 +2,71 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Series on 米二</title>
-    <link>https://xiaokunji.github.io/zh/series/</link>
+    <link>https://xiaokunji.com/zh/series/</link>
     <description>Recent content in Series on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.github.io/zh/series/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/series/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Hadoop生态圈</title>
-      <link>https://xiaokunji.github.io/zh/series/hadoop%E7%94%9F%E6%80%81%E5%9C%88/</link>
+      <link>https://xiaokunji.com/zh/series/hadoop%E7%94%9F%E6%80%81%E5%9C%88/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/series/hadoop%E7%94%9F%E6%80%81%E5%9C%88/</guid>
+      <guid>https://xiaokunji.com/zh/series/hadoop%E7%94%9F%E6%80%81%E5%9C%88/</guid>
       <description></description>
     </item>
     
     <item>
       <title>java及其框架</title>
-      <link>https://xiaokunji.github.io/zh/series/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/</link>
+      <link>https://xiaokunji.com/zh/series/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/series/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/</guid>
+      <guid>https://xiaokunji.com/zh/series/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Linux系统</title>
-      <link>https://xiaokunji.github.io/zh/series/linux%E7%B3%BB%E7%BB%9F/</link>
+      <link>https://xiaokunji.com/zh/series/linux%E7%B3%BB%E7%BB%9F/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/series/linux%E7%B3%BB%E7%BB%9F/</guid>
+      <guid>https://xiaokunji.com/zh/series/linux%E7%B3%BB%E7%BB%9F/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Python及其框架</title>
-      <link>https://xiaokunji.github.io/zh/series/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/</link>
+      <link>https://xiaokunji.com/zh/series/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/series/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/</guid>
+      <guid>https://xiaokunji.com/zh/series/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/</guid>
       <description></description>
     </item>
     
     <item>
       <title>前端</title>
-      <link>https://xiaokunji.github.io/zh/series/%E5%89%8D%E7%AB%AF/</link>
+      <link>https://xiaokunji.com/zh/series/%E5%89%8D%E7%AB%AF/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/series/%E5%89%8D%E7%AB%AF/</guid>
+      <guid>https://xiaokunji.com/zh/series/%E5%89%8D%E7%AB%AF/</guid>
       <description></description>
     </item>
     
     <item>
       <title>数据库</title>
-      <link>https://xiaokunji.github.io/zh/series/%E6%95%B0%E6%8D%AE%E5%BA%93/</link>
+      <link>https://xiaokunji.com/zh/series/%E6%95%B0%E6%8D%AE%E5%BA%93/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/series/%E6%95%B0%E6%8D%AE%E5%BA%93/</guid>
+      <guid>https://xiaokunji.com/zh/series/%E6%95%B0%E6%8D%AE%E5%BA%93/</guid>
       <description></description>
     </item>
     
     <item>
       <title>综合</title>
-      <link>https://xiaokunji.github.io/zh/series/%E7%BB%BC%E5%90%88/</link>
+      <link>https://xiaokunji.com/zh/series/%E7%BB%BC%E5%90%88/</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.github.io/zh/series/%E7%BB%BC%E5%90%88/</guid>
+      <guid>https://xiaokunji.com/zh/series/%E7%BB%BC%E5%90%88/</guid>
       <description></description>
     </item>
     
