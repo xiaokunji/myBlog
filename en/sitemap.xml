@@ -2,40 +2,40 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://xiaokunji.com/en/categories/</loc>
+    <loc>https://xiaokunji.com/en/categories.html</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://xiaokunji.com/zh/categories/"
+                href="https://xiaokunji.com/zh/categories.html"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://xiaokunji.com/en/categories/"
+                href="https://xiaokunji.com/en/categories.html"
                 />
   </url><url>
-    <loc>https://xiaokunji.com/en/series/</loc>
+    <loc>https://xiaokunji.com/en/series.html</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://xiaokunji.com/zh/series/"
+                href="https://xiaokunji.com/zh/series.html"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://xiaokunji.com/en/series/"
+                href="https://xiaokunji.com/en/series.html"
                 />
   </url><url>
-    <loc>https://xiaokunji.com/en/tags/</loc>
+    <loc>https://xiaokunji.com/en/tags.html</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="zh"
-                href="https://xiaokunji.com/zh/tags/"
+                href="https://xiaokunji.com/zh/tags.html"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://xiaokunji.com/en/tags/"
+                href="https://xiaokunji.com/en/tags.html"
                 />
   </url><url>
     <loc>https://xiaokunji.com/en/</loc>

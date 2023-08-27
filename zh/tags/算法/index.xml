@@ -2,71 +2,71 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>算法 on 米二</title>
-    <link>https://xiaokunji.com/zh/tags/%E7%AE%97%E6%B3%95/</link>
+    <link>https://xiaokunji.com/zh/tags/%E7%AE%97%E6%B3%95.html</link>
     <description>Recent content in 算法 on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>LFU</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lfu/</link>
+      <title>LFU-最不经常使用算法</title>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lfu.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lfu/</guid>
-      <description>     </description>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lfu.html</guid>
+      <description> LFU算法-最不经常使用算法</description>
     </item>
     
     <item>
-      <title>LRU</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lru/</link>
+      <title>LRU-最少最近使用算法</title>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lru.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lru/</guid>
-      <description>     </description>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lru.html</guid>
+      <description> LRU-最少最近使用算法</description>
     </item>
     
     <item>
       <title>morris遍历(莫里斯遍历)</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/morris%E9%81%8D%E5%8E%86%E8%8E%AB%E9%87%8C%E6%96%AF%E9%81%8D%E5%8E%86/</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/morris%E9%81%8D%E5%8E%86%E8%8E%AB%E9%87%8C%E6%96%AF%E9%81%8D%E5%8E%86.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/morris%E9%81%8D%E5%8E%86%E8%8E%AB%E9%87%8C%E6%96%AF%E9%81%8D%E5%8E%86/</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/morris%E9%81%8D%E5%8E%86%E8%8E%AB%E9%87%8C%E6%96%AF%E9%81%8D%E5%8E%86.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>布隆过滤器</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>倒排索引</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95/</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95/</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>红黑树</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91/</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>排序算法</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95.html</guid>
       <description>     </description>
     </item>
     

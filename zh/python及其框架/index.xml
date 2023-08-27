@@ -2,25 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Python及其框架 on 米二</title>
-    <link>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/</link>
+    <link>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6.html</link>
     <description>Recent content in Python及其框架 on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language><atom:link href="https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Anaconda</title>
-      <link>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/anaconda/</link>
+      <link>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/anaconda.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/anaconda/</guid>
+      <guid>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/anaconda.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>pip</title>
-      <link>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/pip/</link>
+      <link>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/pip.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/pip/</guid>
+      <guid>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/pip.html</guid>
       <description>     </description>
     </item>
     
