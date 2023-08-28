@@ -116,6 +116,15 @@
     </item>
     
     <item>
+      <title>java常见面试题</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95.html</guid>
+      <description>java常见面试题</description>
+    </item>
+    
+    <item>
       <title>jpa</title>
       <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springboot/jpa.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
@@ -598,7 +607,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6.html</guid>
-      <description>     </description>
+      <description>jvm类加载机制</description>
     </item>
     
     <item>
@@ -607,15 +616,6 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%9E%9A%E4%B8%BE.html</guid>
-      <description>     </description>
-    </item>
-    
-    <item>
-      <title>面试</title>
-      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95.html</guid>
       <description>     </description>
     </item>
     
@@ -652,7 +652,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/jvm/%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.html</guid>
-      <description>     </description>
+      <description> java内存区域划分</description>
     </item>
     
     <item>
