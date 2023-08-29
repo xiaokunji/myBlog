@@ -598,7 +598,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95.html</guid>
-      <description>     </description>
+      <description> redis常见面试题</description>
     </item>
     
     <item>
@@ -670,7 +670,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/redis/%E4%B8%89%E7%A7%8D%E9%9B%86%E7%BE%A4%E6%96%B9%E5%BC%8F.html</guid>
-      <description>     </description>
+      <description>redis的三种部署方式,主从复制,哨兵模式,Cluster模式,mget性能问题</description>
     </item>
     
     <item>
@@ -688,7 +688,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.html</guid>
-      <description>     </description>
+      <description>rocketmq事务消息以及原理介绍</description>
     </item>
     
     <item>

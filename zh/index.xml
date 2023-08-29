@@ -601,6 +601,15 @@
     </item>
     
     <item>
+      <title>mysql面试</title>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95.html</guid>
+      <description>mysql常见面试题</description>
+    </item>
+    
+    <item>
       <title>MySQL与Oracle</title>
       <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/mysql%E4%B8%8Eoracle.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
@@ -1515,7 +1524,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E7%A7%AF%E7%B4%AF.html</guid>
-      <description>     </description>
+      <description>mysql改为oracle </description>
     </item>
     
     <item>
@@ -1871,20 +1880,11 @@
     
     <item>
       <title>面试</title>
-      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95.html</guid>
-      <description>     </description>
-    </item>
-    
-    <item>
-      <title>面试</title>
       <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/redis/%E9%9D%A2%E8%AF%95.html</guid>
-      <description>     </description>
+      <description> redis常见面试题</description>
     </item>
     
     <item>
@@ -2064,7 +2064,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/redis/%E4%B8%89%E7%A7%8D%E9%9B%86%E7%BE%A4%E6%96%B9%E5%BC%8F.html</guid>
-      <description>     </description>
+      <description>redis的三种部署方式,主从复制,哨兵模式,Cluster模式,mget性能问题</description>
     </item>
     
     <item>
@@ -2082,7 +2082,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E5%AE%9E%E6%88%98-%E7%BE%8E%E5%9B%A2.html</guid>
-      <description>     </description>
+      <description>设计模式实战</description>
     </item>
     
     <item>
@@ -2145,7 +2145,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E4%BA%8B%E5%8A%A1.html</guid>
-      <description>     </description>
+      <description>事务问题以及隔离级别</description>
     </item>
     
     <item>
@@ -2163,7 +2163,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.html</guid>
-      <description>     </description>
+      <description>rocketmq事务消息以及原理介绍</description>
     </item>
     
     <item>
@@ -2208,7 +2208,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E7%B4%A2%E5%BC%95.html</guid>
-      <description>     </description>
+      <description>mysql索引分类及原理</description>
     </item>
     
     <item>
@@ -2226,7 +2226,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E9%94%81.html</guid>
-      <description>     </description>
+      <description>mysql锁介绍</description>
     </item>
     
     <item>
