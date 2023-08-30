@@ -13,7 +13,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/binlog.html</guid>
-      <description>     </description>
+      <description>mysql binlog介绍以及解析</description>
     </item>
     
     <item>
@@ -31,7 +31,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB.html</guid>
-      <description>     </description>
+      <description>mysql的ddl实现机制</description>
     </item>
     
     <item>
@@ -139,7 +139,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E9%94%81.html</guid>
-      <description>mysql锁介绍</description>
+      <description>     </description>
     </item>
     
     <item>
