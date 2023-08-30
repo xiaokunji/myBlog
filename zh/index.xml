@@ -61,29 +61,11 @@
     </item>
     
     <item>
-      <title>Bus</title>
-      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/bus.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/bus.html</guid>
-      <description>     </description>
-    </item>
-    
-    <item>
       <title>centos命令</title>
       <link>https://xiaokunji.com/zh/linux%E7%B3%BB%E7%BB%9F/centos/centos%E5%91%BD%E4%BB%A4.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/linux%E7%B3%BB%E7%BB%9F/centos/centos%E5%91%BD%E4%BB%A4.html</guid>
-      <description>     </description>
-    </item>
-    
-    <item>
-      <title>Config</title>
-      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/config.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/config.html</guid>
       <description>     </description>
     </item>
     
@@ -151,15 +133,6 @@
     </item>
     
     <item>
-      <title>Eureka</title>
-      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/eureka.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/eureka.html</guid>
-      <description>     </description>
-    </item>
-    
-    <item>
       <title>filter</title>
       <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springboot/filter.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
@@ -184,15 +157,6 @@
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%B9%B6%E5%8F%91/fork_join.html</guid>
       <description> java 的forkjoin</description>
-    </item>
-    
-    <item>
-      <title>Gateway</title>
-      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/gateway.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/gateway.html</guid>
-      <description>gateway介绍以及限流算法</description>
     </item>
     
     <item>
@@ -619,15 +583,6 @@
     </item>
     
     <item>
-      <title>Nacos</title>
-      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/nacos.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/nacos.html</guid>
-      <description>     </description>
-    </item>
-    
-    <item>
       <title>Netty</title>
       <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/netty.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
@@ -660,15 +615,6 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/oauth2.html</guid>
-      <description>     </description>
-    </item>
-    
-    <item>
-      <title>openFeign</title>
-      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/openfeign.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/openfeign.html</guid>
       <description>     </description>
     </item>
     
@@ -813,15 +759,6 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springboot/shiro_%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86.html</guid>
-      <description>     </description>
-    </item>
-    
-    <item>
-      <title>Sleuth</title>
-      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/sleuth.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/sleuth.html</guid>
       <description>     </description>
     </item>
     
@@ -1713,15 +1650,6 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springboot/%E4%BB%8B%E7%BB%8D.html</guid>
-      <description>     </description>
-    </item>
-    
-    <item>
-      <title>介绍</title>
-      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/%E4%BB%8B%E7%BB%8D.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springcloud/%E4%BB%8B%E7%BB%8D.html</guid>
       <description>     </description>
     </item>
     
