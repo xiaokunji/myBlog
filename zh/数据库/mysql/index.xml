@@ -26,19 +26,19 @@
     
     <item>
       <title>DDL实现机制和分类</title>
-      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB.html</link>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/DDL%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/ddl%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB.html</guid>
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/DDL%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E5%92%8C%E5%88%86%E7%B1%BB.html</guid>
       <description>mysql的ddl实现机制</description>
     </item>
     
     <item>
       <title>MyCat</title>
-      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/mycat.html</link>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/MyCat.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/mycat.html</guid>
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/MyCat.html</guid>
       <description>     </description>
     </item>
     
@@ -71,19 +71,19 @@
     
     <item>
       <title>多版本并发控制(MVCC)</title>
-      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6mvcc.html</link>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6MVCC.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6mvcc.html</guid>
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6MVCC.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>高级SQL</title>
-      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E9%AB%98%E7%BA%A7sql.html</link>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E9%AB%98%E7%BA%A7SQL.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E9%AB%98%E7%BA%A7sql.html</guid>
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E9%AB%98%E7%BA%A7SQL.html</guid>
       <description>     </description>
     </item>
     

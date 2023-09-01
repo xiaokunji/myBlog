@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Oracle on 米二</title>
+    <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/Oracle.html</link>
+    <description>Recent content in Oracle on 米二</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language><atom:link href="https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/Oracle/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>索引</title>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/Oracle/%E7%B4%A2%E5%BC%95.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/Oracle/%E7%B4%A2%E5%BC%95.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>游标和存储过程</title>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/Oracle/%E6%B8%B8%E6%A0%87%E5%92%8C%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/Oracle/%E6%B8%B8%E6%A0%87%E5%92%8C%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B.html</guid>
+      <description>     </description>
+    </item>
+    
+  </channel>
+</rss>

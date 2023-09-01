@@ -9,46 +9,46 @@
     <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/series/%E7%BB%BC%E5%90%88/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>analysis</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/analysis.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/analysis.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/analysis.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>Docker_Swarm</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/docker_swarm.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/Docker_Swarm.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/docker_swarm.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/Docker_Swarm.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>Docker-Compose</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/docker-compose.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/Docker-Compose.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/docker-compose.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/Docker-Compose.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>docker&#43;SpringBoot</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/docker&#43;springboot.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/docker&#43;SpringBoot.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/docker&#43;springboot.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/docker/docker&#43;SpringBoot.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>es优化</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/es%E4%BC%98%E5%8C%96.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/es%E4%BC%98%E5%8C%96.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/es%E4%BC%98%E5%8C%96.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/es%E4%BC%98%E5%8C%96.html</guid>
       <description>     </description>
     </item>
     
@@ -99,19 +99,19 @@
     
     <item>
       <title>HTTPS</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/https.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/HTTPS.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/https.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/HTTPS.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>IaaS，PaaS，SaaS，CaaS</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/iaaspaassaascaas.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/IaaSPaaSSaaSCaaS.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/iaaspaassaascaas.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/IaaSPaaSSaaSCaaS.html</guid>
       <description>     </description>
     </item>
     
@@ -126,19 +126,19 @@
     
     <item>
       <title>IO模型</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/IO%E6%A8%A1%E5%9E%8B.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/io%E6%A8%A1%E5%9E%8B.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/IO%E6%A8%A1%E5%9E%8B.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>javaEE</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/javaee.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/javaEE.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/javaee.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/javaEE.html</guid>
       <description>     </description>
     </item>
     
@@ -162,37 +162,37 @@
     
     <item>
       <title>Kong</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/kong.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/Kong.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/kong.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/Kong.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>LFU-最不经常使用算法</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lfu.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/LFU.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lfu.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/LFU.html</guid>
       <description> LFU算法-最不经常使用算法</description>
     </item>
     
     <item>
       <title>Logstash</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/logstash.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/Logstash.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/logstash.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/Logstash.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>LRU-最少最近使用算法</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lru.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/LRU.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/lru.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/LRU.html</guid>
       <description> LRU-最少最近使用算法</description>
     </item>
     
@@ -207,55 +207,55 @@
     
     <item>
       <title>Netty</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/netty.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/Netty.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/netty.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/Netty.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>Nginx</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E6%9C%8D%E5%8A%A1%E5%99%A8/nginx.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E6%9C%8D%E5%8A%A1%E5%99%A8/Nginx.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E6%9C%8D%E5%8A%A1%E5%99%A8/nginx.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E6%9C%8D%E5%8A%A1%E5%99%A8/Nginx.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>Nginx和uwsgi</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E6%9C%8D%E5%8A%A1%E5%99%A8/nginx%E5%92%8Cuwsgi.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E6%9C%8D%E5%8A%A1%E5%99%A8/Nginx%E5%92%8Cuwsgi.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E6%9C%8D%E5%8A%A1%E5%99%A8/nginx%E5%92%8Cuwsgi.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E6%9C%8D%E5%8A%A1%E5%99%A8/Nginx%E5%92%8Cuwsgi.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>OAuth2</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/oauth2.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/OAuth2.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/oauth2.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/OAuth2.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>OpenResty</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9C%8D%E5%8A%A1%E5%99%A8/openresty.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9C%8D%E5%8A%A1%E5%99%A8/OpenResty.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9C%8D%E5%8A%A1%E5%99%A8/openresty.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9C%8D%E5%8A%A1%E5%99%A8/OpenResty.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>painless_脚本</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/painless_%E8%84%9A%E6%9C%AC.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/painless_%E8%84%9A%E6%9C%AC.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/painless_%E8%84%9A%E6%9C%AC.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/painless_%E8%84%9A%E6%9C%AC.html</guid>
       <description>     </description>
     </item>
     
@@ -270,10 +270,10 @@
     
     <item>
       <title>Redis的淘汰策略LRU与LFU</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5LRU%E4%B8%8ELFU.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5lru%E4%B8%8Elfu.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/redis/redis%E7%9A%84%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5LRU%E4%B8%8ELFU.html</guid>
       <description>     </description>
     </item>
     
@@ -288,46 +288,46 @@
     
     <item>
       <title>Saas的数据隔离</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/%E6%9E%B6%E6%9E%84/saas%E7%9A%84%E6%95%B0%E6%8D%AE%E9%9A%94%E7%A6%BB.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/%E6%9E%B6%E6%9E%84/Saas%E7%9A%84%E6%95%B0%E6%8D%AE%E9%9A%94%E7%A6%BB.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/%E6%9E%B6%E6%9E%84/saas%E7%9A%84%E6%95%B0%E6%8D%AE%E9%9A%94%E7%A6%BB.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/%E6%9E%B6%E6%9E%84/Saas%E7%9A%84%E6%95%B0%E6%8D%AE%E9%9A%94%E7%A6%BB.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>Serviceless</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/serviceless.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/Serviceless.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/serviceless.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/Serviceless.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>SOA架构和微服务架构的区别</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/%E6%9E%B6%E6%9E%84/soa%E6%9E%B6%E6%9E%84%E5%92%8C%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E7%9A%84%E5%8C%BA%E5%88%AB.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/%E6%9E%B6%E6%9E%84/SOA%E6%9E%B6%E6%9E%84%E5%92%8C%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E7%9A%84%E5%8C%BA%E5%88%AB.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/%E6%9E%B6%E6%9E%84/soa%E6%9E%B6%E6%9E%84%E5%92%8C%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E7%9A%84%E5%8C%BA%E5%88%AB.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/%E6%9E%B6%E6%9E%84/SOA%E6%9E%B6%E6%9E%84%E5%92%8C%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E7%9A%84%E5%8C%BA%E5%88%AB.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>Spark</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/Spark.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/spark.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/Spark.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>TCP</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/tcp.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/TCP.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/tcp.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/TCP.html</guid>
       <description>     </description>
     </item>
     
@@ -342,10 +342,10 @@
     
     <item>
       <title>Tomcat</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9C%8D%E5%8A%A1%E5%99%A8/Tomcat.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9C%8D%E5%8A%A1%E5%99%A8/tomcat.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9C%8D%E5%8A%A1%E5%99%A8/Tomcat.html</guid>
       <description>     </description>
     </item>
     
@@ -369,10 +369,10 @@
     
     <item>
       <title>安装与部署</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%83%A8%E7%BD%B2.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketMQ/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%83%A8%E7%BD%B2.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%83%A8%E7%BD%B2.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketMQ/%E5%AE%89%E8%A3%85%E4%B8%8E%E9%83%A8%E7%BD%B2.html</guid>
       <description>  </description>
     </item>
     
@@ -396,19 +396,19 @@
     
     <item>
       <title>测试不同版本的IE浏览器</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%B5%8B%E8%AF%95/%E6%B5%8B%E8%AF%95%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84ie%E6%B5%8F%E8%A7%88%E5%99%A8.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%B5%8B%E8%AF%95/%E6%B5%8B%E8%AF%95%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84IE%E6%B5%8F%E8%A7%88%E5%99%A8.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%B5%8B%E8%AF%95/%E6%B5%8B%E8%AF%95%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84ie%E6%B5%8F%E8%A7%88%E5%99%A8.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%B5%8B%E8%AF%95/%E6%B5%8B%E8%AF%95%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84IE%E6%B5%8F%E8%A7%88%E5%99%A8.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>存储</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%AD%98%E5%82%A8.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%AD%98%E5%82%A8.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%AD%98%E5%82%A8.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%AD%98%E5%82%A8.html</guid>
       <description>     </description>
     </item>
     
@@ -432,10 +432,10 @@
     
     <item>
       <title>打分机制</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%89%93%E5%88%86%E6%9C%BA%E5%88%B6.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%89%93%E5%88%86%E6%9C%BA%E5%88%B6.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%89%93%E5%88%86%E6%9C%BA%E5%88%B6.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%89%93%E5%88%86%E6%9C%BA%E5%88%B6.html</guid>
       <description>     </description>
     </item>
     
@@ -477,10 +477,10 @@
     
     <item>
       <title>分页实现</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0.html</guid>
       <description>     </description>
     </item>
     
@@ -495,19 +495,19 @@
     
     <item>
       <title>概念介绍</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>高性能保证</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketMQ/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketMQ/%E9%AB%98%E6%80%A7%E8%83%BD%E4%BF%9D%E8%AF%81.html</guid>
       <description>     </description>
     </item>
     
@@ -540,10 +540,10 @@
     
     <item>
       <title>集群模式</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F.html</guid>
       <description>     </description>
     </item>
     
@@ -585,10 +585,10 @@
     
     <item>
       <title>介绍</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E4%BB%8B%E7%BB%8D.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketMQ/%E4%BB%8B%E7%BB%8D.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E4%BB%8B%E7%BB%8D.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketMQ/%E4%BB%8B%E7%BB%8D.html</guid>
       <description>     </description>
     </item>
     
@@ -603,10 +603,10 @@
     
     <item>
       <title>面试</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E9%9D%A2%E8%AF%95.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketMQ/%E9%9D%A2%E8%AF%95.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E9%9D%A2%E8%AF%95.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketMQ/%E9%9D%A2%E8%AF%95.html</guid>
       <description>     </description>
     </item>
     
@@ -630,10 +630,10 @@
     
     <item>
       <title>命令</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%91%BD%E4%BB%A4.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E5%91%BD%E4%BB%A4.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%91%BD%E4%BB%A4.html</guid>
       <description>     </description>
     </item>
     
@@ -684,19 +684,19 @@
     
     <item>
       <title>事务消息</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketMQ/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketmq/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/rocketMQ/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.html</guid>
       <description>     </description>
     </item>
     
     <item>
       <title>数据类型</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticsearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html</guid>
       <description>     </description>
     </item>
     
@@ -738,10 +738,10 @@
     
     <item>
       <title>远程调试</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/idea/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/idea/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95.html</guid>
       <description>     </description>
     </item>
     

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Java基础 on 米二</title>
+    <link>https://xiaokunji.com/zh/tags/Java%E5%9F%BA%E7%A1%80.html</link>
+    <description>Recent content in Java基础 on 米二</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Tue, 22 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/tags/Java%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>IO流</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/IO%E6%B5%81.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/IO%E6%B5%81.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>java8</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/java8.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/java8.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>java常见面试题</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95.html</guid>
+      <description>java常见面试题</description>
+    </item>
+    
+    <item>
+      <title>lombok</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/lombok.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>SPI</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/SPI.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/SPI.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>调试体系</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E8%B0%83%E8%AF%95%E4%BD%93%E7%B3%BB.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>动态字节码技术</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%8A%A8%E6%80%81%E5%AD%97%E8%8A%82%E7%A0%81%E6%8A%80%E6%9C%AF.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%8A%A8%E6%80%81%E5%AD%97%E8%8A%82%E7%A0%81%E6%8A%80%E6%9C%AF.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>泛型</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%B3%9B%E5%9E%8B.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%B3%9B%E5%9E%8B.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>枚举</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%9E%9A%E4%B8%BE.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%9E%9A%E4%B8%BE.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>时间</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%97%B6%E9%97%B4.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E6%97%B6%E9%97%B4.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>异常</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%BC%82%E5%B8%B8.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%BC%82%E5%B8%B8.html</guid>
+      <description>     </description>
+    </item>
+    
+  </channel>
+</rss>
