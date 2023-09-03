@@ -22,7 +22,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%B9%B6%E5%8F%91/Lock.html</guid>
-      <description>     </description>
+      <description>AQS详解以及其框架原理</description>
     </item>
     
     <item>
@@ -40,7 +40,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%B9%B6%E5%8F%91/%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8%E9%9B%86%E5%90%88.html</guid>
-      <description>     </description>
+      <description>ConcurrentHashMap原理</description>
     </item>
     
     <item>
@@ -49,7 +49,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E5%B9%B6%E5%8F%91/%E5%85%B3%E9%94%AE%E8%AF%8D.html</guid>
-      <description>     </description>
+      <description>java关键词原理剖析</description>
     </item>
     
     <item>

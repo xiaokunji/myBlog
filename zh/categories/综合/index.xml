@@ -117,11 +117,11 @@
     
     <item>
       <title>IO多路复用</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/io%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.html</guid>
-      <description>     </description>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.html</guid>
+      <description>IO多路复用原理</description>
     </item>
     
     <item>
@@ -130,7 +130,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/IO%E6%A8%A1%E5%9E%8B.html</guid>
-      <description>     </description>
+      <description>各种IO模型分类</description>
     </item>
     
     <item>
@@ -265,7 +265,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/python%E6%90%AD%E5%BB%BAidle%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/python%E6%90%AD%E5%BB%BAidle%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83.html</guid>
-      <description>     </description>
+      <description>sublime下搭建python环境</description>
     </item>
     
     <item>
@@ -301,7 +301,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/Serviceless.html</guid>
-      <description>     </description>
+      <description>Serverless介绍 </description>
     </item>
     
     <item>
@@ -328,7 +328,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/TCP.html</guid>
-      <description>     </description>
+      <description>TCP相关小知识 </description>
     </item>
     
     <item>
@@ -337,7 +337,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/timingwheel.html</guid>
-      <description>     </description>
+      <description>时间轮算法介绍</description>
     </item>
     
     <item>
@@ -382,7 +382,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%AD%A3%E5%88%99/%E6%A1%88%E4%BE%8B.html</guid>
-      <description>     </description>
+      <description>正则高阶用法</description>
     </item>
     
     <item>
@@ -391,7 +391,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8.html</guid>
-      <description>     </description>
+      <description> 布隆过滤器原理介绍</description>
     </item>
     
     <item>
@@ -400,7 +400,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%B5%8B%E8%AF%95/%E6%B5%8B%E8%AF%95%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84IE%E6%B5%8F%E8%A7%88%E5%99%A8.html</guid>
-      <description>     </description>
+      <description>测试不同版本的IE</description>
     </item>
     
     <item>
@@ -427,7 +427,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/python%E6%90%AD%E5%BB%BAidle%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/%E9%94%99%E8%AF%AF.html</guid>
-      <description>     </description>
+      <description>sublime下搭建python环境-错误集锦</description>
     </item>
     
     <item>
@@ -463,7 +463,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/%E5%A4%9A%E7%A7%9F%E6%88%B7%E6%A8%A1%E5%BC%8F.html</guid>
-      <description>     </description>
+      <description>k8s多租户问题</description>
     </item>
     
     <item>
@@ -517,7 +517,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91.html</guid>
-      <description>     </description>
+      <description>红黑树原理介绍</description>
     </item>
     
     <item>
