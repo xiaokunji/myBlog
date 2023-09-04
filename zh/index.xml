@@ -118,10 +118,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>analysis</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/analysis.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/analysis.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/analysis.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/analysis.html</guid>
       <description>     </description>
     </item>
     
@@ -208,10 +208,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>es优化</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/es%E4%BC%98%E5%8C%96.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/es%E4%BC%98%E5%8C%96.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/es%E4%BC%98%E5%8C%96.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/es%E4%BC%98%E5%8C%96.html</guid>
       <description>     </description>
     </item>
     
@@ -577,10 +577,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>Logstash</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/Logstash.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/Logstash.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/Logstash.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/Logstash.html</guid>
       <description>     </description>
     </item>
     
@@ -712,10 +712,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>painless_脚本</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/painless_%E8%84%9A%E6%9C%AC.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/painless_%E8%84%9A%E6%9C%AC.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/painless_%E8%84%9A%E6%9C%AC.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/painless_%E8%84%9A%E6%9C%AC.html</guid>
       <description>     </description>
     </item>
     
@@ -1180,11 +1180,11 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>存储</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%AD%98%E5%82%A8.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E5%AD%98%E5%82%A8.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%AD%98%E5%82%A8.html</guid>
-      <description>     </description>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E5%AD%98%E5%82%A8.html</guid>
+      <description>es存储相关知识</description>
     </item>
     
     <item>
@@ -1261,10 +1261,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>打分机制</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%89%93%E5%88%86%E6%9C%BA%E5%88%B6.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E6%89%93%E5%88%86%E6%9C%BA%E5%88%B6.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%89%93%E5%88%86%E6%9C%BA%E5%88%B6.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E6%89%93%E5%88%86%E6%9C%BA%E5%88%B6.html</guid>
       <description>     </description>
     </item>
     
@@ -1414,10 +1414,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>分页实现</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E5%88%86%E9%A1%B5%E5%AE%9E%E7%8E%B0.html</guid>
       <description>     </description>
     </item>
     
@@ -1432,10 +1432,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>概念介绍</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D.html</guid>
       <description>     </description>
     </item>
     
@@ -1549,11 +1549,11 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>基本搭建</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/%E5%9F%BA%E6%9C%AC%E6%90%AD%E5%BB%BA.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/%E5%9F%BA%E6%9C%AC%E6%90%AD%E5%BB%BA.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/%E5%9F%BA%E6%9C%AC%E6%90%AD%E5%BB%BA.html</guid>
-      <description>     </description>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/%E5%9F%BA%E6%9C%AC%E6%90%AD%E5%BB%BA.html</guid>
+      <description>ELK的基本搭建</description>
     </item>
     
     <item>
@@ -1594,11 +1594,11 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>集群模式</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F.html</guid>
-      <description>     </description>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F.html</guid>
+      <description> es的集群模式介绍</description>
     </item>
     
     <item>
@@ -1747,10 +1747,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>介绍</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/%E4%BB%8B%E7%BB%8D.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/%E4%BB%8B%E7%BB%8D.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/%E4%BB%8B%E7%BB%8D.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/%E4%BB%8B%E7%BB%8D.html</guid>
       <description>     </description>
     </item>
     
@@ -2017,10 +2017,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>命令</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%91%BD%E4%BB%A4.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E5%91%BD%E4%BB%A4.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E5%91%BD%E4%BB%A4.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E5%91%BD%E4%BB%A4.html</guid>
       <description>     </description>
     </item>
     
@@ -2179,10 +2179,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>数据类型</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/elasticSearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/ElasticSearch/%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B.html</guid>
       <description>     </description>
     </item>
     
@@ -2314,10 +2314,10 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     
     <item>
       <title>学习优先级(导论)</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/%E5%AD%A6%E4%B9%A0%E4%BC%98%E5%85%88%E7%BA%A7%E5%AF%BC%E8%AE%BA.html</link>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/%E5%AD%A6%E4%B9%A0%E4%BC%98%E5%85%88%E7%BA%A7%E5%AF%BC%E8%AE%BA.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/elk/%E5%AD%A6%E4%B9%A0%E4%BC%98%E5%85%88%E7%BA%A7%E5%AF%BC%E8%AE%BA.html</guid>
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/%E5%AD%A6%E4%B9%A0%E4%BC%98%E5%85%88%E7%BA%A7%E5%AF%BC%E8%AE%BA.html</guid>
       <description>     </description>
     </item>
     
