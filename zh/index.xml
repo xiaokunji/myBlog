@@ -311,7 +311,7 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/http.html</guid>
-      <description>     </description>
+      <description>http相关知识</description>
     </item>
     
     <item>
@@ -356,7 +356,7 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/Ioc%E6%8E%A7%E5%88%B6%E7%BF%BB%E8%BD%AC%E5%92%8CDI%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5.html</guid>
-      <description>     </description>
+      <description>springIOC</description>
     </item>
     
     <item>
@@ -1049,7 +1049,7 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/Kubernetes/%E5%AE%89%E8%A3%85.html</guid>
-      <description>     </description>
+      <description>k8s安装教程</description>
     </item>
     
     <item>
@@ -1751,7 +1751,7 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/ELK/%E4%BB%8B%E7%BB%8D.html</guid>
-      <description>     </description>
+      <description>ELK介绍</description>
     </item>
     
     <item>
