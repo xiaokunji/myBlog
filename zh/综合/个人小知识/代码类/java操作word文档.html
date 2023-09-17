@@ -1,235 +1,236 @@
-<!doctype html><html lang=zh dir=auto><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>java操作word文档 | 米二</title><meta name=keywords content=" 介绍:, 使用"><meta name=description content="     "><meta name=author content="xkj"><link rel=canonical href=https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB/java%E6%93%8D%E4%BD%9Cword%E6%96%87%E6%A1%A3.html><link crossorigin=anonymous href=/assets/css/stylesheet.b3faf608c544858ba700943ffe182cb647f38432d29a07d73234965beacb26f6.css integrity="sha256-s/r2CMVEhYunAJQ//hgstkfzhDLSmgfXMjSWW+rLJvY=" rel="preload stylesheet" as=style><script defer crossorigin=anonymous src=/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG+9vmJ0cTS+ovo0FeA=" onload=hljs.initHighlightingOnLoad()></script>
-<link rel=icon href=https://xiaokunji.com/img/Q.svg><link rel=icon type=image/png sizes=16x16 href=https://xiaokunji.com/img/Q.svg><link rel=icon type=image/png sizes=32x32 href=https://xiaokunji.com/img/Q.svg><link rel=apple-touch-icon href=https://xiaokunji.com/Q.svg><link rel=mask-icon href=https://xiaokunji.com/Q.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh href=https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB/java%E6%93%8D%E4%BD%9Cword%E6%96%87%E6%A1%A3.html><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta property="og:title" content="java操作word文档"><meta property="og:description" content="     "><meta property="og:type" content="article"><meta property="og:url" content="https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB/java%E6%93%8D%E4%BD%9Cword%E6%96%87%E6%A1%A3.html"><meta property="article:section" content="综合"><meta property="article:published_time" content="2023-08-22T00:00:00+00:00"><meta property="article:modified_time" content="2023-08-22T22:36:07+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="java操作word文档"><meta name=twitter:description content="     "><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":5,"name":"java操作word文档","item":"https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB/java%E6%93%8D%E4%BD%9Cword%E6%96%87%E6%A1%A3.html"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"java操作word文档","name":"java操作word文档","description":"     ","keywords":[" 介绍:"," 使用"],"articleBody":"介绍: 该代码支持:\n填充work中的占位符(仅是填充,不能动态加格式之类) 将work转化为html 使用 pom.xml\norg.apache.poi poi-ooxml ${poi.version} org.apache.poi poi-ooxml-schemas ${poi.version} org.apache.poi ooxml-schemas 1.4 org.apache.poi poi-scratchpad ${poi.version} fr.opensagres.xdocreport xdocreport 1.0.6 wordUtils\npublic static HWPFDocument replaceTables2003(String filePath, Map map) throws Exception { //logger.info(\"替换word2003文档表格内容，文档路径:{}，要替换的内容:{}\", filePath, JsonUtil.toJSONString(map)); if (StringUtils.isBlank(filePath) || MapUtils.isEmpty(map)) { return null; } try (FileInputStream is = new FileInputStream(filePath)) { HWPFDocument document = new HWPFDocument(is); Range range = document.getRange(); for (Entry e : map.entrySet()) { String value = null == e.getValue() ? \"\" : (String) e.getValue(); range.replaceText(e.getKey(), value); } return document; } catch (Exception e) { logger.error(\"替换word2003文档表格内容失败:\" + e.getMessage(), e); throw e; } } public static XWPFDocument replaceTables2007(String filePath, Map map) throws Exception { //logger.info(\"替换word2007文档表格内容，文档路径:{}，要替换的内容:{}\", filePath, JsonUtil.toJSONString(map)); if (StringUtils.isBlank(filePath) || MapUtils.isEmpty(map)) { return null; } XWPFDocument document = new XWPFDocument(POIXMLDocument.openPackage(filePath)); /* 替换段落中的指定文字 */ Iterator itPara = document.getParagraphsIterator(); while (itPara.hasNext()) { XWPFParagraph paragraph = itPara.next(); Set set = map.keySet(); for (String key : set) { List run = paragraph.getRuns(); for (XWPFRun xwpfRun : run) { if (xwpfRun.getText(xwpfRun.getTextPosition()) != null \u0026\u0026 xwpfRun.getText(xwpfRun.getTextPosition()).contains(key)) { //参数0表示生成的文字是要从哪一个地方开始放置,设置文字从位置0开始 就可以把原来的文字全部替换掉了 String text = xwpfRun.getText(xwpfRun.getTextPosition()); String value = null == map.get(key) ? \"\" : (String) map.get(key); if (key.contains(\"#\") || key.contains(\"$\")) { text = text.replaceAll(Pattern.quote(key), value); } else { text = text.replaceAll(key, value); } xwpfRun.setText(text, 0); } } } } // 表格内容 Iterator it = document.getTablesIterator(); while (it.hasNext()) { XWPFTable table = it.next(); int rcount = table.getNumberOfRows(); for (int i = 0; i \u003c rcount; i++) { XWPFTableRow row = table.getRow(i); List cells = row.getTableCells(); for (XWPFTableCell cell : cells) { for (Entry e : map.entrySet()) { if (cell.getText().equals(e.getKey())) { // 删除原来内容 cell.removeParagraph(0); if (e.getValue() != null) { // 写入新内容 cell.setText((String) e.getValue()); } } } } } } return document; } public static String docToHtml(String wordPath, String fileName) { logger.info(\"将word2003转换成html，word文件路径:{}，word文件名:{}\", wordPath, fileName); InputStream input = null; ByteArrayOutputStream outStream = null; try { input = new FileInputStream(wordPath + File.separator + fileName); // 初始化转换器 WordToHtmlConverter converter = new WordToHtmlConverter(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()); // 保存文档中的图片 converter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -\u003e { // 设定图片路径 // return srcPath + File.separator + suggestedName; return suggestedName; }); // word2003 HWPFDocument wordDocument = new HWPFDocument(input); converter.processDocument(wordDocument); // 设定图片 List pics = wordDocument.getPicturesTable().getAllPictures(); if (CollectionUtils.isNotEmpty(pics)) { // 存储图片，根据给定的名称 for (Picture pic : pics) { // 将文件直接写出去 pic.writeImageContent(new FileOutputStream(new File(wordPath, pic.suggestFullFileName()))); } } Document docHtml = converter.getDocument(); DOMSource domSource = new DOMSource(docHtml); outStream = new ByteArrayOutputStream(); StreamResult streamResult = new StreamResult(outStream); TransformerFactory tf = TransformerFactory.newInstance(); Transformer serializer = tf.newTransformer(); serializer.setOutputProperty(OutputKeys.ENCODING, Constant.FILE_ENCODING); serializer.setOutputProperty(OutputKeys.INDENT, \"yes\"); serializer.setOutputProperty(OutputKeys.METHOD, \"html\"); serializer.transform(domSource, streamResult); // 文件名前缀 String prefix = CommonUtils.getFilePrefix(fileName); String htmlPath = wordPath + File.separator + prefix + \".html\"; logger.info(\"将word2003转换成html，html路径为:{}\", htmlPath); File target = new File(htmlPath); FileUtils.writeStringToFile(target, new String(outStream.toByteArray()), Constant.FILE_ENCODING); logger.info(\"将word2003转换成html---成功\"); return htmlPath; } catch (Exception e) { logger.error(\"将word2003转换成html失败:\" + e.getMessage(), e); throw new RuntimeException(\"失败\"); } finally { IOUtils.closeOutputStream(outStream); IOUtils.closeInputStream(input); } } public static String docxToHtml(String wordPath, String fileName) { logger.info(\"将word2007转换成html，word文件路径:{}，word文件名:{}\", wordPath, fileName); OutputStreamWriter writer = null; FileInputStream fis = null; try { String sourceFileName = wordPath + File.separator + fileName; // 文件名前缀 String prefix = CommonUtils.getFilePrefix(fileName); String targetFileName = wordPath + File.separator + prefix + \".html\"; logger.info(\"将word2007转换成html，html路径为:{}\", targetFileName); // 图片存放路径 String imagePathStr = wordPath + \"/image/\"; fis = new FileInputStream(sourceFileName); XWPFDocument document = new XWPFDocument(fis); XHTMLOptions options = XHTMLOptions.create(); File imgFile = new File(imagePathStr); if (!imgFile.exists()) { imgFile.mkdirs(); } // 存放图片的文件夹 options.setExtractor(new FileImageExtractor(imgFile)); // html中图片的路径 options.URIResolver(new BasicURIResolver(\"image\")); options.setIgnoreStylesIfUnused(false); options.setFragment(true); writer = new OutputStreamWriter(new FileOutputStream(targetFileName), Constant.FILE_ENCODING); XHTMLConverter xhtmlConverter = (XHTMLConverter) XHTMLConverter.getInstance(); xhtmlConverter.convert(document, writer, options); logger.info(\"将word2007转换成html---成功\"); return targetFileName; } catch (Exception e) { logger.error(\"将word2007转换成html失败:\" + e.getMessage(), e); throw new RuntimeException(\"失败\"); } finally { IOUtils.closeWriter(writer); IOUtils.closeInputStream(fis); } } ","wordCount":"1371","inLanguage":"zh","datePublished":"2023-08-22T00:00:00Z","dateModified":"2023-08-22T22:36:07+08:00","author":{"@type":"Person","name":"xkj"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB/java%E6%93%8D%E4%BD%9Cword%E6%96%87%E6%A1%A3.html"},"publisher":{"@type":"Organization","name":"米二","logo":{"@type":"ImageObject","url":"https://xiaokunji.com/img/Q.svg"}}}</script></head><body class=dark id=top><script>localStorage.getItem("pref-theme")==="light"&&document.body.classList.remove("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://xiaokunji.com/zh/ accesskey=h title="米二 (Alt + H)"><img src=https://xiaokunji.com/img/Q.svg alt aria-label=logo height=35>米二</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button><ul class=lang-switch><li>|</li><li><a href=https://xiaokunji.com/en/ title=English aria-label=English>English</a></li></ul></div></div><ul id=menu><li><a href=https://xiaokunji.com/zh/ title=🏠主页><span>🏠主页</span></a></li><li><a href=https://xiaokunji.com/zh/search title="🔍搜索 (Alt + /)" accesskey=/><span>🔍搜索</span></a></li><li><a href=https://xiaokunji.com/zh/post.html title=📚文章><span>📚文章</span></a></li><li><a href=https://xiaokunji.com/zh/archives.html title=⏱时间轴><span>⏱时间轴</span></a></li><li><a href=https://xiaokunji.com/zh/tags.html title=🔖标签><span>🔖标签</span></a></li><li><a href=https://xiaokunji.com/zh/categories.html title=📖分类><span>📖分类</span></a></li><li><a href=https://xiaokunji.com/zh/links.html title=🤝友链><span>🤝友链</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><nav aria-label=breadcrumb><ul><a href=https://xiaokunji.com/zh/>🏠</a> <span>></span>
-<a href=https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88.html>综合</a> <span>></span>
-<a href=https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86.html>个人小知识</a> <span>></span>
-<a href=https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB.html>代码类</a> <span>></span></ul></nav><h1 class=post-title>java操作word文档</h1><div class=post-description></div><div class=post-meta>创建:&nbsp;<span title='2023-08-22 00:00:00 +0000 UTC'>2023-08-22</span>&nbsp;·&nbsp;更新:&nbsp;2023-08-22&nbsp;·&nbsp;xkj
-&nbsp;|&nbsp;分类: &nbsp;<ul class=post-categories-meta><a href=https://xiaokunji.com/zh/categories/%E7%BB%BC%E5%90%88.html>综合</a></ul><span id=busuanzi_container_page_pv>&nbsp;| 访问: <span id=busuanzi_value_page_pv>1</span></span></div></header><aside id=toc-container class="toc-container wide"><div class=toc><details open><summary accesskey=c title="(Alt + C)"><span class=details>目录</span></summary><div class=inner><ul><li><a href=#%e4%bb%8b%e7%bb%8d aria-label=介绍:>介绍:</a></li><li><a href=#%e4%bd%bf%e7%94%a8 aria-label=使用>使用</a></li></ul></div></details></div></aside><script>let activeElement,elements;window.addEventListener("DOMContentLoaded",function(){checkTocPosition(),elements=document.querySelectorAll("h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]"),activeElement=elements[0];const t=encodeURI(activeElement.getAttribute("id")).toLowerCase();document.querySelector(`.inner ul li a[href="#${t}"]`).classList.add("active")},!1),window.addEventListener("resize",function(){checkTocPosition()},!1),window.addEventListener("scroll",()=>{activeElement=Array.from(elements).find(e=>{if(getOffsetTop(e)-window.pageYOffset>0&&getOffsetTop(e)-window.pageYOffset<window.innerHeight/2)return e})||activeElement,elements.forEach(e=>{const t=encodeURI(e.getAttribute("id")).toLowerCase();e===activeElement?document.querySelector(`.inner ul li a[href="#${t}"]`).classList.add("active"):document.querySelector(`.inner ul li a[href="#${t}"]`).classList.remove("active")})},!1);const main=parseInt(getComputedStyle(document.body).getPropertyValue("--article-width"),10),toc=parseInt(getComputedStyle(document.body).getPropertyValue("--toc-width"),10),gap=parseInt(getComputedStyle(document.body).getPropertyValue("--gap"),10);function checkTocPosition(){const e=document.body.scrollWidth;e-main-toc*2-gap*4>0?document.getElementById("toc-container").classList.add("wide"):document.getElementById("toc-container").classList.remove("wide")}function getOffsetTop(e){if(!e.getClientRects().length)return 0;let t=e.getBoundingClientRect(),n=e.ownerDocument.defaultView;return t.top+n.pageYOffset}</script><div class=post-content><h1 id=介绍>介绍:<a hidden class=anchor aria-hidden=true href=#介绍>#</a></h1><p>该代码支持:</p><ol><li>填充work中的占位符(仅是填充,不能动态加格式之类)</li><li>将work转化为html</li></ol><h1 id=使用>使用<a hidden class=anchor aria-hidden=true href=#使用>#</a></h1><p><strong>pom.xml</strong></p><div class=highlight><pre tabindex=0 style=color:#c9d1d9;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>&lt;dependency&gt;
-</span></span><span style=display:flex><span>    &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
-</span></span><span style=display:flex><span>    &lt;artifactId&gt;poi-ooxml&lt;/artifactId&gt;
-</span></span><span style=display:flex><span>    &lt;version&gt;${poi.version}&lt;/version&gt;
-</span></span><span style=display:flex><span>&lt;/dependency&gt;
-</span></span><span style=display:flex><span>&lt;dependency&gt;
-</span></span><span style=display:flex><span>    &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
-</span></span><span style=display:flex><span>    &lt;artifactId&gt;poi-ooxml-schemas&lt;/artifactId&gt;
-</span></span><span style=display:flex><span>    &lt;version&gt;${poi.version}&lt;/version&gt;
-</span></span><span style=display:flex><span>&lt;/dependency&gt;
-</span></span><span style=display:flex><span>&lt;dependency&gt;
-</span></span><span style=display:flex><span>    &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
-</span></span><span style=display:flex><span>    &lt;artifactId&gt;ooxml-schemas&lt;/artifactId&gt;
-</span></span><span style=display:flex><span>    &lt;version&gt;1.4&lt;/version&gt;
-</span></span><span style=display:flex><span>&lt;/dependency&gt;
-</span></span><span style=display:flex><span>&lt;dependency&gt;
-</span></span><span style=display:flex><span>    &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
-</span></span><span style=display:flex><span>    &lt;artifactId&gt;poi-scratchpad&lt;/artifactId&gt;
-</span></span><span style=display:flex><span>    &lt;version&gt;${poi.version}&lt;/version&gt;
-</span></span><span style=display:flex><span>&lt;/dependency&gt;
-</span></span><span style=display:flex><span>&lt;dependency&gt;
-</span></span><span style=display:flex><span>    &lt;groupId&gt;fr.opensagres.xdocreport&lt;/groupId&gt;
-</span></span><span style=display:flex><span>    &lt;artifactId&gt;xdocreport&lt;/artifactId&gt;
-</span></span><span style=display:flex><span>    &lt;version&gt;1.0.6&lt;/version&gt;
-</span></span><span style=display:flex><span>&lt;/dependency&gt;
-</span></span></code></pre></div><p><strong>wordUtils</strong></p><div class=highlight><pre tabindex=0 style=color:#c9d1d9;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>public static HWPFDocument replaceTables2003(String filePath, Map&lt;String, Object&gt; map) throws Exception {
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        //logger.info(&#34;替换word2003文档表格内容，文档路径:{}，要替换的内容:{}&#34;, filePath, JsonUtil.toJSONString(map));
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        if (StringUtils.isBlank(filePath) || MapUtils.isEmpty(map)) {
-</span></span><span style=display:flex><span>            return null;
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        try (FileInputStream is = new FileInputStream(filePath)) {
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>            HWPFDocument document = new HWPFDocument(is);
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>            Range range = document.getRange();
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>            for (Entry&lt;String, Object&gt; e : map.entrySet()) {
-</span></span><span style=display:flex><span>                String value = null == e.getValue() ? &#34;&#34; : (String) e.getValue();
-</span></span><span style=display:flex><span>                range.replaceText(e.getKey(), value);
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>            return document;
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        } catch (Exception e) {
-</span></span><span style=display:flex><span>            logger.error(&#34;替换word2003文档表格内容失败:&#34; + e.getMessage(), e);
-</span></span><span style=display:flex><span>            throw e;
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span> public static XWPFDocument replaceTables2007(String filePath, Map&lt;String, Object&gt; map) throws Exception {
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        //logger.info(&#34;替换word2007文档表格内容，文档路径:{}，要替换的内容:{}&#34;, filePath, JsonUtil.toJSONString(map));
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        if (StringUtils.isBlank(filePath) || MapUtils.isEmpty(map)) {
-</span></span><span style=display:flex><span>            return null;
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        XWPFDocument document = new XWPFDocument(POIXMLDocument.openPackage(filePath));
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>     /* 替换段落中的指定文字 */
-</span></span><span style=display:flex><span>        Iterator&lt;XWPFParagraph&gt; itPara = document.getParagraphsIterator();
-</span></span><span style=display:flex><span>        while (itPara.hasNext()) {
-</span></span><span style=display:flex><span>            XWPFParagraph paragraph = itPara.next();
-</span></span><span style=display:flex><span>            Set&lt;String&gt; set = map.keySet();
-</span></span><span style=display:flex><span>            for (String key : set) {
-</span></span><span style=display:flex><span>                List&lt;XWPFRun&gt; run = paragraph.getRuns();
-</span></span><span style=display:flex><span>                for (XWPFRun xwpfRun : run) {
-</span></span><span style=display:flex><span>                    if (xwpfRun.getText(xwpfRun.getTextPosition()) != null
-</span></span><span style=display:flex><span>                            &amp;&amp; xwpfRun.getText(xwpfRun.getTextPosition()).contains(key)) {
-</span></span><span style=display:flex><span>                        //参数0表示生成的文字是要从哪一个地方开始放置,设置文字从位置0开始 就可以把原来的文字全部替换掉了
-</span></span><span style=display:flex><span>                        String text = xwpfRun.getText(xwpfRun.getTextPosition());
-</span></span><span style=display:flex><span>                        String value = null == map.get(key) ? &#34;&#34; : (String) map.get(key);
-</span></span><span style=display:flex><span>                        if (key.contains(&#34;#&#34;) || key.contains(&#34;$&#34;)) {
-</span></span><span style=display:flex><span>                            text = text.replaceAll(Pattern.quote(key), value);
-</span></span><span style=display:flex><span>                        } else {
-</span></span><span style=display:flex><span>                            text = text.replaceAll(key, value);
-</span></span><span style=display:flex><span>                        }
-</span></span><span style=display:flex><span>                        xwpfRun.setText(text, 0);
-</span></span><span style=display:flex><span>                    }
-</span></span><span style=display:flex><span>                }
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        
-</span></span><span style=display:flex><span>        // 表格内容
-</span></span><span style=display:flex><span>        Iterator&lt;XWPFTable&gt; it = document.getTablesIterator();
-</span></span><span style=display:flex><span>        while (it.hasNext()) {
-</span></span><span style=display:flex><span>            XWPFTable table = it.next();
-</span></span><span style=display:flex><span>            int rcount = table.getNumberOfRows();
-</span></span><span style=display:flex><span>            for (int i = 0; i &lt; rcount; i++) {
-</span></span><span style=display:flex><span>                XWPFTableRow row = table.getRow(i);
-</span></span><span style=display:flex><span>                List&lt;XWPFTableCell&gt; cells = row.getTableCells();
-</span></span><span style=display:flex><span>                for (XWPFTableCell cell : cells) {
-</span></span><span style=display:flex><span>                    for (Entry&lt;String, Object&gt; e : map.entrySet()) {
-</span></span><span style=display:flex><span>                        if (cell.getText().equals(e.getKey())) {
-</span></span><span style=display:flex><span>                            // 删除原来内容
-</span></span><span style=display:flex><span>                            cell.removeParagraph(0);
-</span></span><span style=display:flex><span>                            if (e.getValue() != null) {
-</span></span><span style=display:flex><span>                                // 写入新内容
-</span></span><span style=display:flex><span>                                cell.setText((String) e.getValue());
-</span></span><span style=display:flex><span>                            }
-</span></span><span style=display:flex><span>                        }
-</span></span><span style=display:flex><span>                    }
-</span></span><span style=display:flex><span>                }
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>    return document;
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span> }
-</span></span><span style=display:flex><span> 
-</span></span><span style=display:flex><span> public static String docToHtml(String wordPath, String fileName) {
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        logger.info(&#34;将word2003转换成html，word文件路径:{}，word文件名:{}&#34;, wordPath, fileName);
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        InputStream input = null;
-</span></span><span style=display:flex><span>        ByteArrayOutputStream outStream = null;
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        try {
-</span></span><span style=display:flex><span>            input = new FileInputStream(wordPath + File.separator + fileName);
-</span></span><span style=display:flex><span>            // 初始化转换器
-</span></span><span style=display:flex><span>            WordToHtmlConverter converter = new WordToHtmlConverter(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>            // 保存文档中的图片
-</span></span><span style=display:flex><span>            converter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -&gt; {
-</span></span><span style=display:flex><span>                // 设定图片路径
-</span></span><span style=display:flex><span>                // return srcPath + File.separator + suggestedName;
-</span></span><span style=display:flex><span>                return suggestedName;
-</span></span><span style=display:flex><span>            });
-</span></span><span style=display:flex><span>            // word2003
-</span></span><span style=display:flex><span>            HWPFDocument wordDocument = new HWPFDocument(input);
-</span></span><span style=display:flex><span>            converter.processDocument(wordDocument);
-</span></span><span style=display:flex><span>            // 设定图片
-</span></span><span style=display:flex><span>            List&lt;Picture&gt; pics = wordDocument.getPicturesTable().getAllPictures();
-</span></span><span style=display:flex><span>            if (CollectionUtils.isNotEmpty(pics)) {
-</span></span><span style=display:flex><span>                // 存储图片，根据给定的名称
-</span></span><span style=display:flex><span>                for (Picture pic : pics) {
-</span></span><span style=display:flex><span>                    // 将文件直接写出去
-</span></span><span style=display:flex><span>                    pic.writeImageContent(new FileOutputStream(new File(wordPath, pic.suggestFullFileName())));
-</span></span><span style=display:flex><span>                }
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>            Document docHtml = converter.getDocument();
-</span></span><span style=display:flex><span>            DOMSource domSource = new DOMSource(docHtml);
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>            outStream = new ByteArrayOutputStream();
-</span></span><span style=display:flex><span>            StreamResult streamResult = new StreamResult(outStream);
-</span></span><span style=display:flex><span>            TransformerFactory tf = TransformerFactory.newInstance();
-</span></span><span style=display:flex><span>            Transformer serializer = tf.newTransformer();
-</span></span><span style=display:flex><span>            serializer.setOutputProperty(OutputKeys.ENCODING, Constant.FILE_ENCODING);
-</span></span><span style=display:flex><span>            serializer.setOutputProperty(OutputKeys.INDENT, &#34;yes&#34;);
-</span></span><span style=display:flex><span>            serializer.setOutputProperty(OutputKeys.METHOD, &#34;html&#34;);
-</span></span><span style=display:flex><span>            serializer.transform(domSource, streamResult);
-</span></span><span style=display:flex><span>            
-</span></span><span style=display:flex><span>             // 文件名前缀
-</span></span><span style=display:flex><span>            String prefix = CommonUtils.getFilePrefix(fileName);
-</span></span><span style=display:flex><span>            String htmlPath = wordPath + File.separator + prefix + &#34;.html&#34;;
-</span></span><span style=display:flex><span>            logger.info(&#34;将word2003转换成html，html路径为:{}&#34;, htmlPath);
-</span></span><span style=display:flex><span>            File target = new File(htmlPath);
-</span></span><span style=display:flex><span>            FileUtils.writeStringToFile(target, new String(outStream.toByteArray()), Constant.FILE_ENCODING);
-</span></span><span style=display:flex><span>            logger.info(&#34;将word2003转换成html---成功&#34;);
-</span></span><span style=display:flex><span>            return htmlPath;
-</span></span><span style=display:flex><span>        } catch (Exception e) {
-</span></span><span style=display:flex><span>            logger.error(&#34;将word2003转换成html失败:&#34; + e.getMessage(), e);
-</span></span><span style=display:flex><span>            throw new RuntimeException(&#34;失败&#34;);
-</span></span><span style=display:flex><span>        } finally {
-</span></span><span style=display:flex><span>            IOUtils.closeOutputStream(outStream);
-</span></span><span style=display:flex><span>            IOUtils.closeInputStream(input);
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>public static String docxToHtml(String wordPath, String fileName) {
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        logger.info(&#34;将word2007转换成html，word文件路径:{}，word文件名:{}&#34;, wordPath, fileName);
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        OutputStreamWriter writer = null;
-</span></span><span style=display:flex><span>        FileInputStream fis = null;
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        try {
-</span></span><span style=display:flex><span>            String sourceFileName = wordPath + File.separator + fileName;
-</span></span><span style=display:flex><span>            // 文件名前缀
-</span></span><span style=display:flex><span>            String prefix = CommonUtils.getFilePrefix(fileName);
-</span></span><span style=display:flex><span>            String targetFileName = wordPath + File.separator + prefix + &#34;.html&#34;;
-</span></span><span style=display:flex><span>            logger.info(&#34;将word2007转换成html，html路径为:{}&#34;, targetFileName);
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>            // 图片存放路径
-</span></span><span style=display:flex><span>            String imagePathStr = wordPath + &#34;/image/&#34;;
-</span></span><span style=display:flex><span>            fis = new FileInputStream(sourceFileName);
-</span></span><span style=display:flex><span>            XWPFDocument document = new XWPFDocument(fis);
-</span></span><span style=display:flex><span>            XHTMLOptions options = XHTMLOptions.create();
-</span></span><span style=display:flex><span>            File imgFile = new File(imagePathStr);
-</span></span><span style=display:flex><span>            if (!imgFile.exists()) {
-</span></span><span style=display:flex><span>                imgFile.mkdirs();
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>            // 存放图片的文件夹
-</span></span><span style=display:flex><span>            options.setExtractor(new FileImageExtractor(imgFile));
-</span></span><span style=display:flex><span>            // html中图片的路径
-</span></span><span style=display:flex><span>            options.URIResolver(new BasicURIResolver(&#34;image&#34;));
-</span></span><span style=display:flex><span>            options.setIgnoreStylesIfUnused(false);
-</span></span><span style=display:flex><span>            options.setFragment(true);
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>            writer = new OutputStreamWriter(new FileOutputStream(targetFileName), Constant.FILE_ENCODING);
-</span></span><span style=display:flex><span>            XHTMLConverter xhtmlConverter = (XHTMLConverter) XHTMLConverter.getInstance();
-</span></span><span style=display:flex><span>            xhtmlConverter.convert(document, writer, options);
-</span></span><span style=display:flex><span>            logger.info(&#34;将word2007转换成html---成功&#34;);
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>            return targetFileName;
-</span></span><span style=display:flex><span>             } catch (Exception e) {
-</span></span><span style=display:flex><span>            logger.error(&#34;将word2007转换成html失败:&#34; + e.getMessage(), e);
-</span></span><span style=display:flex><span>            throw new RuntimeException(&#34;失败&#34;);
-</span></span><span style=display:flex><span>        } finally {
-</span></span><span style=display:flex><span>            IOUtils.closeWriter(writer);
-</span></span><span style=display:flex><span>            IOUtils.closeInputStream(fis);
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span> 
-</span></span></code></pre></div></div><footer class=post-footer><ul class=post-tags><li><a href=https://xiaokunji.com/zh/tags/%E4%BB%A3%E7%A0%81%E7%B1%BB.html>代码类</a></li><li><a href=https://xiaokunji.com/zh/tags/%E7%BB%BC%E5%90%88.html>综合</a></li></ul><nav class=paginav><a class=prev href=https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/javaEE.html><span class=title>« 上一页</span><br><span>javaEE</span></a>
-<a class=next href=https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95.html><span class=title>下一页 »</span><br><span>java常见面试题</span></a></nav></footer></article></main><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><footer class=footer><span>Copyright
-&copy;
+<!DOCTYPE html>
+<html dir="auto" lang="zh"><head><meta charset="utf-8"/><meta content="IE=edge" http-equiv="x-ua-compatible"/><meta content="width=device-width,initial-scale=1,shrink-to-fit=no" name="viewport"/><meta content="index, follow" name="robots"/><title>java操作word文档 | 米二</title><meta content=" 介绍:, 使用" name="keywords"/><meta content="     " name="description"/><meta content="xkj" name="author"/><link href="https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB/java%E6%93%8D%E4%BD%9Cword%E6%96%87%E6%A1%A3.html" rel="canonical"/><link as="style" crossorigin="anonymous" href="/assets/css/stylesheet.4854cfba8bbd19d516e66f000ebd4a04b6abc27ae655bf07762207e2dfbf60ea.css" integrity="sha256-SFTPuou9GdUW5m8ADr1KBLarwnrmVb8HdiIH4t+/YOo=" rel="preload stylesheet"/><script crossorigin="anonymous" defer="" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG+9vmJ0cTS+ovo0FeA=" onload="hljs.initHighlightingOnLoad()" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js"></script>
+<link href="https://xiaokunji.com/img/Q.svg" rel="icon"/><link href="https://xiaokunji.com/img/Q.svg" rel="icon" sizes="16x16" type="image/png"/><link href="https://xiaokunji.com/img/Q.svg" rel="icon" sizes="32x32" type="image/png"/><link href="https://xiaokunji.com/Q.svg" rel="apple-touch-icon"/><link href="https://xiaokunji.com/Q.svg" rel="mask-icon"/><meta content="#2e2e33" name="theme-color"/><meta content="#2e2e33" name="msapplication-TileColor"/><link href="https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB/java%E6%93%8D%E4%BD%9Cword%E6%96%87%E6%A1%A3.html" hreflang="zh" rel="alternate"/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><meta content="java操作word文档" property="og:title"/><meta content="     " property="og:description"/><meta content="article" property="og:type"/><meta content="https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB/java%E6%93%8D%E4%BD%9Cword%E6%96%87%E6%A1%A3.html" property="og:url"/><meta content="综合" property="article:section"/><meta content="2023-08-22T00:00:00+00:00" property="article:published_time"/><meta content="2023-08-22T22:36:07+08:00" property="article:modified_time"/><meta content="summary" name="twitter:card"/><meta content="java操作word文档" name="twitter:title"/><meta content="     " name="twitter:description"/><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":5,"name":"java操作word文档","item":"https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB/java%E6%93%8D%E4%BD%9Cword%E6%96%87%E6%A1%A3.html"}]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"java操作word文档","name":"java操作word文档","description":"     ","keywords":[" 介绍:"," 使用"],"articleBody":"介绍: 该代码支持:\n填充work中的占位符(仅是填充,不能动态加格式之类) 将work转化为html 使用 pom.xml\norg.apache.poi poi-ooxml ${poi.version} org.apache.poi poi-ooxml-schemas ${poi.version} org.apache.poi ooxml-schemas 1.4 org.apache.poi poi-scratchpad ${poi.version} fr.opensagres.xdocreport xdocreport 1.0.6 wordUtils\npublic static HWPFDocument replaceTables2003(String filePath, Map map) throws Exception { //logger.info(\"替换word2003文档表格内容，文档路径:{}，要替换的内容:{}\", filePath, JsonUtil.toJSONString(map)); if (StringUtils.isBlank(filePath) || MapUtils.isEmpty(map)) { return null; } try (FileInputStream is = new FileInputStream(filePath)) { HWPFDocument document = new HWPFDocument(is); Range range = document.getRange(); for (Entry e : map.entrySet()) { String value = null == e.getValue() ? \"\" : (String) e.getValue(); range.replaceText(e.getKey(), value); } return document; } catch (Exception e) { logger.error(\"替换word2003文档表格内容失败:\" + e.getMessage(), e); throw e; } } public static XWPFDocument replaceTables2007(String filePath, Map map) throws Exception { //logger.info(\"替换word2007文档表格内容，文档路径:{}，要替换的内容:{}\", filePath, JsonUtil.toJSONString(map)); if (StringUtils.isBlank(filePath) || MapUtils.isEmpty(map)) { return null; } XWPFDocument document = new XWPFDocument(POIXMLDocument.openPackage(filePath)); /* 替换段落中的指定文字 */ Iterator itPara = document.getParagraphsIterator(); while (itPara.hasNext()) { XWPFParagraph paragraph = itPara.next(); Set set = map.keySet(); for (String key : set) { List run = paragraph.getRuns(); for (XWPFRun xwpfRun : run) { if (xwpfRun.getText(xwpfRun.getTextPosition()) != null \u0026\u0026 xwpfRun.getText(xwpfRun.getTextPosition()).contains(key)) { //参数0表示生成的文字是要从哪一个地方开始放置,设置文字从位置0开始 就可以把原来的文字全部替换掉了 String text = xwpfRun.getText(xwpfRun.getTextPosition()); String value = null == map.get(key) ? \"\" : (String) map.get(key); if (key.contains(\"#\") || key.contains(\"$\")) { text = text.replaceAll(Pattern.quote(key), value); } else { text = text.replaceAll(key, value); } xwpfRun.setText(text, 0); } } } } // 表格内容 Iterator it = document.getTablesIterator(); while (it.hasNext()) { XWPFTable table = it.next(); int rcount = table.getNumberOfRows(); for (int i = 0; i \u003c rcount; i++) { XWPFTableRow row = table.getRow(i); List cells = row.getTableCells(); for (XWPFTableCell cell : cells) { for (Entry e : map.entrySet()) { if (cell.getText().equals(e.getKey())) { // 删除原来内容 cell.removeParagraph(0); if (e.getValue() != null) { // 写入新内容 cell.setText((String) e.getValue()); } } } } } } return document; } public static String docToHtml(String wordPath, String fileName) { logger.info(\"将word2003转换成html，word文件路径:{}，word文件名:{}\", wordPath, fileName); InputStream input = null; ByteArrayOutputStream outStream = null; try { input = new FileInputStream(wordPath + File.separator + fileName); // 初始化转换器 WordToHtmlConverter converter = new WordToHtmlConverter(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()); // 保存文档中的图片 converter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -\u003e { // 设定图片路径 // return srcPath + File.separator + suggestedName; return suggestedName; }); // word2003 HWPFDocument wordDocument = new HWPFDocument(input); converter.processDocument(wordDocument); // 设定图片 List pics = wordDocument.getPicturesTable().getAllPictures(); if (CollectionUtils.isNotEmpty(pics)) { // 存储图片，根据给定的名称 for (Picture pic : pics) { // 将文件直接写出去 pic.writeImageContent(new FileOutputStream(new File(wordPath, pic.suggestFullFileName()))); } } Document docHtml = converter.getDocument(); DOMSource domSource = new DOMSource(docHtml); outStream = new ByteArrayOutputStream(); StreamResult streamResult = new StreamResult(outStream); TransformerFactory tf = TransformerFactory.newInstance(); Transformer serializer = tf.newTransformer(); serializer.setOutputProperty(OutputKeys.ENCODING, Constant.FILE_ENCODING); serializer.setOutputProperty(OutputKeys.INDENT, \"yes\"); serializer.setOutputProperty(OutputKeys.METHOD, \"html\"); serializer.transform(domSource, streamResult); // 文件名前缀 String prefix = CommonUtils.getFilePrefix(fileName); String htmlPath = wordPath + File.separator + prefix + \".html\"; logger.info(\"将word2003转换成html，html路径为:{}\", htmlPath); File target = new File(htmlPath); FileUtils.writeStringToFile(target, new String(outStream.toByteArray()), Constant.FILE_ENCODING); logger.info(\"将word2003转换成html---成功\"); return htmlPath; } catch (Exception e) { logger.error(\"将word2003转换成html失败:\" + e.getMessage(), e); throw new RuntimeException(\"失败\"); } finally { IOUtils.closeOutputStream(outStream); IOUtils.closeInputStream(input); } } public static String docxToHtml(String wordPath, String fileName) { logger.info(\"将word2007转换成html，word文件路径:{}，word文件名:{}\", wordPath, fileName); OutputStreamWriter writer = null; FileInputStream fis = null; try { String sourceFileName = wordPath + File.separator + fileName; // 文件名前缀 String prefix = CommonUtils.getFilePrefix(fileName); String targetFileName = wordPath + File.separator + prefix + \".html\"; logger.info(\"将word2007转换成html，html路径为:{}\", targetFileName); // 图片存放路径 String imagePathStr = wordPath + \"/image/\"; fis = new FileInputStream(sourceFileName); XWPFDocument document = new XWPFDocument(fis); XHTMLOptions options = XHTMLOptions.create(); File imgFile = new File(imagePathStr); if (!imgFile.exists()) { imgFile.mkdirs(); } // 存放图片的文件夹 options.setExtractor(new FileImageExtractor(imgFile)); // html中图片的路径 options.URIResolver(new BasicURIResolver(\"image\")); options.setIgnoreStylesIfUnused(false); options.setFragment(true); writer = new OutputStreamWriter(new FileOutputStream(targetFileName), Constant.FILE_ENCODING); XHTMLConverter xhtmlConverter = (XHTMLConverter) XHTMLConverter.getInstance(); xhtmlConverter.convert(document, writer, options); logger.info(\"将word2007转换成html---成功\"); return targetFileName; } catch (Exception e) { logger.error(\"将word2007转换成html失败:\" + e.getMessage(), e); throw new RuntimeException(\"失败\"); } finally { IOUtils.closeWriter(writer); IOUtils.closeInputStream(fis); } } ","wordCount":"1371","inLanguage":"zh","datePublished":"2023-08-22T00:00:00Z","dateModified":"2023-08-22T22:36:07+08:00","author":{"@type":"Person","name":"xkj"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB/java%E6%93%8D%E4%BD%9Cword%E6%96%87%E6%A1%A3.html"},"publisher":{"@type":"Organization","name":"米二","logo":{"@type":"ImageObject","url":"https://xiaokunji.com/img/Q.svg"}}}</script></head><body class="dark" id="top"><script>localStorage.getItem("pref-theme")==="light"&&document.body.classList.remove("dark")</script><header class="header"><nav class="nav"><div class="logo"><a accesskey="h" href="https://xiaokunji.com/zh/" title="米二 (Alt + H)"><img alt="" aria-label="logo" height="35" src="https://xiaokunji.com/img/Q.svg"/>米二</a><div class="logo-switches"><button accesskey="t" id="theme-toggle" title="(Alt + T)"><svg fill="none" height="18" id="moon" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg><svg fill="none" height="18" id="sun" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="5"></circle><line x1="12" x2="12" y1="1" y2="3"></line><line x1="12" x2="12" y1="21" y2="23"></line><line x1="4.22" x2="5.64" y1="4.22" y2="5.64"></line><line x1="18.36" x2="19.78" y1="18.36" y2="19.78"></line><line x1="1" x2="3" y1="12" y2="12"></line><line x1="21" x2="23" y1="12" y2="12"></line><line x1="4.22" x2="5.64" y1="19.78" y2="18.36"></line><line x1="18.36" x2="19.78" y1="5.64" y2="4.22"></line></svg></button><ul class="lang-switch"><li>|</li><li><a aria-label="English" href="https://xiaokunji.com/en/" title="English">English</a></li></ul></div></div><ul id="menu"><li><a href="https://xiaokunji.com/zh/" title="🏠主页"><span>🏠主页</span></a></li><li><a accesskey="/" href="https://xiaokunji.com/zh/search" title="🔍搜索 (Alt + /)"><span>🔍搜索</span></a></li><li><a href="https://xiaokunji.com/zh/post.html" title="📚文章"><span>📚文章</span></a></li><li><a href="https://xiaokunji.com/zh/archives.html" title="⏱时间轴"><span>⏱时间轴</span></a></li><li><a href="https://xiaokunji.com/zh/tags.html" title="🔖标签"><span>🔖标签</span></a></li><li><a href="https://xiaokunji.com/zh/categories.html" title="📖分类"><span>📖分类</span></a></li><li><a href="https://xiaokunji.com/zh/links.html" title="🤝友链"><span>🤝友链</span></a></li></ul></nav></header><main class="main"><article class="post-single"><header class="post-header"><nav aria-label="breadcrumb"><ul><a href="https://xiaokunji.com/zh/">🏠</a> <span>&gt;</span>
+<a href="https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88.html">综合</a> <span>&gt;</span>
+<a href="https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86.html">个人小知识</a> <span>&gt;</span>
+<a href="https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E4%BB%A3%E7%A0%81%E7%B1%BB.html">代码类</a> <span>&gt;</span></ul></nav><h1 class="post-title">java操作word文档</h1><div class="post-description"></div><div class="post-meta">创建: <span title="2023-08-22 00:00:00 +0000 UTC">2023-08-22</span> · 更新: 2023-08-22 · xkj
+ | 分类:  <ul class="post-categories-meta"><a href="https://xiaokunji.com/zh/categories/%E7%BB%BC%E5%90%88.html">综合</a></ul><span id="busuanzi_container_page_pv"> | 访问: <span id="busuanzi_value_page_pv">1</span></span></div></header><div class="post-content"><h1 id="介绍">介绍:<a aria-hidden="true" class="anchor" hidden="" href="#介绍">#</a></h1><p>该代码支持:</p><ol><li>填充work中的占位符(仅是填充,不能动态加格式之类)</li><li>将work转化为html</li></ol><h1 id="使用">使用<a aria-hidden="true" class="anchor" hidden="" href="#使用">#</a></h1><p><strong>pom.xml</strong></p><div class="highlight"><pre style="color:#c9d1d9;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-fallback" data-lang="fallback"><span style="display:flex"><span>&lt;dependency&gt;
+</span></span><span style="display:flex"><span>    &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
+</span></span><span style="display:flex"><span>    &lt;artifactId&gt;poi-ooxml&lt;/artifactId&gt;
+</span></span><span style="display:flex"><span>    &lt;version&gt;${poi.version}&lt;/version&gt;
+</span></span><span style="display:flex"><span>&lt;/dependency&gt;
+</span></span><span style="display:flex"><span>&lt;dependency&gt;
+</span></span><span style="display:flex"><span>    &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
+</span></span><span style="display:flex"><span>    &lt;artifactId&gt;poi-ooxml-schemas&lt;/artifactId&gt;
+</span></span><span style="display:flex"><span>    &lt;version&gt;${poi.version}&lt;/version&gt;
+</span></span><span style="display:flex"><span>&lt;/dependency&gt;
+</span></span><span style="display:flex"><span>&lt;dependency&gt;
+</span></span><span style="display:flex"><span>    &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
+</span></span><span style="display:flex"><span>    &lt;artifactId&gt;ooxml-schemas&lt;/artifactId&gt;
+</span></span><span style="display:flex"><span>    &lt;version&gt;1.4&lt;/version&gt;
+</span></span><span style="display:flex"><span>&lt;/dependency&gt;
+</span></span><span style="display:flex"><span>&lt;dependency&gt;
+</span></span><span style="display:flex"><span>    &lt;groupId&gt;org.apache.poi&lt;/groupId&gt;
+</span></span><span style="display:flex"><span>    &lt;artifactId&gt;poi-scratchpad&lt;/artifactId&gt;
+</span></span><span style="display:flex"><span>    &lt;version&gt;${poi.version}&lt;/version&gt;
+</span></span><span style="display:flex"><span>&lt;/dependency&gt;
+</span></span><span style="display:flex"><span>&lt;dependency&gt;
+</span></span><span style="display:flex"><span>    &lt;groupId&gt;fr.opensagres.xdocreport&lt;/groupId&gt;
+</span></span><span style="display:flex"><span>    &lt;artifactId&gt;xdocreport&lt;/artifactId&gt;
+</span></span><span style="display:flex"><span>    &lt;version&gt;1.0.6&lt;/version&gt;
+</span></span><span style="display:flex"><span>&lt;/dependency&gt;
+</span></span></code></pre></div><p><strong>wordUtils</strong></p><div class="highlight"><pre style="color:#c9d1d9;background-color:#0d1117;-moz-tab-size:4;-o-tab-size:4;tab-size:4" tabindex="0"><code class="language-fallback" data-lang="fallback"><span style="display:flex"><span>public static HWPFDocument replaceTables2003(String filePath, Map&lt;String, Object&gt; map) throws Exception {
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        //logger.info("替换word2003文档表格内容，文档路径:{}，要替换的内容:{}", filePath, JsonUtil.toJSONString(map));
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        if (StringUtils.isBlank(filePath) || MapUtils.isEmpty(map)) {
+</span></span><span style="display:flex"><span>            return null;
+</span></span><span style="display:flex"><span>        }
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        try (FileInputStream is = new FileInputStream(filePath)) {
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>            HWPFDocument document = new HWPFDocument(is);
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>            Range range = document.getRange();
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>            for (Entry&lt;String, Object&gt; e : map.entrySet()) {
+</span></span><span style="display:flex"><span>                String value = null == e.getValue() ? "" : (String) e.getValue();
+</span></span><span style="display:flex"><span>                range.replaceText(e.getKey(), value);
+</span></span><span style="display:flex"><span>            }
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>            return document;
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        } catch (Exception e) {
+</span></span><span style="display:flex"><span>            logger.error("替换word2003文档表格内容失败:" + e.getMessage(), e);
+</span></span><span style="display:flex"><span>            throw e;
+</span></span><span style="display:flex"><span>        }
+</span></span><span style="display:flex"><span>    }
+</span></span><span style="display:flex"><span>    
+</span></span><span style="display:flex"><span> public static XWPFDocument replaceTables2007(String filePath, Map&lt;String, Object&gt; map) throws Exception {
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        //logger.info("替换word2007文档表格内容，文档路径:{}，要替换的内容:{}", filePath, JsonUtil.toJSONString(map));
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        if (StringUtils.isBlank(filePath) || MapUtils.isEmpty(map)) {
+</span></span><span style="display:flex"><span>            return null;
+</span></span><span style="display:flex"><span>        }
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        XWPFDocument document = new XWPFDocument(POIXMLDocument.openPackage(filePath));
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>     /* 替换段落中的指定文字 */
+</span></span><span style="display:flex"><span>        Iterator&lt;XWPFParagraph&gt; itPara = document.getParagraphsIterator();
+</span></span><span style="display:flex"><span>        while (itPara.hasNext()) {
+</span></span><span style="display:flex"><span>            XWPFParagraph paragraph = itPara.next();
+</span></span><span style="display:flex"><span>            Set&lt;String&gt; set = map.keySet();
+</span></span><span style="display:flex"><span>            for (String key : set) {
+</span></span><span style="display:flex"><span>                List&lt;XWPFRun&gt; run = paragraph.getRuns();
+</span></span><span style="display:flex"><span>                for (XWPFRun xwpfRun : run) {
+</span></span><span style="display:flex"><span>                    if (xwpfRun.getText(xwpfRun.getTextPosition()) != null
+</span></span><span style="display:flex"><span>                            &amp;&amp; xwpfRun.getText(xwpfRun.getTextPosition()).contains(key)) {
+</span></span><span style="display:flex"><span>                        //参数0表示生成的文字是要从哪一个地方开始放置,设置文字从位置0开始 就可以把原来的文字全部替换掉了
+</span></span><span style="display:flex"><span>                        String text = xwpfRun.getText(xwpfRun.getTextPosition());
+</span></span><span style="display:flex"><span>                        String value = null == map.get(key) ? "" : (String) map.get(key);
+</span></span><span style="display:flex"><span>                        if (key.contains("#") || key.contains("$")) {
+</span></span><span style="display:flex"><span>                            text = text.replaceAll(Pattern.quote(key), value);
+</span></span><span style="display:flex"><span>                        } else {
+</span></span><span style="display:flex"><span>                            text = text.replaceAll(key, value);
+</span></span><span style="display:flex"><span>                        }
+</span></span><span style="display:flex"><span>                        xwpfRun.setText(text, 0);
+</span></span><span style="display:flex"><span>                    }
+</span></span><span style="display:flex"><span>                }
+</span></span><span style="display:flex"><span>            }
+</span></span><span style="display:flex"><span>        }
+</span></span><span style="display:flex"><span>        
+</span></span><span style="display:flex"><span>        // 表格内容
+</span></span><span style="display:flex"><span>        Iterator&lt;XWPFTable&gt; it = document.getTablesIterator();
+</span></span><span style="display:flex"><span>        while (it.hasNext()) {
+</span></span><span style="display:flex"><span>            XWPFTable table = it.next();
+</span></span><span style="display:flex"><span>            int rcount = table.getNumberOfRows();
+</span></span><span style="display:flex"><span>            for (int i = 0; i &lt; rcount; i++) {
+</span></span><span style="display:flex"><span>                XWPFTableRow row = table.getRow(i);
+</span></span><span style="display:flex"><span>                List&lt;XWPFTableCell&gt; cells = row.getTableCells();
+</span></span><span style="display:flex"><span>                for (XWPFTableCell cell : cells) {
+</span></span><span style="display:flex"><span>                    for (Entry&lt;String, Object&gt; e : map.entrySet()) {
+</span></span><span style="display:flex"><span>                        if (cell.getText().equals(e.getKey())) {
+</span></span><span style="display:flex"><span>                            // 删除原来内容
+</span></span><span style="display:flex"><span>                            cell.removeParagraph(0);
+</span></span><span style="display:flex"><span>                            if (e.getValue() != null) {
+</span></span><span style="display:flex"><span>                                // 写入新内容
+</span></span><span style="display:flex"><span>                                cell.setText((String) e.getValue());
+</span></span><span style="display:flex"><span>                            }
+</span></span><span style="display:flex"><span>                        }
+</span></span><span style="display:flex"><span>                    }
+</span></span><span style="display:flex"><span>                }
+</span></span><span style="display:flex"><span>            }
+</span></span><span style="display:flex"><span>        }
+</span></span><span style="display:flex"><span>    return document;
+</span></span><span style="display:flex"><span>    
+</span></span><span style="display:flex"><span> }
+</span></span><span style="display:flex"><span> 
+</span></span><span style="display:flex"><span> public static String docToHtml(String wordPath, String fileName) {
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        logger.info("将word2003转换成html，word文件路径:{}，word文件名:{}", wordPath, fileName);
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        InputStream input = null;
+</span></span><span style="display:flex"><span>        ByteArrayOutputStream outStream = null;
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        try {
+</span></span><span style="display:flex"><span>            input = new FileInputStream(wordPath + File.separator + fileName);
+</span></span><span style="display:flex"><span>            // 初始化转换器
+</span></span><span style="display:flex"><span>            WordToHtmlConverter converter = new WordToHtmlConverter(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>            // 保存文档中的图片
+</span></span><span style="display:flex"><span>            converter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -&gt; {
+</span></span><span style="display:flex"><span>                // 设定图片路径
+</span></span><span style="display:flex"><span>                // return srcPath + File.separator + suggestedName;
+</span></span><span style="display:flex"><span>                return suggestedName;
+</span></span><span style="display:flex"><span>            });
+</span></span><span style="display:flex"><span>            // word2003
+</span></span><span style="display:flex"><span>            HWPFDocument wordDocument = new HWPFDocument(input);
+</span></span><span style="display:flex"><span>            converter.processDocument(wordDocument);
+</span></span><span style="display:flex"><span>            // 设定图片
+</span></span><span style="display:flex"><span>            List&lt;Picture&gt; pics = wordDocument.getPicturesTable().getAllPictures();
+</span></span><span style="display:flex"><span>            if (CollectionUtils.isNotEmpty(pics)) {
+</span></span><span style="display:flex"><span>                // 存储图片，根据给定的名称
+</span></span><span style="display:flex"><span>                for (Picture pic : pics) {
+</span></span><span style="display:flex"><span>                    // 将文件直接写出去
+</span></span><span style="display:flex"><span>                    pic.writeImageContent(new FileOutputStream(new File(wordPath, pic.suggestFullFileName())));
+</span></span><span style="display:flex"><span>                }
+</span></span><span style="display:flex"><span>            }
+</span></span><span style="display:flex"><span>            Document docHtml = converter.getDocument();
+</span></span><span style="display:flex"><span>            DOMSource domSource = new DOMSource(docHtml);
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>            outStream = new ByteArrayOutputStream();
+</span></span><span style="display:flex"><span>            StreamResult streamResult = new StreamResult(outStream);
+</span></span><span style="display:flex"><span>            TransformerFactory tf = TransformerFactory.newInstance();
+</span></span><span style="display:flex"><span>            Transformer serializer = tf.newTransformer();
+</span></span><span style="display:flex"><span>            serializer.setOutputProperty(OutputKeys.ENCODING, Constant.FILE_ENCODING);
+</span></span><span style="display:flex"><span>            serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+</span></span><span style="display:flex"><span>            serializer.setOutputProperty(OutputKeys.METHOD, "html");
+</span></span><span style="display:flex"><span>            serializer.transform(domSource, streamResult);
+</span></span><span style="display:flex"><span>            
+</span></span><span style="display:flex"><span>             // 文件名前缀
+</span></span><span style="display:flex"><span>            String prefix = CommonUtils.getFilePrefix(fileName);
+</span></span><span style="display:flex"><span>            String htmlPath = wordPath + File.separator + prefix + ".html";
+</span></span><span style="display:flex"><span>            logger.info("将word2003转换成html，html路径为:{}", htmlPath);
+</span></span><span style="display:flex"><span>            File target = new File(htmlPath);
+</span></span><span style="display:flex"><span>            FileUtils.writeStringToFile(target, new String(outStream.toByteArray()), Constant.FILE_ENCODING);
+</span></span><span style="display:flex"><span>            logger.info("将word2003转换成html---成功");
+</span></span><span style="display:flex"><span>            return htmlPath;
+</span></span><span style="display:flex"><span>        } catch (Exception e) {
+</span></span><span style="display:flex"><span>            logger.error("将word2003转换成html失败:" + e.getMessage(), e);
+</span></span><span style="display:flex"><span>            throw new RuntimeException("失败");
+</span></span><span style="display:flex"><span>        } finally {
+</span></span><span style="display:flex"><span>            IOUtils.closeOutputStream(outStream);
+</span></span><span style="display:flex"><span>            IOUtils.closeInputStream(input);
+</span></span><span style="display:flex"><span>        }
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>}
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>public static String docxToHtml(String wordPath, String fileName) {
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        logger.info("将word2007转换成html，word文件路径:{}，word文件名:{}", wordPath, fileName);
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        OutputStreamWriter writer = null;
+</span></span><span style="display:flex"><span>        FileInputStream fis = null;
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        try {
+</span></span><span style="display:flex"><span>            String sourceFileName = wordPath + File.separator + fileName;
+</span></span><span style="display:flex"><span>            // 文件名前缀
+</span></span><span style="display:flex"><span>            String prefix = CommonUtils.getFilePrefix(fileName);
+</span></span><span style="display:flex"><span>            String targetFileName = wordPath + File.separator + prefix + ".html";
+</span></span><span style="display:flex"><span>            logger.info("将word2007转换成html，html路径为:{}", targetFileName);
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>            // 图片存放路径
+</span></span><span style="display:flex"><span>            String imagePathStr = wordPath + "/image/";
+</span></span><span style="display:flex"><span>            fis = new FileInputStream(sourceFileName);
+</span></span><span style="display:flex"><span>            XWPFDocument document = new XWPFDocument(fis);
+</span></span><span style="display:flex"><span>            XHTMLOptions options = XHTMLOptions.create();
+</span></span><span style="display:flex"><span>            File imgFile = new File(imagePathStr);
+</span></span><span style="display:flex"><span>            if (!imgFile.exists()) {
+</span></span><span style="display:flex"><span>                imgFile.mkdirs();
+</span></span><span style="display:flex"><span>            }
+</span></span><span style="display:flex"><span>            // 存放图片的文件夹
+</span></span><span style="display:flex"><span>            options.setExtractor(new FileImageExtractor(imgFile));
+</span></span><span style="display:flex"><span>            // html中图片的路径
+</span></span><span style="display:flex"><span>            options.URIResolver(new BasicURIResolver("image"));
+</span></span><span style="display:flex"><span>            options.setIgnoreStylesIfUnused(false);
+</span></span><span style="display:flex"><span>            options.setFragment(true);
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>            writer = new OutputStreamWriter(new FileOutputStream(targetFileName), Constant.FILE_ENCODING);
+</span></span><span style="display:flex"><span>            XHTMLConverter xhtmlConverter = (XHTMLConverter) XHTMLConverter.getInstance();
+</span></span><span style="display:flex"><span>            xhtmlConverter.convert(document, writer, options);
+</span></span><span style="display:flex"><span>            logger.info("将word2007转换成html---成功");
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>            return targetFileName;
+</span></span><span style="display:flex"><span>             } catch (Exception e) {
+</span></span><span style="display:flex"><span>            logger.error("将word2007转换成html失败:" + e.getMessage(), e);
+</span></span><span style="display:flex"><span>            throw new RuntimeException("失败");
+</span></span><span style="display:flex"><span>        } finally {
+</span></span><span style="display:flex"><span>            IOUtils.closeWriter(writer);
+</span></span><span style="display:flex"><span>            IOUtils.closeInputStream(fis);
+</span></span><span style="display:flex"><span>        }
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span>        
+</span></span><span style="display:flex"><span>}
+</span></span><span style="display:flex"><span>
+</span></span><span style="display:flex"><span> 
+</span></span></code></pre></div></div><footer class="post-footer"><ul class="post-tags"><li><a href="https://xiaokunji.com/zh/tags/%E4%BB%A3%E7%A0%81%E7%B1%BB.html">代码类</a></li><li><a href="https://xiaokunji.com/zh/tags/%E7%BB%BC%E5%90%88.html">综合</a></li></ul><nav class="paginav"><a class="prev" href="https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/java/javaEE.html"><span class="title">« 上一页</span><br/><span>javaEE</span></a>
+<a class="next" href="https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/java%E5%9F%BA%E7%A1%80/%E9%9D%A2%E8%AF%95.html"><span class="title">下一页 »</span><br/><span>java常见面试题</span></a></nav></footer></article></main><script async="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><footer class="footer"><span>Copyright
+©
 -2023
-<a href=https://xiaokunji.com/zh/ style=color:#939393>米二</a>
+<a href="https://xiaokunji.com/zh/" style="color:#939393">米二</a>
 All Rights Reserved</span>
-<span id=busuanzi_container><span class="fa fa-user">用户数:</span><span id=busuanzi_value_site_uv></span>
-<span class="fa fa-eye">访问数:</span><span id=busuanzi_value_site_pv></span></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg></a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="复制";function s(){t.innerHTML="已复制！",setTimeout(()=>{t.innerHTML="复制"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>
+<span id="busuanzi_container"><span class="fa fa-user">用户数:</span><span id="busuanzi_value_site_uv"></span>
+<span class="fa fa-eye">访问数:</span><span id="busuanzi_value_site_pv"></span></span></footer><a accesskey="g" aria-label="go to top" class="top-link" href="#top" id="top-link" title="Go to Top (Alt + G)"><svg fill="currentcolor" viewbox="0 0 12 6" xmlns="http://www.w3.org/2000/svg"><path d="M12 6H0l6-6z"></path></svg></a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="复制";function s(){t.innerHTML="已复制！",setTimeout(()=>{t.innerHTML="复制"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>
