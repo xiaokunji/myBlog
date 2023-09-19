@@ -43,8 +43,23 @@ const _click_handler = function (element) {
         return;
     }
 
+    // 解密目录
+    let encrypted_toc = document.getElementById("toc-container")
+    if (encrypted_toc){
+      let decrypted_toc = "";
+      try {
+        decrypted_toc = _do_decrypt(encrypted_toc.innerText, password);
+      } catch (err) {
+        // 解密失败, 原因是: Malformed UTF-8 data
+        console.error("toc解密失败: "+err)
+        alert("toc密码错误!!");
+        return;
+      }
+      encrypted_toc.style.display = "";
+      encrypted_toc.innerHTML = decrypted_toc;
+    }
+      
     let storage = localStorage;
-
     let key = location.pathname + ".password." + index;
     storage.setItem(key, password);
     parent.innerHTML = decrypted;
@@ -71,6 +86,12 @@ window.onload = () => {
             let encrypted = parent.querySelector(".hugo-encryptor-cipher-text").innerText;
             let decrypted = _do_decrypt(encrypted, password);
             elements[index].innerHTML = decrypted;
+
+            // 解密toc
+            let encrypted_toc = document.getElementById("toc-container")
+            let decrypted_toc = _do_decrypt(encrypted_toc.innerText, password);
+            encrypted_toc.innerHTML = decrypted_toc;
+            encrypted_toc.style.display = "";
         }
     }
 };
