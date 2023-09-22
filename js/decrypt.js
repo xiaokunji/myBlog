@@ -58,7 +58,23 @@ const _click_handler = function (element) {
       encrypted_toc.style.display = "";
       encrypted_toc.innerHTML = decrypted_toc;
     }
-      
+
+    // 解密文件夹
+    let articles = document.getElementById("post-entry-all")
+    if (articles){
+      let decrypted_article = "";
+      try {
+        decrypted_article = _do_decrypt(articles.innerText, password);
+      } catch (err) {
+        // 解密失败, 原因是: Malformed UTF-8 data
+        console.error("文件夹解密失败: "+err)
+        alert("文件夹密码错误!!");
+        return;
+      }
+      articles.innerHTML = decrypted_article;
+      articles.style.display = "";
+    }  
+
     let storage = localStorage;
     let key = location.pathname + ".password." + index;
     storage.setItem(key, password);
@@ -89,9 +105,20 @@ window.onload = () => {
 
             // 解密toc
             let encrypted_toc = document.getElementById("toc-container")
-            let decrypted_toc = _do_decrypt(encrypted_toc.innerText, password);
-            encrypted_toc.innerHTML = decrypted_toc;
-            encrypted_toc.style.display = "";
+            if(encrypted_toc){
+              let decrypted_toc = _do_decrypt(encrypted_toc.innerText, password);
+              encrypted_toc.innerHTML = decrypted_toc;
+              encrypted_toc.style.display = "";
+            }
+
+            // 解密文件夹
+            let articles = document.getElementById("post-entry-all")
+            if(articles){
+              let decrypted_article = _do_decrypt(articles.innerText, password);
+              articles.innerHTML = decrypted_article;
+              articles.style.display = "";
+            }
+            
         }
     }
 };
