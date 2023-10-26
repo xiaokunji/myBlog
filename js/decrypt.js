@@ -76,7 +76,7 @@ const _click_handler = function (element) {
     }  
 
     let storage = localStorage;
-    let key = location.pathname + ".password." + index;
+    let key = ".password." + index;
     storage.setItem(key, password);
     parent.innerHTML = decrypted;
 }
@@ -89,7 +89,7 @@ window.onload = () => {
     while (1) {
         ++index;
 
-        let key = location.pathname + ".password." + index;
+        let key =  ".password." + index;
         let password = localStorage.getItem(key);
 
         if (!password) {
