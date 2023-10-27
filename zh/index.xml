@@ -378,6 +378,15 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
     </item>
     
     <item>
+      <title>idea 自定义todo以及过滤规则</title>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E8%87%AA%E5%AE%9A%E4%B9%89todo.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E8%87%AA%E5%AE%9A%E4%B9%89todo.html</guid>
+      <description>idea自定义todo idea使用增强</description>
+    </item>
+    
+    <item>
       <title>Impala与Hive</title>
       <link>https://xiaokunji.com/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/Impala/Impala%E4%B8%8EHive.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
@@ -2417,7 +2426,7 @@ Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用�
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95.html</guid>
-      <description>     </description>
+      <description>远程调试</description>
     </item>
     
     <item>
