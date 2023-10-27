@@ -8,6 +8,15 @@
     <language>zh</language>
     <lastBuildDate>Fri, 27 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/tags/IDEA/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>idea推荐插件</title>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E6%8E%A8%E8%8D%90%E6%8F%92%E4%BB%B6.html</link>
+      <pubDate>Fri, 27 Oct 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E6%8E%A8%E8%8D%90%E6%8F%92%E4%BB%B6.html</guid>
+      <description>idea推荐插件</description>
+    </item>
+    
+    <item>
       <title>idea自定义todo以及过滤规则</title>
       <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E8%87%AA%E5%AE%9A%E4%B9%89todo.html</link>
       <pubDate>Fri, 27 Oct 2023 00:00:00 +0000</pubDate>
@@ -23,15 +32,6 @@
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95.html</guid>
       <description>远程调试</description>
-    </item>
-    
-    <item>
-      <title>idea推荐插件</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E6%8E%A8%E8%8D%90%E6%8F%92%E4%BB%B6.html</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E6%8E%A8%E8%8D%90%E6%8F%92%E4%BB%B6.html</guid>
-      <description>idea推荐插件</description>
     </item>
     
   </channel>
