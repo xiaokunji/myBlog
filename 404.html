@@ -1,64 +1,51 @@
-
-<div class="moon"></div>
+<html><body><div class="moon"></div>
 <div class="moon__crater moon__crater1"></div>
 <div class="moon__crater moon__crater2"></div>
 <div class="moon__crater moon__crater3"></div>
-
 <div class="star star1"></div>
 <div class="star star2"></div>
 <div class="star star3"></div>
 <div class="star star4"></div>
 <div class="star star5"></div>
-
 <div class="error">
-  <div class="error__title">404</div>
-  <div class="error__subtitle">Hmmm...</div>
-  <div class="error__description">这个网页跑到太空去了....</div>
-  <br/>
-  <a href="https://xiaokunji.com" class="link">首页</a>
-    
+<div class="error__title">404</div>
+<div class="error__subtitle">Hmmm...</div>
+<div class="error__description">这个网页跑到太空去了....</div>
+<br/>
+<a class="link" href="https://xiaokunji.com">首页</a>
+<button class="link" onclick="history.back()">回退</button>
 </div>
-
-
 <div class="astronaut">
-  <div class="astronaut__backpack"></div>
-  <div class="astronaut__body"></div>
-  <div class="astronaut__body__chest"></div>
-  <div class="astronaut__arm-left1"></div>
-  <div class="astronaut__arm-left2"></div>
-  <div class="astronaut__arm-right1"></div>
-  <div class="astronaut__arm-right2"></div>
-  <div class="astronaut__arm-thumb-left"></div>
-  <div class="astronaut__arm-thumb-right"></div>
-  <div class="astronaut__leg-left"></div>
-  <div class="astronaut__leg-right"></div>
-  <div class="astronaut__foot-left"></div>
-  <div class="astronaut__foot-right"></div>
-  <div class="astronaut__wrist-left"></div>
-  <div class="astronaut__wrist-right"></div>
-  
-  <div class="astronaut__cord">
-    <canvas id="cord" height="500px" width="500px"></canvas>
-  </div>
-  
-  <div class="astronaut__head">
-    <canvas id="visor" width="60px" height="60px"></canvas>
-    <div class="astronaut__head-visor-flare1"></div>
-    <div class="astronaut__head-visor-flare2"></div>
-  </div>
+<div class="astronaut__backpack"></div>
+<div class="astronaut__body"></div>
+<div class="astronaut__body__chest"></div>
+<div class="astronaut__arm-left1"></div>
+<div class="astronaut__arm-left2"></div>
+<div class="astronaut__arm-right1"></div>
+<div class="astronaut__arm-right2"></div>
+<div class="astronaut__arm-thumb-left"></div>
+<div class="astronaut__arm-thumb-right"></div>
+<div class="astronaut__leg-left"></div>
+<div class="astronaut__leg-right"></div>
+<div class="astronaut__foot-left"></div>
+<div class="astronaut__foot-right"></div>
+<div class="astronaut__wrist-left"></div>
+<div class="astronaut__wrist-right"></div>
+<div class="astronaut__cord">
+<canvas height="500px" id="cord" width="500px"></canvas>
 </div>
-
-<script  src="js/404.js"></script>
-
-
-
+<div class="astronaut__head">
+<canvas height="60px" id="visor" width="60px"></canvas>
+<div class="astronaut__head-visor-flare1"></div>
+<div class="astronaut__head-visor-flare2"></div>
+</div>
+</div>
+<script src="js/404.js"></script>
 <style>
 .copyrights{text-indent:-9999px;height:0;line-height:0;font-size:0;overflow:hidden;}
 </style>
-
 <!-- js -->
-
-<script  >
+<script>
 
 function drawVisor() {
   const canvas = document.getElementById('visor');
@@ -138,11 +125,8 @@ function animate() {
 drawVisor();
 animate();
 </script>
-
-
 <!-- css -->
-<head>
-  <style>
+<style>
   html,
 body {
   height: 100%;
@@ -527,8 +511,6 @@ body {
   border-top-right-radius: 8em;
   border-bottom: 4px solid #e67e22;
 }</style>
-</head>
-
 <style>
   .link {
     display: inline-block;
@@ -544,4 +526,4 @@ body {
     background-color: #ddd;
   }
   </style>
-  
+</body></html>
