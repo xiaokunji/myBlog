@@ -21,7 +21,7 @@
       <pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springCloud/Config.html</guid>
-      <description>[toc] # 介绍 &amp;amp;emsp;&amp;amp;emsp;可以理解为配置中心,把配置放在某个地方(jdbc,git,svn,vault),统一管理. - 和注册中心类似,分为客户端和服务端,服务端就是提供配置的,客户端就获取配置, - 仅SpringCloudConfig不支持自动动态获取配置,需要结合bus(总线)来实现才行 </description>
+      <description> &amp;amp;emsp;&amp;amp;emsp;可以理解为配置中心,把配置放在某个地方(jdbc,git,svn,vault),统一管理. - 和注册中心类似,分为客户端和服务端,服务端就是提供配置的,客户端就获取配置, - 仅SpringCloudConfig不支持自动动态获取配置,需要结合bus(总线)来实现才行 </description>
     </item>
     
     <item>
@@ -59,10 +59,7 @@
       <pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springCloud/OpenFeign.html</guid>
-      <description>[toc]
-
-
-# 前言 </description>
+      <description>OpenFegin启动原理以及源码解析</description>
     </item>
     
     <item>
@@ -71,9 +68,7 @@
       <pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/springCloud/Sleuth.html</guid>
-      <description>[toc]
-Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用实现了一种分布式追踪解决方案，其兼容了Zipkin, HTrace和log-based追踪,官网:https://cloud.spring.io/spring-cloud-sleuth/spring-cloud-sleuth.html#_running_examples
-# **1.术语(Terminology)** </description>
+      <description>Spring-Cloud-Sleuth是Spring Cloud的组成部分之一，为SpringCloud应用实现了一种分布式追踪解决方案，其兼容了Zipkin, HTrace和log-based追踪,基本使用</description>
     </item>
     
     <item>
