@@ -45,7 +45,7 @@
 </span></span><span style="display:flex"><span>dataLogDir<span style="color:#ff7b72;font-weight:700">=</span><span style="color:#a5d6ff">/usr/software/kafka_2.11-0.10.2.1/zookeeper/dataLogDir</span>
 </span></span></code></pre></div><p><strong>4、启动Kafka集群并测试</strong></p><p># 每台都要启动,需先启动zookeeper</p><p><code>nohup sh kafka-server-start.sh -daemon ../config/server.properties &gt;/dev/null &amp;</code></p><blockquote><p>kafka-server-stop.sh 脚本好像不能正确关闭kafka,需要改动命令,如下</p><p>PIDS=$(jps -lm | grep -i ‘kafka.Kafka’| awk ‘{print $1}’)</p><p>关闭kafka后,用jps查看好像会延时,等待一会查看</p></blockquote></div><footer class="post-footer"><ul class="post-tags"><li><a href="https://xiaokunji.com/zh/tags/Kafka.html">Kafka</a></li><li><a href="https://xiaokunji.com/zh/tags/Hadoop%E7%94%9F%E6%80%81%E5%9C%88.html">Hadoop生态圈</a></li></ul></footer></article></main><script async="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><footer class="footer"><span>Copyright
 ©
--2023
+-2024
 <a href="https://xiaokunji.com/zh/" style="color:#939393">米二</a>
 All Rights Reserved</span>
 <span id="busuanzi_container"><span class="fa fa-user">用户数:</span><span id="busuanzi_value_site_uv"></span>

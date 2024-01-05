@@ -2458,15 +2458,6 @@
     </item>
     
     <item>
-      <title>中台知识</title>
-      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/%E4%B8%AD%E5%8F%B0.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/%E4%B8%AD%E5%8F%B0.html</guid>
-      <description>中台介绍与理论</description>
-    </item>
-    
-    <item>
       <title>重写resource</title>
       <link>https://xiaokunji.com/zh/python%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/django/%E9%87%8D%E5%86%99resource.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
@@ -2547,6 +2538,15 @@
       
       <guid>https://xiaokunji.com/zh/links.html</guid>
       <description>神代綺凛 ななひら天下第一！(侵删) Sulv&amp;#39;s Blog 一个记录技术、阅读、生活的博客 wshawk&amp;#39;s blog 学习笔记 👉友链格式 / / 名称： 米二 网址： https://xiaokunji.com 图标： https://xiaokunji.com/img/Q.svg 描述： 记录技术积累の</description>
+    </item>
+    
+    <item>
+      <title>中台知识</title>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/%E4%B8%AD%E5%8F%B0.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%9D%82%E9%A1%B9/%E4%B8%AD%E5%8F%B0.html</guid>
+      <description>中台介绍与理论</description>
     </item>
     
   </channel>

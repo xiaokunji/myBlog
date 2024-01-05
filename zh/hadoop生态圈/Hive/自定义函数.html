@@ -14,7 +14,7 @@
 </span></span><span style="display:flex"><span><span style="color:#7ee787">&lt;/property&gt;</span>
 </span></span></code></pre></div><h2 id="33-将jar包放入hive的jar目录永久加载"><strong>3.3 将jar包放入hive的jar目录(永久加载)</strong><a aria-hidden="true" class="anchor" hidden="" href="#33-将jar包放入hive的jar目录永久加载">#</a></h2><p>是在${HIVE_HOME}下创建auxlib目录，将UDF文件放到该目录中，这样hive在启动时会将其中的jar文件加载到classpath中。</p><blockquote><p>或者 <strong>指定jar所在目录(这种反而更管理一点),实现:</strong></p><p>可以拷贝${HIVE_HOME}/conf中的hive-env.sh.template 为 hive-env.sh 文件，并修改最后一行：</p></blockquote><p><code>export HIVE_AUX_JARS_PATH=[classPath]</code></p><blockquote><p>或者在系统中直接添加HIVE_AUX_JARS_PATH环境变量。</p></blockquote><blockquote><p>来自: <a href="https://blog.csdn.net/snail_bing/article/details/82869435" rel="noopener" target="_blank">https://blog.csdn.net/snail_bing/article/details/82869435</a></p></blockquote></div><footer class="post-footer"><ul class="post-tags"><li><a href="https://xiaokunji.com/zh/tags/Hive.html">Hive</a></li><li><a href="https://xiaokunji.com/zh/tags/Hadoop%E7%94%9F%E6%80%81%E5%9C%88.html">Hadoop生态圈</a></li></ul></footer></article></main><script async="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><footer class="footer"><span>Copyright
 ©
--2023
+-2024
 <a href="https://xiaokunji.com/zh/" style="color:#939393">米二</a>
 All Rights Reserved</span>
 <span id="busuanzi_container"><span class="fa fa-user">用户数:</span><span id="busuanzi_value_site_uv"></span>
