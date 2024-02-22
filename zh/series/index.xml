@@ -6,7 +6,25 @@
     <description>Recent content in Series on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Fri, 27 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/series/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 22 Feb 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/series/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hadoop生态圈</title>
+      <link>https://xiaokunji.com/zh/series/Hadoop%E7%94%9F%E6%80%81%E5%9C%88.html</link>
+      <pubDate>Thu, 22 Feb 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/series/Hadoop%E7%94%9F%E6%80%81%E5%9C%88.html</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>大数据</title>
+      <link>https://xiaokunji.com/zh/series/%E5%A4%A7%E6%95%B0%E6%8D%AE.html</link>
+      <pubDate>Thu, 22 Feb 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/series/%E5%A4%A7%E6%95%B0%E6%8D%AE.html</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>综合</title>
       <link>https://xiaokunji.com/zh/series/%E7%BB%BC%E5%90%88.html</link>
@@ -49,15 +67,6 @@
       <pubDate>Fri, 01 Sep 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/series/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6.html</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Hadoop生态圈</title>
-      <link>https://xiaokunji.com/zh/series/Hadoop%E7%94%9F%E6%80%81%E5%9C%88.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/series/Hadoop%E7%94%9F%E6%80%81%E5%9C%88.html</guid>
       <description></description>
     </item>
     

@@ -7,6 +7,24 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language><atom:link href="https://xiaokunji.com/zh/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>StartRocks介绍及原理</title>
+      <link>https://xiaokunji.com/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/StarRocks/%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%8E%9F%E7%90%86.html</link>
+      <pubDate>Thu, 22 Feb 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/StarRocks/%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%8E%9F%E7%90%86.html</guid>
+      <description>     </description>
+    </item>
+    
+    <item>
+      <title>分布式一致性协议 Quorum 机制</title>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/Quorum%E6%9C%BA%E5%88%B6.html</link>
+      <pubDate>Thu, 22 Feb 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%A4%A7%E6%95%B0%E6%8D%AE/Quorum%E6%9C%BA%E5%88%B6.html</guid>
+      <description>分布式一致性协议 Quorum 机制</description>
+    </item>
+    
+    <item>
       <title>idea推荐插件</title>
       <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E6%8E%A8%E8%8D%90%E6%8F%92%E4%BB%B6.html</link>
       <pubDate>Fri, 27 Oct 2023 00:00:00 +0000</pubDate>
