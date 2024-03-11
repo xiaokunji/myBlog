@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>单测框架 on 米二</title>
+    <link>https://xiaokunji.com/zh/tags/%E5%8D%95%E6%B5%8B%E6%A1%86%E6%9E%B6.html</link>
+    <description>Recent content in 单测框架 on 米二</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Fri, 23 Feb 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/tags/%E5%8D%95%E6%B5%8B%E6%A1%86%E6%9E%B6/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>简述spock以及使用</title>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E5%8D%95%E6%B5%8B%E6%A1%86%E6%9E%B6/spock.html</link>
+      <pubDate>Fri, 23 Feb 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E5%8D%95%E6%B5%8B%E6%A1%86%E6%9E%B6/spock.html</guid>
+      <description>Spock是一款国外优秀的测试框架，基于BDD（行为驱动开发）思想实现，功能非常强大。Spock结合Groovy动态语言的特点，提供了各种标签，并采用简单、通用、结构化的描述语言，让编写测试代码更加简洁、高效 </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -6,7 +6,16 @@
     <description>Recent content in 综合 on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Fri, 27 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/series/%E7%BB%BC%E5%90%88/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 23 Feb 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/series/%E7%BB%BC%E5%90%88/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>简述spock以及使用</title>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E5%8D%95%E6%B5%8B%E6%A1%86%E6%9E%B6/spock.html</link>
+      <pubDate>Fri, 23 Feb 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E5%8D%95%E6%B5%8B%E6%A1%86%E6%9E%B6/spock.html</guid>
+      <description>Spock是一款国外优秀的测试框架，基于BDD（行为驱动开发）思想实现，功能非常强大。Spock结合Groovy动态语言的特点，提供了各种标签，并采用简单、通用、结构化的描述语言，让编写测试代码更加简洁、高效 </description>
+    </item>
+    
     <item>
       <title>idea推荐插件</title>
       <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E5%B7%A5%E5%85%B7%E7%AF%87/IDEA/%E6%8E%A8%E8%8D%90%E6%8F%92%E4%BB%B6.html</link>
