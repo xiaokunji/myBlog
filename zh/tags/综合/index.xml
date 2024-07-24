@@ -6,7 +6,16 @@
     <description>Recent content in 综合 on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 18 Jun 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/tags/%E7%BB%BC%E5%90%88/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 24 Jul 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/tags/%E7%BB%BC%E5%90%88/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>全链路压测</title>
+      <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%B5%8B%E8%AF%95/%E5%85%A8%E9%93%BE%E8%B7%AF%E5%8E%8B%E6%B5%8B.html</link>
+      <pubDate>Wed, 24 Jul 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E6%B5%8B%E8%AF%95/%E5%85%A8%E9%93%BE%E8%B7%AF%E5%8E%8B%E6%B5%8B.html</guid>
+      <description>全链路压测相关知识</description>
+    </item>
+    
     <item>
       <title>RPC</title>
       <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/%E4%B8%AA%E4%BA%BA%E5%B0%8F%E7%9F%A5%E8%AF%86/%E7%BD%91%E7%BB%9C/RPC.html</link>
