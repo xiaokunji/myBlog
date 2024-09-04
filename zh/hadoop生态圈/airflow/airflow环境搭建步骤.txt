@@ -1,8 +1,7 @@
-
 #!/bin/bash
 echo "正在安装相关组件"
 yum install -y openssl-devel bzip2-devel expat-devel gdbm-devel readline-devel sqlite-devel gcc-c++ gcc  mysql-devel zlib zlib-dev  libffi libffi-devel
-  
+
 echo "下载安装包"
 wget https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz
 
@@ -13,13 +12,9 @@ echo "正在解压安装包"
 tar -xf Python-3.7.7.tgz -C $HOME/  
 tar -xf openssl-1.1.1.tar.gz  -C $HOME/
 
-
-  
-
 echo "编译openssl"
 cd $HOME/openssl-1.1.1 
 ./config --prefix=$HOME/openssl shared zlib && make && make install
-
 
 echo "配置openssl包到环境变量变量"
 echo "export LD_LIBRARY_PATH=$HOME/openssl/lib" >> $HOME/.bash_profile
@@ -36,8 +31,6 @@ _ssl _ssl.c \
 -DUSE_SSL -I$(SSL)/include -I$(SSL)/include/openssl \
 -L$(SSL)/lib -lssl -lcrypto
 EOF
-  
-
 
 echo "编译安装Python"
 #./configure --prefix=/usr/local/python37 && make && make install
@@ -45,26 +38,21 @@ echo "编译安装Python"
 cd $HOME/Python-3.7.7/
 ./configure --prefix=$HOME/python && make && make install
 
-
 echo "删除安装包"
 #rm -rf $HOME/Python-3.7.7.tgz && rm -rf $HOME/Python-3.7.7
-  
+
 echo "添加Python环境变量"
 #echo "export PATH=/usr/local/python37/bin:$PATH">> ~/.bash_profile
 echo "export PATH=$HOME/python/bin:$PATH">> ~/.bash_profile
 source ~/.bash_profile
- 
+
 echo "非root用户切换软链接"
 mv /usr/local/bin/python  /usr/local/bin/python.bak
 mv /usr/local/bin/pip /usr/local/bin/pip.bak
 ln -s $HOME/python/bin/python3.7   /usr/local/bin/python
 ln -s $HOME/python/bin/pip3   /usr/local/bin/pip
 
-
-
 echo "安装完成,请执行python3进行测试"
-
-
 
 echo "修改pip镜像源"
 mkdir $HOME/.pip/
@@ -74,10 +62,6 @@ timeout = 6000
 index-url =http://mirrors.aliyun.com/pypi/simple
 trusted-host = mirrors.aliyun.com
 EOF
-
-
-
-
 
 echo "airflow安装配置环境变量"
 export SLUGIFY_USES_TEXT_UNIDECODE=yes
@@ -91,10 +75,6 @@ echo "export SITE_AIRFLOW_HOME=$HOME/python/lib/python3.7/site-packages/airflow"
 source ~/.bash_profile
 echo "export PATH=$SITE_AIRFLOW_HOME/bin:$PATH">> ~/.bash_profile
 source ~/.bash_profile
-
-
-
-
 
 echo "数据库配置变更"
 mysql --help | grep my.cnf
@@ -112,15 +92,12 @@ GRANT all privileges on airflow.* TO 'airflow'@'127.0.0.1' IDENTIFIED BY 'airflo
 刷新
 flush privileges;
 
-
 echo "修改airflow.cfg，默认使用的是SQLite数据库"
 #sql_alchemy_conn = sqlite:////home/darren/airflow/airflow.db
 sql_alchemy_conn = mysql://airflow:airflow@10.10.208.51:3306/airflow
 
 echo "初始化数据库"
 airflow initdb
-
-
 
 echo "编辑utc时间脚本1"
 1   vi $HOME/python/lib/python3.7/site-packages/airflow/www/templates/admin/master.html  
@@ -133,6 +110,7 @@ echo "编辑utc时间脚本2"
 2   vi  $HOME/python/lib/python3.7/site-packages/airflow/utils/timezone.py
 
 # UTC time zone as a tzinfo instance.
+
 utc = pendulum.timezone('UTC')    #这一行下面到pass结束添加的代码
 from airflow.configuration import conf
 try:
@@ -146,7 +124,7 @@ except Exception:
 
     #d = dt.datetime.utcnow()   修改这一行为下面
     d = dt.datetime.now()
-  
+
 echo "编辑utc时间脚本3"
 3  vi $HOME/python/lib/python3.7/site-packages/airflow/utils/sqlalchemy.py
 utc = pendulum.timezone('UTC')  #这一行后面添加
@@ -158,7 +136,6 @@ try:
                 utc = pendulum.timezone(tz)
 except Exception:
         pass
-
 
 echo "停止airflow相关进程"
 ps -ef|egrep 'scheduler|airflow-webserver'|grep -v grep|awk '{print $2}'|xargs kill -9
