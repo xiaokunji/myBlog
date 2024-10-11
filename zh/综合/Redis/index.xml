@@ -66,7 +66,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/Redis/%E9%9B%AA%E5%B4%A9%E5%92%8C%E7%A9%BF%E9%80%8F%E5%92%8C%E5%87%BB%E7%A9%BF.html</guid>
-      <description>     </description>
+      <description>redis的缓存穿透和缓存雪崩和缓存击穿</description>
     </item>
     
   </channel>
