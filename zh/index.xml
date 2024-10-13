@@ -294,7 +294,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/crash-safe%E5%8E%9F%E7%90%86.html</guid>
-      <description>     </description>
+      <description>mysql的crash-safe原理</description>
     </item>
     
     <item>
@@ -609,7 +609,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/%E9%9D%A2%E8%AF%95/kafka.html</guid>
-      <description>     </description>
+      <description>关于kafka的面试问题</description>
     </item>
     
     <item>
@@ -645,7 +645,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/Kafka/kafka%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%8E%9F%E7%90%86.html</guid>
-      <description>     </description>
+      <description>kafka原理介绍</description>
     </item>
     
     <item>
@@ -1770,7 +1770,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/Kafka/%E7%AE%80%E8%BF%B0%E5%88%86%E5%8C%BA%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5.html</guid>
-      <description>     </description>
+      <description>kafka的分区分配策略</description>
     </item>
     
     <item>
@@ -1779,7 +1779,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/Kafka/%E7%AE%80%E8%BF%B0%E5%B9%82%E7%AD%89%E6%80%A7.html</guid>
-      <description>     </description>
+      <description>kafka的幂等性保证</description>
     </item>
     
     <item>
@@ -1905,7 +1905,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/RocketMQ/%E4%BB%8B%E7%BB%8D.html</guid>
-      <description>     </description>
+      <description>RocketMQ介绍</description>
     </item>
     
     <item>
@@ -1941,7 +1941,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/hadoop%E7%94%9F%E6%80%81%E5%9C%88/Zookeeper/%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%8E%9F%E7%90%86.html</guid>
-      <description>     </description>
+      <description>zookeeper原理介绍</description>
     </item>
     
     <item>
@@ -2040,7 +2040,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/RocketMQ/%E9%9D%A2%E8%AF%95.html</guid>
-      <description>     </description>
+      <description>RocketMQ面试问题</description>
     </item>
     
     <item>
