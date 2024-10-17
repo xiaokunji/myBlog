@@ -62,15 +62,6 @@
     </item>
     
     <item>
-      <title>mysql面试</title>
-      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95.html</guid>
-      <description>mysql常见面试题</description>
-    </item>
-    
-    <item>
       <title>MySQL与Oracle</title>
       <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/MySQL%E4%B8%8EOracle.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
@@ -184,7 +175,16 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E9%80%BB%E8%BE%91%E6%9E%B6%E6%9E%84%E5%9B%BE.html</guid>
-      <description>     </description>
+      <description>mysql逻辑架构介绍</description>
+    </item>
+    
+    <item>
+      <title>面试</title>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E9%9D%A2%E8%AF%95.html</guid>
+      <description>mysql常见面试题</description>
     </item>
     
     <item>
@@ -274,7 +274,7 @@
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E5%BC%95%E6%93%8E.html</guid>
-      <description>     </description>
+      <description>mysql引擎介绍</description>
     </item>
     
     <item>
