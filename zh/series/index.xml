@@ -6,7 +6,16 @@
     <description>Recent content in Series on 米二</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Wed, 25 Sep 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/series/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 11 Oct 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://xiaokunji.com/zh/series/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>前端</title>
+      <link>https://xiaokunji.com/zh/series/%E5%89%8D%E7%AB%AF.html</link>
+      <pubDate>Fri, 11 Oct 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/series/%E5%89%8D%E7%AB%AF.html</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>数据库</title>
       <link>https://xiaokunji.com/zh/series/%E6%95%B0%E6%8D%AE%E5%BA%93.html</link>
@@ -22,15 +31,6 @@
       <pubDate>Wed, 04 Sep 2024 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/series/%E7%BB%BC%E5%90%88.html</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>前端</title>
-      <link>https://xiaokunji.com/zh/series/%E5%89%8D%E7%AB%AF.html</link>
-      <pubDate>Mon, 11 Mar 2024 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/series/%E5%89%8D%E7%AB%AF.html</guid>
       <description></description>
     </item>
     
