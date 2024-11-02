@@ -44,6 +44,15 @@
     </item>
     
     <item>
+      <title>mysql事务</title>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/mysql%E4%BA%8B%E5%8A%A1.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/mysql%E4%BA%8B%E5%8A%A1.html</guid>
+      <description>事务问题以及隔离级别</description>
+    </item>
+    
+    <item>
       <title>sql执行过程</title>
       <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/sql%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
@@ -113,15 +122,6 @@
       
       <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B.html</guid>
       <description>     </description>
-    </item>
-    
-    <item>
-      <title>事务</title>
-      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E4%BA%8B%E5%8A%A1.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E4%BA%8B%E5%8A%A1.html</guid>
-      <description>事务问题以及隔离级别</description>
     </item>
     
     <item>

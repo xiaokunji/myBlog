@@ -34,12 +34,12 @@
     </item>
     
     <item>
-      <title>事务</title>
-      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E4%BA%8B%E5%8A%A1.html</link>
+      <title>数据库事务</title>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E4%BA%8B%E5%8A%A1.html</guid>
-      <description>     </description>
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1.html</guid>
+      <description>数据库的事务基础知识</description>
     </item>
     
   </channel>

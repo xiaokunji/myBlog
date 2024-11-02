@@ -793,6 +793,15 @@
     </item>
     
     <item>
+      <title>mysql事务</title>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/mysql%E4%BA%8B%E5%8A%A1.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/mysql%E4%BA%8B%E5%8A%A1.html</guid>
+      <description>事务问题以及隔离级别</description>
+    </item>
+    
+    <item>
       <title>MySQL与Oracle</title>
       <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%B7%AE%E5%BC%82/MySQL%E4%B8%8EOracle.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
@@ -1060,6 +1069,15 @@
       
       <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/SpringCache.html</guid>
       <description>springCache介绍与使用</description>
+    </item>
+    
+    <item>
+      <title>spring事务</title>
+      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/spring%E4%BA%8B%E5%8A%A1.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/spring%E4%BA%8B%E5%8A%A1.html</guid>
+      <description>spring中的事务, 传播机制;隔离行为;事务注解失效场景</description>
     </item>
     
     <item>
@@ -2287,39 +2305,21 @@
     </item>
     
     <item>
-      <title>事务</title>
-      <link>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E4%BA%8B%E5%8A%A1.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/java%E5%8F%8A%E5%85%B6%E6%A1%86%E6%9E%B6/spring/%E4%BA%8B%E5%8A%A1.html</guid>
-      <description>spring中的事务, 传播机制;隔离行为;事务注解失效场景</description>
-    </item>
-    
-    <item>
-      <title>事务</title>
-      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E4%BA%8B%E5%8A%A1.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/%E4%BA%8B%E5%8A%A1.html</guid>
-      <description>事务问题以及隔离级别</description>
-    </item>
-    
-    <item>
-      <title>事务</title>
-      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E4%BA%8B%E5%8A%A1.html</link>
-      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E4%BA%8B%E5%8A%A1.html</guid>
-      <description>     </description>
-    </item>
-    
-    <item>
       <title>事务消息</title>
       <link>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/RocketMQ/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.html</link>
       <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
       
       <guid>https://xiaokunji.com/zh/%E7%BB%BC%E5%90%88/RocketMQ/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.html</guid>
       <description>     </description>
+    </item>
+    
+    <item>
+      <title>数据库事务</title>
+      <link>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1.html</link>
+      <pubDate>Tue, 22 Aug 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://xiaokunji.com/zh/%E6%95%B0%E6%8D%AE%E5%BA%93/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1.html</guid>
+      <description>数据库的事务基础知识</description>
     </item>
     
     <item>
